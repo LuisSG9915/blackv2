@@ -13,7 +13,9 @@ export const useComprasSeleccion = ({ fecha1, fecha2, sucursal }: Props) => {
 
   const fetchComprasSeleccion = async () => {
     try {
-      const response: AxiosResponse<any[]> = await jezaApi.get(`/CompraListaSel?cia=26&sucursal=${sucursal}&f1=${fecha1}&f2=${fecha2}`);
+      const response: AxiosResponse<any[]> = await jezaApi.get(
+        `/CompraListaSel?cia=26&sucursal=${sucursal}&f1=${fecha1 ? fecha1 : "2023-01-01"}&f2=${fecha2 ? fecha2 : "2023-12-12"}`
+      );
       setDataComprasSeleccion(response.data);
     } catch (error) {
       console.log(error);
