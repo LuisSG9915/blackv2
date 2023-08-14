@@ -918,7 +918,7 @@ const Ventas = () => {
         producto: "",
         User: 0,
       });
-      anticipoPost();
+      anticipoPost(Number(response.data.mensaje2));
     });
   };
 
@@ -1043,16 +1043,16 @@ const Ventas = () => {
     );
   }
 
-  const anticipoPost = () => {
+  const anticipoPost = (noVenta: number) => {
     if (formAnticipo.importe > 0) {
       jezaApi
         .post("/AnticipoAplicado", null, {
           params: {
-            cia: 21,
+            cia: 26,
             sucursal: dataUsuarios2[0]?.sucursal,
             caja: 1,
             fecha: fechaHoy,
-            no_venta: 10,
+            no_venta: noVenta,
             fechaMovto: 20230726,
             idCliente: dataTemporal.Cve_cliente,
             idUsuario: dataUsuarios2[0]?.id,

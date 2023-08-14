@@ -168,7 +168,11 @@ function Compras() {
     cantidadFactura: 0,
     cantidadMalEstado: 0,
   });
-  const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(dataCompras.idProveedor, idSeleccionado);
+  const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(
+    dataCompras.idProveedor,
+    idSeleccionado,
+    dataUsuarios2[0]?.sucursal
+  );
   const handle = (dato: Producto) => {
     fetchProduct();
     if (productoSelected.includes(Number(dato.id))) {
