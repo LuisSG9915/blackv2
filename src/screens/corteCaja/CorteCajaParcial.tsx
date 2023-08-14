@@ -202,7 +202,7 @@ function CorteCajaParcial() {
                       className="custom-currency-input"
                       prefix="$"
                       onChange={handleChange}
-                      value={dataCorteParcial[0]?.importe}
+                      value={dataCorteParcial[0]?.importe ? dataCorteParcial[0]?.importe : 0}
                       disabled
                     />
                   </td>
@@ -225,7 +225,7 @@ function CorteCajaParcial() {
                       decimalScale={2}
                       className="custom-currency-input"
                       onChange={handleChange}
-                      value={dataCorteParcial[1]?.importe}
+                      value={dataCorteParcial[1]?.importe ? dataCorteParcial[1]?.importe : 0}
                       disabled
                       prefix="$"
                     />

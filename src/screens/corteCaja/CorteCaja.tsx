@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Alert, Container, Table, CardFooter, Card, FormGroup, CardText, Input, CardTitle, CardBody, Label, Row } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
-import { jezaApi } from "../../api/jezaApi";
-import { Almacen } from "../../models/Almacen";
-import AlertComponent from "../../components/AlertComponent";
-import { Usuario } from "../../models/Usuario";
-import { ImCancelCircle } from "react-icons/im";
+
 import CurrencyInput from "react-currency-input-field";
 import { useCorteDia } from "../../hooks/getsHooks/useCorteDia";
 import { UserResponse } from "../../models/Home";
@@ -133,7 +129,7 @@ function CorteCaja() {
                       prefix="$"
                       name="credito"
                       placeholder="Please enter a number"
-                      value={dataCorteDia[0]?.importe}
+                      value={dataCorteDia[0]?.importe ? dataCorteDia[0]?.importe : 0}
                       disabled
                       decimalScale={2}
                       decimalsLimit={2}
@@ -146,7 +142,7 @@ function CorteCaja() {
                       prefix="$"
                       name="credito"
                       placeholder="Please enter a number"
-                      value={dataCorteDia[0]?.importe}
+                      value={dataCorteDia[0]?.importe ? dataCorteDia[0]?.importe : 0}
                       disabled
                       decimalScale={2}
                       decimalsLimit={2}
@@ -162,7 +158,7 @@ function CorteCaja() {
                       prefix="$"
                       name="credito"
                       placeholder="Please enter a number"
-                      value={dataCorteDia[1]?.importe}
+                      value={dataCorteDia[1]?.importe ? dataCorteDia[1]?.importe : 0}
                       disabled
                       decimalScale={2}
                       decimalsLimit={2}
@@ -175,7 +171,7 @@ function CorteCaja() {
                       prefix="$"
                       name="credito"
                       placeholder="Please enter a number"
-                      value={dataCorteDia[1]?.importe}
+                      value={dataCorteDia[1]?.importe ? dataCorteDia[1]?.importe : 0}
                       disabled
                       decimalScale={2}
                       decimalsLimit={2}
