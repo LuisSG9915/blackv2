@@ -1080,13 +1080,13 @@ const Ventas = () => {
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
       const tempIdPago = getIdPago(Number(elemento.formaPago));
-      jezaApi.post("MedioPago", null, {
+      jezaApi.post("/MedioPago", null, {
         params: {
           caja: 1,
           no_venta: noVenta,
           corte: 0,
           corte_parcial: 0,
-          fecha: fechaHoyMedioPago,
+          fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
           referencia: elemento.referencia ? elemento.referencia : "efectivo",
@@ -1101,9 +1101,10 @@ const Ventas = () => {
     return cia ? cia.descripcion : "Sin forma de pago";
   };
   const getIdPago = (idTipoPago: number) => {
-    const cia = dataFormasPagos.find((cia: FormaPago) => cia.tipo === idTipoPago);
+    const cia = dataFormasPagos.find((cia: FormaPago) => cia.tipo === idTipoPago && cia.sucursal === dataUsuarios2[0]?.sucursal);
     return cia ? cia.id : 1;
   };
+
   const editVenta = () => {
     const today2 = new Date();
     const formattedDate = format(today2, "yyyy-MM-dd");
