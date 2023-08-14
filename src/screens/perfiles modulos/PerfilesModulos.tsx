@@ -1,3 +1,6 @@
+////USANDO GITHUB 
+
+
 import React, { useState, useEffect } from "react";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -100,7 +103,7 @@ function PerfilesModulos() {
   };
 
   const insertar = () => {
-    jezaApi.post("/Medico", {}).then(() => {});
+    jezaApi.post("/Medico", {}).then(() => { });
     setModalInsertar(false);
   };
 
