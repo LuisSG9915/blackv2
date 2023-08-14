@@ -1,0 +1,18 @@
+.cardUsuario {
+        
+    /* height: 150px;
+    width: 300px; */
+            /* position: "absolute", // Fijar el componente en la ventana del navegador
+            top: "100px", // Ajustar la posición vertical
+            left: "930px", // Ajustar la posición horizontal
+     */
+
+    /* width: 18rem;
+    position: absolute; 
+            top: 100px; 
+            left: 10px; */
+            display: flex;
+            justify-content: flex-end;
+            margin-right: 20px;
+            
+};

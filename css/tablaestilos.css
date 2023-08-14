@@ -1,0 +1,22 @@
+.custom-header {
+   /* Cambia el color del fondo del encabezado */
+    color: #000000;
+    font-weight: bold;
+    font-size: 15px;
+    font-weight: bold;
+    /* Otros estilos personalizados para el encabezado */
+  }
+
+/* Estilos para tamaños de pantalla normales */
+.button-group-container {
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+}
+
+/* Media query para tamaños de pantalla pequeños, por ejemplo, dispositivos móviles */
+@media (max-width: 767px) {
+  .button-group-container {
+    flex-direction: column; /* Apila los botones verticalmente */
+    align-items: center; /* Centra los botones horizontalmente */
+  }
+}

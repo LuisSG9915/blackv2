@@ -1,0 +1,67 @@
+/* Estilos base */
+
+
+.formulario {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+
+  /* Para pantallas con un ancho máximo de 768px */
+  .formulario {
+    grid-template-columns: repeat(2, 1fr);
+    /* Cambia a 2 columnas de igual tamaño */
+  }
+}
+
+@media (max-width: 576px) {
+
+  /* Para pantallas con un ancho máximo de 576px */
+  .formulario {
+    grid-template-columns: 1fr;
+    /* Cambia a una sola columna de ancho completo */
+  }
+}
+
+/* Aplicando estilos a la tabla mui */
+.data-grid-header {
+  background-color: #ff2d00;
+  color: #0012ff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Estilo para ajustar el contenido de las celdas y permitir el salto de línea */
+.MuiDataGrid-cell {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Estilo para ajustar el espaciado entre las celdas del DataGrid */
+.custom-data-grid-cell {
+  padding: 10px;
+}
+
+.boton {
+  padding-left: 5px;
+}
+
+/* Estilos para la tabla */
+/* Reduce el espacio entre las celdas del encabezado */
+.MRT-Table .MRT-HeaderCell {
+  padding: 8px;
+}
+
+/* Reduce el espacio entre las celdas de datos */
+.MRT-Table .MRT-Cell {
+  padding: 8px;
+}
+
+/* Estilos específicos para ocultar la columna de ID en la tabla */
+.hide-id .MRT-Table .MRT-HeaderCell:nth-child(1),
+.hide-id .MRT-Table .MRT-Cell:nth-child(1) {
+  display: none;
+}

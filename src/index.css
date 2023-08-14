@@ -1,0 +1,15 @@
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.contenedor {
+  height: 100vh;
+}
+.input-container {
+  display: flex;
+  align-items: center;
+}
+
+.dollar-sign {
+  padding-right: 5px;
+}

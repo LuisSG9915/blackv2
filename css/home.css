@@ -1,0 +1,90 @@
+h3 {
+  color: black;
+  font-weight: 600;
+}
+
+/* Agregar filtro púrpura al fondo */
+.home-page {
+  /* body{ */
+  /* Para usar una imagen como fondo */
+  background-image: url("/src/assets/setup.jpg");
+  /* Para usar un color como fondo, descomenta la siguiente línea y comenta la línea anterior */
+  /* background-color: #abcdef; */
+  /* Ajustar el fondo para cubrir toda la pantalla */
+  background-size: cover;
+  /* Asegura que el fondo se ajuste a toda la pantalla */
+  background-attachment: fixed;
+  /* Centrar el fondo verticalmente */
+  background-position: center;
+  /* Asegura que el contenido esté delante del fondo */
+  position: relative;
+}
+
+/* Agregar filtro púrpura con pseudo-elementos */
+.home-page::before {
+  /* Capa para el filtro púrpura */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(59, 1, 59, 0.315); /* Color púrpura con transparencia */
+  z-index: 1; /* Asegura que la capa esté detrás del contenido */
+}
+.icono-home {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 50%;
+}
+/* Ajustar el diseño para el logotipo y el contenido del formulario */
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Ajustar la altura para ocupar toda la pantalla menos el espacio del margen inferior del logotipo */
+  height: calc(100vh - 0px); /* Ajusta 20px al valor del margen inferior en .logo-container */
+  z-index: 2; /* Asegura que el contenido esté por encima del filtro */
+}
+
+.logo-container {
+  /* Margen inferior opcional para separar el logotipo del formulario */
+  padding-top: 50px;
+  margin-bottom: 20px;
+  z-index: 2;
+}
+
+.container_home {
+  /* Estilos para el contenedor */
+  display: flex !important;
+  justify-content: center !important;
+  width: 500px;
+  z-index: 2; /* Asegura que el contenido esté por encima del filtro */
+}
+
+.centered-content {
+  /* Estilos para el contenido centrado */
+  width: 80%;
+  max-width: 400px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.678);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 10px;
+  border: 1px solid rgb(255, 255, 255);
+  z-index: 2; /* Asegura que el contenido esté por encima del filtro */
+}
+
+/* Media Queries para ajustar el contenido cuando la pantalla es pequeña */
+@media (max-width: 768px) {
+  .centered-content {
+    width: 90%;
+    padding: 10px;
+    z-index: 2; /* Asegura que el contenido esté por encima del filtro */
+  }
+}

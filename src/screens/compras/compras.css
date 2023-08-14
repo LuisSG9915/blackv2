@@ -1,0 +1,25 @@
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /* Ajusta el número de columnas según tus necesidades */
+  grid-gap: 20px;
+  /* Espacio entre los elementos */
+}
+
+.alineación-derecha {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 25px;
+}
+
+.fixed-header thead th {
+  /* the thead selector is required because there are th elements in the body */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+}
+
+.coloreado {
+  background-color: blueviolet;
+}

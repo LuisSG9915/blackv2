@@ -1,0 +1,76 @@
+.sidebar-container {
+  height: 100%;
+  /* Altura de la pantalla completa */
+  width: 100%;
+  /* Ancho del sidebar */
+  padding: 20px;
+  /* Espacio interno del sidebar */
+  background-color: #96adc5;
+  /* Color de fondo del sidebar */
+}
+
+.minimo_celda {
+  max-width: 80px;
+}
+
+.celda_interna {
+  gap: 10px;
+}
+
+.navar {
+  background-color: #a8acb6;
+}
+
+.checkbox-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border: 2px solid #555;
+  border-radius: 4px;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: #555;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+  border-color: #222;
+}
+
+.checkbox-container input:focus ~ .checkmark {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+.custom-currency-input {
+  /* Agrega tus estilos personalizados aquí */
+  /* Ejemplo de estilos personalizados */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  width: 100%;
+}
