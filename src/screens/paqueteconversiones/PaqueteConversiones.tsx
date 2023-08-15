@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Container, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Table, Alert } from "reactstrap";
+import { Row, Container, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Table, Button, Col } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { AiFillDelete, AiFillEdit, AiOutlineBgColors } from "react-icons/ai";
 import { jezaApi } from "../../api/jezaApi";
@@ -11,7 +11,6 @@ import { BsBuildingAdd } from "react-icons/bs";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import "../../../css/tablaestilos.css";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
-import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
@@ -200,63 +199,6 @@ function PaqueteConversiones() {
 
   return (
     <>
-      {/* <Row>
-        <SidebarHorizontal />
-      </Row>
-      <Container>
-        <br />
-        
-        <Alert color="success" isOpen={creado} toggle={() => setVisible1(false)}>
-          Registro guardado con exito
-        </Alert>
-        <Alert color="info" isOpen={actualizado} toggle={() => setVisible2(false)}>
-          Registro modificado con exito
-        </Alert>
-        <Alert color="info" isOpen={eliminado} toggle={() => setVisible3(false)}>
-          Registro Eliminado con exito
-        </Alert>
-        <Alert color="danger" isOpen={error} toggle={() => setVisible4(false)}>
-          Error: idPaquete e idPieza no pueden ser iguales
-        </Alert>
-        <h1>Paquetes y Conversiones</h1>
-        <br />
-        <Button color="success" onClick={toggleCreateModal}>
-          Agregar
-        </Button>
-
-        <Table>
-          <thead>
-            <tr>
-              <th>Paquete</th>
-              <th>Pieza</th>
-              <th>Cantidad por Unidad</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((dato: Paquete_conversion) => (
-              <tr key={dato.id}>
-                <td>{dato.d_paquete}</td>
-                <td>{dato.d_pieza}</td>
-                <td>{dato.Cantidad}</td>
-                <td>
-                  <Button onClick={() => toggleUpdateModal(dato)}>
-                    <AiFillEdit />
-                  </Button>
-                  <Button onClick={() => {
-                    deletePaquetesConversion(dato);
-                  }}
-                  >
-                    <AiFillDelete />
-                  </Button>
-
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Container> */}
-
       <Row>
         <SidebarHorizontal />
       </Row>
@@ -276,8 +218,6 @@ function PaqueteConversiones() {
             color="success"
             onClick={() => {
               setModalCreate(true);
-              // setEstado("insert");
-              // LimpiezaForm();
             }}
           >
             Crear conversión
@@ -298,30 +238,51 @@ function PaqueteConversiones() {
 
       {/* Modals */}
       {/* create */}
-      <Modal isOpen={modalCreate} toggle={toggleCreateModal}>
+      <Modal isOpen={modalCreate} toggle={toggleCreateModal} size="lg">
         <ModalHeader toggle={toggleCreateModal}>Crear paquete conversión</ModalHeader>
 
         <ModalBody>
-          <Label>Paquete: </Label>
-          <Input
-            type="select"
-            name="idPaquete"
-            onChange={(e) => setForm({ ...form, idPaquete: parseInt(e.target.value) })}
-            defaultValue={form.idPaquete}
-          >
-            {dataProductos.map((producto) => (
-              <option value={producto.id}>{producto.descripcion}</option>
-            ))}
-          </Input>
+          <Row>
+            <Col xs={11}>
+              <Label>Paquete: </Label>
+              <Input
+                type="select"
+                name="idPaquete"
+                onChange={(e) => setForm({ ...form, idPaquete: parseInt(e.target.value) })}
+                defaultValue={form.idPaquete}
+                disabled
+              >
+                {dataProductos.map((producto) => (
+                  <option value={producto.id}>{producto.descripcion}</option>
+                ))}
+              </Input>
+            </Col>
+            <Col xs={1} className="d-flex align-items-end justify-content-end">
+              <Button>Elegir</Button>
+            </Col>
+          </Row>
           <br />
-          <Label> Pieza: </Label>
-          <Input type="select" name="idPieza" onChange={(e) => setForm({ ...form, idPieza: parseInt(e.target.value) })} defaultValue={form.idPieza}>
-            {dataProductos.map((producto) => (
-              <option value={producto.id}>{producto.descripcion}</option>
-            ))}
-          </Input>
+          <Row>
+            <Col xs={11}>
+              <Label> Pieza: </Label>
+              <Input
+                type="select"
+                name="idPieza"
+                onChange={(e) => setForm({ ...form, idPieza: parseInt(e.target.value) })}
+                defaultValue={form.idPieza}
+                disabled
+              >
+                {dataProductos.map((producto) => (
+                  <option value={producto.id}>{producto.descripcion}</option>
+                ))}
+              </Input>
+            </Col>
+            <Col xs={1} className="d-flex align-items-end justify-content-end">
+              <Button>Elegir</Button>
+            </Col>
+          </Row>
+
           <br />
-          {/* <Input type="number" name="idPaquete" value={form.idPaquete} onChange={(e) => setForm({ ...form, idPaquete: parseInt(e.target.value) })} placeholder="Ingrese el nombre del producto" /> */}
           <Label>Cantidad por unidad:</Label>
           <Input
             type="number"
@@ -365,7 +326,6 @@ function PaqueteConversiones() {
             ))}
           </Input>
           <br />
-          {/* <Input type="number" name="idPaquete" value={form.idPaquete} onChange={(e) => setForm({ ...form, idPaquete: parseInt(e.target.value) })} placeholder="Ingrese el nombre del producto" /> */}
           <Label>Cantidad por unidad:</Label>
           <Input
             type="number"
