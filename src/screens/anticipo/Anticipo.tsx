@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { Autocomplete, TextField } from "@mui/material";
+
 import {
   Row,
   Container,
@@ -17,6 +19,7 @@ import {
   AccordionHeader,
   AccordionItem,
   UncontrolledAccordion,
+  InputGroup,
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
@@ -46,8 +49,15 @@ import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 
 function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
   const { dataAnticipos, fetchAnticipos } = useAnticipos();
   const [modalCliente, setModalCliente] = useState(false);
@@ -67,6 +77,7 @@ function Anticipo() {
   const [reportes, setReportes] = useState([]);
   const { dataCias, fetchCias } = useCias();
   const { dataSucursales, fetchSucursales } = useSucursales();
+  const [idActualizar, setIdActualizar] = useState(null);
   const [formulario, setFormulario] = useState({
     reporte: "",
     fechaInicial: "",
@@ -115,6 +126,7 @@ function Anticipo() {
   });
 
   const mostrarModalActualizar = (dato: any) => {
+    setIdActualizar(dato.id);
     setForm(dato);
     setModalActualizar(true);
   };
@@ -166,10 +178,13 @@ function Anticipo() {
             sucursal: dataUsuarios2[0]?.sucursal,
             caja: 1,
             fecha: form.fechaMovto.replace(/-/g, ""),
+            no_venta: 0,
             fechaMovto: formattedDate,
             idCliente: form.idCliente,
             idUsuario: dataUsuarios2[0]?.id,
+            tipoMovto: 2,
             referencia: form.referencia,
+            id_formaPago: formPago.id,
             importe: form.importe,
             observaciones: form.observaciones,
           },
@@ -182,6 +197,7 @@ function Anticipo() {
           });
           setModalInsertar(false);
           fetchAnticipos();
+          ejecutaPeticion(formulario.reporte);
         })
         .catch((error) => {
           console.log(error);
@@ -190,47 +206,49 @@ function Anticipo() {
     }
   };
 
-  ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
-  const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  const editar = async (id) => {
+    if (!id) {
+      return;
     }
+
+    const permiso = await filtroSeguridad("CAT_ANT_UPD");
+    if (permiso === false) {
+      return;
+    }
+
     if (validarCampos() === true) {
       await jezaApi
-        .put(`/Anticipo`, null, {
-          params: {
-            id: 2,
-            fechamovto: "20230725",
-            observaciones: "alguna",
-            referencia: "alguna",
-          },
-        })
+        .put(
+          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
+        )
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Anticipo actualizada con éxito",
+            text: "Anticipo actualizado con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalActualizar(false);
           fetchAnticipos();
+          ejecutaPeticion(formulario.reporte);
         })
         .catch((error) => {
           console.log(error);
         });
     } else {
+      // Mostrar mensajes de validación si es necesario
     }
   };
 
-  ///AQUÍ COMIENZA EL MÉTODO DELETE
-  const eliminar = async (dato: AnticipoGet) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  const eliminar = async (id) => {
+    // Recibe el id como parámetro
+    const permiso = await filtroSeguridad("CAT_ANT_DEL");
+    if (permiso === false || !id) {
+      return;
     }
+
     Swal.fire({
       title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar el anticipo?`,
+      text: `¿Está seguro que desea eliminar el anticipo? ${id}`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -238,13 +256,13 @@ function Anticipo() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/Anticipo?id=${dato.id}`).then(() => {
+        jezaApi.delete(`/Anticipo?id=${id}`).then(() => {
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
             confirmButtonColor: "#3085d6",
           });
-          fetchAnticipos();
+          ejecutaPeticion(formulario.reporte);
         });
       }
     });
@@ -302,50 +320,6 @@ function Anticipo() {
     setForm({ ...form, id: 0 });
   };
 
-  // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
-  // const columns: GridColDef[] = [
-  //   {
-  //     field: "Acción",
-  //     renderCell: (params) => <ComponentChiquito params={params} />,
-  //     flex: 1, // Ancho flexible
-  //     minWidth: 120, // Ancho mínimo
-  //     headerClassName: "custom-header",
-  //   },
-  //   // { field: "sucursal", headerName: "ID", width: 200, headerClassName: "custom-header", },
-  //   {
-  //     field: "importe",
-  //     headerName: "Importe",
-  //     flex: 1, // Ancho flexible
-  //     minWidth: 150, // Ancho mínimo
-  //     width: 150,
-  //     headerClassName: "custom-header",
-  //   },
-  //   {
-  //     field: "referencia",
-  //     headerName: "Referencia",
-  //     flex: 1, // Ancho flexible
-  //     minWidth: 150, // Ancho mínimo
-  //     width: 150,
-  //     headerClassName: "custom-header",
-  //   },
-  //   {
-  //     field: "observaciones",
-  //     headerName: "Observaciones",
-  //     flex: 1, // Ancho flexible
-  //     minWidth: 150, // Ancho mínimo
-  //     width: 150,
-  //     headerClassName: "custom-header",
-  //   },
-  //   {
-  //     field: "fecha",
-  //     headerName: "Fecha de movimientos",
-  //     flex: 1, // Ancho flexible
-  //     minWidth: 150, // Ancho mínimo
-
-  //     headerClassName: "custom-header",
-  //   },
-  // ];
-
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
@@ -400,11 +374,23 @@ function Anticipo() {
       isVisible: true,
       Cell: ({ row }) => (
         <>
-          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(row)} size={23}></AiFillEdit>
-          <AiFillDelete color="lightred" onClick={() => eliminar(row)} size={23}></AiFillDelete>
+          <AiFillEdit
+            className="mr-2"
+            onClick={() => {
+              setIdActualizar(row.original.id); // Establece el id a actualizar
+              mostrarModalActualizar(row.original); // Abre el modal
+            }}
+            size={23}
+          ></AiFillEdit>
+          <AiFillDelete
+            color="lightred"
+            onClick={() => eliminar(row.original.id)} // Pasa el id como parámetro
+            size={23}
+          ></AiFillDelete>
         </>
       ),
     },
+
     {
       accessorKey: "id",
       header: "ID",
@@ -497,7 +483,12 @@ function Anticipo() {
     columns: [],
   });
 
-  const ejecutaPeticion = (reporte) => {
+  const ejecutaPeticion = async (reporte) => {
+    const permiso = await filtroSeguridad("CAT_ANT_SEL");
+    if (permiso === false) {
+      return;
+    }
+
     // Copiamos el formulario actual para no modificar el estado original
     const formData = { ...formulario };
 
@@ -512,8 +503,6 @@ function Anticipo() {
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
     const queryString = `/Anticipo?id=%&idcia=${formData.empresa}&idsuc=${formData.sucursal}&idnoVenta=%&idCliente=${formData.cliente}&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
-    // const queryString = `/Anticipo?id=%&idcia=%&idsuc=21&idnoVenta=%&idCliente=11&idtipoMovto=%&idformaPago=%&f1=20230101&f2=20230731`;
-    // http://cbinfo.no-ip.info:9089/Anticipo?id=%&idcia=%&idsuc=21&idnoVenta=%&idCliente=11&idtipoMovto=%&idformaPago=%&f1=20230101&f2=20230731
 
     console.log(queryString);
 
@@ -545,6 +534,7 @@ function Anticipo() {
     // Utilizamos slice para obtener partes de la cadena y luego las concatenamos
     return fechaISO8601.slice(0, 4) + fechaISO8601.slice(5, 7) + fechaISO8601.slice(8, 10);
   };
+
   return (
     <>
       <Row>
@@ -598,16 +588,34 @@ function Anticipo() {
                   <div className="formulario">
                     <div>
                       <Label>Fecha inicial:</Label>
-                      <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaInicial"
+                        value={formulario.fechaInicial}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </div>
                     <div>
                       <Label>Fecha final:</Label>
-                      <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaFinal"
+                        value={formulario.fechaFinal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </div>
 
                     <div>
                       <Label>Sucursal:</Label>
-                      <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="sucursal"
+                        value={formulario.sucursal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
@@ -618,7 +626,14 @@ function Anticipo() {
 
                     <div>
                       <Label>Clientes:</Label>
-                      <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange3} bsSize="sm">
+
+                      <Input
+                        type="select"
+                        name="cliente"
+                        value={formulario.cliente}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione el cliente</option>
 
                         {dataClientes.map((item) => (
@@ -629,7 +644,13 @@ function Anticipo() {
 
                     <div>
                       <Label>Empresa:</Label>
-                      <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="empresa"
+                        value={formulario.empresa}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la empresa</option>
 
                         {dataCias.map((item) => (
@@ -640,7 +661,11 @@ function Anticipo() {
                   </div>
                   <br />
                   <div className="d-flex justify-content-end">
-                    <CButton color="primary" text="Consultar" onClick={() => ejecutaPeticion(formulario.reporte)}></CButton>
+                    <CButton
+                      color="primary"
+                      text="Consultar"
+                      onClick={() => ejecutaPeticion(formulario.reporte)}
+                    ></CButton>
                   </div>
                 </AccordionBody>
               </AccordionItem>
@@ -661,45 +686,62 @@ function Anticipo() {
       <Modal isOpen={modalActualizar} size="xl">
         <ModalHeader>
           <div>
-            <h3>Editar anticipo</h3>
+            <h3>Editar anticipo </h3>
           </div>
         </ModalHeader>
 
         <ModalBody>
           <Form>
-            <FormGroup>
+            {/* <FormGroup>
               <Label for="fechaMovto">Fecha del anticipo</Label>
               <Input type="date" name="fechaMovto" id="fechaMovto" value={form.fechaMovto} onChange={handleChange} />
-            </FormGroup>
-            <FormGroup>
-              {/* SELECT */}
+            </FormGroup> */}
+            {/* <FormGroup>
+              
               <Label for="idCliente">Cliente</Label>
-              <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
+              <Input
+                disabled
+                type="text"
+                name="d_cliente"
+                id="d_cliente"
+                value={form.d_cliente}
+                onChange={handleChange}
+              />
               <Button onClick={mostrarModalClienteActualizar}>Seleccionar</Button>
-            </FormGroup>
+            </FormGroup> */}
             <FormGroup>
               <Label for="referencia">Referencia</Label>
               <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
             </FormGroup>
-            <FormGroup>
+            {/* <FormGroup>
               <Label for="importe">Importe</Label>
               <Input type="number" name="importe" id="importe" value={form.importe} onChange={handleChange} />
-            </FormGroup>
+            </FormGroup> */}
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>{" "}
         </ModalBody>
 
         <ModalFooter>
-          <CButton color="primary" onClick={editar} text="Actualizar" />
+          <CButton
+            color="primary"
+            onClick={() => editar(idActualizar)} // Pasa el id como parámetro
+            text="Actualizar"
+          />
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
 
       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalInsertar} size="xl">
+      <Modal isOpen={modalInsertar}>
         <ModalHeader>
           <div>
             <h3>Crear anticipo</h3>
@@ -715,8 +757,17 @@ function Anticipo() {
             <FormGroup>
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
-              <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
-              <Button onClick={mostrarModalClienteActualizar}>Seleccionar</Button>
+              <InputGroup>
+                <Input
+                  disabled
+                  type="text"
+                  name="d_cliente"
+                  id="d_cliente"
+                  value={form.d_cliente}
+                  onChange={handleChange}
+                />
+                <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
+              </InputGroup>
             </FormGroup>
 
             <FormGroup>
@@ -741,7 +792,13 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>
         </ModalBody>
@@ -761,7 +818,12 @@ function Anticipo() {
       <Modal isOpen={modalCliente} size="md">
         <ModalHeader> Cliente </ModalHeader>
         <ModalBody>
-          <TableClienteAnticipos form={form} setForm={setForm} data={dataClientes} setModalCliente={setModalCliente}></TableClienteAnticipos>
+          <TableClienteAnticipos
+            form={form}
+            setForm={setForm}
+            data={dataClientes}
+            setModalCliente={setModalCliente}
+          ></TableClienteAnticipos>
         </ModalBody>
         <ModalFooter>
           <CButton
