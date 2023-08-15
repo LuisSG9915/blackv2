@@ -669,7 +669,7 @@ function NominaTrabajadores() {
                   </NavLink>
                 </NavItem> */}
               </Nav>
-              <TabContent activeTab={activeTab}>
+              <TabContent activeTab={activeTab1}>
                 <br />
                 <TabPane tabId="1">
                   <Row>

@@ -685,6 +685,7 @@ function PerfilesModulos() {
               <Col md="6" className="mb-4">
                 <Label>Perfil:</Label>
                 <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
+                  <option value={0}>--Selecciona una opción--</option>
                   {dataPerfiles.map((perfil) => (
                     <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>
                       {perfil.descripcion_perfil}
@@ -695,6 +696,7 @@ function PerfilesModulos() {
               <Col md="6">
                 <Label>Módulo:</Label>
                 <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
+                  <option value={0}>--Selecciona una opción--</option>
                   {data.map((perfil) => (
                     <option key={perfil.modulo} value={perfil.modulo}>
                       {perfil.d_modulo}
