@@ -601,7 +601,7 @@ function NominaTrabajadores() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Nomina de trabajadores </h1>
+          <h1> Catálago trabajadores </h1>
           <AiOutlineUser size={30}></AiOutlineUser>
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
