@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button, Col, Container, Input, Label, Row } from "reactstrap";
-import { useGentlemanContext } from "../context/VentasContext";
-import CButton from "../../../components/CButton";
+import { CircularProgress } from "@mui/material";
 import { useProductosFiltradoExistenciaProducto } from "../../../hooks/getsHooks/useProductosFiltradoExistenciaProducto";
 import Swal from "sweetalert2";
 import { Venta } from "../../../models/Venta";
@@ -91,7 +90,7 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
     obsoleto: 0,
     servicio: 0,
   });
-  const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
+  const { dataProductos4, fetchProduct4, isLoading } = useProductosFiltradoExistenciaProducto({
     descripcion: filtroProductos,
     insumo: productoFilter.insumo,
     inventariable: productoFilter.inventariable,
@@ -143,22 +142,35 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
     []
   );
   const [state, setState] = useState(true);
+
+  // useEffect(() => {
+  //   fetchProduct4();
+  // }, [state]);
+
   return (
     <Container>
       <Label></Label>
-      <Input
-        checked={state}
-        type="switch"
-        role="switch"
-        onClick={() => {
-          setState(!state);
-          if (state === true) {
-            setProductoFilter({ insumo: 0, inventariable: 2, obsoleto: 0, servicio: 0 });
-          } else {
-            setProductoFilter({ insumo: 0, inventariable: 0, obsoleto: 0, servicio: 2 });
-          }
-        }}
-      />
+      <Row>
+        <Col style={{ marginRight: 10 }} xs={1}>
+          {state ? <p>Productos</p> : <p>Servicios</p>}
+        </Col>
+        <Col xs={1}>
+          <Input
+            checked={state}
+            type="switch"
+            role="switch"
+            onClick={() => {
+              setState(!state);
+              if (state === false) {
+                setProductoFilter({ insumo: 0, inventariable: 2, obsoleto: 0, servicio: 0 });
+              } else {
+                setProductoFilter({ insumo: 0, inventariable: 0, obsoleto: 0, servicio: 2 });
+              }
+            }}
+          />
+        </Col>
+        <Col xs={1}>{isLoading ? <CircularProgress size={20} /> : null}</Col>
+      </Row>
       <MaterialReactTable
         columns={columns}
         data={dataProductosConAcciones}
