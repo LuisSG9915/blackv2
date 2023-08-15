@@ -9,7 +9,6 @@ interface Props {
   insumo: number;
   obsoleto: number;
   sucursal: number;
-  
 }
 export const useProductosFiltradoExistenciaProducto = ({ descripcion, insumo, inventariable, obsoleto, servicio, sucursal }: Props) => {
   const [dataProductos4, setDataProductos4] = useState<ProductoExistencia[]>([]);
@@ -33,7 +32,7 @@ export const useProductosFiltradoExistenciaProducto = ({ descripcion, insumo, in
   }, []);
   useEffect(() => {
     fetchProduct4();
-  }, [descripcion]);
+  }, [descripcion, servicio, insumo]);
 
   return { dataProductos4, fetchProduct4, setDataProductos4 };
 };

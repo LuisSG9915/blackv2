@@ -1,46 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { FcPlus } from "react-icons/fc";
-
-import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
+import { Button } from "reactstrap";
+import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { ImGift } from "react-icons/im";
-import {
-  Row,
-  Container,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  CardText,
-  Input,
-  Table,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Label,
-  Col,
-} from "reactstrap";
+import { Row, Container, Input, Table, Modal, ModalBody, ModalFooter, ModalHeader, Label, Col } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
-import { Marca } from "../../models/Marca";
 import { useProductos } from "../../hooks/getsHooks/useProductos";
 import { Producto } from "../../models/Producto";
 import { Kit } from "../../models/Kit";
 import { usePaquetesKits } from "../../hooks/getsHooks/usePaquetesKits";
 //NUEVAS IMPOTACIONES
-import Swal from "sweetalert2";
-import { BsBuildingAdd } from "react-icons/bs";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import "../../../css/tablaestilos.css";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
-import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { HiBuildingStorefront } from "react-icons/hi2";
-import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function KitPaquete() {
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
@@ -54,49 +33,6 @@ function KitPaquete() {
     d_kit: "",
     id: 0,
   });
-  // const [form, setForm] = useState<Producto>({
-  //   fecha_act: "",
-  //   fecha_alta: "",
-  //   id: 0,
-  //   clave_prod: "string",
-  //   descripcion: "string",
-  //   descripcion_corta: "string",
-  //   sucursal_origen: 0,
-  //   idMarca: 0,
-  //   area: 0,
-  //   depto: 0,
-  //   clase: 0,
-  //   observacion: "string",
-  //   inventariable: false,
-  //   controlado: false,
-  //   es_fraccion: false,
-  //   obsoleto: false,
-  //   es_insumo: false,
-  //   es_servicio: false,
-  //   es_producto: false,
-  //   es_kit: false,
-  //   tasa_iva: 0,
-  //   tasa_ieps: 0,
-  //   costo_unitario: 0,
-  //   precio: 0,
-  //   unidad_paq: 0,
-  //   unidad_paq_traspaso: 0,
-  //   promocion: false,
-  //   porcentaje_promocion: 0,
-  //   precio_promocion: 0,
-  //   fecha_inicio: "string",
-  //   fecha_final: "string",
-  //   unidad_medida: 0,
-  //   clave_prov: 0,
-  //   tiempo: 0,
-  //   comision: 0,
-  //   productoLibre: false,
-  //   d_area: "",
-  //   d_clase: "",
-  //   d_depto: "",
-  //   d_proveedor: "",
-  //   marca: "",
-  // });
 
   const [form, setForm] = useState<Producto>({
     fecha_act: "",
@@ -144,6 +80,11 @@ function KitPaquete() {
   });
 
   const { dataPaquetesKits, fetchPaquetesKits } = usePaquetesKits(form);
+  const [arregloInsumo, SetarregloInsumo] = useState<number[]>([]);
+  useEffect(() => {
+    const idInsumo = dataPaquetesKits.map((item) => item.idInsumo);
+    SetarregloInsumo(idInsumo);
+  }, [dataPaquetesKits]);
 
   const [filteredData, setFilteredData] = useState([]);
   const [modalKit, setModalKit] = useState(false);
@@ -151,11 +92,6 @@ function KitPaquete() {
   const [modalEdit, setModalEdit] = useState(false);
   const [filteredDataFalse, setFilteredDataFalse] = useState([]);
 
-  const [filtroValorMedico, setFiltroValorMedico] = useState("");
-
-  const [datos, setDatos] = useState([]);
-
-  const DataTableHeader = ["Clave", "Descripción", "Costo", "Acciones"];
   const DataTableHeaderkit = ["Clave", "Producto", "Cantidad", "Acciones"];
   const DataInsumoHeader = ["Clave", "Producto", "Acciones"];
 
@@ -184,7 +120,6 @@ function KitPaquete() {
     const opcion = window.confirm(`Estás Seguro que deseas Eliminar el insumo: ${dato.id}`);
     if (opcion) {
       jezaApi.delete(`/Kit?id=${dato.id}`).then(() => {
-        // setModalActualizar(false);
         fetchPaquetesKits();
       });
     }
@@ -200,7 +135,6 @@ function KitPaquete() {
       })
       .then(() => {
         fetchPaquetesKits();
-        console.log("realizado");
       })
       .catch((e) => console.log(e));
     setModalInsertar(false);
@@ -231,14 +165,6 @@ function KitPaquete() {
   const handleInsumoButtonClick = () => {
     setIsInsumoSelected(!isInsumoSelected);
   };
-
-  // // Redirige a la ruta "/app"
-  // const navigate = useNavigate();
-  // const handleRedirect = () => {
-  //   navigate("/app");
-  // };
-  // Recargar la página actual
-
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
   const columns: GridColDef[] = [
     {
@@ -252,13 +178,50 @@ function KitPaquete() {
     { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
     { field: "costo_unitario", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
   ];
+  const columnsInsumos: GridColDef[] = [
+    {
+      field: "Acción",
+      renderCell: (params) => <ComponentInsumos params={params} />,
+      flex: 0,
+      headerClassName: "custom-header",
+    },
 
+    { field: "clave_prod", headerName: "Clave producto", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Descripción", flex: 3, headerClassName: "custom-header" },
+  ];
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
         <FcPlus className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={30}></FcPlus>
-        {/* <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete> */}
-        {/* <AiFillDelete color="lightred" onClick={() => console.log(params.row.id)} size={23}></AiFillDelete> */}
+      </>
+    );
+  };
+  const ComponentInsumos = ({ params }: { params: any }) => {
+    return (
+      <>
+        <FcPlus
+          className="mr-2"
+          onClick={() => {
+            if (!arregloInsumo.includes(params.row.id)) {
+              if (flagKit) {
+                setModalInsert(true);
+                setFormKit(params.row);
+                console.log(params);
+              } else {
+                setFormKit({ ...formKit, idInsumo: params.row.id, d_insumo: params.row.descripcion });
+                setModalKit(false);
+              }
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: `Producto repetido, favor de intentarlo nuevamente`,
+                confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+              });
+            }
+          }}
+          size={30}
+        ></FcPlus>
       </>
     );
   };
@@ -283,21 +246,16 @@ function KitPaquete() {
       </div>
     );
   }
-  // Redirige a la ruta "/app"
   const navigate = useNavigate();
   const handleRedirect = () => {
     navigate("/app");
   };
 
-  // Recargar la página actual
   const handleReload = () => {
     window.location.reload();
   };
-  //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
-  // const LimpiezaForm = () => {
-  //   setForm({ cia: 0, sucursal: 0, almacen: 0, descripcion: "" });
-  // };
+  const [flagKit, setFlagKit] = useState(false);
 
   return (
     <>
@@ -370,6 +328,7 @@ function KitPaquete() {
                       size={35}
                       color="success"
                       onClick={() => {
+                        setFlagKit(true);
                         setModalKit(true);
                       }}
                     />
@@ -402,7 +361,6 @@ function KitPaquete() {
                         onClick={() => {
                           setModalEdit(true);
                           setFormKit(falsos);
-                          console.log({ falsos });
                         }}
                         size={23}
                       ></AiFillEdit>
@@ -432,53 +390,7 @@ function KitPaquete() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <Table size="sm" striped={true} responsive={true} style={{ width: "100%", margin: "auto" }}>
-            <thead>
-              <tr>
-                {DataInsumoHeader.map((valor) => (
-                  <th className="" key={valor}>
-                    {valor}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredDataFalse.map((falsos: Producto) => (
-                <tr>
-                  <td>{falsos.clave_prod}</td>
-                  <td>{falsos.descripcion}</td>
-
-                  <td>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => {
-                        setModalInsert(true);
-                        setFormKit(falsos);
-                      }}
-                    >
-                      Seleccionar
-                    </button>
-                  </td>
-                  {/* <td>
-                    <label className="checkbox-container">
-                      <input
-                        type="checkbox"
-                        onChange={handleChange}
-                        name="es_insumo"
-                        checked={form.es_insumo}
-                        defaultChecked={true}
-                        onClick={() => {
-                          setModalInsert(true);
-                          setFormKit(falsos);
-                        }}
-                      />
-                      <span className="checkmark"></span>
-                    </label>
-                  </td> */}
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          <DataGrid rows={filteredDataFalse} columns={columnsInsumos} />
         </ModalBody>
         <ModalFooter>
           <CButton color="btn btn-danger" onClick={() => setModalKit(false)} text="Salir" />
@@ -525,18 +437,32 @@ function KitPaquete() {
         </ModalHeader>
         <ModalBody>
           <Label> Producto kit: </Label>
-          <Input type="select" name="idProducto" onChange={handleChange}>
+          <Input disabled type="select" name="idProducto" onChange={handleChange}>
             {filteredData.map((producto: Producto) => (
               <option value={producto.id}>{producto.descripcion}</option>
             ))}
           </Input>
           <br />
-          <Label> Insumo: </Label>
-          <Input name="idInsumo" onChange={handleChange} type="select">
-            {filteredDataFalse.map((producto: Producto) => (
-              <option value={producto.id}>{producto.descripcion}</option>
-            ))}
-          </Input>
+          <Row>
+            <Col xs={11}>
+              <Label> Insumo: </Label>
+              <Input value={formKit.idInsumo} disabled name="idInsumo" onChange={handleChange} type="select">
+                {filteredDataFalse.map((producto: Producto) => (
+                  <option value={producto.id}>{producto.descripcion}</option>
+                ))}
+              </Input>
+            </Col>
+            <Col xs={1} className="d-flex align-items-end justify-content-end">
+              <Button
+                onClick={() => {
+                  setFlagKit(false);
+                  setModalKit(true);
+                }}
+              >
+                Elegir{" "}
+              </Button>
+            </Col>
+          </Row>
           <br />
           <Label> Cantidad:</Label>
           <Input defaultValue={formKit.cantidad} name="cantidad" type="number" onChange={handleChange}></Input>
