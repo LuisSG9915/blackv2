@@ -12,8 +12,9 @@ interface Props {
 }
 export const useProductosFiltradoExistenciaProducto = ({ descripcion, insumo, inventariable, obsoleto, servicio, sucursal }: Props) => {
   const [dataProductos4, setDataProductos4] = useState<ProductoExistencia[]>([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const fetchProduct4 = async () => {
+    setIsLoading(true);
     try {
       const response: AxiosResponse<ProductoExistencia[]> = await jezaApi.get(
         `/ProductoExistencia?id=0&descripcion=${
@@ -22,6 +23,7 @@ export const useProductosFiltradoExistenciaProducto = ({ descripcion, insumo, in
       );
       setDataProductos4(response.data);
       console.log({ dataProductos4 });
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -32,7 +34,7 @@ export const useProductosFiltradoExistenciaProducto = ({ descripcion, insumo, in
   }, []);
   useEffect(() => {
     fetchProduct4();
-  }, [descripcion, servicio, insumo]);
+  }, [descripcion, inventariable, descripcion]);
 
-  return { dataProductos4, fetchProduct4, setDataProductos4 };
+  return { dataProductos4, fetchProduct4, setDataProductos4, isLoading };
 };
