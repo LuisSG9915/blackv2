@@ -134,31 +134,28 @@ const TableClienteAnticipos = ({ data, setModalCliente, form, setForm }: Props) 
     {
       accessorKey: "acciones", // Cambia "Acciones" a "acciones"
       header: "Acciones",
-      Cell: ({ cell }) => <Button onClick={() => handle(cell.row.original)}>Seleccionar</Button>, // Usa cell.row.original para obtener el objeto completo
+      Cell: ({ cell }) => (
+        <Button size="sm" onClick={() => handle(cell.row.original)}>
+          Seleccionar
+        </Button>
+      ), // Usa cell.row.original para obtener el objeto completo
     },
   ];
 
   return (
     <>
-      <Label>Cliente: </Label>
-      <Row>
-        <Col md={"8"}>
-          <Input
-            onChange={(e) => {
-              setFiltroCliente(e.target.value);
-              if (e.target.value === "") {
-                fetchClientes();
-              }
-            }}
-          ></Input>
-        </Col>
-        <Col md={"2"}>
-          <Button onClick={() => filtroClientes(filtroCliente)}>Filtro</Button>
-        </Col>
-      </Row>
-      <br />
-      <br />
-      <MaterialReactTable columns={columns} data={dataClientes} />
+      <MaterialReactTable
+        columns={columns}
+        data={dataClientes}
+        initialState={{
+          density: "compact",
+          showGlobalFilter: true,
+          pagination: {
+            pageSize: 5,
+            pageIndex: 0,
+          },
+        }}
+      />
     </>
   );
 };

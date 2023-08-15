@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { Autocomplete, TextField } from "@mui/material";
+
 import {
   Row,
   Container,
@@ -17,6 +19,7 @@ import {
   AccordionHeader,
   AccordionItem,
   UncontrolledAccordion,
+  InputGroup,
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
@@ -531,6 +534,7 @@ function Anticipo() {
     // Utilizamos slice para obtener partes de la cadena y luego las concatenamos
     return fechaISO8601.slice(0, 4) + fechaISO8601.slice(5, 7) + fechaISO8601.slice(8, 10);
   };
+
   return (
     <>
       <Row>
@@ -622,6 +626,7 @@ function Anticipo() {
 
                     <div>
                       <Label>Clientes:</Label>
+
                       <Input
                         type="select"
                         name="cliente"
@@ -736,7 +741,7 @@ function Anticipo() {
       </Modal>
 
       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalInsertar} size="xl">
+      <Modal isOpen={modalInsertar}>
         <ModalHeader>
           <div>
             <h3>Crear anticipo</h3>
@@ -752,15 +757,17 @@ function Anticipo() {
             <FormGroup>
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
-              <Input
-                disabled
-                type="text"
-                name="d_cliente"
-                id="d_cliente"
-                value={form.d_cliente}
-                onChange={handleChange}
-              />
-              <Button onClick={mostrarModalClienteActualizar}>Seleccionar</Button>
+              <InputGroup>
+                <Input
+                  disabled
+                  type="text"
+                  name="d_cliente"
+                  id="d_cliente"
+                  value={form.d_cliente}
+                  onChange={handleChange}
+                />
+                <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
+              </InputGroup>
             </FormGroup>
 
             <FormGroup>
