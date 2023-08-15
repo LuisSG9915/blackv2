@@ -1,281 +1,24 @@
-// ////USANDO GITHUB
-
-// import React, { useState, useEffect } from "react";
-// import { MdInventory } from "react-icons/md";
-// import { useNavigate } from "react-router-dom";
-// import {
-//   Row,
-//   Container,
-//   Col,
-//   Card,
-//   CardHeader,
-//   CardBody,
-//   CardTitle,
-//   CardText,
-//   Input,
-//   Table,
-//   Button,
-//   FormGroup,
-//   Modal,
-//   ModalBody,
-//   ModalFooter,
-//   ModalHeader,
-//   Label,
-// } from "reactstrap";
-// import { jezaApi } from "../../api/jezaApi";
-// import CButton from "../../components/CButton";
-// import CFormGroupInput from "../../components/CFormGroupInput";
-// import SidebarHorizontal from "../../components/SidebarHorizontal";
-// import useModalHook from "../../hooks/useModalHook";
-// import TablePerfilesModulos from "./components/TablePerfilesModulos";
-// import { Perfil_Modulo } from "../../models/Perfil_Modulo";
-// import { usePerfiles } from "../../hooks/getsHooks/useClavePerfil";
-
-// function PerfilesModulos() {
-//   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-//     useModalHook();
-//   const [filtroValorMedico, setFiltroValorMedico] = useState("");
-
-//   const [data, setData] = useState<Perfil_Modulo[]>([]);
-//   const { dataPerfiles } = usePerfiles();
-//   const [form, setForm] = useState<Perfil_Modulo>({
-//     clave_perfil: 1,
-//     modulo: 1,
-//     permiso: false,
-//     d_perfil: "",
-//   });
-
-//   const navigate = useNavigate();
-
-//   const DataTableHeader = ["Clave Perfil", "Modulo", "Permisos", "Acciones"];
-
-//   const mostrarModalActualizar = (dato: any) => {
-//     setForm(dato);
-//     setModalActualizar(true);
-//   };
-
-//   const editar = (dato: Perfil_Modulo) => {
-//     jezaApi
-//       .put(`/PerfilModulo`, null, {
-//         params: {
-//           id: Number(dato.id),
-//           clave_perfil: Number(dato.clave_perfil),
-//           modulo: Number(dato.modulo),
-//           permiso: dato.permiso,
-//         },
-//       })
-//       .then((response) => {
-//         getPerfilModulos();
-//       })
-//       .catch((e) => console.log(e));
-//     setModalActualizar(false);
-//   };
-
-//   const getPerfilModulos = () => {
-//     jezaApi
-//       .get("PerfilModulo?id=0")
-//       .then((response) => setData(response.data))
-//       .catch((e) => console.log(e));
-//   };
-
-//   const getModulos = () => {
-//     jezaApi
-//       .get("PerfilModulo?id=0")
-//       .then((response) => setData(response.data))
-//       .catch((e) => console.log(e));
-//   };
-
-//   useEffect(() => {
-//     getPerfilModulos();
-//   }, []);
-
-//   const eliminar = (dato: any) => {
-//     const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.id}`);
-//     if (opcion) {
-//       jezaApi.delete(`/PerfilModulo?id=${dato.id}`).then(() => {
-//         setModalActualizar(false);
-//         setTimeout(() => {
-//           getPerfilModulos();
-//         }, 1000);
-//       });
-//     }
-//   };
-
-//   const insertar = () => {
-//     jezaApi.post("/Medico", {}).then(() => { });
-//     setModalInsertar(false);
-//   };
-
-//   const filtroEmail = (datoDescripcion: any) => {
-//     var resultado = data.filter((elemento: Perfil_Modulo) => {
-//       // Aplica la lógica del filtro solo si hay valores en los inputs
-//       if (elemento.d_perfil?.toLowerCase().includes(datoDescripcion.toLowerCase())) {
-//         return elemento;
-//       }
-//     });
-//     setData(resultado);
-//   };
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-//     const { name, value } = e.target;
-//     const checked = (e.target as HTMLInputElement).checked;
-//     if (name === "permiso") {
-//       setForm((prevState) => ({ ...prevState, [name]: checked }));
-//     } else {
-//       setForm((prevState: Perfil_Modulo) => ({ ...prevState, [name]: value }));
-//     }
-//     console.log(form);
-//   };
-//   const handleNav = () => {
-//     navigate("/UsuariosCrear");
-//   };
-//   const handleNavs = () => {
-//     navigate("/PerfilesModulosCrear");
-//   };
-//   const [isSidebarVisible, setSidebarVisible] = useState(false);
-
-//   const toggleSidebar = () => {
-//     setSidebarVisible(!isSidebarVisible);
-//   };
-//   return (
-//     <>
-//       <Row>
-//         <SidebarHorizontal />
-//       </Row>
-//       <Container>
-//         <Row>
-//           <Col>
-//             <Container fluid>
-//               <br />
-//               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-//                 <h1> Seguridad </h1>
-//                 <MdInventory size={30}></MdInventory>
-//               </div>
-
-//               <div className="col align-self-start d-flex justify-content-center ">
-//                 <Card className="my-2 w-100" color="white">
-//                   <CardHeader>Filtro</CardHeader>
-//                   <CardBody>
-//                     <Row>
-//                       <div className="col-sm">
-//                         <CardTitle tag="h5">Clave Perfil</CardTitle>
-//                         <CardText>
-//                           <Input
-//                             type="text"
-//                             onChange={(e) => {
-//                               setFiltroValorMedico(e.target.value);
-//                               if (e.target.value === "") {
-//                                 getPerfilModulos();
-//                               }
-//                             }}
-//                           ></Input>
-//                         </CardText>
-//                       </div>
-//                       {/* <div className="col-sm">
-//                         <CardTitle tag="h5">Bodega</CardTitle>
-//                         <CardText>
-//                           <Input
-//                             type="text"
-//                             onChange={(e) => {
-//                               setFiltroValorEmail(e.target.value);
-//                             }}
-//                           />
-//                         </CardText>
-//                       </div> */}
-//                     </Row>
-//                     <br />
-//                     <div className="d-flex justify-content-end">
-//                       <CButton color="success" onClick={() => filtroEmail(filtroValorMedico)} text="Filtro" />
-//                     </div>
-//                   </CardBody>
-//                 </Card>
-//               </div>
-//               <Container className="d-flex justify-content-end ">
-//                 <Button onClick={handleNavs}>Crear Seguridad</Button>
-//               </Container>
-//             </Container>
-//             <br />
-//             <br />
-//             <TablePerfilesModulos
-//               DataTableHeader={DataTableHeader}
-//               data={data}
-//               eliminar={eliminar}
-//               mostrarModalActualizar={mostrarModalActualizar}
-//             ></TablePerfilesModulos>
-//           </Col>
-//         </Row>
-//       </Container>
-
-//       <Modal isOpen={modalActualizar} size="xl">
-//         <ModalHeader>
-//           <div>
-//             <h3>Editar Seguridad</h3>
-//           </div>
-//         </ModalHeader>
-
-//         <ModalBody>
-//           <FormGroup>
-//             <Row>
-//               <Col md="6" className="mb-4">
-//                 <Label>Clave de perfil</Label>
-//                 <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
-//                   {dataPerfiles.map((perfil) => (
-//                     <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>
-//                       {perfil.descripcion_perfil}
-//                     </option>
-//                   ))}
-//                 </Input>
-//               </Col>
-//               <Col md="6">
-//                 <Label>Modulo</Label>
-//                 <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
-//                   {data.map((perfil) => (
-//                     <option key={perfil.modulo} value={perfil.modulo}>
-//                       {perfil.d_modulo}
-//                     </option>
-//                   ))}
-//                 </Input>
-//               </Col>
-//               <Col md="6">
-//                 <Label style={{ marginRight: 25 }}>Permiso</Label>
-//                 <Input type="checkbox" name="permiso" checked={form.permiso} onChange={handleChange}></Input>
-//               </Col>
-//             </Row>
-//           </FormGroup>
-//         </ModalBody>
-
-//         <ModalFooter>
-//           <CButton color="primary" onClick={() => editar(form)} text="Editar" />
-//           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
-//         </ModalFooter>
-//       </Modal>
-
-//       <Modal isOpen={modalInsertar}>
-//         <ModalHeader>
-//           <div>
-//             <h3>Insertar Personaje</h3>
-//           </div>
-//         </ModalHeader>
-//         <ModalBody>
-//           <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" />
-//           <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" />
-//           <CFormGroupInput handleChange={handleChange} inputName="idClinica" labelName="Id Clinica:" />
-//         </ModalBody>
-//         <ModalFooter>
-//           <CButton color="primary" onClick={() => insertar()} text="Insertar" />
-//           <CButton color="btn btn-danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
-//         </ModalFooter>
-//       </Modal>
-//     </>
-//   );
-// }
-
-// export default PerfilesModulos;
-
-
 import React, { useState, useEffect } from "react";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { Row, Container, Col, Card, CardHeader, CardBody, CardTitle, CardText, Input, Table, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
+import {
+  Row,
+  Container,
+  Col,
+  Card,
+  CardHeader,
+  CardBody,
+  CardTitle,
+  CardText,
+  Input,
+  Table,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Label,
+} from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
@@ -284,7 +27,7 @@ import useModalHook from "../../hooks/useModalHook";
 import TablePerfilesModulos from "./components/TablePerfilesModulos";
 import { Perfil_Modulo } from "../../models/Perfil_Modulo";
 import { usePerfiles } from "../../hooks/getsHooks/useClavePerfil";
-///NUEVAS IMPORTACIONES 
+///NUEVAS IMPORTACIONES
 import { useModulos } from "../../hooks/getsHooks/useModulos";
 import { Modulo } from "../../models/Modulo";
 import Swal from "sweetalert2";
@@ -300,9 +43,16 @@ import { AiFillTags } from "react-icons/ai";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 // import { GrSecures } from "react-icons/gr";
 
-
 function PerfilesModulos() {
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { filtroSeguridad, session } = useSeguridad();
   const { dataModulos } = useModulos();
   const [data, setData] = useState<Perfil_Modulo[]>([]);
@@ -351,89 +101,111 @@ function PerfilesModulos() {
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
 
-
-
   ////////MÓDULO AGREGAR SEGURIDAD
-  // const [visible, setVisible] = useState(false);
-  // const [dataText, setDataText] = useState("");
 
-  // const insertar = () => {
-  //   jezaApi
-  //     .post("/PerfilModulo", null, {
-  //       params: {
-  //         clave_perfil: Number(form.clave_perfil),
-  //         modulo: Number(form.modulo),
-  //         permiso: form.permiso,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       setVisible(true);
-  //       setDataText(response.data.mensaje1);
-  //       setModalInsertar(false);
-  //     })
-  //     .catch((error) => {
-  //       // Handle error here
-  //       console.log(error);
-  //     });
+  ////////MODULO EDITAR SEGURIDAD
+
+  // const insertar = async () => {
+  //   const permiso = await filtroSeguridad("CAT_SEG_ADD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+
+  //   console.log(validarCampos());
+  //   console.log({ form });
+  //   if (validarCampos() === true) {
+  //     // Verificar si el registro ya existe en la tabla
+  //     const registroExistente = data.find(
+  //       (registro) => registro.clave_perfil === form.clave_perfil && registro.modulo === form.modulo
+  //     );
+
+  //     if (registroExistente) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: "Registro duplicado",
+  //         text: "El registro ya existe en la tabla.",
+  //         confirmButtonColor: "#3085d6",
+  //       });
+  //       return;
+  //     }
+
+  //     await jezaApi
+  //       .post("/PerfilModulo", null, {
+  //         params: {
+  //           clave_perfil: Number(form.clave_perfil),
+  //           modulo: Number(form.modulo),
+  //           permiso: form.permiso,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Permiso creado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalInsertar(false);
+  //         getPerfilModulos();
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   } else {
+  //   }
   // };
 
-  ////////MODULO EDITAR SEGURIDAD 
-
-  //AQUI COMIENZA MÉTODO AGREGAR SUCURSAL
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_SEG_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos());
-    console.log({ form });
-    if (validarCampos() === true) {
-      await jezaApi
-        .post("/PerfilModulo", null, {
-          params: {
-            clave_perfil: Number(form.clave_perfil),
-            modulo: Number(form.modulo),
-            permiso: form.permiso,
-          },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Permiso creado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalInsertar(false);
-          getPerfilModulos();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-    }
-  };
 
-  // const editar = (dato: Perfil_Modulo) => {
-  //   jezaApi
-  //     .put(`/PerfilModulo`, null, {
-  //       params: {
-  //         id: Number(dato.id),
-  //         clave_perfil: Number(dato.clave_perfil),
-  //         modulo: Number(dato.modulo),
-  //         permiso: dato.permiso,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       getPerfilModulos();
-  //     })
-  //     .catch((e) => console.log(e));
-  //   setModalActualizar(false);
-  // };
+    if (!validarCampos()) {
+      return; // Si los campos no son válidos, se sale de la función
+    }
+
+    // Verificar si el registro ya existe en la tabla
+    const registroExistente = data.find(
+      (registro) => registro.clave_perfil === form.clave_perfil && registro.modulo === form.modulo
+    );
+
+    if (registroExistente) {
+      Swal.fire({
+        icon: "error",
+        title: "Registro duplicado",
+        text: "El registro ya existe en la tabla.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+
+    // Insertar el registro si no existe duplicado
+    await jezaApi
+      .post("/PerfilModulo", null, {
+        params: {
+          clave_perfil: Number(form.clave_perfil),
+          modulo: Number(form.modulo),
+          permiso: form.permiso,
+        },
+      })
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          text: "Permiso creado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+        setModalInsertar(false);
+        getPerfilModulos();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   ////////MÓDULO ELIMINAR SEGURIDAD
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_SEG_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -463,20 +235,8 @@ function PerfilesModulos() {
     }
   };
 
-
-  // const eliminar = (dato: any) => {
-  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.id}`);
-  //   if (opcion) {
-  //     jezaApi.delete(`/PerfilModulo?id=${dato.id}`).then(() => {
-  //       setModalActualizar(false);
-  //       setTimeout(() => {
-  //         getPerfilModulos();
-  //       }, 1000);
-  //     });
-  //   }
-  // };
   const eliminar = async (dato: Perfil_Modulo) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_SEG_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -502,7 +262,7 @@ function PerfilesModulos() {
     });
   };
 
-  const getPerfilModulos = () => {
+  const getPerfilModulos = async () => {
     jezaApi
       .get("PerfilModulo?id=0")
       .then((response) => setData(response.data))
@@ -519,7 +279,6 @@ function PerfilesModulos() {
   useEffect(() => {
     getPerfilModulos();
   }, []);
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -553,7 +312,6 @@ function PerfilesModulos() {
     setForm({ id: 0, clave_perfil: 0, modulo: 0, permiso: false });
   };
 
-
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
   const columns: GridColDef[] = [
     {
@@ -566,7 +324,10 @@ function PerfilesModulos() {
     { field: "clave_perfil", headerName: "Clave perfil", flex: 1, headerClassName: "custom-header" },
     { field: "d_perfil", headerName: "Perfil", flex: 1, headerClassName: "custom-header" },
     {
-      field: "modulo", headerName: "Módulo", flex: 1, headerClassName: "custom-header",
+      field: "modulo",
+      headerName: "Módulo",
+      flex: 1,
+      headerClassName: "custom-header",
       renderCell: (params) => <span> {getSeguridadForeignKey(params.row.id)} </span>,
     },
     {
@@ -575,14 +336,12 @@ function PerfilesModulos() {
       flex: 0,
       headerClassName: "custom-header",
     },
-
   ];
 
   const ComponentPermiso = ({ params }: { params: any }) => {
     return (
       <>
-        <input type="checkbox" checked={params.row} disabled />
-
+        <input type="checkbox" checked={params.row.permiso} disabled />
       </>
     );
   };
@@ -596,12 +355,10 @@ function PerfilesModulos() {
     );
   };
 
-
   const getSeguridadForeignKey = (idTableSeguridad: number) => {
     const modulo = data.find((modulo: Perfil_Modulo) => modulo.id === idTableSeguridad);
     return modulo ? modulo.d_modulo : "Sin seguridad";
   };
-
 
   function DataTable() {
     return (
@@ -624,20 +381,15 @@ function PerfilesModulos() {
     );
   }
 
-
   return (
     <>
-
-
       <Row>
         <SidebarHorizontal />
       </Row>
       <Container>
-
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <h1>Seguridad</h1>
           {/* <GrSecures size={30} /> */}
-
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
@@ -668,9 +420,7 @@ function PerfilesModulos() {
         <br />
         <br />
         <DataTable></DataTable>
-
       </Container>
-
 
       <Modal isOpen={modalActualizar} size="xl">
         <ModalHeader>
@@ -684,7 +434,13 @@ function PerfilesModulos() {
             <Row>
               <Col md="6" className="mb-4">
                 <Label>Perfil:</Label>
-                <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
+                <Input
+                  type="select"
+                  name="clave_perfil"
+                  id="exampleSelect"
+                  value={form.clave_perfil}
+                  onChange={handleChange}
+                >
                   {dataPerfiles.map((perfil) => (
                     <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>
                       {perfil.descripcion_perfil}
@@ -706,7 +462,7 @@ function PerfilesModulos() {
 
               <Col md="12">
                 <Label style={{ marginRight: 25 }}>Asignar permiso</Label>
-                <Input type="checkbox" name="permiso" onChange={handleChange}></Input>
+                <Input type="checkbox" name="permiso" checked={form.permiso} onChange={handleChange}></Input>
               </Col>
             </Row>
           </FormGroup>
@@ -730,7 +486,13 @@ function PerfilesModulos() {
               <Row>
                 <Col md="12" className="mb-4">
                   <Label>Perfil: </Label>
-                  <Input type="select" name="clave_perfil" id="clave_perfil" value={form.clave_perfil} onChange={handleChange}>
+                  <Input
+                    type="select"
+                    name="clave_perfil"
+                    id="clave_perfil"
+                    value={form.clave_perfil}
+                    onChange={handleChange}
+                  >
                     <option value={0}>--Selecciona una opción--</option>
                     {dataPerfiles.map((perfil) => (
                       <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>
