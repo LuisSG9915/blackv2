@@ -117,6 +117,7 @@ import CButton from "../../../components/CButton";
 import Swal from "sweetalert2";
 import { jezaApi } from "../../../api/jezaApi";
 import useSeguridad from "../../../hooks/getsHooks/useSeguridad";
+import { Venta } from "../../../models/Venta";
 // interface Venta {
 //   id?: number;
 //   estilista: string;

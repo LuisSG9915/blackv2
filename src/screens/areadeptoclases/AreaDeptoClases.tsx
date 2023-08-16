@@ -61,12 +61,17 @@ function AreaDeptoClases() {
     cerrarModalInsertarClase,
   } = useModalHook();
 
+
+  const [deptoGet, setDeptoGet] = useState<Departamento[]>([]);
+  const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const [areasGet, setAreaGet] = useState<Area[]>([]);
   const [claseGet, setclaseGet] = useState<Clase[]>([]);
-  const [deptoGet, setDeptoGet] = useState<Departamento[]>([]);
+
   const { filtroSeguridad, session } = useSeguridad();
 
+
   const [formArea, setArea] = useState<Area>({
+    id: 0,
     area: 1,
     descripcion: "",
   });
@@ -74,13 +79,18 @@ function AreaDeptoClases() {
   const [formDepto, setDepto] = useState<Departamento>({
     id: 0,
     area: 0,
+    d_area: "",
     depto: 0,
     descripcion: "",
   });
 
   const [formClase, setClase] = useState<Clase>({
+    id: 0,
+    clase: 0,
     area: 1,
+    d_area: "",
     depto: 1,
+    d_depto: "",
     descripcion: "",
   });
 
@@ -149,6 +159,16 @@ function AreaDeptoClases() {
     return camposVacios.length === 0;
   };
 
+  //LIMPIEZA DE CAMPOS
+  const [estado, setEstado] = useState("");
+
+  ////CAMPOS VACIOS AREAS
+  const LimpiezaFormArea = () => {
+    setArea({ id: 0, area: 0, descripcion: "" });
+  };
+
+
+
   //VALIDACIÓN DEPTO---->
   const [camposFaltantes2, setCamposFaltantes2] = useState<string[]>([]);
 
@@ -175,6 +195,13 @@ function AreaDeptoClases() {
     }
     return camposVacios.length === 0;
   };
+
+  ////CAMPOS VACIOS DEPTOS
+  const LimpiezaFormDepto = () => {
+    setDepto({ id: 0, area: 0, d_area: "", depto: 0, descripcion: "" });
+  };
+
+
 
   //VALIDACIÓN CLASE---->
   const [camposFaltantes3, setCamposFaltantes3] = useState<string[]>([]);
@@ -204,11 +231,17 @@ function AreaDeptoClases() {
   };
 
   //LIMPIEZA DE CAMPOS
-  const [estado, setEstado] = useState("");
+  const [estado3, setEstado3] = useState("");
+
+  ////CAMPOS VACIOS clases
+  const LimpiezaFormClase = () => {
+    setClase({ id: 0, clase: 0, d_area: "", area: 0, depto: 0, d_depto: "", descripcion: "" });
+  };
+
 
   //AQUI COMIENZA MÉTODO AGREGAR AREA
   const insertar1 = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_AREA-ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -238,6 +271,7 @@ function AreaDeptoClases() {
   };
 
   //AQUI COMIENZA MÉTODO AGREGAR DEPTO
+  const [estado2, setEstado2] = useState("");
   const insertar2 = async () => {
     const permiso = await filtroSeguridad("CAT_SUC_ADD");
     if (permiso === false) {
@@ -268,6 +302,7 @@ function AreaDeptoClases() {
     } else {
     }
   };
+
 
   //AQUI COMIENZA MÉTODO AGREGAR CLASE
   const insertar3 = async () => {
@@ -303,13 +338,13 @@ function AreaDeptoClases() {
   };
 
   const editArea = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_AREA_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
     if (validarCampos1() === true) {
       await jezaApi
-        .put(`/Area`, null, {
+        .put(`/Area2`, null, {
           params: {
             area: formArea.area,
             descripcion: formArea.descripcion,
@@ -357,6 +392,8 @@ function AreaDeptoClases() {
     }
   };
 
+
+
   const editClase = async () => {
     const permiso = await filtroSeguridad("CAT_SUC_UPD");
     if (permiso === false) {
@@ -366,9 +403,10 @@ function AreaDeptoClases() {
       await jezaApi
         .put(`/Clase`, null, {
           params: {
-            area: Number(formClase.area),
-            depto: Number(formClase.depto),
-            clase: Number(formClase.clase),
+            id: formClase.id,
+            area: formClase.area,
+            depto: formClase.depto,
+            clase: formClase.clase,
             descripcion: formClase.descripcion,
           },
         })
@@ -388,35 +426,106 @@ function AreaDeptoClases() {
     }
   };
 
-  const eliminar1 = (dato: Area) => {
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.area}`);
-    if (opcion) {
-      jezaApi.delete(`/Area?area=${dato.area}`).then((response) => {
-        setModalActualizarArea(false);
-        getAreas();
-        alert(response.data.mensaje1);
-      });
+  const eliminar1 = async (dato: Area) => {
+    const permiso = await filtroSeguridad("CAT_AREA_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar la el área: ${dato.descripcion}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/Area?area=${dato.area}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getAreas();
+        });
+      }
+    });
   };
-  const eliminar2 = (dato: Clase) => {
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.clase}`);
-    if (opcion) {
-      jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
-        setModalActualizarClase(false);
-        getClases();
-      });
+
+
+  // const eliminar2 = (dato: Clase) => {
+
+  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.clase}`);
+  //   if (opcion) {
+  //     jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
+  //       setModalActualizarClase(false);
+  //       getClases();
+  //     });
+  //   }
+  // };
+
+  const eliminar2 = async (dato: Clase) => {
+    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar la clase: ${dato.descripcion}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getClases();
+        });
+      }
+    });
   };
-  const eliminar3 = (dato: Departamento) => {
-    console.log(dato);
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.depto}`);
-    if (opcion) {
-      jezaApi.delete(`/Depto?area=${dato.area}&id=${dato.depto}`).then(() => {
-        setModalActualizarDepto(false);
-        getDepartamentos();
-      });
+
+
+
+
+
+
+
+  // ELIMINAR DEPARTAMENTO
+  const eliminar3 = async (dato: Departamento) => {
+    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar la el departamento: ${dato.descripcion}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/Depto?area=${dato.area}&id=${dato.depto}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getDepartamentos();
+        });
+      }
+    });
   };
+
 
   const getAreas = () => {
     jezaApi.get("/Area?area=0").then((response) => {
@@ -489,6 +598,147 @@ function AreaDeptoClases() {
   };
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
+  // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE AREAS
+  const columns: GridColDef[] = [
+    {
+      field: "Acción",
+      renderCell: (params) => <ComponentChiquito params={params} />,
+      flex: 0,
+      headerClassName: "custom-header",
+    },
+
+    { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
+  ];
+
+  const ComponentChiquito = ({ params }: { params: any }) => {
+    return (
+      <>
+        <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizarArea(params.row)} size={23}></AiFillEdit>
+        <AiFillDelete color="lightred" onClick={() => eliminar1(params.row)} size={23}></AiFillDelete>
+      </>
+    );
+  };
+
+
+  function DataTable() {
+    return (
+      <div style={{ height: 600, width: "100%" }}>
+        <div style={{ height: "100%", width: "100%" }}>
+          <DataGrid
+            rows={areasGet}
+            columns={columns}
+            getRowId={(row) => row.area}
+            hideFooter={false}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 15 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+          />
+        </div>
+      </div>
+    );
+  }
+
+
+
+  // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE DEPARTAMENTOS
+  const columns2: GridColDef[] = [
+    {
+      field: "Acción",
+      renderCell: (params) => <ComponentChiquito2 params={params} />,
+      flex: 0,
+      headerClassName: "custom-header",
+    },
+
+    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "d_area", headerName: "Área descripción", flex: 1, headerClassName: "custom-header" },
+    { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
+  ];
+
+  const ComponentChiquito2 = ({ params }: { params: any }) => {
+    return (
+      <>
+        <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizarDepto(params.row)} size={23}></AiFillEdit>
+        <AiFillDelete color="lightred" onClick={() => eliminar3(params.row)} size={23}></AiFillDelete>
+      </>
+    );
+  };
+
+  function DataTableDepto() {
+    return (
+      <div style={{ height: 600, width: "100%" }}>
+        <div style={{ height: "100%", width: "100%" }}>
+          <DataGrid
+            rows={deptoGet}
+            columns={columns2}
+            getRowId={(row) => row.depto}
+            hideFooter={false}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 15 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+          />
+        </div>
+      </div>
+    );
+  }
+
+
+  // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE DEPART
+  const columns3: GridColDef[] = [
+    {
+      field: "Acción",
+      renderCell: (params) => <ComponentChiquito3 params={params} />,
+      flex: 0,
+      headerClassName: "custom-header",
+    },
+
+    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "d_area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    // { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
+    { field: "d_depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
+    { field: "clase", headerName: "Clase", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
+  ];
+
+  const ComponentChiquito3 = ({ params }: { params: any }) => {
+    return (
+      <>
+        <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizarClase(params.row)} size={23}></AiFillEdit>
+        <AiFillDelete color="lightred" onClick={() => eliminar2(params.row)} size={23}></AiFillDelete>
+      </>
+    );
+  };
+
+  function DataTableClase() {
+    return (
+      <div style={{ height: 600, width: "100%" }}>
+        <div style={{ height: "100%", width: "100%" }}>
+          <DataGrid
+            rows={claseGet}
+            columns={columns3}
+            getRowId={(row) => row.clase}
+            hideFooter={false}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 15 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+          />
+        </div>
+      </div>
+    );
+  }
+
+
+
   return (
     <>
       <Row>
@@ -498,22 +748,18 @@ function AreaDeptoClases() {
         <Row>
           <Col>
             <Container fluid>
-              <br />
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Areas, Departamentos y Clases </h1>
+                <h1> Áreas, Departamentos y Clases </h1>
                 <VscTypeHierarchy size={30}></VscTypeHierarchy>
               </div>
             </Container>
             <br />
-            {/* <br />
-            <Container className="d-flex justify-content-end ">
-              <CButton color="success" onClick={() => handleNav()} text="Crear secciones" />
-            </Container>
-            <br /> */}
+            <br />
+            <br />
             <Nav tabs>
               <NavItem>
                 <NavLink className={activeTab === "1" ? "active" : ""} onClick={() => toggleTab("1")}>
-                  Areas
+                  Áreas
                 </NavLink>
               </NavItem>
 
@@ -541,8 +787,8 @@ function AreaDeptoClases() {
                       color="success"
                       onClick={() => {
                         setModalInsertarArea(true);
-                        // setEstado("insert");
-                        // LimpiezaForm();
+                        setEstado("insert");
+                        LimpiezaFormArea();
                       }}
                     >
                       Crear área
@@ -556,8 +802,12 @@ function AreaDeptoClases() {
                   </ButtonGroup>
                 </div>
                 <br />
+
                 <Row>
-                  <Table size="sm" striped={true} responsive={true}>
+
+                  <br />
+                  <DataTable></DataTable>
+                  {/* <Table size="sm" striped={true} responsive={true}>
                     <thead>
                       <tr>
                         {DataTableHeaderArea.map((valor) => (
@@ -579,7 +829,7 @@ function AreaDeptoClases() {
                         </tr>
                       ))}
                     </tbody>
-                  </Table>
+                  </Table> */}
                 </Row>
                 <br />
               </TabPane>
@@ -594,8 +844,8 @@ function AreaDeptoClases() {
                       color="success"
                       onClick={() => {
                         setModalInsertarDepto(true);
-                        // setEstado("insert");
-                        // LimpiezaForm();
+                        setEstado2("insert");
+                        LimpiezaFormDepto();
                       }}
                     >
                       Crear departamento
@@ -609,7 +859,10 @@ function AreaDeptoClases() {
                   </ButtonGroup>
                 </div>
                 <br />
-                <Row>
+                <DataTableDepto></DataTableDepto>
+                <br />
+
+                {/* <Row>
                   <Table size="sm" striped={true} responsive={true}>
                     <thead>
                       <tr>
@@ -634,7 +887,7 @@ function AreaDeptoClases() {
                       ))}
                     </tbody>
                   </Table>
-                </Row>
+                </Row> */}
               </TabPane>
 
               <TabPane tabId="3">
@@ -647,8 +900,8 @@ function AreaDeptoClases() {
                       color="success"
                       onClick={() => {
                         setModalInsertarClase(true);
-                        // setEstado("insert");
-                        // LimpiezaForm();
+                        setEstado3("insert");
+                        LimpiezaFormClase();
                       }}
                     >
                       Crear clase
@@ -662,7 +915,9 @@ function AreaDeptoClases() {
                   </ButtonGroup>
                 </div>
                 <br />
-                <Row>
+                <DataTableClase></DataTableClase>
+                <br />
+                {/* <Row>
                   <Table size="sm" striped={true} responsive={true}>
                     <thead>
                       <tr>
@@ -688,7 +943,7 @@ function AreaDeptoClases() {
                       ))}
                     </tbody>
                   </Table>
-                </Row>
+                </Row> */}
               </TabPane>
             </TabContent>
             {/* <TableSucursal dataCia={dataCias} DataTableHeader={DataTableHeader} data={data} eliminar={eliminar} mostrarModalActualizar={mostrarModalActualizar} /> */}
@@ -722,6 +977,7 @@ function AreaDeptoClases() {
         <ModalBody>
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formArea.area}>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={Number(option.area)} value={Number(option.area)}>
                 {option.descripcion}
@@ -737,6 +993,8 @@ function AreaDeptoClases() {
           <CButton color="danger" onClick={() => cerrarModalActualizarDepto()} text="Cancelar" />
         </ModalFooter>
       </Modal>
+
+
       {/* ACTUALIZAR CLASE */}
       <Modal isOpen={modalActualizarClase} size="xl">
         <ModalHeader>
@@ -746,7 +1004,8 @@ function AreaDeptoClases() {
         </ModalHeader>
         <ModalBody>
           <Label>Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase}>
+          <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase} value={formClase.area}>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={option.area} value={Number(option.area)}>
                 {option.descripcion}
@@ -755,7 +1014,8 @@ function AreaDeptoClases() {
           </Input>
           <br />
           <Label>Departamento:</Label>
-          <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase}>
+          <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase} value={formClase.depto}>
+            <option value={0}>--Selecciona una opción--</option>
             {deptoGet.map((depto) => (
               <option value={depto.depto}> {depto.descripcion} </option>
             ))}
@@ -795,6 +1055,8 @@ function AreaDeptoClases() {
         <ModalBody>
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formDepto.area}>
+            <option value="">Seleccione área</option>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={Number(option.area)} value={Number(option.area)}>
                 {option.descripcion}
@@ -821,6 +1083,7 @@ function AreaDeptoClases() {
         <ModalBody>
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase}>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={option.area} value={Number(option.area)}>
                 {option.descripcion}
@@ -830,6 +1093,7 @@ function AreaDeptoClases() {
           <br />
           <Label>Departamento:</Label>
           <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase}>
+            <option value={0}>--Selecciona una opción--</option>
             {deptoGet.map((depto) => (
               <option value={depto.depto}> {depto.descripcion} </option>
             ))}
