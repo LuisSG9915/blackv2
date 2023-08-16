@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< Updated upstream
-import { Button} from "reactstrap";
-=======
 import { Button } from "reactstrap";
->>>>>>> Stashed changes
 import { Trabajador } from "../../../models/Trabajador";
 import { Venta } from "../../../models/Venta";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
