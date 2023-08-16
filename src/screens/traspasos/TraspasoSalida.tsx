@@ -1,6 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AiFillEdit, AiFillDelete, AiOutlineSelect } from "react-icons/ai";
-import { Row, Container, Input, Table, Modal, ModalBody, ModalFooter, ModalHeader, Label, Col, Button, Card } from "reactstrap";
+import {
+  Row,
+  Container,
+  Input,
+  Table,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Label,
+  Col,
+  Button,
+  Card,
+  InputGroup,
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+  UncontrolledAccordion,
+} from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -17,8 +35,10 @@ import { useTraspasoBusqueda } from "../../hooks/getsHooks/useTraspasoBusqueda";
 import Swal from "sweetalert2";
 import { useProductos } from "../../hooks/getsHooks/useProductos";
 import { UserResponse } from "../../models/Home";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function TraspasoSalida() {
+  const { filtroSeguridad, session } = useSeguridad();
   const [productoSelected, setProductoSelected] = useState<String[]>([]);
   // const { dataComprasGeneral, fetchCompras } = useComprasV3(dataCompras.idProveedor, idSeleccionado);
 
@@ -73,8 +93,23 @@ function TraspasoSalida() {
   const { dataSucursales } = useSucursales();
   const { dataAlmacenes } = useAlmacen();
 
-  const DataTableHeader = ["", "Folio", "Sucursal destino", "Fecha", "Responsable traspaso", "Almacen destino", "Almacen origen"];
-  const DataTableHeaderPrincipal = ["Clave producto", "Producto", "Cantidad", "Unidad de medida", "Responsable traspaso", "Acciones"];
+  const DataTableHeader = [
+    "",
+    "Folio",
+    "Sucursal destino",
+    "Fecha",
+    "Responsable traspaso",
+    "Almacen destino",
+    "Almacen origen",
+  ];
+  const DataTableHeaderPrincipal = [
+    "Clave producto",
+    "Producto",
+    "Cantidad",
+    "Unidad de medida",
+    "Responsable traspaso",
+    "Acciones",
+  ];
 
   const mostrarModalActualizar = (dato: Traspaso) => {
     setForm({ ...dato, suc_destino: form.suc_destino, suc_origen: form.suc_origen, sucursal: form.sucursal });
@@ -86,7 +121,11 @@ function TraspasoSalida() {
     sucursal_origen: dataUsuarios2 && dataUsuarios2.length > 0 ? dataUsuarios2[0].sucursal : 0,
   });
 
-  const postTraspasoSalida = () => {
+  const postTraspasoSalida = async () => {
+    const permiso = await filtroSeguridad("TRASP_SALIDA_ADD");
+    if (permiso === false) {
+      return;
+    }
     jezaApi
       .post("/Traspaso", null, {
         params: {
@@ -139,7 +178,11 @@ function TraspasoSalida() {
       .catch(() => alert("No realizado"));
   };
 
-  const putFinalizaTraspasoSalida = () => {
+  const putFinalizaTraspasoSalida = async () => {
+    const permiso = await filtroSeguridad("TRASP_SALIDA_FIN");
+    if (permiso === false) {
+      return;
+    }
     jezaApi
       .put("/TraspasoFinaliza", null, {
         params: {
@@ -155,7 +198,11 @@ function TraspasoSalida() {
       .catch((error) => console.log(error));
   };
 
-  const getTraspasoBusqueda = () => {
+  const getTraspasoBusqueda = async () => {
+    const permiso = await filtroSeguridad("TRASP_SALIDA_GET");
+    if (permiso === false) {
+      return;
+    }
     jezaApi
       .get(
         `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${
@@ -276,50 +323,50 @@ function TraspasoSalida() {
   const InfoRow = () => {
     return (
       <Row>
-        <Col md={9}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <h1> Traspaso de salida </h1>
-          </div>
-          <br />
-          <Row className="">
-            <Col lg={5} md={4}>
-              <Label>Sucursal destino:</Label>
-              <Input value={form.suc_destino} type="select" name="suc_destino" onChange={handleChange}>
-                <option value={0}> Escoja una sucursal</option>
-                {filtradoSucursales.map((option: Sucursal) => (
-                  <option key={option.sucursal} value={Number(option.sucursal)}>
-                    {option.nombre}
-                  </option>
-                ))}
-              </Input>
-            </Col>
+        {/* <Col md={9}> */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <h1> Traspaso de salida </h1>
+        </div>
+        <br />
+        <Row className="">
+          <Col lg={5} md={4}>
+            <Label>Sucursal destino:</Label>
+            <Input value={form.suc_destino} type="select" name="suc_destino" onChange={handleChange}>
+              <option value={0}> Escoja una sucursal</option>
+              {filtradoSucursales.map((option: Sucursal) => (
+                <option key={option.sucursal} value={Number(option.sucursal)}>
+                  {option.nombre}
+                </option>
+              ))}
+            </Input>
+          </Col>
 
-            <Col lg={5} md={4}>
-              <Label>Almacén destino:</Label>
-              <Input value={form.almacenDestino} type="select" name="almacenDestino" onChange={handleChange}>
-                <option value={0}> Escoja una almacén</option>
-                {filtradoAlmacen.map((option: Almacen) => (
-                  <option key={option.almacen} value={option.almacen}>
-                    {option.descripcion}
-                  </option>
-                ))}
-              </Input>
-            </Col>
+          <Col lg={5} md={4}>
+            <Label>Almacén destino:</Label>
+            <Input value={form.almacenDestino} type="select" name="almacenDestino" onChange={handleChange}>
+              <option value={0}> Escoja una almacén</option>
+              {filtradoAlmacen.map((option: Almacen) => (
+                <option key={option.almacen} value={option.almacen}>
+                  {option.descripcion}
+                </option>
+              ))}
+            </Input>
+          </Col>
 
-            <Col lg={5} md={4}>
-              <Label>Almacén origen:</Label>
-              <Input type="select" value={form.almacenOrigen} name="almacenOrigen" onChange={handleChange}>
-                <option value="0"> Escoja una almacen</option>
-                {filtradoAlmacenFormateada.map((option: Almacen) => (
-                  <option key={option.almacen} value={option.almacen}>
-                    {option.descripcion}
-                  </option>
-                ))}
-              </Input>
-            </Col>
-          </Row>
-        </Col>
-        <Col md={3}>
+          <Col lg={5} md={4}>
+            <Label>Almacén origen:</Label>
+            <Input type="select" value={form.almacenOrigen} name="almacenOrigen" onChange={handleChange}>
+              <option value="0"> Escoja una almacen</option>
+              {filtradoAlmacenFormateada.map((option: Almacen) => (
+                <option key={option.almacen} value={option.almacen}>
+                  {option.descripcion}
+                </option>
+              ))}
+            </Input>
+          </Col>
+        </Row>
+        {/* </Col> */}
+        {/* <Col md={3}>
           <br />
           <br />
           <br />
@@ -328,7 +375,7 @@ function TraspasoSalida() {
           <Label>Sucursal: {dataUsuarios2 ? dataUsuarios2[0]?.d_sucursal.toLocaleUpperCase() : ""}</Label>
           <br />
           <Label> Usuario: {dataUsuarios2 ? dataUsuarios2[0]?.nombre.toLocaleUpperCase() : ""} </Label>
-        </Col>
+        </Col> */}
       </Row>
     );
   };
@@ -371,8 +418,16 @@ function TraspasoSalida() {
                         </>
                       ) : (
                         <>
-                          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(dato)} size={23}></AiFillEdit>
-                          <AiFillDelete color="lightred" onClick={() => eliminar(dato.id, dato.d_producto)} size={23}></AiFillDelete>
+                          <AiFillEdit
+                            className="mr-2"
+                            onClick={() => mostrarModalActualizar(dato)}
+                            size={23}
+                          ></AiFillEdit>
+                          <AiFillDelete
+                            color="lightred"
+                            onClick={() => eliminar(dato.id, dato.d_producto)}
+                            size={23}
+                          ></AiFillDelete>
                         </>
                       )}
                     </td>
@@ -386,26 +441,71 @@ function TraspasoSalida() {
   };
   const InformativeInformation = () => {
     return (
-      <div
-        className="d-flex flex-column justify-content-end align-items-end"
-        style={{ position: "fixed", bottom: "7%", right: "10%", marginRight: "20px", zIndex: 1 }}
-      >
-        <Card className="p-2" style={{ maxWidth: "400px" }}>
-          <h6>
-            <strong>Total de claves: {informative.totalClaves}</strong>
-          </h6>
-          <h6>
-            <strong> Total de productos: {informative.totalCantidad}</strong>{" "}
-          </h6>
-        </Card>
-      </div>
+      // <div
+      //   className="d-flex flex-column justify-content-end align-items-end"
+      //   style={{ position: "fixed", bottom: "7%", right: "10%", marginRight: "20px", zIndex: 1 }}
+      // >
+      <>
+        {/* ... otros componentes y contenido ... */}
+        <UncontrolledAccordion defaultOpen="1">
+          <AccordionItem>
+            <AccordionHeader targetId="2">Totales</AccordionHeader>
+            <AccordionBody accordionId="2">
+              <table width="100%">
+                <tr>
+                  <th>Total de claves</th>
+                  <th>Total de productos</th>
+                </tr>
+                <tr>
+                  <td>{informative.totalClaves}</td>
+                  <td>{informative.totalCantidad}</td>
+                </tr>
+              </table>
+            </AccordionBody>
+          </AccordionItem>
+        </UncontrolledAccordion>
+      </>
     );
   };
 
   const GroupButtons = () => {
+    // return (
+    //   <div style={{ position: "fixed", bottom: 10, width: "100%", zIndex: 9999 }}>
+    //     <div style={{ justifyContent: "space-evenly", alignContent: "space-evenly", display: "flex" }}>
+    //       <Button
+    //         disabled={Number(form.folio) > 0 || !dataTraspasos || dataTraspasos.length === 0}
+    //         onClick={() => {
+    //           putFinalizaTraspasoSalida();
+    //         }}
+    //         color="success"
+    //       >
+    //         Finalizar
+    //       </Button>
+
+    //       <TicketPrint>
+    //         <>
+    //           <br />
+    //           <InfoRow></InfoRow>
+    //           <br />
+    //           <TableSalidas></TableSalidas>
+    //           <br />
+    //         </>
+    //       </TicketPrint>
+    //       <Button
+    //         onClick={() => {
+    //           setModalBusqueda(true);
+    //           getTraspasoBusqueda();
+    //         }}
+    //       >
+    //         Búsqueda
+    //       </Button>
+    //     </div>
+    //   </div>
+    // );
     return (
-      <div style={{ position: "fixed", bottom: 10, width: "100%", zIndex: 9999 }}>
-        <div style={{ justifyContent: "space-evenly", alignContent: "space-evenly", display: "flex" }}>
+      // <div style={{ position: "fixed", bottom: 10, width: "100%", zIndex: 9999 }}>
+      <Container>
+        <InputGroup>
           <Button
             disabled={Number(form.folio) > 0 || !dataTraspasos || dataTraspasos.length === 0}
             onClick={() => {
@@ -425,6 +525,7 @@ function TraspasoSalida() {
               <br />
             </>
           </TicketPrint>
+
           <Button
             onClick={() => {
               setModalBusqueda(true);
@@ -433,8 +534,8 @@ function TraspasoSalida() {
           >
             Búsqueda
           </Button>
-        </div>
-      </div>
+        </InputGroup>
+      </Container>
     );
   };
   interface TicketPrintProps {
@@ -477,7 +578,11 @@ function TraspasoSalida() {
             disabled={Number(form.folio) > 0 ? true : false}
             onClick={() => {
               console.log(form);
-              if (form.suc_destino === "0" || form.almacenDestino.toString() === "0" || form.almacenOrigen.toString() === "0") {
+              if (
+                form.suc_destino === "0" ||
+                form.almacenDestino.toString() === "0" ||
+                form.almacenOrigen.toString() === "0"
+              ) {
                 Swal.fire({
                   icon: "info",
                   title: "Atención",
@@ -525,7 +630,15 @@ function TraspasoSalida() {
               </Col>
               <Col>
                 <Label>Cantidad: </Label>
-                <Input type="number" min="1.00" step="0.01" name="cantidad" value={form.cantidad} onChange={handleChange} placeholder="Cantidad" />
+                <Input
+                  type="number"
+                  min="1.00"
+                  step="0.01"
+                  name="cantidad"
+                  value={form.cantidad}
+                  onChange={handleChange}
+                  placeholder="Cantidad"
+                />
               </Col>
             </Row>
             <br />
@@ -578,7 +691,12 @@ function TraspasoSalida() {
             <Row>
               <Col md={3}>
                 <Label>Sucursal destino:</Label>
-                <Input value={fechaSeleccionada.suc_destino} type="select" name="suc_destino" onChange={handleChangeFechas}>
+                <Input
+                  value={fechaSeleccionada.suc_destino}
+                  type="select"
+                  name="suc_destino"
+                  onChange={handleChangeFechas}
+                >
                   <option value={0}> Escoja una sucursal</option>
                   {filtradoSucursales.map((option: Sucursal) => (
                     <option key={option.sucursal} value={Number(option.sucursal)}>
@@ -597,7 +715,12 @@ function TraspasoSalida() {
               </Col>
               <Col md={3}>
                 <Label>Folio: </Label>
-                <Input type="text" onChange={handleChangeFechas} name="folio" defaultValue={fechaSeleccionada.folio}></Input>
+                <Input
+                  type="text"
+                  onChange={handleChangeFechas}
+                  name="folio"
+                  defaultValue={fechaSeleccionada.folio}
+                ></Input>
               </Col>
             </Row>
             <Button className="align-self-end" onClick={() => getTraspasoBusqueda()} color="primary">
@@ -661,7 +784,7 @@ function TraspasoSalida() {
           />
         </ModalBody>
         <ModalFooter>
-          <CButton color="danger" onClick={() => setModalOpen3(false)} text="Salir" />
+          <CButton color="danger" onClick={() => setModalOpen3(false)} text="Cancelar" />
         </ModalFooter>
       </Modal>
 
@@ -703,7 +826,15 @@ function TraspasoSalida() {
               </Col>
               <Col>
                 <Label>Cantidad: </Label>
-                <Input type="number" min="1.00" step="0.01" name="cantidad" value={form.cantidad} onChange={handleChange} placeholder="Cantidad" />
+                <Input
+                  type="number"
+                  min="1.00"
+                  step="0.01"
+                  name="cantidad"
+                  value={form.cantidad}
+                  onChange={handleChange}
+                  placeholder="Cantidad"
+                />
               </Col>
             </Row>
             <br />
