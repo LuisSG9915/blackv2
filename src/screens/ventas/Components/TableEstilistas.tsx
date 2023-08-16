@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< Updated upstream
 import { Button} from "reactstrap";
+=======
+import { Button } from "reactstrap";
+>>>>>>> Stashed changes
 import { Trabajador } from "../../../models/Trabajador";
 import { Venta } from "../../../models/Venta";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
@@ -27,17 +31,7 @@ export interface Estilistas {
   id: number;
   estilista: string;
 }
-const TableEstilistas = ({
-  data,
-  setModalOpen2,
-  dataVentaEdit,
-  setDataVentaEdit,
-  dataTemporal,
-  setDataTemporal,
-  flagEstilistas,
-  setFlagEstilistas,
-}: Props) => {
-  const TableDataHeader = ["Estilistas", ""];
+const TableEstilistas = ({ data, setModalOpen2, dataVentaEdit, setDataVentaEdit, dataTemporal, setDataTemporal, flagEstilistas }: Props) => {
   const [estilistasFiltrado, setEstilistasFiltrado] = useState<Estilistas[]>([]);
   const [estilistaFiltro, setEstilistaFiltro] = useState<any>([]);
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();

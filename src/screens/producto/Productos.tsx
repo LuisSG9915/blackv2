@@ -780,7 +780,12 @@ function Productos() {
             <AlertComponent error={error} onDismiss={onDismiss} visible={visible} />
 
             <div style={{ width: "100%" }}>
-              <MaterialReactTable columns={columns} data={dataProductos} initialState={{ density: "compact" }} />
+              <MaterialReactTable
+                enableSorting
+                columns={columns}
+                data={dataProductos}
+                initialState={{ density: "compact", sorting: [{ id: "descripcion", desc: false }] }}
+              />
             </div>
           </Col>
         </Row>

@@ -175,12 +175,13 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
         columns={columns}
         data={dataProductosConAcciones}
         initialState={{
-          density: "compact",
           showGlobalFilter: false,
           pagination: {
             pageSize: 5,
             pageIndex: 0,
           },
+          density: "compact",
+          sorting: [{ id: "descripcion", desc: false }],
         }}
         muiTableBodyRowProps={{
           sx: {
