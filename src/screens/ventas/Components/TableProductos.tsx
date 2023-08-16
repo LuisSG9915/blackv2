@@ -181,6 +181,7 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
             pageSize: 5,
             pageIndex: 0,
           },
+          sorting: [{ id: "descripcion", desc: false }],
         }}
         muiTableBodyRowProps={{
           sx: {
