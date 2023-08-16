@@ -451,6 +451,7 @@ function PerfilesModulos() {
               <Col md="6">
                 <Label>Módulo:</Label>
                 <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
+                  <option value={0}>--Selecciona una opción--</option>
                   {data.map((perfil) => (
                     <option key={perfil.modulo} value={perfil.modulo}>
                       {perfil.d_modulo}

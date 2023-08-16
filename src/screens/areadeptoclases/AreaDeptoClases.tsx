@@ -62,9 +62,11 @@ function AreaDeptoClases() {
   } = useModalHook();
 
 
+  const [deptoGet, setDeptoGet] = useState<Departamento[]>([]);
+  const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const [areasGet, setAreaGet] = useState<Area[]>([]);
   const [claseGet, setclaseGet] = useState<Clase[]>([]);
-  const [deptoGet, setDeptoGet] = useState<Departamento[]>([]);
+
   const { filtroSeguridad, session } = useSeguridad();
 
 
@@ -77,14 +79,18 @@ function AreaDeptoClases() {
   const [formDepto, setDepto] = useState<Departamento>({
     id: 0,
     area: 0,
+    d_area: "",
     depto: 0,
     descripcion: "",
   });
 
   const [formClase, setClase] = useState<Clase>({
+    id: 0,
     clase: 0,
     area: 1,
+    d_area: "",
     depto: 1,
+    d_depto: "",
     descripcion: "",
   });
 
@@ -153,12 +159,13 @@ function AreaDeptoClases() {
     return camposVacios.length === 0;
   };
 
+  //LIMPIEZA DE CAMPOS
+  const [estado, setEstado] = useState("");
+
   ////CAMPOS VACIOS AREAS
   const LimpiezaFormArea = () => {
     setArea({ id: 0, area: 0, descripcion: "" });
   };
-
-
 
 
 
@@ -191,7 +198,7 @@ function AreaDeptoClases() {
 
   ////CAMPOS VACIOS DEPTOS
   const LimpiezaFormDepto = () => {
-    setArea({ id: 0, area: 0, depto: 0, descripcion: "" });
+    setDepto({ id: 0, area: 0, d_area: "", depto: 0, descripcion: "" });
   };
 
 
@@ -224,7 +231,13 @@ function AreaDeptoClases() {
   };
 
   //LIMPIEZA DE CAMPOS
-  const [estado, setEstado] = useState("");
+  const [estado3, setEstado3] = useState("");
+
+  ////CAMPOS VACIOS clases
+  const LimpiezaFormClase = () => {
+    setClase({ id: 0, clase: 0, d_area: "", area: 0, depto: 0, d_depto: "", descripcion: "" });
+  };
+
 
   //AQUI COMIENZA MÉTODO AGREGAR AREA
   const insertar1 = async () => {
@@ -290,6 +303,7 @@ function AreaDeptoClases() {
     }
   };
 
+
   //AQUI COMIENZA MÉTODO AGREGAR CLASE
   const insertar3 = async () => {
     const permiso = await filtroSeguridad("CAT_SUC_ADD");
@@ -330,7 +344,7 @@ function AreaDeptoClases() {
     }
     if (validarCampos1() === true) {
       await jezaApi
-        .put(`/Area`, null, {
+        .put(`/Area2`, null, {
           params: {
             area: formArea.area,
             descripcion: formArea.descripcion,
@@ -389,6 +403,7 @@ function AreaDeptoClases() {
       await jezaApi
         .put(`/Clase`, null, {
           params: {
+            id: formClase.id,
             area: formClase.area,
             depto: formClase.depto,
             clase: formClase.clase,
@@ -439,15 +454,49 @@ function AreaDeptoClases() {
   };
 
 
-  const eliminar2 = (dato: Clase) => {
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.clase}`);
-    if (opcion) {
-      jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
-        setModalActualizarClase(false);
-        getClases();
-      });
+  // const eliminar2 = (dato: Clase) => {
+
+  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.clase}`);
+  //   if (opcion) {
+  //     jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
+  //       setModalActualizarClase(false);
+  //       getClases();
+  //     });
+  //   }
+  // };
+
+  const eliminar2 = async (dato: Clase) => {
+    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar la clase: ${dato.descripcion}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getClases();
+        });
+      }
+    });
   };
+
+
+
+
+
+
 
   // ELIMINAR DEPARTAMENTO
   const eliminar3 = async (dato: Departamento) => {
@@ -604,7 +653,8 @@ function AreaDeptoClases() {
       headerClassName: "custom-header",
     },
 
-    { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "d_area", headerName: "Área descripción", flex: 1, headerClassName: "custom-header" },
     { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
     { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
   ];
@@ -649,8 +699,10 @@ function AreaDeptoClases() {
       headerClassName: "custom-header",
     },
 
-    { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
-    { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
+    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "d_area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    // { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
+    { field: "d_depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
     { field: "clase", headerName: "Clase", flex: 1, headerClassName: "custom-header" },
     { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
   ];
@@ -848,8 +900,8 @@ function AreaDeptoClases() {
                       color="success"
                       onClick={() => {
                         setModalInsertarClase(true);
-                        // setEstado("insert");
-                        // LimpiezaForm();
+                        setEstado3("insert");
+                        LimpiezaFormClase();
                       }}
                     >
                       Crear clase
@@ -925,6 +977,7 @@ function AreaDeptoClases() {
         <ModalBody>
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formArea.area}>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={Number(option.area)} value={Number(option.area)}>
                 {option.descripcion}
@@ -951,7 +1004,8 @@ function AreaDeptoClases() {
         </ModalHeader>
         <ModalBody>
           <Label>Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase}>
+          <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase} value={formClase.area}>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={option.area} value={Number(option.area)}>
                 {option.descripcion}
@@ -960,7 +1014,8 @@ function AreaDeptoClases() {
           </Input>
           <br />
           <Label>Departamento:</Label>
-          <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase}>
+          <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase} value={formClase.depto}>
+            <option value={0}>--Selecciona una opción--</option>
             {deptoGet.map((depto) => (
               <option value={depto.depto}> {depto.descripcion} </option>
             ))}
@@ -1001,6 +1056,7 @@ function AreaDeptoClases() {
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formDepto.area}>
             <option value="">Seleccione área</option>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={Number(option.area)} value={Number(option.area)}>
                 {option.descripcion}
@@ -1027,6 +1083,7 @@ function AreaDeptoClases() {
         <ModalBody>
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase}>
+            <option value={0}>--Selecciona una opción--</option>
             {areasGet.map((option: Area) => (
               <option key={option.area} value={Number(option.area)}>
                 {option.descripcion}
@@ -1036,6 +1093,7 @@ function AreaDeptoClases() {
           <br />
           <Label>Departamento:</Label>
           <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase}>
+            <option value={0}>--Selecciona una opción--</option>
             {deptoGet.map((depto) => (
               <option value={depto.depto}> {depto.descripcion} </option>
             ))}

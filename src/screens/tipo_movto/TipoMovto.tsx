@@ -33,6 +33,7 @@ function TipoMovto() {
   const { dataCias, fetchCias } = useCias();
 
   const [form, setForm] = useState<TipoMovtoModel>({
+    id: 0,
     tipo_movto: 0,
     descripcion: "",
   });
@@ -73,7 +74,7 @@ function TipoMovto() {
   const [estado, setEstado] = useState("");
 
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_MOVIMIENTOS_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -104,7 +105,7 @@ function TipoMovto() {
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_MOVIMIENTOS_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -134,7 +135,7 @@ function TipoMovto() {
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
   const eliminar = async (dato: TipoMovtoModel) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_MOVIMIENTOS_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -148,7 +149,7 @@ function TipoMovto() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/UnidadMedida?id=${dato.tipo_movto}`).then(() => {
+        jezaApi.delete(`/TipoMovto?id=${dato.tipo_movto}`).then(() => {
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
@@ -207,7 +208,7 @@ function TipoMovto() {
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
   const LimpiezaForm = () => {
-    setForm({ tipo_movto: 0, descripcion: "" });
+    setForm({ id: 0, tipo_movto: 0, descripcion: "" });
   };
 
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE

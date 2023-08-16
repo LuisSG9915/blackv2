@@ -612,7 +612,7 @@ const Ventas = () => {
             cancelada: false,
             folio_estilista: 0,
             hora: horaDateTime,
-            tiempo: dataTemporal.tiempo,
+            tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
             terminado: false,
             validadoServicio: false,
             ieps: "0",
@@ -918,7 +918,7 @@ const Ventas = () => {
         producto: "",
         User: 0,
       });
-      anticipoPost(Number(response.data.mensaje2));
+      // anticipoPost(Number(response.data.mensaje2));
     });
   };
 
@@ -1043,39 +1043,39 @@ const Ventas = () => {
     );
   }
 
-  const anticipoPost = (noVenta: number) => {
-    if (formAnticipo.importe > 0) {
-      jezaApi
-        .post("/AnticipoAplicado", null, {
-          params: {
-            cia: 26,
-            sucursal: dataUsuarios2[0]?.sucursal,
-            caja: 1,
-            fecha: fechaHoy,
-            no_venta: noVenta,
-            fechaMovto: 20230726,
-            idCliente: dataTemporal.Cve_cliente,
-            idUsuario: dataUsuarios2[0]?.id,
-            tipoMovto: 1,
-            referencia: formAnticipo.referencia,
-            importe: formAnticipo.importe,
-            observaciones: formAnticipo.observaciones,
-            idAnticipo: formAnticipo.id,
-          },
-        })
-        .then(() => {
-          setTimeout(() => {
-            Swal.fire({
-              icon: "success",
-              text: "Venta finalizada con éxito",
-              confirmButtonColor: "#3085d6",
-            });
-          }, 1500);
-        });
-    } else {
-      null;
-    }
-  };
+  // const anticipoPost = (noVenta: number) => {
+  //   if (formAnticipo.importe > 0) {
+  //     jezaApi
+  //       .post("/AnticipoAplicado", null, {
+  //         params: {
+  //           cia: 26,
+  //           sucursal: dataUsuarios2[0]?.sucursal,
+  //           caja: 1,
+  //           fecha: fechaHoy,
+  //           no_venta: noVenta,
+  //           fechaMovto: 20230726,
+  //           idCliente: dataTemporal.Cve_cliente,
+  //           idUsuario: dataUsuarios2[0]?.id,
+  //           tipoMovto: 1,
+  //           referencia: formAnticipo.referencia,
+  //           importe: formAnticipo.importe,
+  //           observaciones: formAnticipo.observaciones,
+  //           idAnticipo: formAnticipo.id,
+  //         },
+  //       })
+  //       .then(() => {
+  //         setTimeout(() => {
+  //           Swal.fire({
+  //             icon: "success",
+  //             text: "Venta finalizada con éxito",
+  //             confirmButtonColor: "#3085d6",
+  //           });
+  //         }, 1500);
+  //       });
+  //   } else {
+  //     null;
+  //   }
+  // };
 
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
@@ -1131,7 +1131,17 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${dataUsuarios2[0]?.sucursal}&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto}&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento}&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo}&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${dataVentaEdit.idEstilista}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo}&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
+        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
       )
       .then(() => {
         Swal.fire({
