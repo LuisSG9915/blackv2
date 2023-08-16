@@ -29,6 +29,7 @@ export const useProductosFiltradoExistencia = ({ descripcion, insumo, inventaria
 
   useEffect(() => {
     fetchProduct3();
+    
   }, []);
   useEffect(() => {
     fetchProduct3();
