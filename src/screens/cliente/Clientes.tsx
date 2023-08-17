@@ -107,7 +107,7 @@ function Clientes() {
       setActiveTab1(tab);
     }
   };
-  //AAA
+  //AAAa
   const [visible, setVisible] = useState(false);
 
   const [error, setError] = useState(false);
