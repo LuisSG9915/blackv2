@@ -73,13 +73,7 @@ function MovimientoDiversos() {
   });
 
   const { dataAjustes, fetchAjustes } = useAjuste({ folio: form.folio, sucursal: dataUsuarios2[0]?.sucursal });
-  // useEffect(() => {
-  //   const item = localStorage.getItem("userLogged");
-  //   if (item !== null) {
-  //     const parsedItem = JSON.parse(item);
-  //     setDataUsuarios(parsedItem);
-  //   }
-  // }, []);
+
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -127,14 +121,7 @@ function MovimientoDiversos() {
   const [modalResumenEditar, setModalResumenEditar] = useState<boolean>(false);
   const [modalProductos, setModalProductos] = useState<boolean>(false);
   const [modalBusqueda, setModalBusqueda] = useState<boolean>(false);
-  const DataTableHeader = [
-    "Acción",
-    "Folio",
-    "Tipo de movimiento",
-    "Numero de items",
-    "Responsable de ajuste",
-    "Estado",
-  ];
+  const DataTableHeader = ["Acción", "Folio", "Tipo de movimiento", "Numero de items", "Responsable de ajuste", "Estado"];
   const [filtradoAlmacenFormateada, setFiltradoAlmacenFormateada] = useState([]);
 
   useEffect(() => {
@@ -149,7 +136,7 @@ function MovimientoDiversos() {
           cia: 26,
           sucursal: dataUsuarios2[0]?.sucursal,
           folio: 0,
-          fecha: fechaHoy,
+          fecha: new Date(),
           clave_prod: form.clave_prod,
           tipo_movto: form.tipo_movto,
           cantidad_entrada: form.cantidad_entrada ? form.cantidad_entrada : 0,
@@ -207,9 +194,7 @@ function MovimientoDiversos() {
   };
   const putFinalizado = () => {
     jezaApi
-      .put(
-        `/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`
-      )
+      .put(`/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
         Swal.fire("¡Ajuste finalizado!", `Finalizado`, "success");
         fetchAjustes();
@@ -238,15 +223,11 @@ function MovimientoDiversos() {
 
   useEffect(() => {
     const ultimoAlmacen = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].almacen : 0;
-    const ultimoObservación =
-      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
-    const ultimoMovimiento =
-      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].tipo_movto : "";
-    const ultimaFecha =
-      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].fecha.split("T")[0] : "";
+    const ultimoObservación = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
+    const ultimoMovimiento = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].tipo_movto : "";
+    const ultimaFecha = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].fecha.split("T")[0] : "";
     const ultimoEstado = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].finalizado : false;
-    const ultimoResponsable =
-      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].nombreUsuario : "";
+    const ultimoResponsable = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].nombreUsuario : "";
     setUsuarioResponsable(ultimoResponsable);
     setEstados(ultimoEstado);
     setform({
@@ -351,15 +332,7 @@ function MovimientoDiversos() {
             <Row>
               <Col md="3" style={{ marginBottom: 0 }}>
                 <Label>Tipo de movimiento:</Label>
-                <Input
-                  disabled={estados}
-                  type="select"
-                  name="tipo_movto"
-                  id="tipo_movto"
-                  value={form.tipo_movto}
-                  onChange={handleChange}
-                  bsSize="sm"
-                >
+                <Input disabled={estados} type="select" name="tipo_movto" id="tipo_movto" value={form.tipo_movto} onChange={handleChange} bsSize="sm">
                   <option value="">Selecciona tipo de movimiento</option>
                   {dataMovimientos.map((mov) => (
                     <option key={mov.tipo_movto} value={mov.tipo_movto}>
@@ -371,15 +344,7 @@ function MovimientoDiversos() {
 
               <Col md="3" style={{ marginBottom: 0 }}>
                 <Label>Almacén:</Label>
-                <Input
-                  disabled={estados}
-                  type="select"
-                  name="almacen"
-                  id="almacen"
-                  value={form.almacen}
-                  onChange={handleChange}
-                  bsSize="sm"
-                >
+                <Input disabled={estados} type="select" name="almacen" id="almacen" value={form.almacen} onChange={handleChange} bsSize="sm">
                   <option value="">Selecciona el almacén</option>
                   {filtradoAlmacenFormateada.map((sucursal: any) => (
                     <option key={sucursal.id} value={sucursal.id}>
@@ -391,27 +356,12 @@ function MovimientoDiversos() {
 
               <Col md="3">
                 <Label>Fecha:</Label>
-                <Input
-                  disabled={true}
-                  type="date"
-                  onChange={handleChange}
-                  name="fecha"
-                  value={form.fecha}
-                  bsSize="sm"
-                />
+                <Input disabled={true} type="date" onChange={handleChange} name="fecha" value={form.fecha} bsSize="sm" />
                 <br />
               </Col>
               <Col md="3">
                 <Label>Folio:</Label>
-                <Input
-                  disabled
-                  type="text"
-                  name="folio"
-                  id="folio"
-                  value={form.folio}
-                  onChange={handleChange}
-                  bsSize="sm"
-                ></Input>
+                <Input disabled type="text" name="folio" id="folio" value={form.folio} onChange={handleChange} bsSize="sm"></Input>
               </Col>
               <Col md="6">
                 <Label>Observaciones:</Label>
@@ -448,11 +398,7 @@ function MovimientoDiversos() {
                     color="success"
                     disabled={estados}
                     onClick={() => {
-                      if (
-                        form.tipo_movto.toString() === "0" ||
-                        form.almacen.toString() === "0" ||
-                        form.observacion === ""
-                      ) {
+                      if (form.tipo_movto.toString() === "0" || form.almacen.toString() === "0" || form.observacion === "") {
                         Swal.fire({
                           icon: "info",
                           title: "Atención",
@@ -617,23 +563,11 @@ function MovimientoDiversos() {
               </Col>
               <Col>
                 <Label>Cantidad entrada:</Label>
-                <Input
-                  type="number"
-                  disabled={deshabiliteadoExistencia}
-                  onChange={handleChange}
-                  name="cantidad_entrada"
-                  placeholder="Cantidad"
-                />
+                <Input type="number" disabled={deshabiliteadoExistencia} onChange={handleChange} name="cantidad_entrada" placeholder="Cantidad" />
               </Col>
               <Col>
                 <Label>Cantidad salida: </Label>
-                <Input
-                  type="number"
-                  disabled={deshabiliteadoSalida}
-                  onChange={handleChange}
-                  name="cantidad_salida"
-                  placeholder="Cantidad salida"
-                />
+                <Input type="number" disabled={deshabiliteadoSalida} onChange={handleChange} name="cantidad_salida" placeholder="Cantidad salida" />
               </Col>
             </Row>
             <br />
@@ -735,7 +669,7 @@ function MovimientoDiversos() {
                             onClick={() => {
                               setform({
                                 ...form,
-                                folio: ajuste.folio,
+                                folio: Number(ajuste.folio),
                                 tipo_movto: ajuste.tipo_movto,
                                 fecha: ajuste.fecha.split("T")[0],
                               });

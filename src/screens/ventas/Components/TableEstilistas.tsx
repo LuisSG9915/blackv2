@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { AiFillEdit, AiFillDelete } from "react-icons/ai";
-import { useDispatch } from "react-redux";
-import { Button, Col, Input, Label, Row, Table } from "reactstrap";
-import { addEstilistas } from "../../../redux/states/estilistas";
-import { addVentas } from "../../../redux/states/ventas";
-import { useGentlemanContext } from "../context/VentasContext";
+import { Button} from "reactstrap";
 import { Trabajador } from "../../../models/Trabajador";
-import { useEstilistas } from "../../../hooks/getsHooks/useEstilistas";
-import { Estilista } from "../../../models/Estilista";
 import { Venta } from "../../../models/Venta";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import Swal from "sweetalert2";

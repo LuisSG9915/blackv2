@@ -3,7 +3,26 @@ import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Almacen } from "../../models/Almacen";
 import { Usuario } from "../../models/Usuario";
-import { Button, Col, Container, ModalFooter, Modal, ModalHeader, ModalBody, FormGroup, Input, Label, Row, Table, Card } from "reactstrap";
+import {
+  Button,
+  Col,
+  Container,
+  ModalFooter,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+  Table,
+  Card,
+  InputGroup,
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+  UncontrolledAccordion,
+} from "reactstrap";
 import { ImMoveDown } from "react-icons/im";
 import { useTraspasoEntrada } from "../../hooks/getsHooks/useTraspasoEntrada";
 import { TraspasoBusqueda, TraspasoGet } from "../../models/Traspaso";
@@ -16,8 +35,10 @@ import CButton from "../../components/CButton";
 import { useTraspasoEntradaSelector } from "../../hooks/getsHooks/useTraspasoEntradaSelector";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function TraspasosEntrada() {
+  const { filtroSeguridad, session } = useSeguridad();
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
   const { dataSucursales } = useSucursales();
@@ -108,15 +129,25 @@ function TraspasosEntrada() {
   });
   useEffect(() => {
     const ultimoFolio =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido : false;
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
+        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido
+        : false;
     const sucursalOrigen =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].suc_origen : 0;
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
+        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].suc_origen
+        : 0;
     const sumaCantidades =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas.reduce((total, item) => total + item.cantidad, 0) : [0];
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
+        ? dataTraspasosEntradas.reduce((total, item) => total + item.cantidad, 0)
+        : [0];
     const ultimoNombreAlmOrigen =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmOrigen : "";
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
+        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmOrigen
+        : "";
     const ultimoNombreAlmDestino =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmDestino : "";
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
+        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmDestino
+        : "";
 
     setSetstateRecibido(ultimoFolio);
     setFechaSeleccionada({
@@ -135,36 +166,31 @@ function TraspasosEntrada() {
   }, [dataTraspasosEntradas.length > 0, dataTraspasosEntradas]);
   const InformativeInformation = () => {
     return (
-      <div
-        className="d-flex flex-column justify-content-end align-items-end"
-        style={{ position: "fixed", bottom: "7%", right: "10%", marginRight: "20px", zIndex: 1 }}
-      >
-        <Card className="p-2" style={{ maxWidth: "400px" }}>
-          <h6>
-            <strong>Total de claves: {informative.totalClaves}</strong>
-          </h6>
-          <h6>
-            <strong> Total de productos: {informative.totalCantidad}</strong>{" "}
-          </h6>
-        </Card>
-      </div>
+      <>
+        <UncontrolledAccordion defaultOpen="1">
+          <AccordionItem>
+            <AccordionHeader targetId="2">Totales</AccordionHeader>
+            <AccordionBody accordionId="2">
+              <table width="100%">
+                <tr>
+                  <th>Total de claves</th>
+                  <th>Total de productos</th>
+                </tr>
+                <tr>
+                  <td>{informative.totalClaves}</td>
+                  <td>{informative.totalCantidad}</td>
+                </tr>
+              </table>
+            </AccordionBody>
+          </AccordionItem>
+        </UncontrolledAccordion>
+      </>
     );
   };
   const InfoRow = () => {
     return (
       <>
-        <Container>
-          <Row>
-            <Col md="4"></Col>
-            <Col md="4"></Col>
-            <Col md="4">
-              <Label>
-                Fecha de venta: {fechaHoy} Sucursal: {dataUsuarios2 ? dataUsuarios2[0]?.d_sucursal.toUpperCase() : ""}
-              </Label>
-              <Label> Usuario: {dataUsuarios2 ? dataUsuarios2[0]?.nombre.toLocaleUpperCase() : ""} </Label>
-            </Col>
-          </Row>
-        </Container>
+        <Container></Container>
         <Container>
           <Row>
             <Col md="3" style={{ marginBottom: 25 }}>
@@ -192,7 +218,14 @@ function TraspasosEntrada() {
             </Col>
             <Col md="4">
               <Label>Responsable de envío:</Label>
-              <Input disabled type="text" name="d_usuario" id="d_usuario" value={fechaSeleccionada.d_usuario} onChange={handleChangeFechas}></Input>
+              <Input
+                disabled
+                type="text"
+                name="d_usuario"
+                id="d_usuario"
+                value={fechaSeleccionada.d_usuario}
+                onChange={handleChangeFechas}
+              ></Input>
             </Col>
             <Col md="1">
               <Label>Folio:</Label>
@@ -202,16 +235,29 @@ function TraspasosEntrada() {
           <Row>
             <Col md="3">
               <Label>Almacén origen:</Label>
-              <Input disabled type="text" name="d_almacenOrigen" id="folio" value={informative.d_almacenOrigen} onChange={handleChange}></Input>
+              <Input
+                disabled
+                type="text"
+                name="d_almacenOrigen"
+                id="folio"
+                value={informative.d_almacenOrigen}
+                onChange={handleChange}
+              ></Input>
             </Col>
             <Col md="3">
               <Label>Almacén destino:</Label>
-              <Input disabled type="text" name="d_almacenDestino" id="folio" value={informative.d_almacenDestino} onChange={handleChange}></Input>
+              <Input
+                disabled
+                type="text"
+                name="d_almacenDestino"
+                id="folio"
+                value={informative.d_almacenDestino}
+                onChange={handleChange}
+              ></Input>
             </Col>
           </Row>
           <br />
         </Container>
-        <InformativeInformation></InformativeInformation>
       </>
     );
   };
@@ -219,62 +265,67 @@ function TraspasosEntrada() {
 
   const TableTraspasoEntrada = () => {
     return (
-      <Table size="sm" striped={true} responsive={true} style={{ width: "100%", margin: "auto" }}>
-        <thead>
-          <tr>
-            {DataTableHeader.map((valor) => (
-              <th className="" key={valor}>
-                {valor}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {dataTraspasosEntradas.map((dato: TraspasoGet, index) => (
-            <tr key={dato.id + index}>
-              <td>{dato.clave_prod}</td>
-              <td>{dato.d_producto}</td>
-              <td>{dato.cantidad}</td>
-              <td>{dato.d_unidadmedida}</td>
+      <>
+        <Table size="sm" striped={true} responsive={true} style={{ width: "100%", margin: "auto" }}>
+          <thead>
+            <tr>
+              {DataTableHeader.map((valor) => (
+                <th className="" key={valor}>
+                  {valor}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {dataTraspasosEntradas.map((dato: TraspasoGet, index) => (
+              <tr key={dato.id + index}>
+                <td>{dato.clave_prod}</td>
+                <td>{dato.d_producto}</td>
+                <td>{dato.cantidad}</td>
+                <td>{dato.d_unidadmedida}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <InformativeInformation></InformativeInformation>
+      </>
     );
   };
 
   const GroupButtons = () => {
     return (
-      <div style={{ position: "fixed", bottom: 20, width: "100%" }}>
-        <div style={{ justifyContent: "space-evenly", alignContent: "space-evenly", display: "flex" }}>
-          <Button
-            disabled={!recibido && dataTraspasosEntradas.length > 0 ? false : true}
-            onClick={() => {
-              FinalizaRecepcion();
-            }}
-            color="success"
-          >
-            Recibir
-          </Button>
-          <TicketPrint>
-            <>
-              <br />
-              <InfoRow></InfoRow>
-              <br />
-              <TableTraspasoEntrada></TableTraspasoEntrada>
-              <br />
-            </>
-          </TicketPrint>
-          <Button
-            onClick={() => {
-              setModalBusqueda(true);
-              getTraspasoBusqueda();
-            }}
-          >
-            Búsqueda
-          </Button>
-        </div>
-      </div>
+      <>
+        <Container>
+          <InputGroup>
+            <Button
+              disabled={!recibido && dataTraspasosEntradas.length > 0 ? false : true}
+              onClick={() => {
+                FinalizaRecepcion();
+              }}
+              color="success"
+            >
+              Recibir
+            </Button>
+            <TicketPrint>
+              <>
+                <br />
+                <InfoRow></InfoRow>
+                <br />
+                <TableTraspasoEntrada></TableTraspasoEntrada>
+                <br />
+              </>
+            </TicketPrint>
+            <Button
+              onClick={() => {
+                setModalBusqueda(true);
+                getTraspasoBusqueda();
+              }}
+            >
+              Búsqueda
+            </Button>
+          </InputGroup>
+        </Container>
+      </>
     );
   };
   const Title = () => {
@@ -310,7 +361,12 @@ function TraspasosEntrada() {
     );
   };
 
-  const FinalizaRecepcion = () => {
+  const FinalizaRecepcion = async () => {
+    const permiso = await filtroSeguridad("TRASP_ENTRA_REC");
+    if (permiso === false) {
+      return;
+    }
+
     console.log(form);
     jezaApi
       .put("/TraspasoRecepcion", null, {
@@ -346,18 +402,27 @@ function TraspasosEntrada() {
   };
   const [dataTraspasoBusqueda2, setDataTraspasoBusqueda2] = useState<TraspasoBusqueda[]>([]);
 
-  const getTraspasoBusqueda = () => {
+  const getTraspasoBusqueda = async () => {
+    const permiso = await filtroSeguridad("TRASP_ENTRA_GET");
+    if (permiso === false) {
+      return;
+    }
+
     jezaApi
       .get(
         `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${
           fechaSeleccionada.suc_destino
-        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"}&f2=${
-          fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"
-        }`
+        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${
+          fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"
+        }&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"}`
       )
       .then((response) => {
         setDataTraspasoBusqueda2(response.data);
-        setForm({ ...form, suc_destino: fechaSeleccionada.suc_destino.toString(), sucursal: Number(fechaSeleccionada.suc_destino) });
+        setForm({
+          ...form,
+          suc_destino: fechaSeleccionada.suc_destino.toString(),
+          sucursal: Number(fechaSeleccionada.suc_destino),
+        });
       });
   };
   useEffect(() => {
@@ -367,7 +432,9 @@ function TraspasosEntrada() {
   const [recibido, setRecibido] = useState(false);
   useEffect(() => {
     const ultimoFolio =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido : false;
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
+        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido
+        : false;
     setRecibido(ultimoFolio);
   }, [dataTraspasosEntradas]);
 
@@ -382,7 +449,11 @@ function TraspasosEntrada() {
         <br />
         <InfoRow />
         <h4>
-          {stateRecibido === true ? "Traspaso recibido" : stateRecibido === false && dataTraspasosEntradas.length > 0 ? "Traspaso no recibido" : ""}{" "}
+          {stateRecibido === true
+            ? "Traspaso recibido"
+            : stateRecibido === false && dataTraspasosEntradas.length > 0
+            ? "Traspaso no recibido"
+            : ""}{" "}
         </h4>
 
         <TableTraspasoEntrada />
@@ -410,7 +481,12 @@ function TraspasosEntrada() {
               </Col>
               <Col md={3}>
                 <Label>Sucursal origen:</Label>
-                <Input value={fechaSeleccionada.suc_destino} type="select" name="suc_destino" onChange={handleChangeFechas}>
+                <Input
+                  value={fechaSeleccionada.suc_destino}
+                  type="select"
+                  name="suc_destino"
+                  onChange={handleChangeFechas}
+                >
                   <option value={0}>Selecciona sucursal</option>
                   {filtradoSucursales.map((option: Sucursal) => (
                     <option key={option.sucursal} value={Number(option.sucursal)}>
@@ -456,7 +532,11 @@ function TraspasosEntrada() {
                             f1: fechaSeleccionada.f1,
                             f2: fechaSeleccionada.f2,
                           });
-                          setInformative({ ...informative, d_almacenDestino: traspaso.d_almacenDestino, d_almacenOrigen: traspaso.d_almacenOrigen });
+                          setInformative({
+                            ...informative,
+                            d_almacenDestino: traspaso.d_almacenDestino,
+                            d_almacenOrigen: traspaso.d_almacenOrigen,
+                          });
                         }}
                       ></AiOutlineSelect>
                     </td>
