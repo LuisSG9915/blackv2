@@ -1241,13 +1241,14 @@ const Ventas = () => {
 
   const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
 
-  const loadHistorialDetalle = (numVenta: number) => {
+  const loadHistorialDetalle = (sucursal: number, numVenta: number, idProducto: number) => {
     jezaApi
-      .get(`/HistorialDetalle?suc=21&cliente=${dataTemporal.Cve_cliente}&venta=${numVenta}&serv=7702`)
+      .get(`/HistorialDetalle?suc=${sucursal}&cliente=${dataTemporal.Cve_cliente}&venta=${numVenta}&serv=${idProducto}`)
       .then((response) => {
         // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
         console.log(response.data);
         // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
         setHistorialDetalle(response.data);
       })
       .catch((error) => {
@@ -1258,20 +1259,7 @@ const Ventas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
-  const handleOpenModal = (id) => {
-
-        jezaApi
-      .get(`/HistorialDetalle?suc=21&cliente=${id}&venta=${numVenta}&serv=7702`)
-      .then((response) => {
-        // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
-        console.log(response.data);
-        // Asigna los datos de respuesta a la variable local historialDetalle
-        setHistorialDetalle(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  const handleOpenModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
@@ -1284,7 +1272,14 @@ const Ventas = () => {
     () => [
       {
         header: "Acciones",
-        Cell: ({ row }) => <Button onClick={() => handleOpenModal(row.original.NumVenta)}>Abrir Modal</Button>,
+        Cell: ({ row }) => (
+          <Button
+            size="sm"
+            onClick={() => loadHistorialDetalle(row.original.sucursal, row.original.NumVenta, row.original.idProducto)}
+          >
+            Detalle
+          </Button>
+        ),
         muiTableBodyCellProps: {
           align: "center",
         },
@@ -1451,10 +1446,10 @@ const Ventas = () => {
   };
   const [flagEstilistas, setFlagEstilistas] = useState(false);
 
-  const handleInputChange = (event) => {
-    const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
-    setInputValue(cleanedValue);
-  };
+  // const handleInputChange = (event) => {
+  //   const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
+  //   setInputValue(cleanedValue);
+  // };
   return (
     <>
       <Row>
@@ -1738,7 +1733,11 @@ const Ventas = () => {
               <Label>Estilista auxiliar:</Label>
               <Row>
                 <Col xs={9}>
-                  <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
+                  <Input
+                    disabled
+                    defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""}
+                  />
+                </Col>
                 <Col>
                   <Input
                     disabled
@@ -1747,7 +1746,10 @@ const Ventas = () => {
                   {/* <Label> {dataTemporal.idestilistaAux} </Label> */}
                 </Col>
                 <Col xs={1}>
-                  <Button color="danger" onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                  <Button
+                    color="danger"
+                    onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}
+                  >
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
@@ -2111,7 +2113,7 @@ const Ventas = () => {
               <Input onChange={cambiosPagos} name="efectivo" value={formPago.efectivo}></Input>
             </Col>
           </Row> */}
-          <br /> 
+          <br />
           <Row>
             <Col md="7">
               <Label>TOTAL DE PAGOS: </Label>
@@ -2475,7 +2477,12 @@ const Ventas = () => {
           </Input>
           <br />
           <Label> Importe </Label>
-          <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
+          <Input
+            type="number"
+            onChange={handleFormaPagoTemporal}
+            value={dataArregloTemporal.importe}
+            name={"importe"}
+          ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
           dataArregloTemporal.formaPago == 91 ||
@@ -2589,10 +2596,16 @@ const Ventas = () => {
               <Label>Estilista auxilliar:</Label>
               <Row>
                 <Col>
-                  <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
+                  <Input
+                    disabled
+                    value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""}
+                  />
                 </Col>
                 <Col xs={1}>
-                  <Button color="danger" onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                  <Button
+                    color="danger"
+                    onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}
+                  >
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
@@ -2750,8 +2763,24 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={isModalOpen} toggle={setIsModalOpen}>
-        <ModalHeader toggle={handleCloseModal}>Historial Detalle</ModalHeader>
-        <ModalBody>holamundo</ModalBody>
+        <ModalHeader toggle={handleCloseModal}>Historial Detalle: </ModalHeader>
+        <ModalBody>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            {historialDetalle.map((item, index) => (
+              <div key={index}>
+                <p>Fecha: {item.Fecha}</p>
+                <p>Número de Venta: {item.NumVenta}</p>
+                <p>Sucursal: {item.Sucursal}</p>
+                <p>Estilista: {item.Estilista}</p>
+                <p>Servicio: {item.Servicio}</p>
+                <p>Insumo: {item.Insumo}</p>
+                <p>Cantidad: {item.Cant}</p>
+                {/* Agregar más campos aquí si es necesario */}
+                <hr />
+              </div>
+            ))}
+          </div>
+        </ModalBody>
       </Modal>
     </>
   );
