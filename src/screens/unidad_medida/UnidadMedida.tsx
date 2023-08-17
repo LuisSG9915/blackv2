@@ -75,7 +75,7 @@ function UnidadMedida() {
   const [estado, setEstado] = useState("");
 
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_UNIDADMEDIDA_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -106,7 +106,7 @@ function UnidadMedida() {
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_UNIDADMEDIDA_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -136,7 +136,7 @@ function UnidadMedida() {
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
   const eliminar = async (dato: UnidadMedidaModel) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_UNIDADMEDIDA_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }

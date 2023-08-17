@@ -62,7 +62,7 @@ function TipoBajas() {
 
   //AQUI COMIENZA MÉTODO AGREGAR TIPO BAJA
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_BAJAS_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -94,7 +94,7 @@ function TipoBajas() {
   // Update ---> PUT
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_BAJAS_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -132,7 +132,7 @@ function TipoBajas() {
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
   const eliminar = async (dato: TiposdeBajas) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_BAJAS_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }

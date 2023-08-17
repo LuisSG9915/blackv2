@@ -91,6 +91,18 @@ function Clientes() {
       setActiveTab(tab);
     }
   };
+
+
+  const [activeTab1, setActiveTab1] = useState("1");
+
+  const toggleTab1 = (tab: React.SetStateAction<string>) => {
+    if (activeTab1 !== tab) {
+      setActiveTab1(tab);
+    }
+  };
+
+
+
   const [visible, setVisible] = useState(false);
 
   const [error, setError] = useState(false);
@@ -123,6 +135,38 @@ function Clientes() {
     }
     return camposVacios.length === 0;
   };
+
+
+
+  //VALIDACIÓN ACTUALIZACIÓN---->
+  const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
+
+  const validarCampos1 = () => {
+    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac", "rfc", "regimenFiscal", "nombre_fiscal", "correo_factura"];
+    const camposVacios: string[] = [];
+
+    camposRequeridos.forEach((campo: keyof Cliente) => {
+      const fieldValue = form[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios.push(campo);
+      }
+    });
+
+    setCamposFaltantes1(camposVacios);
+
+    if (camposVacios.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios.length === 0;
+  };
+
+
+
 
   const insertar = async () => {
     /* CREATE */
@@ -159,7 +203,7 @@ function Clientes() {
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    if (validarCampos() === true) {
+    if (validarCampos1() === true) {
       await jezaApi
         .put(`/Cliente`, null, {
           params: {
@@ -174,17 +218,17 @@ function Clientes() {
             telefono: form.telefono,
             email: form.email,
             nombre_fiscal: form.nombre_fiscal,
-            suspendido: form.suspendido,
+            suspendido: false,
             sucursal_origen: dataUsuarios2[0]?.sucursal,
-            num_plastico: form.num_plastico,
-            suc_asig_plast: form.suc_asig_plast,
-            fecha_asig_plast: form.fecha_asig_plast,
+            num_plastico: form.num_plastico ? form.num_plastico : "...",
+            suc_asig_plast: form.suc_asig_plast ? form.suc_asig_plast : 0,
+            fecha_asig_plast: "2023-01-01",
             usr_asig_plast: dataUsuarios2[0]?.id,
-            plastico_activo: form.plastico_activo,
+            plastico_activo: false,
             fecha_nac: form.fecha_nac,
             correo_factura: form.correo_factura,
             regimenFiscal: form.regimenFiscal,
-            claveRegistroMovil: form.claveRegistroMovil,
+            claveRegistroMovil: form.claveRegistroMovil ? form.claveRegistroMovil : "...",
             fecha_alta: fechaHoy,
             fecha_act: fechaHoy,
           },
@@ -249,13 +293,13 @@ function Clientes() {
     setModalActualizar(true);
   };
 
-  const mostrarModalDetalle = (dato: Cliente) => {
-    setForm(dato);
-    setModalDetalle(true);
-  };
+  // const mostrarModalDetalle = (dato: Cliente) => {
+  //   setForm(dato);
+  //   setModalDetalle(true);
+  // };
 
-  /* DETALLE */
-  const [modalDetalle, setModalDetalle] = useState(false);
+  // /* DETALLE */
+  // const [modalDetalle, setModalDetalle] = useState(false);
 
   // const toggleDetalleModal = async (idCliente: number) => {
   //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
@@ -269,6 +313,36 @@ function Clientes() {
   //   setModalDetalle(!modalDetalle);
   //   setDetalleRowData(data);
   // };
+
+  // State for the modal visibility
+  const [modalDetalle, setModalDetalle] = useState(false);
+
+  // Function to toggle the modal visibility
+  const toggleModalDetalle = () => {
+    setModalDetalle(!modalDetalle);
+  };
+
+  const mostrarModalDetalle = (dato: Cliente) => {
+    setClienteSeleccionado(dato);
+    setModalDetalle(true);
+  };
+
+  // const mostrarModalDetalle = async (dato: Cliente) => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso, se sale de la función
+  //   }
+  //   setClienteSeleccionado(dato);
+  //   setModalDetalle(true);
+  // };
+
+
+
+
+
+  const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
+
+
 
   const [detalleRowData, setDetalleRowData] = useState(null);
 
@@ -342,7 +416,12 @@ function Clientes() {
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
-        {/* <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
+        <AiFillEye
+          className="mr-2"
+          onClick={() => mostrarModalDetalle(params.row)}
+          size={23}
+        />
+        {/* <AiFillEye className="mr-2" onClick={() => toggleModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
         <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete>
         {/* <AiFillDelete color="lightred" onClick={() => console.log(params.row.id)} size={23}></AiFillDelete> */}
@@ -525,11 +604,11 @@ function Clientes() {
                     Datos adicionales
                   </NavLink>
                 </NavItem>
-                <NavItem>
+                {/* <NavItem>
                   <NavLink className={activeTab === "3" ? "active" : ""} onClick={() => toggleTab("3")}>
                     Datos plástico
                   </NavLink>
-                </NavItem>
+                </NavItem> */}
               </Nav>
 
               <TabContent activeTab={activeTab}>
@@ -686,7 +765,7 @@ function Clientes() {
                     </Col> */}
                   </Row>
                 </TabPane>
-
+                {/* 
                 <TabPane tabId="3">
                   <Row>
                     <Col sm="6">
@@ -712,8 +791,8 @@ function Clientes() {
                       </Input>
                       <br />
                     </Col>
-                    <Col sm="6">
-                      {/* <Label>Fecha de asignación del plástico:</Label>
+                    <Col sm="6"> */}
+                {/* <Label>Fecha de asignación del plástico:</Label>
                       <Input
                         type="date"
                         name="fecha_asig_plast"
@@ -722,7 +801,7 @@ function Clientes() {
 
                       /> */}
 
-                      <Label for="exampleDate">Fecha de asignación del plástico:</Label>
+                {/* <Label for="exampleDate">Fecha de asignación del plástico:</Label>
                       <Input
                         id="exampleDate"
                         name="fecha_asig_plast"
@@ -732,9 +811,9 @@ function Clientes() {
                       />
 
                       <br />
-                    </Col>
+                    </Col> */}
 
-                    {/* <Col sm="6">
+                {/* <Col sm="6">
                       <Label>Usuario de asignación del plástico:</Label>
                       <Input
                         type="text"
@@ -746,7 +825,7 @@ function Clientes() {
                       <br />
                     </Col> */}
 
-                    <Col sm="6">
+                {/* <Col sm="6">
                       <Label>Clave de registro móvil:</Label>
                       <Input
                         type="text"
@@ -775,7 +854,7 @@ function Clientes() {
                       <br />
                     </Col>
                   </Row>
-                </TabPane>
+                </TabPane> */}
                 {/* <AlertComponent error={error} onDismiss={onDismiss} visible={visible} /> */}
               </TabContent>
             </Card>
@@ -786,6 +865,152 @@ function Clientes() {
           <CButton color="danger" onClick={cerrarModalActualizar} text="Cancelar"></CButton>
         </ModalFooter>
       </Modal>
+
+
+      <Modal isOpen={modalDetalle} size="lg">
+        <ModalHeader>Detalles del cliente</ModalHeader>
+        <ModalBody>
+          {clienteSeleccionado && (
+            <Container>
+              <Card body>
+                {/* <TabPrueba getTrab={getTrabajador} form2={form} setForm2={setForm}></TabPrueba> */}
+                <Nav tabs>
+                  <NavItem>
+                    <NavLink className={activeTab1 === "1" ? "active" : ""} onClick={() => toggleTab1("1")}>
+                      Datos personales
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink className={activeTab1 === "2" ? "active" : ""} onClick={() => toggleTab1("2")}>
+                      Datos adicionales
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink className={activeTab1 === "3" ? "active" : ""} onClick={() => toggleTab1("3")}>
+                      Historial del cliente
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+
+                <TabContent activeTab={activeTab1}>
+                  <br />
+                  <TabPane tabId="1">
+                    <Row>
+                      <Col sm="6">
+                        <p><strong>Nombre:</strong> {clienteSeleccionado.nombre}</p>
+                        <p><strong>Domicilio:</strong> {clienteSeleccionado.domicilio}</p>
+                        <p><strong>Fecha de nacimiento:</strong> {clienteSeleccionado.fecha_nac}</p>
+                        <p><strong>Ciudad:</strong> {clienteSeleccionado.ciudad}</p>
+
+                      </Col>
+
+                      <Col sm="6">
+                        <p><strong>Estado:</strong> {clienteSeleccionado.estado}</p>
+                        <p><strong>Colonia:</strong> {clienteSeleccionado.colonia}</p>
+                        <p><strong>Código Postal:</strong> {clienteSeleccionado.cp}</p>
+
+                      </Col>
+                    </Row>
+                    <br />
+                  </TabPane>
+
+                  <TabPane tabId="2">
+                    <Row>
+                      <Col sm="6">
+                        <p><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</p>
+                        <p><strong>Email:</strong> {clienteSeleccionado.email}</p>
+                        <p><strong>Correo de facturación:</strong> {clienteSeleccionado.correo_factura}</p>
+                      </Col>
+
+                      <Col sm="6">
+                        <p><strong>Nombre fiscal:</strong> {clienteSeleccionado.nombre_fiscal}</p>
+                        <p><strong>Regimen fiscal:</strong> {clienteSeleccionado.regimenFiscal}</p>
+                      </Col>
+                    </Row>
+                  </TabPane>
+
+                  <TabPane tabId="3">
+                    <Row>
+                      <Col sm="6">
+
+                      </Col>
+                      <Col sm="6">
+
+                      </Col>
+
+                    </Row>
+                  </TabPane>
+
+                </TabContent>
+              </Card>
+            </Container>
+
+          )}
+
+
+
+          {/* 
+
+          {clienteSeleccionado && (
+            <div>
+              <p><strong>Nombre:</strong> {clienteSeleccionado.nombre}</p>
+              <p><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</p>
+              <p><strong>Domicilio:</strong> {clienteSeleccionado.domicilio}</p>
+              <p><strong>Email:</strong> {clienteSeleccionado.email}</p>
+              <p><strong>Ciudad:</strong> {clienteSeleccionado.ciudad}</p>
+              <p><strong>Estado:</strong> {clienteSeleccionado.estado}</p>
+              <p><strong>Colonia:</strong> {clienteSeleccionado.colonia}</p>
+              <p><strong>Código Postal:</strong> {clienteSeleccionado.cp}</p>
+
+        
+            </div>
+          )} */}
+        </ModalBody>
+        <ModalFooter>
+          <CButton text="Cerrar" color="danger" onClick={() => setModalDetalle(false)} />
+        </ModalFooter>
+      </Modal>
+
+
+
+
+
+
+
+      {/* Modal for showing client details */}
+      {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
+        <ModalHeader toggle={toggleModalDetalle}>Detalles del Cliente</ModalHeader>
+        <ModalBody> */}
+      {/* Display the client details */}
+      {/* <p><strong>Nombre:</strong> {form.nombre}</p>
+          <p><strong>Teléfono:</strong> {form.telefono}</p>
+          <p><strong>Domicilio:</strong> {form.domicilio}</p>
+          <p><strong>Email:</strong> {form.email}</p>
+          <p><strong>Ciudad:</strong> {form.ciudad}</p>
+          <p><strong>Estado:</strong> {form.estado}</p>
+          <p><strong>Colonia:</strong> {form.colonia}</p>
+          <p><strong>Código Postal:</strong> {form.cp}</p> */}
+      {/* ... (display other details here) */}
+      {/* </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggleModalDetalle}>Cerrar</Button>
+        </ModalFooter>
+      </Modal> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       {/* modal para Detalles */}
       {/* <Modal isOpen={modalDetalle} fullscreen={true}>

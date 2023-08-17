@@ -72,7 +72,7 @@ function Estatuscolaborador() {
 
   //AQUI COMIENZA MÉTODO AGREGAR TIPO BAJA
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_STATUSRH_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -114,7 +114,7 @@ function Estatuscolaborador() {
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_STATUSRH_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -162,7 +162,7 @@ function Estatuscolaborador() {
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
   const eliminar = async (dato: ColaboradorStatus) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_STATUSRH_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
