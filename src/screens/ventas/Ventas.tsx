@@ -118,7 +118,6 @@ const Ventas = () => {
       (formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal
     );
     setFormasPagosFiltradas(formasPagosFiltradas);
-    console.log({ formasPagosFiltradas });
   }, [dataFormasPagos]);
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
@@ -495,6 +494,9 @@ const Ventas = () => {
     } else if (name === "formaPago" && Number(value) === 100) {
       setModalAnticipo(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
+    } else if (name === "importe") {
+      const cleanedValue = value?.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
+      setDataArregloTemporal((prev) => ({ ...prev, [name]: Number(cleanedValue) }));
     } else {
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     }
@@ -882,6 +884,7 @@ const Ventas = () => {
   };
 
   const [productoSelected, setProductoSelected] = useState<number[]>([]);
+
   useEffect(() => {
     const descripciones = dataVentas ? dataVentas.map((item) => item.Clave_prod) : [];
     setProductoSelected(descripciones);
@@ -1101,6 +1104,7 @@ const Ventas = () => {
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
       const tempIdPago = getIdPago(Number(elemento.formaPago));
+
       jezaApi.post("/MedioPago", null, {
         params: {
           caja: 1,
@@ -1446,6 +1450,11 @@ const Ventas = () => {
     );
   };
   const [flagEstilistas, setFlagEstilistas] = useState(false);
+
+  const handleInputChange = (event) => {
+    const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
+    setInputValue(cleanedValue);
+  };
   return (
     <>
       <Row>
@@ -1728,6 +1737,8 @@ const Ventas = () => {
             <>
               <Label>Estilista auxiliar:</Label>
               <Row>
+                <Col xs={9}>
+                  <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
                 <Col>
                   <Input
                     disabled
@@ -1735,7 +1746,12 @@ const Ventas = () => {
                   />
                   {/* <Label> {dataTemporal.idestilistaAux} </Label> */}
                 </Col>
-                <Col md={2}>
+                <Col xs={1}>
+                  <Button color="danger" onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                    <AiFillDelete></AiFillDelete>
+                  </Button>
+                </Col>
+                <Col md={1}>
                   <Button
                     onClick={() => {
                       setModalOpen2(true);
@@ -2067,7 +2083,7 @@ const Ventas = () => {
                         if (Number(pago.formaPago) === 11) {
                           // efectivo
                           eliminarElemento(2, index, Number(pago.importe));
-                        } else if (Number(pago.formaPago) === 21) {
+                        } else if (Number(pago.formaPago) === 90) {
                           // anticipo
                           eliminarElemento(1, index, Number(pago.importe));
                         } else {
@@ -2259,6 +2275,7 @@ const Ventas = () => {
             data={data}
             setModalOpen2={setModalOpenInsumosSelect}
             handleGetFetch={fetchInsumosProducto}
+            datoInsumosProducto={datoInsumosProducto}
           ></TableInsumosGenerales>
         </ModalBody>
         <ModalFooter>
@@ -2419,6 +2436,7 @@ const Ventas = () => {
       <Modal isOpen={modalAnticipo} size="xl">
         <ModalHeader>Selección de anticipo</ModalHeader>
         <ModalBody>
+          {dataAnticipos.length === 0 ? <h4> Por el momento el cliente no cuenta con anticipos </h4> : null}
           <br />
           <DataTable></DataTable>
           <br />
@@ -2426,7 +2444,6 @@ const Ventas = () => {
           <br />
           <br />
           <br />
-          {!dataAnticipos ? <h2> Por el momento el cliente no cuenta con anticipos </h2> : null}
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -2458,7 +2475,7 @@ const Ventas = () => {
           </Input>
           <br />
           <Label> Importe </Label>
-          <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
+          <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
           dataArregloTemporal.formaPago == 91 ||
@@ -2567,17 +2584,19 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-          {dataTemporal.Observacion === "SERV" ? (
+          {dataVentaEdit.Observacion === "SERV" ? (
             <>
               <Label>Estilista auxilliar:</Label>
               <Row>
                 <Col>
-                  <Input
-                    disabled
-                    value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""}
-                  />
+                  <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
                 </Col>
-                <Col md={2}>
+                <Col xs={1}>
+                  <Button color="danger" onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                    <AiFillDelete></AiFillDelete>
+                  </Button>
+                </Col>
+                <Col xs={1}>
                   <Button
                     onClick={() => {
                       setModalOpen2(true);
