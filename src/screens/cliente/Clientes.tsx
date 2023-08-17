@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete, AiFillEye } from "react-icons/ai";
 import {
   Row,
@@ -37,10 +37,18 @@ import useModalHook from "../../hooks/useModalHook";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+import MaterialReactTable from "material-react-table";
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -92,7 +100,6 @@ function Clientes() {
     }
   };
 
-
   const [activeTab1, setActiveTab1] = useState("1");
 
   const toggleTab1 = (tab: React.SetStateAction<string>) => {
@@ -100,8 +107,6 @@ function Clientes() {
       setActiveTab1(tab);
     }
   };
-
-
 
   const [visible, setVisible] = useState(false);
 
@@ -113,7 +118,17 @@ function Clientes() {
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac"];
+    const camposRequeridos: (keyof Cliente)[] = [
+      "nombre",
+      "domicilio",
+      "ciudad",
+      "estado",
+      "colonia",
+      "cp",
+      "telefono",
+      "email",
+      "fecha_nac",
+    ];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -135,14 +150,26 @@ function Clientes() {
     }
     return camposVacios.length === 0;
   };
-
-
 
   //VALIDACIÓN ACTUALIZACIÓN---->
   const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
 
   const validarCampos1 = () => {
-    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac", "rfc", "regimenFiscal", "nombre_fiscal", "correo_factura"];
+    const camposRequeridos: (keyof Cliente)[] = [
+      "nombre",
+      "domicilio",
+      "ciudad",
+      "estado",
+      "colonia",
+      "cp",
+      "telefono",
+      "email",
+      "fecha_nac",
+      "rfc",
+      "regimenFiscal",
+      "nombre_fiscal",
+      "correo_factura",
+    ];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -164,9 +191,6 @@ function Clientes() {
     }
     return camposVacios.length === 0;
   };
-
-
-
 
   const insertar = async () => {
     /* CREATE */
@@ -293,7 +317,6 @@ function Clientes() {
     setModalActualizar(true);
   };
 
-
   // const mostrarModalDetalle = (dato: Cliente) => {
   //   setForm(dato);
   //   setModalDetalle(true);
@@ -324,6 +347,7 @@ function Clientes() {
   };
 
   const mostrarModalDetalle = (dato: Cliente) => {
+    historial(dato.id_cliente);
     setClienteSeleccionado(dato);
     setModalDetalle(true);
   };
@@ -337,13 +361,7 @@ function Clientes() {
   //   setModalDetalle(true);
   // };
 
-
-
-
-
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
-
-
 
   const [detalleRowData, setDetalleRowData] = useState(null);
 
@@ -404,24 +422,22 @@ function Clientes() {
       field: "fecha_alta",
       headerName: "Fecha alta",
       flex: 1,
-      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) => new Date(params.row.fecha_alta).toLocaleDateString(),
+      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) =>
+        new Date(params.row.fecha_alta).toLocaleDateString(),
     },
     {
       field: "plastico_activo",
       headerName: "Cuenta activa",
       flex: 1,
-      renderCell: (params: { row: { plastico_activo: any } }) => (params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>),
+      renderCell: (params: { row: { plastico_activo: any } }) =>
+        params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>,
     },
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
-        <AiFillEye
-          className="mr-2"
-          onClick={() => mostrarModalDetalle(params.row)}
-          size={23}
-        />
+        <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(params.row)} size={23} />
         {/* <AiFillEye className="mr-2" onClick={() => toggleModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
         <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete>
@@ -460,6 +476,166 @@ function Clientes() {
   const handleReload = () => {
     window.location.reload();
   };
+
+  const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
+  const historial = (id) => {
+    jezaApi.get(`/Historial?cliente=${id}`).then((response) => {
+      setData1(response.data);
+      // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
+  };
+
+  const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
+    () => [
+      // {
+      //   header: "Acciones",
+      //   Cell: ({ row }) => (
+      //     <Button
+      //       size="sm"
+      //       onClick={() => loadHistorialDetalle(row.original.sucursal, row.original.NumVenta, row.original.idProducto)}
+      //     >
+      //       Detalle
+      //     </Button>
+      //   ),
+      //   muiTableBodyCellProps: {
+      //     align: "center",
+      //   },
+      //   muiTableHeadCellProps: {
+      //     align: "center",
+      //   },
+      // },
+      {
+        accessorKey: "NumVenta",
+        header: "NumVenta",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "NombreSuc",
+        header: "Sucursal",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Fecha",
+        header: "Fecha",
+        flex: 1,
+        size: 1,
+        Cell: ({ cell }) => {
+          const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
+          const dia = fecha.getDate().toString().padStart(2, "0"); // Obtener el día con dos dígitos
+          const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // Obtener el mes con dos dígitos (los meses en JavaScript son base 0)
+          const anio = fecha.getFullYear().toString(); // Obtener el año con cuatro dígitos
+
+          return <span>{`${dia}/${mes}/${anio}`}</span>;
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Clave",
+        header: "Clave",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Producto_Servicio",
+        header: "Producto/Servicio",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Cantidad",
+        header: "Cantidad",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Precio",
+        header: "Precio",
+        flex: 1,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
+        muiTableBodyCellProps: {
+          align: "right",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        size: 1,
+      },
+      {
+        accessorKey: "Estilista",
+        header: "Estilista",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Descuento",
+        header: "Descuento",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Forma_pago",
+        header: "Forma de pago",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -512,7 +688,12 @@ function Clientes() {
           <Row>
             <Col sm="6">
               <Label>Nombre:</Label>
-              <Input type="text" name={"nombre"} onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })} defaultValue={form.nombre} />
+              <Input
+                type="text"
+                name={"nombre"}
+                onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })}
+                defaultValue={form.nombre}
+              />
               <br />
             </Col>
 
@@ -528,12 +709,22 @@ function Clientes() {
             </Col>
             <Col sm="6">
               <Label>Ciudad:</Label>
-              <Input type="text" name={"ciudad"} onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })} defaultValue={form.ciudad} />
+              <Input
+                type="text"
+                name={"ciudad"}
+                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
+                defaultValue={form.ciudad}
+              />
               <br />
             </Col>
             <Col sm="6">
               <Label>Estado:</Label>
-              <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
+              <Input
+                type="text"
+                name={"Estado"}
+                onChange={(e) => setForm({ ...form, estado: String(e.target.value) })}
+                defaultValue={form.estado}
+              />
               <br />
             </Col>
             <Col sm="6">
@@ -548,7 +739,12 @@ function Clientes() {
             </Col>
             <Col sm="6">
               <Label>Código postal:</Label>
-              <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
+              <Input
+                type="text"
+                name={"cp"}
+                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
+                defaultValue={form.cp}
+              />
               <br />
             </Col>
             <Col sm="6">
@@ -563,7 +759,12 @@ function Clientes() {
             </Col>
             <Col sm="6">
               <Label>E-mail:</Label>
-              <Input type="email" name={"email"} onChange={(e) => setForm({ ...form, email: String(e.target.value) })} defaultValue={form.email} />
+              <Input
+                type="email"
+                name={"email"}
+                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
+                defaultValue={form.email}
+              />
               <br />
             </Col>
 
@@ -683,12 +884,22 @@ function Clientes() {
 
                     <Col sm="6">
                       <Label>Código postal:</Label>
-                      <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
+                      <Input
+                        type="text"
+                        name={"cp"}
+                        onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
+                        defaultValue={form.cp}
+                      />
                       <br />
                     </Col>
                     <Col sm="6">
                       <Label>RFC:</Label>
-                      <Input type="text" name="rfc" onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })} defaultValue={form.rfc} />
+                      <Input
+                        type="text"
+                        name="rfc"
+                        onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })}
+                        defaultValue={form.rfc}
+                      />
                       <br />
                     </Col>
                   </Row>
@@ -867,7 +1078,6 @@ function Clientes() {
         </ModalFooter>
       </Modal>
 
-
       <Modal isOpen={modalDetalle} size="lg">
         <ModalHeader>Detalles del cliente</ModalHeader>
         <ModalBody>
@@ -898,18 +1108,30 @@ function Clientes() {
                   <TabPane tabId="1">
                     <Row>
                       <Col sm="6">
-                        <p><strong>Nombre:</strong> {clienteSeleccionado.nombre}</p>
-                        <p><strong>Domicilio:</strong> {clienteSeleccionado.domicilio}</p>
-                        <p><strong>Fecha de nacimiento:</strong> {clienteSeleccionado.fecha_nac}</p>
-                        <p><strong>Ciudad:</strong> {clienteSeleccionado.ciudad}</p>
-
+                        <p>
+                          <strong>Nombre:</strong> {clienteSeleccionado.nombre}
+                        </p>
+                        <p>
+                          <strong>Domicilio:</strong> {clienteSeleccionado.domicilio}
+                        </p>
+                        <p>
+                          <strong>Fecha de nacimiento:</strong> {clienteSeleccionado.fecha_nac}
+                        </p>
+                        <p>
+                          <strong>Ciudad:</strong> {clienteSeleccionado.ciudad}
+                        </p>
                       </Col>
 
                       <Col sm="6">
-                        <p><strong>Estado:</strong> {clienteSeleccionado.estado}</p>
-                        <p><strong>Colonia:</strong> {clienteSeleccionado.colonia}</p>
-                        <p><strong>Código Postal:</strong> {clienteSeleccionado.cp}</p>
-
+                        <p>
+                          <strong>Estado:</strong> {clienteSeleccionado.estado}
+                        </p>
+                        <p>
+                          <strong>Colonia:</strong> {clienteSeleccionado.colonia}
+                        </p>
+                        <p>
+                          <strong>Código Postal:</strong> {clienteSeleccionado.cp}
+                        </p>
                       </Col>
                     </Row>
                     <br />
@@ -918,37 +1140,48 @@ function Clientes() {
                   <TabPane tabId="2">
                     <Row>
                       <Col sm="6">
-                        <p><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</p>
-                        <p><strong>Email:</strong> {clienteSeleccionado.email}</p>
-                        <p><strong>Correo de facturación:</strong> {clienteSeleccionado.correo_factura}</p>
+                        <p>
+                          <strong>Teléfono:</strong> {clienteSeleccionado.telefono}
+                        </p>
+                        <p>
+                          <strong>Email:</strong> {clienteSeleccionado.email}
+                        </p>
+                        <p>
+                          <strong>Correo de facturación:</strong> {clienteSeleccionado.correo_factura}
+                        </p>
                       </Col>
 
                       <Col sm="6">
-                        <p><strong>Nombre fiscal:</strong> {clienteSeleccionado.nombre_fiscal}</p>
-                        <p><strong>Regimen fiscal:</strong> {clienteSeleccionado.regimenFiscal}</p>
+                        <p>
+                          <strong>Nombre fiscal:</strong> {clienteSeleccionado.nombre_fiscal}
+                        </p>
+                        <p>
+                          <strong>Regimen fiscal:</strong> {clienteSeleccionado.regimenFiscal}
+                        </p>
                       </Col>
                     </Row>
                   </TabPane>
 
                   <TabPane tabId="3">
                     <Row>
-                      <Col sm="6">
-
-                      </Col>
-                      <Col sm="6">
-
-                      </Col>
-
+                      <MaterialReactTable
+                        columns={cHistorial}
+                        data={datah}
+                        initialState={{
+                          pagination: {
+                            pageSize: 5,
+                            pageIndex: 0,
+                          },
+                          density: "compact",
+                        }}
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      />
                     </Row>
                   </TabPane>
-
                 </TabContent>
               </Card>
             </Container>
-
           )}
-
-
 
           {/* 
 
@@ -972,12 +1205,6 @@ function Clientes() {
         </ModalFooter>
       </Modal>
 
-
-
-
-
-
-
       {/* Modal for showing client details */}
       {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
         <ModalHeader toggle={toggleModalDetalle}>Detalles del Cliente</ModalHeader>
@@ -997,21 +1224,6 @@ function Clientes() {
           <Button color="primary" onClick={toggleModalDetalle}>Cerrar</Button>
         </ModalFooter>
       </Modal> */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       {/* modal para Detalles */}
       {/* <Modal isOpen={modalDetalle} fullscreen={true}>
