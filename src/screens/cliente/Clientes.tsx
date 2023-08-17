@@ -152,7 +152,7 @@ function Clientes() {
       }
     });
 
-    setCamposFaltantes1(camposVacios);
+    setCamposFaltantes(camposVacios);
 
     if (camposVacios.length > 0) {
       Swal.fire({
@@ -292,6 +292,7 @@ function Clientes() {
     setForm(dato);
     setModalActualizar(true);
   };
+
 
   // const mostrarModalDetalle = (dato: Cliente) => {
   //   setForm(dato);
