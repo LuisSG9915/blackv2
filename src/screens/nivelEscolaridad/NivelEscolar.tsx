@@ -71,7 +71,7 @@ function NivelEscolar() {
 
   //AQUI COMIENZA MÉTODO AGREGAR TIPO BAJA
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_ESCOLARIDAD_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -110,7 +110,7 @@ function NivelEscolar() {
   // };
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_ESCOLARIDAD_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -159,7 +159,7 @@ function NivelEscolar() {
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
   const eliminar = async (dato: NivelEscolaridad) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_ESCOLRIDAD_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }

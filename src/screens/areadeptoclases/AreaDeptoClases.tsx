@@ -273,7 +273,7 @@ function AreaDeptoClases() {
   //AQUI COMIENZA MÉTODO AGREGAR DEPTO
   const [estado2, setEstado2] = useState("");
   const insertar2 = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_DEPTOS_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -306,7 +306,7 @@ function AreaDeptoClases() {
 
   //AQUI COMIENZA MÉTODO AGREGAR CLASE
   const insertar3 = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_CLASES_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -369,7 +369,7 @@ function AreaDeptoClases() {
   };
 
   const editDepto = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_DEPTOS_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -395,7 +395,7 @@ function AreaDeptoClases() {
 
 
   const editClase = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_CLASES_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -466,7 +466,7 @@ function AreaDeptoClases() {
   // };
 
   const eliminar2 = async (dato: Clase) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_CLASES_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -500,7 +500,7 @@ function AreaDeptoClases() {
 
   // ELIMINAR DEPARTAMENTO
   const eliminar3 = async (dato: Departamento) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_DEPTOS_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
