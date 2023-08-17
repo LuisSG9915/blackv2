@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete, AiFillEye } from "react-icons/ai";
 import {
   Row,
@@ -37,6 +37,7 @@ import useModalHook from "../../hooks/useModalHook";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+import MaterialReactTable from "material-react-table";
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
   const {
@@ -106,8 +107,7 @@ function Clientes() {
       setActiveTab1(tab);
     }
   };
-  //aaaa
-
+  //AAAa
   const [visible, setVisible] = useState(false);
 
   const [error, setError] = useState(false);
@@ -347,6 +347,7 @@ function Clientes() {
   };
 
   const mostrarModalDetalle = (dato: Cliente) => {
+    historial(dato.id_cliente);
     setClienteSeleccionado(dato);
     setModalDetalle(true);
   };
@@ -475,6 +476,166 @@ function Clientes() {
   const handleReload = () => {
     window.location.reload();
   };
+
+  const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
+  const historial = (id) => {
+    jezaApi.get(`/Historial?cliente=${id}`).then((response) => {
+      setData1(response.data);
+      // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
+  };
+
+  const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
+    () => [
+      // {
+      //   header: "Acciones",
+      //   Cell: ({ row }) => (
+      //     <Button
+      //       size="sm"
+      //       onClick={() => loadHistorialDetalle(row.original.sucursal, row.original.NumVenta, row.original.idProducto)}
+      //     >
+      //       Detalle
+      //     </Button>
+      //   ),
+      //   muiTableBodyCellProps: {
+      //     align: "center",
+      //   },
+      //   muiTableHeadCellProps: {
+      //     align: "center",
+      //   },
+      // },
+      {
+        accessorKey: "NumVenta",
+        header: "NumVenta",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "NombreSuc",
+        header: "Sucursal",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Fecha",
+        header: "Fecha",
+        flex: 1,
+        size: 1,
+        Cell: ({ cell }) => {
+          const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
+          const dia = fecha.getDate().toString().padStart(2, "0"); // Obtener el día con dos dígitos
+          const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // Obtener el mes con dos dígitos (los meses en JavaScript son base 0)
+          const anio = fecha.getFullYear().toString(); // Obtener el año con cuatro dígitos
+
+          return <span>{`${dia}/${mes}/${anio}`}</span>;
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Clave",
+        header: "Clave",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Producto_Servicio",
+        header: "Producto/Servicio",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Cantidad",
+        header: "Cantidad",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Precio",
+        header: "Precio",
+        flex: 1,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
+        muiTableBodyCellProps: {
+          align: "right",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        size: 1,
+      },
+      {
+        accessorKey: "Estilista",
+        header: "Estilista",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Descuento",
+        header: "Descuento",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Forma_pago",
+        header: "Forma de pago",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -1003,8 +1164,18 @@ function Clientes() {
 
                   <TabPane tabId="3">
                     <Row>
-                      <Col sm="6"></Col>
-                      <Col sm="6"></Col>
+                      <MaterialReactTable
+                        columns={cHistorial}
+                        data={datah}
+                        initialState={{
+                          pagination: {
+                            pageSize: 5,
+                            pageIndex: 0,
+                          },
+                          density: "compact",
+                        }}
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      />
                     </Row>
                   </TabPane>
                 </TabContent>
