@@ -62,7 +62,15 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Acción"];
+  const TableDataHeaderComprasSeleccion = [
+    "Clave compra",
+    "Proveedor",
+    "Items",
+    "Importe",
+    "Estado",
+    "Fecha",
+    "Acción",
+  ];
 
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
   const toggleCrearModal = () => {
@@ -97,7 +105,10 @@ function Compras() {
   const filtroProducto = (datoMedico: string) => {
     var resultado = dataProductos.filter((elemento: Producto) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
-      if ((datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.descripcion.length > 2) {
+      if (
+        (datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) &&
+        elemento.descripcion.length > 2
+      ) {
         return elemento;
       }
     });
@@ -208,7 +219,12 @@ function Compras() {
 
   const postCompra = () => {
     // Validar los datos antes de hacer la solicitud
-    if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
+    if (
+      !dataCompras.idProveedor ||
+      !dataCompras.clave_prod ||
+      dataCompras.cantidadFactura <= 0 ||
+      dataCompras.costoCompra <= 0
+    ) {
       // alert("Por favor, complete los campos obligatorios.");
       Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
       return;
@@ -217,7 +233,7 @@ function Compras() {
       .post("/Compra", null, {
         params: {
           id_compra: 0,
-          fecha: fechaHoy,
+          fecha: new Date(),
           cia: 26,
           idSucursal: dataUsuarios2[0]?.sucursal,
           idProveedor: dataCompras.idProveedor,
@@ -261,6 +277,8 @@ function Compras() {
       d_producto: "",
       d_unidadMedida: "",
       d_unidadTraspaso: 0,
+      cantidadFactura: 0,
+      cantidadMalEstado: 0,
     });
   };
 
@@ -401,8 +419,13 @@ function Compras() {
   const [productoSelected, setProductoSelected] = useState<Number[]>([]);
 
   useEffect(() => {
-    setSetsumaTotalCompras(dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16);
-    const ultimoFolio = dataComprasGeneral && dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento : "";
+    setSetsumaTotalCompras(
+      dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16
+    );
+    const ultimoFolio =
+      dataComprasGeneral && dataComprasGeneral.length > 0
+        ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento
+        : "";
     const ultiFecha = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fecha : "";
     const ultiCompra = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].id_compra : 0;
     if (ultiCompra > 0) {
@@ -797,7 +820,9 @@ function Compras() {
                               })}
                           </td>
                           <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
+                            {dataComprasGeneral
+                              .reduce((total, dato) => total + dato.costoCompra, 0)
+                              .toLocaleString("en-US", options)}
                           </td>
                           <td style={{ fontSize: "13px" }} align="right">
                             {dataComprasGeneral
@@ -905,7 +930,7 @@ function Compras() {
               />
             </Col> */}
             <Col md={4} xs={4}>
-              <Label>Unidad traspaso:</Label>
+              <Label>Unidad paquete:</Label>
               <CurrencyInput
                 className="custom-currency-input"
                 name="costoUnitario"
@@ -972,6 +997,7 @@ function Compras() {
                 onValueChange={(value) => handleValueChange("cantidadFactura", value)}
               />
             </Col>
+
             <Col>
               <Label>Cantidad en mal estado:</Label>
               <CurrencyInput
@@ -1168,11 +1194,11 @@ function Compras() {
               />
             </Col>
             <Col md={4} xs={4}>
-              <Label>Unidad traspaso:</Label>
+              <Label>Unidad paquete:</Label>
               <CurrencyInput
                 className="custom-currency-input"
                 name="costoUnitario"
-                value={dataCompras.d_unidadTraspaso}
+                value={dataCompras.unidad_paq}
                 disabled
                 onValueChange={(value) => handleValueChange("costoUnitario", value)}
               />
@@ -1184,7 +1210,7 @@ function Compras() {
                 type="text"
                 className="custom-currency-input"
                 name="d_unidadMedida"
-                value={dataCompras.d_unidadMedida}
+                value={dataCompras.descUnidadMedida}
                 disabled
               />
             </Col>
