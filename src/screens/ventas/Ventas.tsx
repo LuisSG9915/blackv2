@@ -2775,7 +2775,7 @@ const Ventas = () => {
                 <p>Servicio: {item.Servicio}</p>
                 <p>Insumo: {item.Insumo}</p>
                 <p>Cantidad: {item.Cant}</p>
-                {/* Agregar más campos aquí si es necesario */}
+                <p>test</p>
                 <hr />
               </div>
             ))}
