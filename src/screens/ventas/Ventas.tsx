@@ -51,7 +51,14 @@ import { FormaPago } from "../../models/FormaPago";
 import TimeKeeper from "react-timekeeper";
 import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
-import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
+import {
+  MdOutlineReceiptLong,
+  MdAttachMoney,
+  MdAccessTime,
+  MdDataSaverOn,
+  MdPendingActions,
+  MdEmojiPeople,
+} from "react-icons/md";
 import { format } from "date-fns";
 
 interface TicketPrintProps {
@@ -88,7 +95,9 @@ const Ventas = () => {
     },
   ]);
   const [fechaVieja, setFechaVieja] = useState("");
-  const [arregloTemporal, setArregloTemporal] = useState<{ importe: number; formaPago: number; referencia: string }[]>([]);
+  const [arregloTemporal, setArregloTemporal] = useState<{ importe: number; formaPago: number; referencia: string }[]>(
+    []
+  );
   const [dataArregloTemporal, setDataArregloTemporal] = useState({
     formaPago: 0,
     importe: 0,
@@ -105,7 +114,9 @@ const Ventas = () => {
 
   const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
   useEffect(() => {
-    const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
+    const formasPagosFiltradas = dataFormasPagos.filter(
+      (formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal
+    );
     setFormasPagosFiltradas(formasPagosFiltradas);
   }, [dataFormasPagos]);
   const [form, setForm] = useState<Usuario[]>([]);
@@ -696,7 +707,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
 
@@ -760,7 +771,10 @@ const Ventas = () => {
       );
   };
 
-  const { dataVentas, fetchVentas } = useVentasV2({ idCliente: dataTemporal.Cve_cliente, sucursal: dataUsuarios2[0]?.sucursal });
+  const { dataVentas, fetchVentas } = useVentasV2({
+    idCliente: dataTemporal.Cve_cliente,
+    sucursal: dataUsuarios2[0]?.sucursal,
+  });
 
   const [fechaHoy, setFechaHoy] = useState("");
   const [fechaHoyMedioPago, setFechaHoyMedioPago] = useState("");
@@ -795,7 +809,8 @@ const Ventas = () => {
     let totalPorProducto = 0;
 
     dataVentas.forEach((producto) => {
-      totalPorProducto += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
+      totalPorProducto +=
+        producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
     });
 
     setTotal(Number(totalPorProducto));
@@ -832,7 +847,11 @@ const Ventas = () => {
       if (
         Observacion === "SERV" &&
         !listaEstilistas.some(
-          (item) => item.d_estilista === d_estilista && item.User === User && item.No_venta === No_venta && item.Cve_cliente === Cve_cliente
+          (item) =>
+            item.d_estilista === d_estilista &&
+            item.User === User &&
+            item.No_venta === No_venta &&
+            item.Cve_cliente === Cve_cliente
         )
       ) {
         listaEstilistas.push({ d_estilista, User, No_venta, Cve_cliente });
@@ -872,57 +891,59 @@ const Ventas = () => {
   }, [dataVentas]);
 
   const endVenta = () => {
-    jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-      medioPago(Number(response.data.mensaje2));
-      jezaApi
-        .get(
-          `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
-        )
-        .then((response) => {
-          setDatoTicket(response.data);
-          setModalTicket(true);
+    jezaApi
+      .put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`)
+      .then((response) => {
+        medioPago(Number(response.data.mensaje2));
+        jezaApi
+          .get(
+            `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
+          )
+          .then((response) => {
+            setDatoTicket(response.data);
+            setModalTicket(true);
+          });
+        Swal.fire({
+          icon: "success",
+          text: "Venta finalizada con éxito",
+          confirmButtonColor: "#3085d6",
         });
-      Swal.fire({
-        icon: "success",
-        text: "Venta finalizada con éxito",
-        confirmButtonColor: "#3085d6",
+        setDataTemporal({
+          Caja: 1,
+          cancelada: false,
+          Cant_producto: 0,
+          Cia: 0,
+          Clave_Descuento: 0,
+          Clave_prod: 0,
+          Corte: 0,
+          Corte_parcial: 0,
+          Costo: 0,
+          Credito: false,
+          Cve_cliente: 0,
+          Descuento: 0,
+          Fecha: "20230724",
+          folio_estilista: 0,
+          hora: 0,
+          idEstilista: 0,
+          ieps: 0,
+          No_venta: 0,
+          Observacion: "",
+          Precio: 0,
+          Precio_base: 0,
+          Sucursal: 0,
+          Tasa_iva: 0,
+          terminado: false,
+          tiempo: 0,
+          Usuario: 0,
+          validadoServicio: false,
+          cliente: "",
+          estilista: "",
+          id: 0,
+          producto: "",
+          User: 0,
+        });
+        // anticipoPost(Number(response.data.mensaje2));
       });
-      setDataTemporal({
-        Caja: 1,
-        cancelada: false,
-        Cant_producto: 0,
-        Cia: 0,
-        Clave_Descuento: 0,
-        Clave_prod: 0,
-        Corte: 0,
-        Corte_parcial: 0,
-        Costo: 0,
-        Credito: false,
-        Cve_cliente: 0,
-        Descuento: 0,
-        Fecha: "20230724",
-        folio_estilista: 0,
-        hora: 0,
-        idEstilista: 0,
-        ieps: 0,
-        No_venta: 0,
-        Observacion: "",
-        Precio: 0,
-        Precio_base: 0,
-        Sucursal: 0,
-        Tasa_iva: 0,
-        terminado: false,
-        tiempo: 0,
-        Usuario: 0,
-        validadoServicio: false,
-        cliente: "",
-        estilista: "",
-        id: 0,
-        producto: "",
-        User: 0,
-      });
-      // anticipoPost(Number(response.data.mensaje2));
-    });
   };
 
   const { dataAnticipos } = useAnticipoVentas({
@@ -1105,7 +1126,9 @@ const Ventas = () => {
     return cia ? cia.descripcion : "Sin forma de pago";
   };
   const getIdPago = (idTipoPago: number) => {
-    const cia = dataFormasPagos.find((cia: FormaPago) => cia.tipo === idTipoPago && cia.sucursal === dataUsuarios2[0]?.sucursal);
+    const cia = dataFormasPagos.find(
+      (cia: FormaPago) => cia.tipo === idTipoPago && cia.sucursal === dataUsuarios2[0]?.sucursal
+    );
     return cia ? cia.id : 1;
   };
 
@@ -1135,12 +1158,21 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
+        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${
+          dataVentaEdit.Observacion
+        }&Descuento=${dataVentaEdit.Descuento}&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${
+          dataVentaEdit.idEstilista
+        }&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo}&Precio_base=${
+          dataVentaEdit.Precio_base
+        }&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${
+          dataUsuarios2[0]?.id
+        }`
       )
       .then(() => {
         Swal.fire({
@@ -1209,13 +1241,14 @@ const Ventas = () => {
 
   const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
 
-  const loadHistorialDetalle = (numVenta: number) => {
+  const loadHistorialDetalle = (sucursal: number, numVenta: number, idProducto: number) => {
     jezaApi
-      .get(`/HistorialDetalle?suc=21&cliente=${dataTemporal.Cve_cliente}&venta=${numVenta}&serv=7702`)
+      .get(`/HistorialDetalle?suc=${sucursal}&cliente=${dataTemporal.Cve_cliente}&venta=${numVenta}&serv=${idProducto}`)
       .then((response) => {
         // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
         console.log(response.data);
         // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
         setHistorialDetalle(response.data);
       })
       .catch((error) => {
@@ -1223,8 +1256,37 @@ const Ventas = () => {
       });
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedId(null);
+    setIsModalOpen(!isModalOpen);
+  };
+
   const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
     () => [
+      {
+        header: "Acciones",
+        Cell: ({ row }) => (
+          <Button
+            size="sm"
+            onClick={() => loadHistorialDetalle(row.original.sucursal, row.original.NumVenta, row.original.idProducto)}
+          >
+            Detalle
+          </Button>
+        ),
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
       {
         accessorKey: "NumVenta",
         header: "NumVenta",
@@ -1308,7 +1370,11 @@ const Ventas = () => {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -1380,10 +1446,10 @@ const Ventas = () => {
   };
   const [flagEstilistas, setFlagEstilistas] = useState(false);
 
-  const handleInputChange = (event) => {
-    const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
-    setInputValue(cleanedValue);
-  };
+  // const handleInputChange = (event) => {
+  //   const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
+  //   setInputValue(cleanedValue);
+  // };
   return (
     <>
       <Row>
@@ -1398,12 +1464,22 @@ const Ventas = () => {
             <Row className="align-items-end">
               <Col md={"7"}>
                 <InputGroup>
-                  <Input disabled value={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"Cve_cliente"} />
+                  <Input
+                    disabled
+                    value={dataTemporal.cliente ? dataTemporal.cliente : ""}
+                    onChange={cambios}
+                    name={"Cve_cliente"}
+                  />
                   <Button onClick={() => setModalCliente(true)}>
                     <MdEmojiPeople size={23} />
                     Elegir
                   </Button>
-                  <Button disabled={!dataTemporal.cliente} color="primary" size="sm" onClick={() => historial(dataTemporal.id)}>
+                  <Button
+                    disabled={!dataTemporal.cliente}
+                    color="primary"
+                    size="sm"
+                    onClick={() => historial(dataTemporal.id)}
+                  >
                     Historial
                     <MdPendingActions size={23} />
                   </Button>
@@ -1482,7 +1558,11 @@ const Ventas = () => {
                     <td>
                       {dato.Descuento === 0
                         ? "$" + (dato.Precio * dato.Cant_producto).toFixed(2)
-                        : "$" + (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toFixed(2)}
+                        : "$" +
+                          (
+                            dato.Precio * dato.Cant_producto -
+                            dato.Precio * dato.Cant_producto * dato.Descuento
+                          ).toFixed(2)}
                     </td>
                     {/* <td>{obtenerHoraFormateada(dato.hora)}</td> */}
                     {/* <td>{dato.tiempo + " min"}</td> */}
@@ -1506,7 +1586,9 @@ const Ventas = () => {
                           const hours = dateObject.getHours();
                           const minutes = dateObject.getMinutes();
 
-                          const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+                          const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+                            .toString()
+                            .padStart(2, "0")}`;
                           setDataVentaEdit({
                             ...dataVentaEdit,
                             id: dato.id,
@@ -1527,7 +1609,9 @@ const Ventas = () => {
                             d_estilistaAuxilliar: dato.nombreEstilistaAux,
                             tiempo: dato.tiempo,
                           });
-                          const descuentito = dataDescuentos.find((objeto) => objeto.id === Number(dato.Clave_Descuento));
+                          const descuentito = dataDescuentos.find(
+                            (objeto) => objeto.id === Number(dato.Clave_Descuento)
+                          );
 
                           setDescuento({
                             min: descuentito?.min_descto ? Number(descuentito?.min_descto) : 0,
@@ -1649,10 +1733,23 @@ const Ventas = () => {
               <Label>Estilista auxiliar:</Label>
               <Row>
                 <Col xs={9}>
-                  <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
+                  <Input
+                    disabled
+                    defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""}
+                  />
+                </Col>
+                <Col>
+                  <Input
+                    disabled
+                    defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""}
+                  />
+                  {/* <Label> {dataTemporal.idestilistaAux} </Label> */}
                 </Col>
                 <Col xs={1}>
-                  <Button color="danger" onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                  <Button
+                    color="danger"
+                    onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}
+                  >
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
@@ -1673,7 +1770,13 @@ const Ventas = () => {
           <Row>
             <Col sm={6} md={4}>
               <Label>Cantidad en existencia: </Label>
-              <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
+              <Input
+                disabled
+                placeholder="Cantidad en existencia"
+                onChange={cambios}
+                name="d_existencia"
+                defaultValue={dataTemporal.d_existencia}
+              />
               <br />
             </Col>
             <Col sm={6} md={4}>
@@ -1689,13 +1792,24 @@ const Ventas = () => {
             </Col>
             <Col md={4}>
               <Label>Cantidad a vender:</Label>
-              <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} />
+              <Input
+                placeholder="Cantidad"
+                onChange={cambios}
+                name="Cant_producto"
+                value={dataTemporal.Cant_producto}
+              />
               <br />
             </Col>
           </Row>
 
           <Label>Tipo de descuento:</Label>
-          <Input type="select" name="Clave_Descuento" id="exampleSelect" value={dataTemporal.Clave_Descuento} onChange={cambios}>
+          <Input
+            type="select"
+            name="Clave_Descuento"
+            id="exampleSelect"
+            value={dataTemporal.Clave_Descuento}
+            onChange={cambios}
+          >
             <option value={0}>-Selecciona el tipo de descuento-</option>
             {dataDescuentos.map((descuento) => (
               <option value={descuento.id}>{descuento.descripcion}</option>
@@ -1751,7 +1865,10 @@ const Ventas = () => {
                   icon: "info",
                   text: "No ha seleccionado estilista",
                 });
-              } else if (dataTemporal?.d_existencia < dataTemporal.Cant_producto && dataTemporal.Observacion !== "SERV") {
+              } else if (
+                dataTemporal?.d_existencia < dataTemporal.Cant_producto &&
+                dataTemporal.Observacion !== "SERV"
+              ) {
                 Swal.fire({
                   icon: "info",
                   text: "No hay existencias ",
@@ -1860,7 +1977,12 @@ const Ventas = () => {
         nombreActualizar="Editar venta / servicio"
       >
         <Label>Cliente</Label>
-        <Input disabled defaultValue={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"cve_cliente"} />
+        <Input
+          disabled
+          defaultValue={dataTemporal.cliente ? dataTemporal.cliente : ""}
+          onChange={cambios}
+          name={"cve_cliente"}
+        />
         <Label>Producto/servicio</Label>
         <Row>
           <Col>
@@ -1882,10 +2004,21 @@ const Ventas = () => {
         </Row>
         <br />
         <Label>Cantidad</Label>
-        <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" defaultValue={dataTemporal.Cant_producto} />
+        <Input
+          placeholder="Cantidad"
+          onChange={cambios}
+          name="Cant_producto"
+          defaultValue={dataTemporal.Cant_producto}
+        />
         <br />
         <Label>Cantidad en existencia </Label>
-        <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
+        <Input
+          disabled
+          placeholder="Cantidad en existencia"
+          onChange={cambios}
+          name="d_existencia"
+          defaultValue={dataTemporal.d_existencia}
+        />
         <br />
         <Label style={{ marginRight: 10 }}>Hora de servicio</Label>
         {/* <select id="hora" name="hora" onChange={cambios} value={dataTemporal.hora}>
@@ -1903,7 +2036,10 @@ const Ventas = () => {
               <Label>TOTAL DE ESTA VENTA: </Label>
             </Col>
             <Col md="5">
-              <Input disabled value={"$" + total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}></Input>
+              <Input
+                disabled
+                value={"$" + total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ></Input>
             </Col>
           </Row>
           <hr className="my-4" />
@@ -1926,7 +2062,13 @@ const Ventas = () => {
                   <Col xs={""}>
                     <Label>Importe</Label>
                     <Input
-                      value={"$" + Number(pago.importe).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      value={
+                        "$" +
+                        Number(pago.importe).toLocaleString("es-MX", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      }
                       disabled
                     />
                   </Col>
@@ -1980,7 +2122,10 @@ const Ventas = () => {
               <Input
                 disabled
                 name="totalPago"
-                value={"$ " + formPago.totalPago.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                value={
+                  "$ " +
+                  formPago.totalPago.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                }
               ></Input>
             </Col>
           </Row>
@@ -1993,7 +2138,10 @@ const Ventas = () => {
               {/* <Input name="cambioCliente" value={formPago.cambioCliente > 0 ? formPago.cambioCliente : 0} disabled></Input> */}
               <Input
                 name="cambioCliente"
-                value={"$ " + formPago.cambioCliente.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                value={
+                  "$ " +
+                  formPago.cambioCliente.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                }
                 disabled
               ></Input>
             </Col>
@@ -2314,7 +2462,12 @@ const Ventas = () => {
         <ModalHeader>Seleccione el tipo de venta</ModalHeader>
         <ModalBody>
           <Label> Forma de pago </Label>
-          <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
+          <Input
+            type="select"
+            onChange={handleFormaPagoTemporal}
+            value={dataArregloTemporal.formaPago}
+            name={"formaPago"}
+          >
             <option value={0}>-Seleccione la forma de pago-</option>
             {formasPagosFiltradas.map((formaPago, index) => (
               <option key={index} value={formaPago.tipo}>
@@ -2324,15 +2477,24 @@ const Ventas = () => {
           </Input>
           <br />
           <Label> Importe </Label>
-          <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
+          <Input
+            type="number"
+            onChange={handleFormaPagoTemporal}
+            value={dataArregloTemporal.importe}
+            name={"importe"}
+          ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ? (
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia </Label>
-              <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
+              <Input
+                onChange={handleFormaPagoTemporal}
+                value={dataArregloTemporal.referencia}
+                name={"referencia"}
+              ></Input>
             </>
           ) : null}
 
@@ -2433,11 +2595,17 @@ const Ventas = () => {
             <>
               <Label>Estilista auxilliar:</Label>
               <Row>
-                <Col xs={9}>
-                  <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
+                <Col>
+                  <Input
+                    disabled
+                    value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""}
+                  />
                 </Col>
                 <Col xs={1}>
-                  <Button color="danger" onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                  <Button
+                    color="danger"
+                    onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}
+                  >
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
@@ -2458,7 +2626,13 @@ const Ventas = () => {
           <Row>
             <Col>
               <Label>Cantidad en existencia: </Label>
-              <Input disabled placeholder="Cantidad en existencia" onChange={cambiosEdit} name="d_existencia" value={dataVentaEdit.d_existencia} />
+              <Input
+                disabled
+                placeholder="Cantidad en existencia"
+                onChange={cambiosEdit}
+                name="d_existencia"
+                value={dataVentaEdit.d_existencia}
+              />
             </Col>
             <Col>
               <Label>Precio:</Label>
@@ -2473,7 +2647,12 @@ const Ventas = () => {
 
             <Col>
               <Label>Cantidad a vender:</Label>
-              <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
+              <Input
+                placeholder="Cantidad"
+                onChange={cambiosEdit}
+                name="Cant_producto"
+                value={dataVentaEdit.Cant_producto}
+              />
             </Col>
           </Row>
           <br />
@@ -2492,7 +2671,13 @@ const Ventas = () => {
           </Label>
           <Row>
             <Col md={"12"}>
-              <Input name="Descuento" value={dataVentaEdit.Descuento} onChange={cambiosEdit} placeholder="0.0" type="number"></Input>
+              <Input
+                name="Descuento"
+                value={dataVentaEdit.Descuento}
+                onChange={cambiosEdit}
+                placeholder="0.0"
+                type="number"
+              ></Input>
             </Col>
           </Row>
           <br />
@@ -2567,7 +2752,7 @@ const Ventas = () => {
               },
               density: "compact",
             }}
-          // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+            // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
           />
         </ModalBody>
         <ModalFooter>
@@ -2575,6 +2760,27 @@ const Ventas = () => {
             Cerrar
           </Button>
         </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={isModalOpen} toggle={setIsModalOpen}>
+        <ModalHeader toggle={handleCloseModal}>Historial Detalle: </ModalHeader>
+        <ModalBody>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            {historialDetalle.map((item, index) => (
+              <div key={index}>
+                <p>Fecha: {item.Fecha}</p>
+                <p>Número de Venta: {item.NumVenta}</p>
+                <p>Sucursal: {item.Sucursal}</p>
+                <p>Estilista: {item.Estilista}</p>
+                <p>Servicio: {item.Servicio}</p>
+                <p>Insumo: {item.Insumo}</p>
+                <p>Cantidad: {item.Cant}</p>
+                <p>test</p>
+                <hr />
+              </div>
+            ))}
+          </div>
+        </ModalBody>
       </Modal>
     </>
   );
