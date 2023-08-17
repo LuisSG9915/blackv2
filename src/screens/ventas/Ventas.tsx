@@ -1216,20 +1216,33 @@ const Ventas = () => {
   };
 
   const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
+  const [flagDetalles, setFlagDetalles] = useState(false);
+  const [paramsDetalles, setParamsDetalles] = useState({
+    sucursal: 0,
+    numVenta: 0,
+    idProducto: 0,
+  });
+  useEffect(() => {
+    loadHistorialDetalle();
+  }, [paramsDetalles.sucursal]);
 
-  const loadHistorialDetalle = (sucursal: number, numVenta: number, idProducto: number) => {
-    jezaApi
-      .get(`/HistorialDetalle?suc=${sucursal}&cliente=${dataTemporal.Cve_cliente}&venta=${numVenta}&serv=${idProducto}`)
-      .then((response) => {
-        // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
-        console.log(response.data);
-        // Asigna los datos de respuesta a la variable local historialDetalle
-        handleOpenModal();
-        setHistorialDetalle(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const loadHistorialDetalle = async () => {
+    if (paramsDetalles.numVenta > 0) {
+      await jezaApi
+        .get(
+          `/HistorialDetalle?suc=${paramsDetalles.sucursal}&cliente=${dataTemporal.Cve_cliente}&venta=${paramsDetalles.numVenta}&serv=${paramsDetalles.idProducto}`
+        )
+        .then((response) => {
+          // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
+          console.log(response.data);
+          // Asigna los datos de respuesta a la variable local historialDetalle
+          handleOpenModal();
+          setHistorialDetalle(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1243,13 +1256,21 @@ const Ventas = () => {
     setSelectedId(null);
     setIsModalOpen(!isModalOpen);
   };
+  // useEffect(() => {
+
+  // }, [])
 
   const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
     () => [
       {
         header: "Acciones",
         Cell: ({ row }) => (
-          <Button size="sm" onClick={() => loadHistorialDetalle(row.original.sucursal, row.original.NumVenta, row.original.idProducto)}>
+          <Button
+            size="sm"
+            onClick={() => {
+              setParamsDetalles({ idProducto: row.original.idProducto, numVenta: row.original.NumVenta, sucursal: row.original.sucursal });
+            }}
+          >
             Detalle
           </Button>
         ),
@@ -1388,37 +1409,37 @@ const Ventas = () => {
     ],
     []
   );
-  const renderDetailPanel = ({ row }: { row: any }) => {
-    // Cargar los detalles del historial al expandir un row
-    useEffect(() => {
-      loadHistorialDetalle(row.original.NumVenta);
-    }, [row.original.NumVenta]); // Se ejecutará cada vez que cambie la NumVenta en el row
+  // const renderDetailPanel = ({ row }: { row: any }) => {
+  //   // Cargar los detalles del historial al expandir un row
+  //   useEffect(() => {
+  //     loadHistorialDetalle(row.original.NumVenta);
+  //   }, [row.original.NumVenta]); // Se ejecutará cada vez que cambie la NumVenta en el row
 
-    return (
-      <div style={{ display: "grid" }}>
-        {/* Renderizar los detalles del historial */}
-        {historialDetalle.length > 0 && (
-          <div>
-            <span>Detalles del historial:</span>
-            <span>Fecha: {historialDetalle[0].Fecha}</span>
-            <span>NumVenta: {historialDetalle[0].NumVenta}</span>
-            <span>Sucursal: {historialDetalle[0].Sucursal}</span>
-            <span>Estilista: {historialDetalle[0].Estilista}</span>
-            <span>Servicio: {historialDetalle[0].Servicio}</span>
-            <span>Insumo: {historialDetalle[0].Insumo}</span>
-            <span>Cantidad: {historialDetalle[0].Cant}</span>
-            {/* ... */}
-          </div>
-        )}
-      </div>
-    );
-  };
+  //   return (
+  //     <div style={{ display: "grid" }}>
+  //       {/* Renderizar los detalles del historial */}
+  //       {historialDetalle.length > 0 && (
+  //         <div>
+  //           <span>Detalles del historial:</span>
+  //           <span>Fecha: {historialDetalle[0].Fecha}</span>
+  //           <span>NumVenta: {historialDetalle[0].NumVenta}</span>
+  //           <span>Sucursal: {historialDetalle[0].Sucursal}</span>
+  //           <span>Estilista: {historialDetalle[0].Estilista}</span>
+  //           <span>Servicio: {historialDetalle[0].Servicio}</span>
+  //           <span>Insumo: {historialDetalle[0].Insumo}</span>
+  //           <span>Cantidad: {historialDetalle[0].Cant}</span>
+  //           {/* ... */}
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
   const [flagEstilistas, setFlagEstilistas] = useState(false);
 
-  const handleInputChange = (event) => {
-    const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
-    setInputValue(cleanedValue);
-  };
+  // const handleInputChange = (event) => {
+  //   const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
+  //   setInputValue(cleanedValue);
+  // };
   return (
     <>
       <Row>
@@ -2596,7 +2617,7 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalOpen} toggle={toggleModalHistorial} size="lg">
-        <ModalHeader toggle={toggleModalHistorial}>Historial</ModalHeader>
+        <ModalHeader toggle={toggleModalHistorial}>Historial </ModalHeader>
         <ModalBody>
           <MaterialReactTable
             columns={cHistorial}
