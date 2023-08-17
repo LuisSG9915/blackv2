@@ -287,12 +287,131 @@ function Productos() {
     d_Producto: "",
   });
 
-  const create = () => {
-    jezaApi.post(`ProductoSustituto?id_Producto=${form.id}&clave_real=${ProductoSustitutoForm.clave_real}`).then(() => {
-      alert("registro cargado"); //manda alerta
-      getinfo(); // refresca tabla
-    });
+  // const create = () => {
+  //   jezaApi.post(`ProductoSustituto?id_Producto=${form.id}&clave_real=${ProductoSustitutoForm.clave_real}`).then(() => {
+  //     alert("registro cargado"); //manda alerta
+  //     getinfo(); // refresca tabla
+  //   });
+  // };
+
+  // const create = async () => {
+  //   const permiso = await filtroSeguridad("CAT_EMPRE_ADD");
+  //   if (permiso === false) {
+  //     return;
+  //   }
+
+  //   if (validarCampos() === true) {
+  //     if (form.clave_prod === ProductoSustitutoForm.clave_real) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         text: "La clave real no puede ser igual a la clave del producto.",
+  //         confirmButtonColor: "#d33",
+  //       });
+  //       return;
+  //     }
+
+  //     if (form.id === parseInt(ProductoSustitutoForm.clave_real)) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         text: "El ID de la clave real no puede ser igual a la clave real.",
+  //         confirmButtonColor: "#d33",
+  //       });
+  //       return;
+  //     }
+
+  //     await jezaApi
+  //       .post("/ProductoSustituto", null, {
+  //         params: {
+  //           id_Producto: form.id,
+  //           clave_real: ProductoSustitutoForm.clave_real,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Clave real creada con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getinfo();
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // };
+
+  const create = async () => {
+    const permiso = await filtroSeguridad("CAT_EMPRE_ADD");
+    if (permiso === false) {
+      return;
+    }
+
+    if (validarCampos() === true) {
+      if (dataProductos.some((elemento) => elemento.clave_prod === ProductoSustitutoForm.clave_real)) {
+        // alert("CLAVE REPETIDA")
+        Swal.fire({
+          icon: "error",
+          text: "La clave real no puede ser igual a la clave del producto.",
+          confirmButtonColor: "#d33",
+        });
+        return
+        // if (form.clave_prod === ProductoSustitutoForm.clave_real) {
+        //   Swal.fire({
+        //     icon: "error",
+        //     text: "La clave real no puede ser igual a la clave del producto.",
+        //     confirmButtonColor: "#d33",
+        //   });
+        //   return;
+        // }
+
+      } else if (data.some((elemento) => elemento.clave_real === ProductoSustitutoForm.clave_real)) {
+        Swal.fire({
+          icon: "error",
+          text: "La clave real no puede ser igual a la clave del producto.",
+          confirmButtonColor: "#d33",
+        });
+        return
+      }
+      // Obtener la lista de productos
+      const listaProductos = await jezaApi.get("/producto?id=0&descripcion=%&verinventariable=0&esServicio=2&esInsumo=2&obsoleto=2&marca=%&cia=21&sucursal=26"); // Cambia la ruta según corresponda
+
+      // Comparar la clave real con todas las claves_prod de la lista
+      // const claveRealRepetida = listaProductos.some((producto) => {
+      //   return producto.id === ProductoSustitutoForm.clave_real;
+      // });
+
+      // if (claveRealRepetida) {
+      //   Swal.fire({
+      //     icon: "error",
+      //     text: "La clave real ya está en uso por otro producto.",
+      //     confirmButtonColor: "#d33",
+      //   });
+      //   return;
+      // }
+
+      await jezaApi
+        .post("/ProductoSustituto", null, {
+          params: {
+            id_Producto: form.id,
+            clave_real: ProductoSustitutoForm.clave_real,
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Clave real creada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getinfo();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
+
+
+
 
   const getinfo = () => {
     jezaApi.get(`Sustituto?idProducto=${form.id}`).then((response) => {
@@ -1370,6 +1489,7 @@ function Productos() {
                   <thead>
                     <tr>
                       <th>Claves producto</th>
+                      <th>Clave real</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -1379,7 +1499,7 @@ function Productos() {
                     {data.map((dato: ProdSustituto) => (
                       <tr key={dato.id}>
                         <td> {dato.id_Producto}</td>
-                        <td align="center">{dato.clave_real}</td>
+                        <td >{dato.clave_real}</td>
                         <td align="center">
                           <AiFillDelete color="lightred" onClick={() => eliminarSustituto(dato)} size={23}></AiFillDelete>
                         </td>
