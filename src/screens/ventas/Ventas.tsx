@@ -2111,7 +2111,7 @@ const Ventas = () => {
               <Input onChange={cambiosPagos} name="efectivo" value={formPago.efectivo}></Input>
             </Col>
           </Row> */}
-          <br />
+          <br /> 
           <Row>
             <Col md="7">
               <Label>TOTAL DE PAGOS: </Label>

@@ -32,6 +32,7 @@ import { Button, ButtonGroup } from "@mui/material";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import axios from "axios";
 
 function Descuentos() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -79,7 +80,15 @@ function Descuentos() {
     setForm(dato);
     setModalActualizar(true);
   };
-
+  // const ejecucion = async () => {
+  //   await axios
+  //     .get("http://cbinfo.no-ip.info:8011/api/movil/Cliente?id=00007")
+  //     .then(() => alert("a"))
+  //     .catch(() => alert("e"));
+  // };
+  // useEffect(() => {
+  //   ejecucion();
+  // }, []);
   const editar = async (dato: any) => {
     const permiso = await filtroSeguridad("CAT_DESCUENTO_UPD");
     if (permiso === false) {

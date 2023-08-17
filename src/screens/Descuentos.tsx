@@ -32,18 +32,12 @@ import { Button, ButtonGroup } from "@mui/material";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import axios, { Axios } from "axios";
 
 function Descuentos() {
   const { filtroSeguridad, session } = useSeguridad();
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [data, setData] = useState([]);
@@ -54,6 +48,16 @@ function Descuentos() {
     min_descto: 0.0,
     max_descto: 0.0,
   });
+  // const ejecucion = async () => {
+  //   await axios
+  //     .get("/http://cbinfo.no-ip.info:8011/api/movil/Cliente?id=00007")
+  //     .then(() => alert("a"))
+  //     .catch(() => alert("e"));
+  // };
+  // useEffect(() => {
+  //   ejecucion();
+  //   alert("a");
+  // }, []);
 
   const DataTableHeader = ["Descripción", "Minimo descuento", "Máximo descuento", "Acciones"];
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
@@ -189,11 +193,7 @@ function Descuentos() {
       flex: 1,
       renderCell: (params) => (
         <>
-          <AiFillEdit
-            className="mr-2"
-            onClick={() => mostrarModalActualizar(params.row as Descuento)}
-            size={23}
-          ></AiFillEdit>
+          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row as Descuento)} size={23}></AiFillEdit>
           <AiFillDelete color="lightred" onClick={() => eliminar(params.row as Descuento)} size={23}></AiFillDelete>
         </>
       ),
@@ -257,7 +257,7 @@ function Descuentos() {
       <Container>
         <br />
         <div style={{ display: "flex", alignItems: "", gap: 10 }}>
-          <h1> Descuentos Autorizados </h1>
+          <h1> Descuentos Autorizadosxd </h1>
           <AiOutlineUser size={30} />
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
@@ -322,24 +322,9 @@ function Descuentos() {
 
         <ModalBody>
           <Container>
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="descripcion"
-              labelName="Descripción:"
-              defaultValue={form.descripcion}
-            />
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="min_descto"
-              labelName="Minimo de descuento:"
-              defaultValue={form.min_descto}
-            />
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="max_descto"
-              labelName="Máximo de descuento:"
-              defaultValue={form.max_descto}
-            />
+            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción:" defaultValue={form.descripcion} />
+            <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Minimo de descuento:" defaultValue={form.min_descto} />
+            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo de descuento:" defaultValue={form.max_descto} />
           </Container>
         </ModalBody>
 
