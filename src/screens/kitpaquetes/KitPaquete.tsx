@@ -32,6 +32,8 @@ function KitPaquete() {
     d_insumo: "",
     d_kit: "",
     id: 0,
+    costo: 0.0,
+    importe: 0.0,
   });
 
   const [form, setForm] = useState<Producto>({
@@ -92,7 +94,7 @@ function KitPaquete() {
   const [modalEdit, setModalEdit] = useState(false);
   const [filteredDataFalse, setFilteredDataFalse] = useState([]);
 
-  const DataTableHeaderkit = ["Clave", "Producto", "Cantidad", "Acciones"];
+  const DataTableHeaderkit = ["Acciones", "Clave", "Producto", "Cantidad", "Costo", "Importe"];
   const DataInsumoHeader = ["Clave", "Producto", "Acciones"];
 
   const mostrarModalActualizar = (dato: Producto) => {
@@ -257,6 +259,21 @@ function KitPaquete() {
 
   const [flagKit, setFlagKit] = useState(false);
 
+  const [totalImporte, setTotalImporte] = useState(0);
+
+  // Calcula la suma de los importes
+  const calcularTotalImporte = () => {
+    const suma = dataPaquetesKits.reduce((accumulator, item) => accumulator + item.importe, 0);
+    return suma;
+  };
+
+  // Actualiza el total de importe cuando cambia el arreglo de datos
+  React.useEffect(() => {
+    const sumaTotal = calcularTotalImporte();
+    setTotalImporte(sumaTotal);
+  }, [dataPaquetesKits]);
+
+
   return (
     <>
       <Row>
@@ -286,7 +303,7 @@ function KitPaquete() {
           <Button color="primary" onClick={handleRedirect}>
             <IoIosHome size={20}></IoIosHome>
           </Button>
-          <Button onClick={handleReload}>
+          <Button color="primary" onClick={handleReload}>
             <IoIosRefresh size={20}></IoIosRefresh>
           </Button>
         </ButtonGroup>
@@ -297,7 +314,7 @@ function KitPaquete() {
         <DataTable></DataTable>
       </Container>
 
-      <Modal isOpen={modalActualizar} size="md" fullscreen={"md"}>
+      <Modal isOpen={modalActualizar} size="lg" fullscreen={"lg"}>
         <ModalHeader>
           <div>
             <h3>Catálogo Kit</h3>
@@ -308,21 +325,28 @@ function KitPaquete() {
             <Table size="sm" responsive={true} style={{ width: "100%", margin: "auto" }}>
               <thead>
                 <tr>
-                  <th>Clave:</th>
+                  <th>id:</th>
                   <th>Producto:</th>
+                  <th>Precio:</th>
                   <th>Agregar</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
+
                   <td>
-                    <Input onChange={handleChange} name="marca" defaultValue={form.clave_prod} disabled></Input>
+                    <Input onChange={handleChange} name="clave_prod" defaultValue={form.clave_prod} disabled></Input>
                   </td>
                   <td>
-                    <Input onChange={handleChange} name="marca" defaultValue={form.descripcion} disabled></Input>
+                    <Input onChange={handleChange} name="descripcion" defaultValue={form.descripcion} disabled></Input>
                   </td>
                   <td>
-                    {" "}
+                    <Input onChange={handleChange} name="precio" defaultValue={form.precio} disabled></Input>
+                  </td>
+
+
+                  <td>
+
                     <FcPlus
                       className="center"
                       size={35}
@@ -352,9 +376,6 @@ function KitPaquete() {
               <tbody>
                 {dataPaquetesKits.map((falsos: Kit) => (
                   <tr>
-                    <td>{falsos.id}</td>
-                    <td>{falsos.d_insumo}</td>
-                    <td>{falsos.cantidad}</td>
                     <td className="gap-5">
                       <AiFillEdit
                         className="mr-2"
@@ -372,10 +393,34 @@ function KitPaquete() {
                         size={23}
                       ></AiFillDelete>
                     </td>
+                    <td>{falsos.id}</td>
+                    <td>{falsos.d_insumo}</td>
+                    <td>{falsos.cantidad}</td>
+                    <td>{falsos.costo.toFixed(2)}</td>
+                    <td>{falsos.importe.toFixed(2)}</td>
+                    <td></td>
+
+
                   </tr>
                 ))}
               </tbody>
             </Table>
+            <br />
+            <br />
+            <div>
+              <p style={{ textAlign: "right" }}><strong>Total paquete: {totalImporte.toFixed(2)}</strong></p>
+            </div>
+
+
+            {/* <div> */}
+            {/* Renderiza los datos y el total */}
+            {/* <ul>
+                {dataPaquetesKits.map(item => (
+                  <li key={item.id}>Importe: {item.importe.toFixed(2)}</li>
+                ))}
+              </ul> */}
+            {/* <p><strong>Total paquete: {totalImporte.toFixed(2)}</strong></p>
+            </div> */}
           </Container>
         </ModalBody>
         <ModalFooter>

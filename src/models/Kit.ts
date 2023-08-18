@@ -7,4 +7,6 @@ export interface Kit {
   idInsumo: number;
   d_insumo: string;
   cantidad: number;
+  costo: number;
+  importe: number;
 }
