@@ -20,12 +20,14 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function KitPaquete() {
+  const { filtroSeguridad, session } = useSeguridad();
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const { dataProductos } = useProductos();
-  const [formKit, setFormKit] = useState<any>({
+  const [formKit, setFormKit] = useState<Kit>({
     cantidad: 1,
     idInsumo: 1,
     idProducto: 1,
@@ -102,45 +104,174 @@ function KitPaquete() {
     setModalActualizar(true);
   };
 
-  const editar = () => {
-    jezaApi
-      .put(`/Kit`, null, {
-        params: {
-          id: formKit.id,
-          idProducto: formKit.idProducto,
-          idInsumo: formKit.idInsumo,
-          cantidad: formKit.cantidad,
-        },
-      })
-      .then(() => {
-        console.log("realizado");
-        fetchPaquetesKits();
-      })
-      .catch((e) => console.log(e));
-  };
-  const eliminar = (dato: any) => {
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el insumo: ${dato.id}`);
-    if (opcion) {
-      jezaApi.delete(`/Kit?id=${dato.id}`).then(() => {
-        fetchPaquetesKits();
-      });
+  // const editar = () => {
+  //   jezaApi
+  //     .put(`/Kit`, null, {
+  //       params: {
+  //         id: formKit.id,
+  //         idProducto: formKit.idProducto,
+  //         idInsumo: formKit.idInsumo,
+  //         cantidad: formKit.cantidad,
+  //       },
+  //     })
+  //     .then(() => {
+  //       console.log("realizado");
+  //       fetchPaquetesKits();
+  //     })
+  //     .catch((e) => console.log(e));
+  // };
+
+
+
+  const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_KIT_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    if (validarCampos() === true) {
+      await jezaApi
+        .put(`/Kit`, null, {
+          params: {
+            id: formKit.id,
+            idProducto: formKit.idProducto,
+            idInsumo: formKit.idInsumo,
+            cantidad: formKit.cantidad,
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Kit actualizado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalActualizar(false);
+          fetchPaquetesKits();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
     }
   };
-  const insertar = () => {
-    jezaApi
-      .post("/Kit", null, {
-        params: {
-          idProducto: form.id,
-          idInsumo: formKit.id,
-          cantidad: Number(formKit.cantidad),
-        },
-      })
-      .then(() => {
-        fetchPaquetesKits();
-      })
-      .catch((e) => console.log(e));
-    setModalInsertar(false);
+  // const eliminar = (dato: Kit) => {
+  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el insumo: ${dato.id}`);
+  //   if (opcion) {
+  //     jezaApi.delete(`/Kit?id=${dato.id}`).then(() => {
+  //       fetchPaquetesKits();
+  //     });
+  //   }
+  // };
+
+  const eliminar = async (dato: Kit) => {
+    const permiso = await filtroSeguridad("CAT_KIT_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar el insumo: ${dato.d_insumo}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/Kit?id=${dato.id}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          fetchPaquetesKits();
+        });
+      }
+    });
   };
+
+
+  //VALIDACIÓN---->
+  const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
+
+  const validarCampos = () => {
+    const camposRequeridos: (keyof Kit)[] = ["cantidad"];
+    const camposVacios: string[] = [];
+
+    camposRequeridos.forEach((campo: keyof Kit) => {
+      const fieldValue = formKit[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios.push(campo);
+      }
+    });
+
+    setCamposFaltantes(camposVacios);
+
+    if (camposVacios.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios.length === 0;
+  };
+
+  //LIMPIEZA DE CAMPOS
+  const [estado, setEstado] = useState("");
+
+
+  // const insertar = () => {
+  //   jezaApi
+  //     .post("/Kit", null, {
+  //       params: {
+  //         idProducto: form.id,
+  //         idInsumo: formKit.id,
+  //         cantidad: Number(formKit.cantidad),
+  //       },
+  //     })
+  //     .then(() => {
+  //       fetchPaquetesKits();
+  //     })
+  //     .catch((e) => console.log(e));
+  //   setModalInsertar(false);
+  // };
+
+  // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
+  const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_KIT_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      await jezaApi
+        .post("/Kit", null, {
+          params: {
+            idProducto: form.id,
+            idInsumo: formKit.id,
+            cantidad: Number(formKit.cantidad),
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Kit creao con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalInsertar(false);
+          fetchPaquetesKits();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -178,8 +309,9 @@ function KitPaquete() {
 
     { field: "clave_prod", headerName: "Clave producto", flex: 1, headerClassName: "custom-header" },
     { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
-    { field: "costo_unitario", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
+    { field: "precio", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
   ];
+
   const columnsInsumos: GridColDef[] = [
     {
       field: "Acción",
@@ -274,6 +406,18 @@ function KitPaquete() {
   }, [dataPaquetesKits]);
 
 
+  //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
+
+  // const LimpiezaForm = () => {
+  //   setForm({
+  //     id: 0,
+  //     cantidad: 0,
+
+  //   });
+  // };
+
+
+
   return (
     <>
       <Row>
@@ -352,6 +496,7 @@ function KitPaquete() {
                       size={35}
                       color="success"
                       onClick={() => {
+                        setEstado("insert");
                         setFlagKit(true);
                         setModalKit(true);
                       }}
@@ -424,7 +569,7 @@ function KitPaquete() {
           </Container>
         </ModalBody>
         <ModalFooter>
-          <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
+          <CButton color="success" onClick={() => cerrarModalActualizar()} text="Aceptar" />
         </ModalFooter>
       </Modal>
 
@@ -465,8 +610,8 @@ function KitPaquete() {
             color="success"
             onClick={() => {
               insertar();
-              setModalInsert(false);
-              setModalKit(false);
+              setModalInsert(true);
+              setModalKit(true);
             }}
             text="Agregar insumos al kit"
           />
@@ -518,7 +663,7 @@ function KitPaquete() {
             color="primary"
             onClick={() => {
               editar();
-              setModalEdit(false);
+              setModalEdit(true);
               setModalKit(false);
             }}
             text="Actualizar"

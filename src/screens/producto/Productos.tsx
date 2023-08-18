@@ -358,13 +358,13 @@ function Productos() {
 
 
   const create = async () => {
-    const permiso = await filtroSeguridad("CAT_EMPRE_ADD");
+    const permiso = await filtroSeguridad("CAT_CLAVEREAL_ADD");
     if (permiso === false) {
       return;
     }
 
     if (validarCampos1() === true) {
-      if (dataProductos.some((elemento) => elemento.clave_prod === ProductoSustitutoForm.clave_real)) {
+      if (dataProductos.some((elemento) => elemento.clave_prod === ProductoSustitutoForm.clave_real.trim())) {
         // alert("CLAVE REPETIDA")
         Swal.fire({
           icon: "error",
@@ -373,7 +373,7 @@ function Productos() {
         });
         return
 
-      } else if (data.some((elemento) => elemento.clave_real === ProductoSustitutoForm.clave_real)) {
+      } else if (data.some((elemento) => elemento.clave_real === ProductoSustitutoForm.clave_real.trim())) {
         Swal.fire({
           icon: "error",
           text: "Clave ya registrada.",
@@ -424,7 +424,7 @@ function Productos() {
   // };
 
   const eliminarSustituto = async (dato: ProdSustituto) => {
-    const permiso = await filtroSeguridad("CAT_ALMACEN_DEL");
+    const permiso = await filtroSeguridad("CAT_CLAVEREAL_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
