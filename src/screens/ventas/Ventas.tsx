@@ -1221,10 +1221,11 @@ const Ventas = () => {
     sucursal: 0,
     numVenta: 0,
     idProducto: 0,
+    clave: 0,
   });
   useEffect(() => {
     loadHistorialDetalle();
-  }, [paramsDetalles.sucursal]);
+  }, [paramsDetalles.sucursal, paramsDetalles.numVenta, paramsDetalles.numVenta, paramsDetalles.clave]);
 
   const loadHistorialDetalle = async () => {
     if (paramsDetalles.numVenta > 0) {
@@ -1268,7 +1269,12 @@ const Ventas = () => {
           <Button
             size="sm"
             onClick={() => {
-              setParamsDetalles({ idProducto: row.original.idProducto, numVenta: row.original.NumVenta, sucursal: row.original.sucursal });
+              setParamsDetalles({
+                idProducto: row.original.idProducto,
+                numVenta: row.original.NumVenta,
+                sucursal: row.original.sucursal,
+                clave: row.original.id,
+              });
             }}
           >
             Detalle

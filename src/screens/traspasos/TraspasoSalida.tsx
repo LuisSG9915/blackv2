@@ -93,23 +93,8 @@ function TraspasoSalida() {
   const { dataSucursales } = useSucursales();
   const { dataAlmacenes } = useAlmacen();
 
-  const DataTableHeader = [
-    "",
-    "Folio",
-    "Sucursal destino",
-    "Fecha",
-    "Responsable traspaso",
-    "Almacen destino",
-    "Almacen origen",
-  ];
-  const DataTableHeaderPrincipal = [
-    "Clave producto",
-    "Producto",
-    "Cantidad",
-    "Unidad de medida",
-    "Responsable traspaso",
-    "Acciones",
-  ];
+  const DataTableHeader = ["", "Folio", "Sucursal destino", "Fecha", "Responsable traspaso", "Almacen destino", "Almacen origen"];
+  const DataTableHeaderPrincipal = ["Clave producto", "Producto", "Cantidad", "Unidad de medida", "Responsable traspaso", "Acciones"];
 
   const mostrarModalActualizar = (dato: Traspaso) => {
     setForm({ ...dato, suc_destino: form.suc_destino, suc_origen: form.suc_origen, sucursal: form.sucursal });
@@ -184,16 +169,10 @@ function TraspasoSalida() {
       return;
     }
     jezaApi
-      .put("/TraspasoFinaliza", null, {
-        params: {
-          sucursal_origen: dataUsuarios2[0].sucursal,
-          sucursal_destino: form.suc_destino,
-          usuario: dataUsuarios2[0].id,
-        },
-      })
+      .put(`/TraspasoFinaliza?sucursal_origen=${dataUsuarios2[0].sucursal}&sucursal_destino=${form.suc_destino}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
-        alert(response.data.mensaje1);
         fetchTraspasos();
+        alert("Traspaso finalizado correctamente");
       })
       .catch((error) => console.log(error));
   };
@@ -418,16 +397,8 @@ function TraspasoSalida() {
                         </>
                       ) : (
                         <>
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => mostrarModalActualizar(dato)}
-                            size={23}
-                          ></AiFillEdit>
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={() => eliminar(dato.id, dato.d_producto)}
-                            size={23}
-                          ></AiFillDelete>
+                          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(dato)} size={23}></AiFillEdit>
+                          <AiFillDelete color="lightred" onClick={() => eliminar(dato.id, dato.d_producto)} size={23}></AiFillDelete>
                         </>
                       )}
                     </td>
@@ -578,11 +549,7 @@ function TraspasoSalida() {
             disabled={Number(form.folio) > 0 ? true : false}
             onClick={() => {
               console.log(form);
-              if (
-                form.suc_destino === "0" ||
-                form.almacenDestino.toString() === "0" ||
-                form.almacenOrigen.toString() === "0"
-              ) {
+              if (form.suc_destino === "0" || form.almacenDestino.toString() === "0" || form.almacenOrigen.toString() === "0") {
                 Swal.fire({
                   icon: "info",
                   title: "Atención",
@@ -630,15 +597,7 @@ function TraspasoSalida() {
               </Col>
               <Col>
                 <Label>Cantidad: </Label>
-                <Input
-                  type="number"
-                  min="1.00"
-                  step="0.01"
-                  name="cantidad"
-                  value={form.cantidad}
-                  onChange={handleChange}
-                  placeholder="Cantidad"
-                />
+                <Input type="number" min="1.00" step="0.01" name="cantidad" value={form.cantidad} onChange={handleChange} placeholder="Cantidad" />
               </Col>
             </Row>
             <br />
@@ -691,12 +650,7 @@ function TraspasoSalida() {
             <Row>
               <Col md={3}>
                 <Label>Sucursal destino:</Label>
-                <Input
-                  value={fechaSeleccionada.suc_destino}
-                  type="select"
-                  name="suc_destino"
-                  onChange={handleChangeFechas}
-                >
+                <Input value={fechaSeleccionada.suc_destino} type="select" name="suc_destino" onChange={handleChangeFechas}>
                   <option value={0}> Escoja una sucursal</option>
                   {filtradoSucursales.map((option: Sucursal) => (
                     <option key={option.sucursal} value={Number(option.sucursal)}>
@@ -715,12 +669,7 @@ function TraspasoSalida() {
               </Col>
               <Col md={3}>
                 <Label>Folio: </Label>
-                <Input
-                  type="text"
-                  onChange={handleChangeFechas}
-                  name="folio"
-                  defaultValue={fechaSeleccionada.folio}
-                ></Input>
+                <Input type="text" onChange={handleChangeFechas} name="folio" defaultValue={fechaSeleccionada.folio}></Input>
               </Col>
             </Row>
             <Button className="align-self-end" onClick={() => getTraspasoBusqueda()} color="primary">
@@ -826,15 +775,7 @@ function TraspasoSalida() {
               </Col>
               <Col>
                 <Label>Cantidad: </Label>
-                <Input
-                  type="number"
-                  min="1.00"
-                  step="0.01"
-                  name="cantidad"
-                  value={form.cantidad}
-                  onChange={handleChange}
-                  placeholder="Cantidad"
-                />
+                <Input type="number" min="1.00" step="0.01" name="cantidad" value={form.cantidad} onChange={handleChange} placeholder="Cantidad" />
               </Col>
             </Row>
             <br />

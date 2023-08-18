@@ -696,6 +696,7 @@ function Compras() {
         <div className="alineación-derecha">
           <InputGroup className="alineación-derecha">
             <Button
+              // disabled={}
               color="primary"
               onClick={() => {
                 setTimeout(() => {
