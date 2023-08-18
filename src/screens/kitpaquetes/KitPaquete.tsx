@@ -96,7 +96,7 @@ function KitPaquete() {
   const [modalEdit, setModalEdit] = useState(false);
   const [filteredDataFalse, setFilteredDataFalse] = useState([]);
 
-  const DataTableHeaderkit = ["Acciones", "Clave", "Producto", "Cantidad", "Costo", "Importe"];
+  const DataTableHeaderkit = ["Acciones", "Producto", "Cantidad", "Costo", "Importe"];
   const DataInsumoHeader = ["Clave", "Producto", "Acciones"];
 
   const mostrarModalActualizar = (dato: Producto) => {
@@ -469,7 +469,7 @@ function KitPaquete() {
             <Table size="sm" responsive={true} style={{ width: "100%", margin: "auto" }}>
               <thead>
                 <tr>
-                  <th>id:</th>
+                  <th>Clave producto:</th>
                   <th>Producto:</th>
                   <th>Precio:</th>
                   <th>Agregar</th>
@@ -538,7 +538,7 @@ function KitPaquete() {
                         size={23}
                       ></AiFillDelete>
                     </td>
-                    <td>{falsos.id}</td>
+                    {/* <td>{falsos.id}</td> */}
                     <td>{falsos.d_insumo}</td>
                     <td>{falsos.cantidad}</td>
                     <td>{falsos.costo.toFixed(2)}</td>

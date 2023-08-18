@@ -42,10 +42,13 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { ImGift } from "react-icons/im";
+import { Cia } from "../../models/Cia";
+
 
 function DescPorPuntos() {
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
+  const { filtroSeguridad, session } = useSeguridad();
   const [data, setData] = useState([]);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const { dataCias } = useCias();
@@ -53,6 +56,7 @@ function DescPorPuntos() {
   const { dataFormasPagos } = useFormasPagos();
   const { dataAreas } = useAreas();
   const { dataDeptos } = useDeptos();
+  const [dataCia, setDataCia] = useState<Cia[]>([]);
 
   const [form, setForm] = useState<DescPorPunto>({
     id: 0,
@@ -97,16 +101,16 @@ function DescPorPuntos() {
     }
   };
 
-  const eliminar = (dato: DescPorPunto) => {
-    console.log(dato);
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.id}`);
-    if (opcion) {
-      jezaApi.delete(`/DeptosPuntos?id=${dato.id}`).then(() => {
-        setModalActualizar(false);
-        getDesucentos();
-      });
-    }
-  };
+  // const eliminar = (dato: DescPorPunto) => {
+  //   console.log(dato);
+  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.id}`);
+  //   if (opcion) {
+  //     jezaApi.delete(`/DeptosPuntos?id=${dato.id}`).then(() => {
+  //       setModalActualizar(false);
+  //       getDesucentos();
+  //     });
+  //   }
+  // };
 
   const getDesucentos = () => {
     jezaApi
@@ -120,25 +124,127 @@ function DescPorPuntos() {
     getDesucentos();
   }, []);
 
-  const insertar = () => {
-    jezaApi
-      .post("/DeptosPuntos", null, {
-        params: {
-          cia: 1,
-          area: 1,
-          depto: 1,
-          forma_pago: 13,
-          sucursal: 1,
-          porcentaje_puntos: Number(form.porcentaje_puntos),
-        },
-      })
-      .then((r) => {
-        console.log("exitoso");
-        console.log(r);
-      })
-      .catch((e) => console.log(e));
-    setModalInsertar(false);
+  // const insertar = () => {
+  //   jezaApi
+  //     .post("/DeptosPuntos", null, {
+  //       params: {
+  //         cia: form.cia,
+  //         area: form.area,
+  //         depto: form.depto,
+  //         forma_pago: form.forma_pago,
+  //         sucursal: form.sucursal,
+  //         porcentaje_puntos: form.porcentaje_puntos,
+  //       },
+  //     })
+  //     .then((r) => {
+  //       console.log("exitoso");
+  //       console.log(r);
+  //     })
+  //     .catch((e) => console.log(e));
+  //   setModalInsertar(false);
+  // };
+
+
+
+  //VALIDACIÓN---->
+  const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
+
+  const validarCampos = () => {
+    const camposRequeridos: (keyof DescPorPunto)[] = ["sucursal", "area", "depto", "forma_pago", "porcentaje_puntos"];
+    const camposVacios: string[] = [];
+
+    camposRequeridos.forEach((campo: keyof DescPorPunto) => {
+      const fieldValue = form[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios.push(campo);
+      }
+    });
+
+    setCamposFaltantes(camposVacios);
+
+    if (camposVacios.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios.length === 0;
   };
+
+  //LIMPIEZA DE CAMPOS
+  const [estado, setEstado] = useState("");
+
+
+  // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
+  const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_ALMACEN_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      await jezaApi
+        .post("/DeptosPuntos", null, {
+          params: {
+            cia: form.cia,
+            area: form.area,
+            depto: form.depto,
+            forma_pago: form.forma_pago,
+            sucursal: form.sucursal,
+            porcentaje_puntos: form.porcentaje_puntos,
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Descuento por puntos creado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalInsertar(false);
+          getDesucentos();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+  const eliminar = async (dato: DescPorPunto) => {
+    const permiso = await filtroSeguridad("CAT_ALMACEN_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar el descuento: ${dato.porcentaje_puntos}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/DeptosPuntos?id=${dato.ID}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getDesucentos();
+        });
+      }
+    });
+  };
+
+
+
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -266,6 +372,18 @@ function DescPorPuntos() {
 
         <ModalBody>
           <FormGroup>
+            <Label>Empresa:</Label>
+            <Input type="select" name="cia" id="exampleSelect" value={form.cia} onChange={handleChange}>
+              <option value="">Selecciona empresa</option>
+              {dataCias.map((cia) => (
+                <option key={cia.id} value={cia.id}>
+                  {cia.nombre}
+                </option>
+              ))}
+            </Input>
+          </FormGroup>
+
+          <FormGroup>
             <Label>Sucursal:</Label>
             <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
               <option value="">Seleccione sucursal</option>
@@ -331,6 +449,20 @@ function DescPorPuntos() {
           </div>
         </ModalHeader>
         <ModalBody>
+
+          <FormGroup>
+            <Label>Empresa:</Label>
+            <Input type="select" name="cia" id="exampleSelect" value={form.cia} onChange={handleChange}>
+              <option value="">Selecciona empresa</option>
+              {dataCias.map((cia) => (
+                <option key={cia.id} value={cia.id}>
+                  {cia.nombre}
+                </option>
+              ))}
+            </Input>
+          </FormGroup>
+
+
           <FormGroup>
             <Label>Sucursal:</Label>
             <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
@@ -344,7 +476,7 @@ function DescPorPuntos() {
           </FormGroup>
 
           <Label for="area">Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChange}>
+          <Input type="select" name="area" id="area" value={form.area} onChange={handleChange}>
             <option value={0}>Seleccione un área</option>
             {dataAreas.map((area) => (
               <option value={area.area}>{area.descripcion}</option>
@@ -353,7 +485,7 @@ function DescPorPuntos() {
           <br />
           <FormGroup>
             <Label for="departamento">Departamento:</Label>
-            <Input type="select" name="depto" id="depto" onChange={handleChange}>
+            <Input type="select" name="depto" id="depto" value={form.depto} onChange={handleChange}>
               <option value={0}>Seleccione un departamento</option>
               {dataDeptosFiltrado.map((depto) => (
                 <option value={depto.depto}>{depto.descripcion}</option>
@@ -363,8 +495,8 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="formaPago">Forma de pago:</Label>
-            <Input type="select" name="formaPago" id="formaPago" onChange={handleChange}>
-              {/* Opciones de forma de pago */}
+            <Input type="select" name="forma_pago" id="forma_pago" value={form.forma_pago} onChange={handleChange}>
+              <option value={0}>Seleccione un departamento</option>
               {dataFormasPagos.map((formaPago: FormaPago) => (
                 <option value={formaPago.tipo}> {formaPago.descripcion} </option>
               ))}
@@ -373,11 +505,11 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="Porcentaje">Porcentaje:</Label>
-            <Input type="number" name="porcentaje_puntos" id="Porcentaje" onChange={handleChange} />
+            <Input type="number" name="porcentaje_puntos" id="Porcentaje" value={form.porcentaje_puntos} onChange={handleChange} />
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <CButton color="success" onClick={() => insertar()} text="Guardar recompensa" />
+          <CButton color="success" onClick={insertar} text="Guardar recompensa" />
           <CButton color="btn btn-danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
