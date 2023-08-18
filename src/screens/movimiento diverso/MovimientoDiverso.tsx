@@ -193,6 +193,7 @@ function MovimientoDiversos() {
       .catch((e) => console.log(e));
   };
   const putFinalizado = () => {
+
     jezaApi
       .put(`/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
@@ -520,7 +521,8 @@ function MovimientoDiversos() {
       </Container>
       <Container>
         <InputGroup>
-          <Button onClick={putFinalizado} color="success" disabled={estados || !dataAjustes ? true : false}>
+          {/* <Button onClick={putFinalizado} color="success" disabled={estados || !dataAjustes ? true : false}> */}
+          <Button onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
             Finalizar
           </Button>
           <Button
@@ -663,28 +665,28 @@ function MovimientoDiversos() {
               <tbody>
                 {dataAjustesBusquedas
                   ? dataAjustesBusquedas.map((ajuste) => (
-                      <tr>
-                        <td>
-                          <AiOutlineSelect
-                            onClick={() => {
-                              setform({
-                                ...form,
-                                folio: Number(ajuste.folio),
-                                tipo_movto: ajuste.tipo_movto,
-                                fecha: ajuste.fecha.split("T")[0],
-                              });
-                              setModalBusqueda(false);
-                              console.log(ajuste);
-                            }}
-                          ></AiOutlineSelect>
-                        </td>
-                        <td>{ajuste.folio}</td>
-                        <td>{ajuste.descripcion}</td>
-                        <td>{ajuste.items}</td>
-                        <td>{ajuste.nombreUsuario}</td>
-                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                      </tr>
-                    ))
+                    <tr>
+                      <td>
+                        <AiOutlineSelect
+                          onClick={() => {
+                            setform({
+                              ...form,
+                              folio: Number(ajuste.folio),
+                              tipo_movto: ajuste.tipo_movto,
+                              fecha: ajuste.fecha.split("T")[0],
+                            });
+                            setModalBusqueda(false);
+                            console.log(ajuste);
+                          }}
+                        ></AiOutlineSelect>
+                      </td>
+                      <td>{ajuste.folio}</td>
+                      <td>{ajuste.descripcion}</td>
+                      <td>{ajuste.items}</td>
+                      <td>{ajuste.nombreUsuario}</td>
+                      <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                    </tr>
+                  ))
                   : null}
               </tbody>
             </Table>
