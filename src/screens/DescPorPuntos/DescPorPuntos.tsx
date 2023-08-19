@@ -113,7 +113,7 @@ function DescPorPuntos() {
   // };
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_ALMACEN_UPD");
+    const permiso = await filtroSeguridad("CAT_PUNTOSDESC_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -216,7 +216,7 @@ function DescPorPuntos() {
 
   // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_ALMACEN_ADD");
+    const permiso = await filtroSeguridad("CAT_PUNTOSDESC_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -252,7 +252,7 @@ function DescPorPuntos() {
 
 
   const eliminar = async (dato: DescPorPunto) => {
-    const permiso = await filtroSeguridad("CAT_ALMACEN_DEL");
+    const permiso = await filtroSeguridad("CAT_PUNTOSDESC_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -277,10 +277,6 @@ function DescPorPuntos() {
       }
     });
   };
-
-
-
-
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -431,15 +427,15 @@ function DescPorPuntos() {
               ))}
             </Input>
           </FormGroup>
-
-          <Label for="area">Área:</Label>
-          <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
-            <option value={0}>Seleccione un área</option>
-            {dataAreas.map((area) => (
-              <option value={area.area}>{area.descripcion}</option>
-            ))}{" "}
-          </Input>
-          <br />
+          <FormGroup>
+            <Label for="area">Área:</Label>
+            <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
+              <option value={0}>Seleccione un área</option>
+              {dataAreas.map((area) => (
+                <option value={area.area}>{area.descripcion}</option>
+              ))}{" "}
+            </Input>
+          </FormGroup>
           <FormGroup>
             <Label for="departamento">Departamento:</Label>
             <Input type="select" name="depto" id="exampleSelect" value={form.depto} onChange={handleChange}>
@@ -495,8 +491,6 @@ function DescPorPuntos() {
               ))}
             </Input>
           </FormGroup>
-
-
           <FormGroup>
             <Label>Sucursal:</Label>
             <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
@@ -517,7 +511,6 @@ function DescPorPuntos() {
               ))}{" "}
             </Input>
           </FormGroup>
-          <br />
           <FormGroup>
             <Label for="departamento">Departamento:</Label>
             <Input type="select" name="depto" id="exampleSelect" value={form.depto} onChange={handleChange}>
@@ -527,7 +520,6 @@ function DescPorPuntos() {
               ))}{" "}
             </Input>
           </FormGroup>
-
           <FormGroup>
             <Label for="formaPago">Forma de pago:</Label>
             <Input type="select" name="forma_pago" id="exampleSelect" value={form.forma_pago} onChange={handleChange}>
