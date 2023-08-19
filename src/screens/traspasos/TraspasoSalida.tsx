@@ -216,8 +216,23 @@ function TraspasoSalida() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: Traspaso) => ({ ...prevState, [name]: value }));
-    console.log(form);
+    if (name === "almacenDestino" && Number(value) === Number(form.almacenOrigen)) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: `No puede seleccionar los mismos almacenes, favor de intentarlo de nuevo`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    } else if (name === "almacenOrigen" && Number(value) === Number(form.almacenDestino)) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: `No puede seleccionar los mismos almacenes, favor de intentarlo de nuevo`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    } else {
+      setForm((prevState: Traspaso) => ({ ...prevState, [name]: value }));
+    }
   };
   const handleChangeFechas = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -331,9 +346,15 @@ function TraspasoSalida() {
         <Row className="">
           <Col lg={5} md={4}>
             <Label>Sucursal destino:</Label>
-            <Input value={form.suc_destino} type="select" name="suc_destino" onChange={handleChange}>
+            <Input
+              disabled={Number(form.folio) !== 0 ? true : false}
+              value={form.suc_destino}
+              type="select"
+              name="suc_destino"
+              onChange={handleChange}
+            >
               <option value={0}> Escoja una sucursal</option>
-              {filtradoSucursales.map((option: Sucursal) => (
+              {dataSucursales.map((option: Sucursal) => (
                 <option key={option.sucursal} value={Number(option.sucursal)}>
                   {option.nombre}
                 </option>
@@ -343,7 +364,13 @@ function TraspasoSalida() {
 
           <Col lg={5} md={4}>
             <Label>Almacén destino:</Label>
-            <Input value={form.almacenDestino} type="select" name="almacenDestino" onChange={handleChange}>
+            <Input
+              disabled={Number(form.folio) !== 0 ? true : false}
+              value={form.almacenDestino}
+              type="select"
+              name="almacenDestino"
+              onChange={handleChange}
+            >
               <option value={0}> Escoja una almacén</option>
               {filtradoAlmacen.map((option: Almacen) => (
                 <option key={option.almacen} value={option.almacen}>
@@ -355,7 +382,13 @@ function TraspasoSalida() {
 
           <Col lg={5} md={4}>
             <Label>Almacén origen:</Label>
-            <Input type="select" value={form.almacenOrigen} name="almacenOrigen" onChange={handleChange}>
+            <Input
+              disabled={Number(form.folio) !== 0 ? true : false}
+              type="select"
+              value={form.almacenOrigen}
+              name="almacenOrigen"
+              onChange={handleChange}
+            >
               <option value="0"> Escoja una almacen</option>
               {filtradoAlmacenFormateada.map((option: Almacen) => (
                 <option key={option.almacen} value={option.almacen}>
@@ -365,17 +398,6 @@ function TraspasoSalida() {
             </Input>
           </Col>
         </Row>
-        {/* </Col> */}
-        {/* <Col md={3}>
-          <br />
-          <br />
-          <br />
-          <Label>Fecha: {fechaHoy} </Label>
-          <br />
-          <Label>Sucursal: {dataUsuarios2 ? dataUsuarios2[0]?.d_sucursal.toLocaleUpperCase() : ""}</Label>
-          <br />
-          <Label> Usuario: {dataUsuarios2 ? dataUsuarios2[0]?.nombre.toLocaleUpperCase() : ""} </Label>
-        </Col> */}
       </Row>
     );
   };
@@ -566,6 +588,21 @@ function TraspasoSalida() {
         <br />
         <div className="col align-self-start d-flex justify-content-end ">
           <Button
+            color="primary"
+            disabled={Number(form.folio) === 0 ? true : false}
+            onClick={() => {
+              setForm({
+                ...form,
+                folio: 0,
+                suc_destino: 0,
+                suc_origen: 0,
+                almacenOrigen: 0,
+              });
+            }}
+          >
+            Nuevo
+          </Button>
+          <Button
             color="success"
             disabled={Number(form.folio) > 0 ? true : false}
             onClick={() => {
@@ -673,7 +710,7 @@ function TraspasoSalida() {
                 <Label>Sucursal destino:</Label>
                 <Input value={fechaSeleccionada.suc_destino} type="select" name="suc_destino" onChange={handleChangeFechas}>
                   <option value={0}> Escoja una sucursal</option>
-                  {filtradoSucursales.map((option: Sucursal) => (
+                  {dataSucursales.map((option: Sucursal) => (
                     <option key={option.sucursal} value={Number(option.sucursal)}>
                       {option.nombre}
                     </option>
