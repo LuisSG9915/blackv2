@@ -121,12 +121,12 @@ function DescPorPuntos() {
       await jezaApi
         .put(`/DeptosPuntos`, null, {
           params: {
-            id: form.id,
+            id: form.ID,
             cia: form.cia,
+            sucursal: form.sucursal,
             area: form.area,
             depto: form.depto,
             forma_pago: form.forma_pago,
-            sucursal: form.sucursal,
             porcentaje_puntos: form.porcentaje_puntos,
           },
         })
@@ -452,8 +452,8 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="formaPago">Forma de pago:</Label>
-            <Input type="select" name="formaPago" id="exampleSelect" value={form.forma_pago} onChange={handleChange}>
-              {/* Opciones de forma de pago */}
+            <Input type="select" name="forma_pago" id="exampleSelect" value={form.forma_pago} onChange={handleChange}>
+              <option value={0}>Seleccione un departamento</option>
               {dataFormasPagos.map((formaPago: FormaPago) => (
                 <option value={formaPago.tipo}> {formaPago.descripcion} </option>
               ))}
@@ -508,14 +508,15 @@ function DescPorPuntos() {
               ))}
             </Input>
           </FormGroup>
-
-          <Label for="area">Área:</Label>
-          <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
-            <option value={0}>Seleccione un área</option>
-            {dataAreas.map((area) => (
-              <option value={area.area}>{area.descripcion}</option>
-            ))}{" "}
-          </Input>
+          <FormGroup>
+            <Label for="area">Área:</Label>
+            <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
+              <option value={0}>Seleccione un área</option>
+              {dataAreas.map((area) => (
+                <option value={area.area}>{area.descripcion}</option>
+              ))}{" "}
+            </Input>
+          </FormGroup>
           <br />
           <FormGroup>
             <Label for="departamento">Departamento:</Label>

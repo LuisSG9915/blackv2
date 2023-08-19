@@ -18,6 +18,7 @@ import {
   ModalHeader,
   Label,
   Col,
+  FormGroup
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
@@ -40,6 +41,8 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { VscTypeHierarchy } from "react-icons/vsc";
+import { useAreas } from "../../hooks/getsHooks/useAreas";
+import { useDeptos } from "../../hooks/getsHooks/useDeptos";
 
 function AreaDeptoClases() {
   const { modalActualizarArea, modalInsertarArea, setModalInsertarArea, setModalActualizarArea, cerrarModalActualizarArea, cerrarModalInsertarArea } =
@@ -61,6 +64,9 @@ function AreaDeptoClases() {
     cerrarModalInsertarClase,
   } = useModalHook();
 
+
+  const { dataAreas } = useAreas();
+  const { dataDeptos } = useDeptos();
 
   const [deptoGet, setDeptoGet] = useState<Departamento[]>([]);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
@@ -544,6 +550,18 @@ function AreaDeptoClases() {
     });
   };
 
+
+  useEffect(() => {
+    const quePedo = dataDeptos.filter((data) => data.area === Number(formClase.area));
+    setDataDeptosFiltrado(quePedo);
+    console.log({ dataDeptosFiltrado });
+  }, [formClase.area]);
+
+
+
+
+
+
   useEffect(() => {
     getAreas();
     getClases();
@@ -607,8 +625,8 @@ function AreaDeptoClases() {
       headerClassName: "custom-header",
     },
 
-    { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
-    { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
+    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "area", headerName: "Áreas", flex: 1, headerClassName: "custom-header" },
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -654,9 +672,9 @@ function AreaDeptoClases() {
     },
 
     // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
-    { field: "d_area", headerName: "Área descripción", flex: 1, headerClassName: "custom-header" },
-    { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
-    { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
+    { field: "d_area", headerName: "Áreas descripción", flex: 1, headerClassName: "custom-header" },
+    // { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Departamentos", flex: 1, headerClassName: "custom-header" },
   ];
 
   const ComponentChiquito2 = ({ params }: { params: any }) => {
@@ -700,11 +718,11 @@ function AreaDeptoClases() {
     },
 
     // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
-    { field: "d_area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
+    { field: "d_area", headerName: "Áreas descripción", flex: 1, headerClassName: "custom-header" },
     // { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
-    { field: "d_depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
-    { field: "clase", headerName: "Clase", flex: 1, headerClassName: "custom-header" },
-    { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
+    { field: "d_depto", headerName: "Departamentos descripción", flex: 1, headerClassName: "custom-header" },
+    // { field: "clase", headerName: "Clase", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Clases", flex: 1, headerClassName: "custom-header" },
   ];
 
   const ComponentChiquito3 = ({ params }: { params: any }) => {
@@ -1081,6 +1099,32 @@ function AreaDeptoClases() {
           </div>
         </ModalHeader>
         <ModalBody>
+
+          <FormGroup>
+            <Label for="area">Área:</Label>
+            <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase}>
+              <option value={0}>Seleccione un área</option>
+              {dataAreas.map((area) => (
+                <option value={area.area}>{area.descripcion}</option>
+              ))}{" "}
+            </Input>
+          </FormGroup>
+          <br />
+          <FormGroup>
+            <Label for="departamento">Departamento:</Label>
+            <Input type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
+              <option value={0}>Seleccione un departamento</option>
+              {dataDeptosFiltrado.map((depto) => (
+                <option value={depto.depto}>{depto.descripcion}</option>
+              ))}{" "}
+            </Input>
+          </FormGroup>
+
+
+
+
+
+          {/* 
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase}>
             <option value={0}>--Selecciona una opción--</option>
@@ -1097,7 +1141,7 @@ function AreaDeptoClases() {
             {deptoGet.map((depto) => (
               <option value={depto.depto}> {depto.descripcion} </option>
             ))}
-          </Input>
+          </Input> */}
           <br />
           <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} />
         </ModalBody>

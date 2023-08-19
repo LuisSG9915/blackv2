@@ -62,6 +62,7 @@ function PerfilesModulos() {
     modulo: 1,
     permiso: false,
     d_perfil: "",
+    descripcion: "",
   });
 
   const DataTableHeader = ["Clave Perfil", "Modulo", "Permisos", "Acciones"];
@@ -269,12 +270,12 @@ function PerfilesModulos() {
       .catch((e) => console.log(e));
   };
 
-  const getModulos = () => {
-    jezaApi
-      .get("PerfilModulo?id=0")
-      .then((response) => setData(response.data))
-      .catch((e) => console.log(e));
-  };
+  // const getModulos = () => {
+  //   jezaApi
+  //     .get("PerfilModulo?id=0")
+  //     .then((response) => setData(response.data))
+  //     .catch((e) => console.log(e));
+  // };
 
   useEffect(() => {
     getPerfilModulos();
@@ -309,7 +310,7 @@ function PerfilesModulos() {
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
   const LimpiezaForm = () => {
-    setForm({ id: 0, clave_perfil: 0, modulo: 0, permiso: false });
+    setForm({ id: 0, clave_perfil: 0, modulo: 0, permiso: false, descripcion: "" });
   };
 
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
@@ -323,6 +324,7 @@ function PerfilesModulos() {
 
     { field: "clave_perfil", headerName: "Clave perfil", flex: 1, headerClassName: "custom-header" },
     { field: "d_perfil", headerName: "Perfil", flex: 1, headerClassName: "custom-header" },
+    // { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
     {
       field: "modulo",
       headerName: "Módulo",
@@ -454,7 +456,7 @@ function PerfilesModulos() {
                   <option value={0}>--Selecciona una opción--</option>
                   {data.map((perfil) => (
                     <option key={perfil.modulo} value={perfil.modulo}>
-                      {perfil.d_modulo}
+                      {perfil.descripcion}
                     </option>
                   ))}
                 </Input>
@@ -470,7 +472,7 @@ function PerfilesModulos() {
         </ModalBody>
 
         <ModalFooter>
-          <CButton color="primary" onClick={() => editar(form)} text="Actualizar" />
+          <CButton color="primary" onClick={editar} text="Actualizar" />
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>

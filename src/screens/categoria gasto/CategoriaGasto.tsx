@@ -387,6 +387,16 @@ function CategoriaGastos() {
       <Modal isOpen={modalInsertar} toggle={toggleCreateModal}>
         <ModalHeader toggle={toggleCreateModal}>Crear categoría</ModalHeader>
         <ModalBody>
+          <Label>Empresa:</Label>
+          <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
+            <option value={0}>--Selecciona una empresa--</option>
+            {dataCias.map((cia: Cia) => (
+              <option key={cia.id} value={cia.id}>
+                {cia.nombre}
+              </option>
+            ))}
+          </Input>
+          <br />
           <Label>Descripción:</Label>
           <Input
             type="text"
@@ -397,18 +407,9 @@ function CategoriaGastos() {
               console.log(form);
             }}
             min="1"
-            placeholder="Ingrese la cantidad de producto por unidad"
+
           />
-          <br />
-          <Label>Empresa:</Label>
-          <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-            <option value="">Selecciona empresa</option>
-            {dataCias.map((cia: Cia) => (
-              <option key={cia.id} value={cia.id}>
-                {cia.nombre}
-              </option>
-            ))}
-          </Input>
+
         </ModalBody>
 
         <ModalFooter>
@@ -421,16 +422,6 @@ function CategoriaGastos() {
       <Modal isOpen={modalActualizar} toggle={toggleUpdateModal}>
         <ModalHeader toggle={toggleUpdateModal}>Editar categoría</ModalHeader>
         <ModalBody>
-          <Label>Empresa:</Label>
-          <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-            <option value="">Selecciona sucursal</option>
-            {dataCias.map((cia: Cia) => (
-              <option key={cia.id} value={cia.id}>
-                {cia.nombre}
-              </option>
-            ))}
-          </Input>
-          <br />
           <Label>Descripción:</Label>
           <Input
             type="text"
@@ -443,6 +434,19 @@ function CategoriaGastos() {
             min="1"
             placeholder="Ingrese la cantidad de producto por unidad"
           />
+
+          <br />
+          <Label>Empresa:</Label>
+          <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
+            <option value={0}>--Selecciona una empresa--</option>
+            {dataCias.map((cia: Cia) => (
+              <option key={cia.id} value={cia.id}>
+                {cia.nombre}
+              </option>
+            ))}
+          </Input>
+
+
         </ModalBody>
 
         <ModalFooter>
