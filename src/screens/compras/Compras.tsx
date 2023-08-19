@@ -62,15 +62,7 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = [
-    "Clave compra",
-    "Proveedor",
-    "Items",
-    "Importe",
-    "Estado",
-    "Fecha",
-    "Acción",
-  ];
+  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Acción"];
 
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
   const toggleCrearModal = () => {
@@ -105,10 +97,7 @@ function Compras() {
   const filtroProducto = (datoMedico: string) => {
     var resultado = dataProductos.filter((elemento: Producto) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
-      if (
-        (datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) &&
-        elemento.descripcion.length > 2
-      ) {
+      if ((datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.descripcion.length > 2) {
         return elemento;
       }
     });
@@ -178,6 +167,7 @@ function Compras() {
     fechaDocumento: "",
     cantidadFactura: 0,
     cantidadMalEstado: 0,
+    folioValidacion: 0,
   });
   const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(
     dataCompras.idProveedor,
@@ -219,12 +209,7 @@ function Compras() {
 
   const postCompra = () => {
     // Validar los datos antes de hacer la solicitud
-    if (
-      !dataCompras.idProveedor ||
-      !dataCompras.clave_prod ||
-      dataCompras.cantidadFactura <= 0 ||
-      dataCompras.costoCompra <= 0
-    ) {
+    if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
       // alert("Por favor, complete los campos obligatorios.");
       Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
       return;
@@ -419,13 +404,8 @@ function Compras() {
   const [productoSelected, setProductoSelected] = useState<Number[]>([]);
 
   useEffect(() => {
-    setSetsumaTotalCompras(
-      dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16
-    );
-    const ultimoFolio =
-      dataComprasGeneral && dataComprasGeneral.length > 0
-        ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento
-        : "";
+    setSetsumaTotalCompras(dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16);
+    const ultimoFolio = dataComprasGeneral && dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento : "";
     const ultiFecha = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fecha : "";
     const ultiCompra = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].id_compra : 0;
     if (ultiCompra > 0) {
@@ -433,10 +413,9 @@ function Compras() {
     } else {
       setDisabledFecha(false);
     }
-    setDataCompras({ ...dataCompras, folioDocumento: ultimoFolio, fecha: ultiFecha.split("T")[0] });
+    setDataCompras({ ...dataCompras, folioDocumento: ultimoFolio, fecha: ultiFecha.split("T")[0], folioValidacion: ultimoFolio });
     const descripciones = dataComprasGeneral.map((item) => item.claveProd);
     setProductoSelected(descripciones);
-    console.log(descripciones);
   }, [dataComprasGeneral]);
 
   const options = {
@@ -696,12 +675,28 @@ function Compras() {
         <div className="alineación-derecha">
           <InputGroup className="alineación-derecha">
             <Button
-              // disabled={}
+              disabled={!Number(dataCompras?.folioValidacion) > 0}
               color="primary"
               onClick={() => {
-                setTimeout(() => {
-                  setIdSeleccionado(0);
-                }, 1500);
+                setDataCompras({
+                  bonificaciones: 0,
+                  cantidad: 0,
+                  cantidadFactura: 0,
+                  cantidadMalEstado: 0,
+                  cia: 0,
+                  clave_prod: 0,
+                  costoCompra: 0,
+                  costounitario: 0,
+                  d_proveedor: "",
+                  fecha: "",
+                  finalizado: false,
+                  folioDocumento: "",
+                  id: 0,
+                  id_compra: 0,
+                  idProveedor: 0,
+                  idSucursal: 0,
+                  Usuario: 0,
+                });
                 setDisabledFecha(false);
               }}
             >
@@ -821,9 +816,7 @@ function Compras() {
                               })}
                           </td>
                           <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral
-                              .reduce((total, dato) => total + dato.costoCompra, 0)
-                              .toLocaleString("en-US", options)}
+                            {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
                           </td>
                           <td style={{ fontSize: "13px" }} align="right">
                             {dataComprasGeneral

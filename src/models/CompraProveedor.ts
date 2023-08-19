@@ -22,4 +22,5 @@ export interface CompraProveedor {
   d_unidadMedida?: string;
   d_unidadTraspaso?: number;
   fechaDocumento?: string;
+  folioValidacion?: any;
 }

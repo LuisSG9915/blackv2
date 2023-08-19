@@ -174,6 +174,9 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
       <MaterialReactTable
         columns={columns}
         data={dataProductosConAcciones}
+        state={{
+          isLoading: isLoading,
+        }}
         initialState={{
           density: "compact",
           showGlobalFilter: false,
