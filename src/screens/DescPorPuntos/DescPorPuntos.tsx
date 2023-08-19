@@ -75,31 +75,31 @@ function DescPorPuntos() {
     setModalActualizar(true);
   };
 
-  const editar = (dato: any) => {
-    jezaApi
-      .put(`/DeptosPuntos`, null, {
-        /* <-----------------------------------------------------------------------------------------API EDITAR */
-        params: {
-          id: form.id,
-          cia: form.cia,
-          area: form.area,
-          depto: form.depto,
-          forma_pago: form.forma_pago,
-          sucursal: form.sucursal,
-          porcentaje_puntos: form.porcentaje_puntos,
-        },
-      })
-      .then(() => {
-        getDesucentos();
-      })
-      .catch((e) => console.log(e));
-    const arreglo: any[] = [...data];
-    const index = arreglo.findIndex((registro) => registro.id === dato.id);
-    if (index !== -1) {
-      console.log("index");
-      setModalActualizar(false);
-    }
-  };
+  // const editar = (dato: any) => {
+  //   jezaApi
+  //     .put(`/DeptosPuntos`, null, {
+  //       /* <-----------------------------------------------------------------------------------------API EDITAR */
+  //       params: {
+  //         id: form.id,
+  //         cia: form.cia,
+  //         area: form.area,
+  //         depto: form.depto,
+  //         forma_pago: form.forma_pago,
+  //         sucursal: form.sucursal,
+  //         porcentaje_puntos: form.porcentaje_puntos,
+  //       },
+  //     })
+  //     .then(() => {
+  //       getDesucentos();
+  //     })
+  //     .catch((e) => console.log(e));
+  //   const arreglo: any[] = [...data];
+  //   const index = arreglo.findIndex((registro) => registro.id === dato.id);
+  //   if (index !== -1) {
+  //     console.log("index");
+  //     setModalActualizar(false);
+  //   }
+  // };
 
   // const eliminar = (dato: DescPorPunto) => {
   //   console.log(dato);
@@ -111,6 +111,43 @@ function DescPorPuntos() {
   //     });
   //   }
   // };
+
+  const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_ALMACEN_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    if (validarCampos() === true) {
+      await jezaApi
+        .put(`/DeptosPuntos`, null, {
+          params: {
+            id: form.id,
+            cia: form.cia,
+            area: form.area,
+            depto: form.depto,
+            forma_pago: form.forma_pago,
+            sucursal: form.sucursal,
+            porcentaje_puntos: form.porcentaje_puntos,
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Descuento actualizado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalActualizar(false);
+          getDesucentos();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+
 
   const getDesucentos = () => {
     jezaApi
@@ -396,7 +433,7 @@ function DescPorPuntos() {
           </FormGroup>
 
           <Label for="area">Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChange}>
+          <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
             <option value={0}>Seleccione un área</option>
             {dataAreas.map((area) => (
               <option value={area.area}>{area.descripcion}</option>
@@ -405,7 +442,7 @@ function DescPorPuntos() {
           <br />
           <FormGroup>
             <Label for="departamento">Departamento:</Label>
-            <Input type="select" name="depto" id="depto" onChange={handleChange}>
+            <Input type="select" name="depto" id="exampleSelect" value={form.depto} onChange={handleChange}>
               <option value={0}>Seleccione un departamento</option>
               {dataDeptosFiltrado.map((depto) => (
                 <option value={depto.depto}>{depto.descripcion}</option>
@@ -415,7 +452,7 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="formaPago">Forma de pago:</Label>
-            <Input type="select" name="formaPago" id="formaPago" onChange={handleChange}>
+            <Input type="select" name="formaPago" id="exampleSelect" value={form.forma_pago} onChange={handleChange}>
               {/* Opciones de forma de pago */}
               {dataFormasPagos.map((formaPago: FormaPago) => (
                 <option value={formaPago.tipo}> {formaPago.descripcion} </option>
@@ -425,24 +462,21 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="Porcentaje">Porcentaje:</Label>
-            <Input type="number" name="porcentaje_puntos" id="Porcentaje" onChange={handleChange} />
+            <Input type="number" name="porcentaje_puntos" id="exampleSelect" value={form.porcentaje_puntos} onChange={handleChange} />
           </FormGroup>
         </ModalBody>
 
         <ModalFooter>
           <CButton
             color="primary"
-            onClick={() => {
-              editar(form);
-              getDesucentos();
-            }}
+            onClick={editar}
             text="Actualizar"
           />
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalInsertar} about="">
+      <Modal isOpen={modalInsertar} >
         <ModalHeader>
           <div>
             <h3>Crear recompensa</h3>
@@ -476,7 +510,7 @@ function DescPorPuntos() {
           </FormGroup>
 
           <Label for="area">Área:</Label>
-          <Input type="select" name="area" id="area" value={form.area} onChange={handleChange}>
+          <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
             <option value={0}>Seleccione un área</option>
             {dataAreas.map((area) => (
               <option value={area.area}>{area.descripcion}</option>
@@ -485,7 +519,7 @@ function DescPorPuntos() {
           <br />
           <FormGroup>
             <Label for="departamento">Departamento:</Label>
-            <Input type="select" name="depto" id="depto" value={form.depto} onChange={handleChange}>
+            <Input type="select" name="depto" id="exampleSelect" value={form.depto} onChange={handleChange}>
               <option value={0}>Seleccione un departamento</option>
               {dataDeptosFiltrado.map((depto) => (
                 <option value={depto.depto}>{depto.descripcion}</option>
@@ -495,7 +529,7 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="formaPago">Forma de pago:</Label>
-            <Input type="select" name="forma_pago" id="forma_pago" value={form.forma_pago} onChange={handleChange}>
+            <Input type="select" name="forma_pago" id="exampleSelect" value={form.forma_pago} onChange={handleChange}>
               <option value={0}>Seleccione un departamento</option>
               {dataFormasPagos.map((formaPago: FormaPago) => (
                 <option value={formaPago.tipo}> {formaPago.descripcion} </option>
@@ -505,7 +539,7 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="Porcentaje">Porcentaje:</Label>
-            <Input type="number" name="porcentaje_puntos" id="Porcentaje" value={form.porcentaje_puntos} onChange={handleChange} />
+            <Input type="number" name="porcentaje_puntos" id="exampleSelect" value={form.porcentaje_puntos} onChange={handleChange} />
           </FormGroup>
         </ModalBody>
         <ModalFooter>
