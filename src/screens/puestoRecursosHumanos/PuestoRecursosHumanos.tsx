@@ -32,24 +32,126 @@ function PuestoRecursosHumanos() {
     useModalHook();
 
   // Create ----> POST
-  const insertar = () => {
-    if (form.descripcion_puesto === "") {
-      return;
-    }
-    jezaApi.post(`/Puesto?descripcion=${form.descripcion_puesto}`).then(() => {
-      alert("registro cargado"); //manda alerta
-      getinfo(); // refresca tabla
-    });
-  };
+  // const insertar = () => {
+  //   if (form.descripcion_puesto === "") {
+  //     return;
+  //   }
+  //   jezaApi.post(`/Puesto?descripcion=${form.descripcion_puesto}`).then(() => {
+  //     alert("registro cargado"); //manda alerta
+  //     getinfo(); // refresca tabla
+  //   });
+  // };
 
   // Update ---> PUT
-  const update = () => {
-    jezaApi.put(`/Puesto?id=${form.clave_puesto}&descripcion=${form.descripcion_puesto}`).then(() => {
-      alert("Registro Actualizado"); //manda alerta
-      setModalActualizar(!modalActualizar); //cierra modal
-      getinfo(); // refresca tabla
+
+  //VALIDACIÓN---->
+  const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
+
+  const validarCampos = () => {
+    const camposRequeridos: (keyof RecursosHumanosPuesto)[] = ["descripcion_puesto"];
+    const camposVacios: string[] = [];
+
+    camposRequeridos.forEach((campo: keyof RecursosHumanosPuesto) => {
+      const fieldValue = form[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios.push(campo);
+      }
     });
+
+    setCamposFaltantes(camposVacios);
+
+    if (camposVacios.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios.length === 0;
   };
+
+  //LIMPIEZA DE CAMPOS
+  const [estado, setEstado] = useState("");
+
+  const LimpiezaForm = () => {
+    setForm({ clave_puesto: 0, descripcion_puesto: "" });
+  };
+
+  // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
+  const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_PUESTO_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      await jezaApi
+        .post("/Puesto", null, {
+          params: {
+            descripcion: form.descripcion_puesto,
+
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Puesto creado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalInsertar(false);
+          getinfo();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+  // const editar = () => {
+  //   jezaApi.put(`/Puesto?id=${form.clave_puesto}&descripcion=${form.descripcion_puesto}`).then(() => {
+  //     alert("Registro Actualizado"); //manda alerta
+  //     setModalActualizar(!modalActualizar); //cierra modal
+  //     getinfo(); // refresca tabla
+  //   });
+  // };
+
+
+  // AQUÉ COMIENZA MÉTODO PUT PARA ACTUALIZAR REGISTROS
+  const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_PUESTO_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    if (validarCampos() === true) {
+      await jezaApi
+        .put(`/Puesto`, null, {
+          params: {
+            id: form.clave_puesto,
+            descripcion: form.descripcion_puesto,
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Puesto actualizado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalActualizar(false);
+          getinfo();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+
 
   // Read --->  GET
   const getinfo = () => {
@@ -59,7 +161,7 @@ function PuestoRecursosHumanos() {
   };
 
   const eliminar = async (dato: RecursosHumanosPuesto) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_PUESTO_DELS");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -237,8 +339,8 @@ function PuestoRecursosHumanos() {
             color="success"
             onClick={() => {
               setModalInsertar(true);
-              // setEstado("insert");
-              // LimpiezaForm();
+              setEstado("insert");
+              LimpiezaForm();
             }}
           >
             Crear puesto
@@ -269,7 +371,7 @@ function PuestoRecursosHumanos() {
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_puesto: e.target.value })}
             value={form.descripcion_puesto}
-            placeholder="Ingrese descripcion"
+
           ></Input>
         </ModalBody>
         <ModalFooter>
@@ -289,11 +391,11 @@ function PuestoRecursosHumanos() {
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_puesto: e.target.value })}
             value={form.descripcion_puesto}
-            placeholder="Ingrese descripcion"
+
           ></Input>
         </ModalBody>
         <ModalFooter>
-          <CButton color="primary" text="Actualizar" onClick={update} />
+          <CButton color="primary" text="Actualizar" onClick={editar} />
           <CButton color="danger" text="Cancelar" onClick={cerrarModalActualizar} />
         </ModalFooter>
       </Modal>
