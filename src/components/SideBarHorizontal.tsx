@@ -18,6 +18,7 @@ import {
   Card,
   ListGroup,
   ListGroupItem,
+  Input,
 } from "reactstrap";
 import { Usuario } from "../models/Usuario";
 import Usuarios from "../screens/Usuarios";
@@ -26,6 +27,7 @@ import Timer from "../components/Timer";
 import Swal from "sweetalert2";
 import "../../css/sidebar.css";
 import logoImage from "../assets/logoN.png";
+import { useSucursales } from "../hooks/getsHooks/useSucursales";
 
 const SidebarHorizontal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -152,6 +154,43 @@ const SidebarHorizontal = () => {
     // Limpiar el intervalo cuando el componente se desmonte
     return () => clearInterval(interval);
   }, []);
+  const [sucData, setSucData] = useState({ idSuc: 0, dSuc: "" });
+  const { dataSucursales } = useSucursales();
+  const [bandera, setBandera] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    localStorage.removeItem("userLoggedv2");
+
+    const desc = dataSucursales.find((suc) => Number(suc.sucursal) == Number(value));
+    // setSucData((prevState: any) => ({ ...prevState, [name]: Number(value) }));
+    // if (value.length > 0) setBandera(true);
+    setSucData({ ...sucData, dSuc: desc?.nombre ? desc?.nombre : "", idSuc: Number(value) });
+    // setTimeout(() => {
+    //   const neuevoResponse = form.map((item) => {
+    //     return {
+    //       ...item,
+    //       sucursal: sucData.idSuc,
+    //       d_sucursal: sucData.dSuc,
+    //     };
+    //   });
+    //   localStorage.setItem("userLoggedv2", JSON.stringify(neuevoResponse));
+    // }, 1500);
+  };
+  useEffect(() => {
+    if (sucData.idSuc > 0) {
+      const nuevoResponse = form.map((item) => {
+        return {
+          ...item,
+          sucursal: sucData.idSuc,
+          d_sucursal: sucData.dSuc,
+        };
+      });
+      localStorage.setItem("userLoggedv2", JSON.stringify(nuevoResponse));
+      setForm(nuevoResponse);
+      window.location.reload();
+    }
+  }, [sucData.dSuc]);
 
   return (
     <>
@@ -273,12 +312,24 @@ const SidebarHorizontal = () => {
                   <DropdownMenu dark>
                     {/* <DropdownItem header> {form.map((usuario) => usuario.nombre)}</DropdownItem> */}
                     <DropdownItem header>
-                      {" "}
                       <Card>
                         <CardHeader>{currentDateTime}</CardHeader>
                         <ListGroup flush>
                           <ListGroupItem>Nombre: {form.length > 0 && form[0].nombre}</ListGroupItem>
-                          <ListGroupItem>Sucursal: {form.length > 0 && form[0].d_sucursal}</ListGroupItem>
+                          {/* <ListGroupItem>Sucursal: {form.length > 0 && form[0].d_sucursal}</ListGroupItem> */}
+                          <ListGroupItem>
+                            <Input
+                              value={form.length > 0 && form[0].sucursal}
+                              type="select"
+                              bsSize="sm"
+                              style={{ fontSize: 10, fontStyle: "oblique" }}
+                              onChange={handleChange}
+                            >
+                              {dataSucursales.map((suc) => (
+                                <option value={suc.sucursal}> Sucursal: {suc.nombre}</option>
+                              ))}
+                            </Input>
+                          </ListGroupItem>
                         </ListGroup>
                       </Card>
                     </DropdownItem>

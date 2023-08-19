@@ -172,7 +172,28 @@ function TraspasoSalida() {
       .put(`/TraspasoFinaliza?sucursal_origen=${dataUsuarios2[0].sucursal}&sucursal_destino=${form.suc_destino}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
         fetchTraspasos();
-        alert("Traspaso finalizado correctamente");
+        Swal.fire({
+          icon: "success",
+          text: "Traspaso finalizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+        setForm({
+          cia: 0,
+          sucursal: 0,
+          folio: "",
+          fecha: "",
+          clave_prod: "",
+          cantidad: "",
+          costo: "",
+          precio: "",
+          suc_origen: 0,
+          suc_destino: 0,
+          usuario: "",
+          id: 0,
+          idProducto: "",
+          almacenOrigen: 0,
+          almacenDestino: 0,
+        });
       })
       .catch((error) => console.log(error));
   };

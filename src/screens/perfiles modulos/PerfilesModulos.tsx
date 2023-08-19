@@ -44,15 +44,8 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 // import { GrSecures } from "react-icons/gr";
 
 function PerfilesModulos() {
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const { filtroSeguridad, session } = useSeguridad();
   const { dataModulos } = useModulos();
   const [data, setData] = useState<Perfil_Modulo[]>([]);
@@ -165,9 +158,7 @@ function PerfilesModulos() {
     }
 
     // Verificar si el registro ya existe en la tabla
-    const registroExistente = data.find(
-      (registro) => registro.clave_perfil === form.clave_perfil && registro.modulo === form.modulo
-    );
+    const registroExistente = data.find((registro) => registro.clave_perfil === form.clave_perfil && registro.modulo === form.modulo);
 
     if (registroExistente) {
       Swal.fire({
@@ -326,7 +317,7 @@ function PerfilesModulos() {
     { field: "d_perfil", headerName: "Perfil", flex: 1, headerClassName: "custom-header" },
     // { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
     {
-      field: "modulo",
+      field: "d_modulo",
       headerName: "Módulo",
       flex: 1,
       headerClassName: "custom-header",
@@ -436,13 +427,7 @@ function PerfilesModulos() {
             <Row>
               <Col md="6" className="mb-4">
                 <Label>Perfil:</Label>
-                <Input
-                  type="select"
-                  name="clave_perfil"
-                  id="exampleSelect"
-                  value={form.clave_perfil}
-                  onChange={handleChange}
-                >
+                <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
                   {dataPerfiles.map((perfil) => (
                     <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>
                       {perfil.descripcion_perfil}
@@ -489,13 +474,7 @@ function PerfilesModulos() {
               <Row>
                 <Col md="12" className="mb-4">
                   <Label>Perfil: </Label>
-                  <Input
-                    type="select"
-                    name="clave_perfil"
-                    id="clave_perfil"
-                    value={form.clave_perfil}
-                    onChange={handleChange}
-                  >
+                  <Input type="select" name="clave_perfil" id="clave_perfil" value={form.clave_perfil} onChange={handleChange}>
                     <option value={0}>--Selecciona una opción--</option>
                     {dataPerfiles.map((perfil) => (
                       <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>

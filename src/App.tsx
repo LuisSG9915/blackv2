@@ -16,30 +16,30 @@ const App = () => {
   const [form, setForm] = useState<Usuario[]>([]);
   const componentRef = useRef();
   const [content, setContent] = useState("¡Hola, mundo!");
-  // useEffect(() => {
-  //   const item = localStorage.getItem("userLoggedv2");
-  //   if (item !== null) {
-  //     try {
-  //       const parsedItem = JSON.parse(item);
-  //       setForm(parsedItem);
-  //     } catch (error) {
-  //       console.error("Error parsing JSON:", error);
-  //       // Mostrar un alert en caso de error
-  //       alert("Error al cargar los datos de sesión. Por favor, vuelve a iniciar sesión.");
-  //       // Otra opción es usar una librería de notificaciones como "sweetalert2" para mostrar un mensaje más estilizado
-  //       // import Swal from "sweetalert2";
-  //       // Swal.fire({
-  //       //   icon: "error",
-  //       //   title: "Error",
-  //       //   text: "Error al cargar los datos de sesión. Por favor, vuelve a iniciar sesión.",
-  //       // });
-  //     }
-  //   } else {
-  //     // Handle the case where "userLoggedv2" is not present in localStorage
-  //     // For example, you might want to set a default value for the form in this case
-  //     console.log("userLoggedv2 not found in localStorage");
-  //   }
-  // }, []);
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      try {
+        const parsedItem = JSON.parse(item);
+        setForm(parsedItem);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        // Mostrar un alert en caso de error
+        alert("Error al cargar los datos de sesión. Por favor, vuelve a iniciar sesión.");
+        // Otra opción es usar una librería de notificaciones como "sweetalert2" para mostrar un mensaje más estilizado
+        // import Swal from "sweetalert2";
+        // Swal.fire({
+        //   icon: "error",
+        //   title: "Error",
+        //   text: "Error al cargar los datos de sesión. Por favor, vuelve a iniciar sesión.",
+        // });
+      }
+    } else {
+      // Handle the case where "userLoggedv2" is not present in localStorage
+      // For example, you might want to set a default value for the form in this case
+      console.log("userLoggedv2 not found in localStorage");
+    }
+  }, []);
 
   interface TicketPrintProps {
     children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -150,6 +150,8 @@ const App = () => {
   return (
     <>
       <SidebarHorizontal />
+      {form[0]?.sucursal}
+      {form[0]?.d_sucursal}
       {/* <TicketPrint>
         <Ticket />
       </TicketPrint> */}
