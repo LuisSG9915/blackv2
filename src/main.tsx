@@ -65,6 +65,7 @@ import UnidadMedida from "./screens/unidad_medida/UnidadMedida";
 import TipoMovto from "./screens/tipo_movto/TipoMovto";
 import Anticipo from "./screens/anticipo/Anticipo";
 import ReporteTool from "./screens/ReporteTool/ReporteTool";
+import DemoTresTablas from "./screens/ReporteTool/DemoTresTablas";
 
 const router = createBrowserRouter([
   {
@@ -316,6 +317,10 @@ const router = createBrowserRouter([
   {
     path: "/ReporteTool",
     element: <ReporteTool />,
+  },
+  {
+    path: "/DemoTresTablas",
+    element: <DemoTresTablas />,
   },
 ]);
 
