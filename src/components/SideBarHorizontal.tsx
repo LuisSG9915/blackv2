@@ -230,7 +230,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquete conversiones</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
                     <DropdownItem onClick={() => navigate("/UnidadMedida")}>Unidad de medida</DropdownItem>
                     <DropdownItem onClick={() => navigate("/TipoMovto")}>Tipo de movimiento</DropdownItem>
                     <DropdownItem divider />
@@ -241,7 +241,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/NivelEscolar")}>Niveles de escolaridad</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Estatuscolaborador")}>Estatus colaboradores</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Nomina trabajadores</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
@@ -293,6 +293,7 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DemoTresTablas")}>DEMO</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
