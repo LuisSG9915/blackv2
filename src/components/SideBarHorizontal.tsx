@@ -154,7 +154,7 @@ const SidebarHorizontal = () => {
     // Limpiar el intervalo cuando el componente se desmonte
     return () => clearInterval(interval);
   }, []);
-  const [sucData, setSucData] = useState({ idSuc: 0, dSuc: "" });
+  const [sucData, setSucData] = useState({ idSuc: 0, dSuc: "", idCia: 0 });
   const { dataSucursales } = useSucursales();
   const [bandera, setBandera] = useState(false);
 
@@ -165,7 +165,7 @@ const SidebarHorizontal = () => {
     const desc = dataSucursales.find((suc) => Number(suc.sucursal) == Number(value));
     // setSucData((prevState: any) => ({ ...prevState, [name]: Number(value) }));
     // if (value.length > 0) setBandera(true);
-    setSucData({ ...sucData, dSuc: desc?.nombre ? desc?.nombre : "", idSuc: Number(value) });
+    setSucData({ ...sucData, dSuc: desc?.nombre ? desc?.nombre : "", idSuc: Number(value), idCia: Number(desc?.cia) });
     // setTimeout(() => {
     //   const neuevoResponse = form.map((item) => {
     //     return {
@@ -184,6 +184,7 @@ const SidebarHorizontal = () => {
           ...item,
           sucursal: sucData.idSuc,
           d_sucursal: sucData.dSuc,
+          idCia: sucData.idCia,
         };
       });
       localStorage.setItem("userLoggedv2", JSON.stringify(nuevoResponse));
