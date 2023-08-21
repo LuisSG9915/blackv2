@@ -39,6 +39,10 @@ import { jezaApi } from "../../api/jezaApi";
 import { useAjusteBusqueda } from "../../hooks/getsHooks/useAjusteBusqueda";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
+import { BiAddToQueue } from "react-icons/bi";
+
+
+
 function MovimientoDiversos() {
   const [dataUsuarios, setDataUsuarios] = useState<Usuario[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -276,7 +280,7 @@ function MovimientoDiversos() {
         </Card> */}
         <UncontrolledAccordion defaultOpen="1">
           <AccordionItem>
-            <AccordionHeader targetId="1">Totales</AccordionHeader>
+            <AccordionHeader targetId="1"> <strong>Totales</strong></AccordionHeader>
             <AccordionBody accordionId="1">
               <table style={{ width: "100%" }}>
                 <thead>
@@ -341,6 +345,7 @@ function MovimientoDiversos() {
                     </option>
                   ))}
                 </Input>
+                <br />
               </Col>
 
               <Col md="3" style={{ marginBottom: 0 }}>
@@ -353,6 +358,7 @@ function MovimientoDiversos() {
                     </option>
                   ))}
                 </Input>
+                <br />
               </Col>
 
               <Col md="3">
@@ -363,6 +369,7 @@ function MovimientoDiversos() {
               <Col md="3">
                 <Label>Folio:</Label>
                 <Input disabled type="text" name="folio" id="folio" value={form.folio} onChange={handleChange} bsSize="sm"></Input>
+                <br />
               </Col>
               <Col md="6">
                 <Label>Observaciones:</Label>
@@ -375,6 +382,7 @@ function MovimientoDiversos() {
                   onChange={handleChange}
                   bsSize="sm"
                 ></Input>
+                <br />
               </Col>
               <Col md="6">
                 <Label>Responsable:</Label>
@@ -387,6 +395,7 @@ function MovimientoDiversos() {
                   onChange={handleChange}
                   bsSize="sm"
                 ></Input>
+                <br />
               </Col>
             </Row>
           </Container>
@@ -411,6 +420,7 @@ function MovimientoDiversos() {
                     }}
                     style={{ marginRight: 0 }}
                   >
+                    <BiAddToQueue size={30} />
                     Agregar
                   </Button>
 
@@ -441,7 +451,7 @@ function MovimientoDiversos() {
               </div>
               <div className="table-responsive">
                 <br />
-                <Table size="sm" striped={true} responsive={"sm"}>
+                <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
                   <thead>
                     <tr>
                       <th>Clave</th>

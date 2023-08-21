@@ -713,7 +713,9 @@ const Ventas = () => {
               if (dataTemporal.cliente) {
                 setModalOpen(true);
               } else {
-                alert("Ingrese un cliente");
+
+                Swal.fire("Ingrese un cliente");
+
               }
             }}
           >

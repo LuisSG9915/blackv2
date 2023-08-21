@@ -1,230 +1,130 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Row, Container, Button, Input, Table, Card, CardHeader, CardBody } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { jezaApi } from "../../api/jezaApi";
 import { Trabajador } from "../../models/Trabajador";
 import { Horario } from "../../models/Horario";
+import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 
 function Horarios() {
-  const [data, setData] = useState<Trabajador[]>([]);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [weekDates, setWeekDates] = useState<Date[]>([]);
-  const [form, setForm] = useState<Horario>({
-    id: 1,
-    id_empleado: "",
-    nombre: "",
-    fecha: new Date(),
-    diaSemana: 1,
-    h1: "",
-    h2: "",
-    h3: "",
-    h4: "",
-    descanso: false,
-  });
-
-  const handleItemChange = (e) => {
-    const id_empleado = e.target.value;
-    const selectedEmpleado = data.find((item) => item.id === id_empleado);
-    setForm((prevForm) => ({
-      ...prevForm,
-      id_empleado,
-      nombre: selectedEmpleado ? selectedEmpleado.nombre : "",
-    }));
-  };
-
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-  };
-
-  const getDayOfWeek = (date: Date): string => {
-    const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-    return days[date.getDay()];
-  };
-
-  const getCurrentWeekDates = (selectedDate: string): Date[] => {
-    const startDate = new Date(selectedDate);
-    const weekDates = [];
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
-      weekDates.push(date);
-    }
-
-    return weekDates;
-  };
-
-  const getEmpleado = () => {
-    jezaApi.get(`/Trabajador?id=0`).then((response) => {
-      setData(response.data);
-    });
-  };
+  const [horarios, setHorarios] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getEmpleado();
+    // Realizar la solicitud fetch a la API
+    fetch("http://cbinfo.no-ip.info:9089/Horario?idTrabajador=2132&fecha=2023-08-07")
+      .then((response) => response.json())
+      .then((data) => {
+        setHorarios(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error al cargar los datos:", error);
+        setLoading(false);
+      });
   }, []);
 
-  const handleSearch = () => {
-    if (selectedDate) {
-      const dates = getCurrentWeekDates(selectedDate);
-      setWeekDates(dates);
-    }
-  };
+  const columns = useMemo<MRT_ColumnDef<Person>[]>(
+    () => [
+      {
+        accessorKey: "diaSemana",
+        header: "Día",
+        size: 150,
+        Cell: ({ row }) => {
+          const dayNumber = row.original.diaSemana;
+          let dayName = "";
 
-  const create = () => {
-    const item = data.find((item) => item.id === form.id_empleado); // Obtiene el objeto item seleccionado
-    if (item) {
-      jezaApi
-        .post(
-          `/Horarios?id_empleado=${item.id}&fecha=${selectedDate}&h1=${form.h1}&h2=${form.h2}&h3=${form.h3}&h4=${form.h4}&descanso=${form.descanso}`
-        )
-        .then(() => {
-          alert("registro cargado");
-          getEmpleado(); // Actualiza los datos de los empleados
-        });
-    }
-  };
+          if (dayNumber === 1) {
+            dayName = "Lunes";
+          } else if (dayNumber === 2) {
+            dayName = "Martes";
+          } else if (dayNumber === 3) {
+            dayName = "Miércoles";
+          } else if (dayNumber === 4) {
+            dayName = "Jueves";
+          } else if (dayNumber === 5) {
+            dayName = "Viernes";
+          } else if (dayNumber === 6) {
+            dayName = "Sábado";
+          } else if (dayNumber === 7) {
+            dayName = "Domingo";
+          }
+
+          return dayName;
+        },
+      },
+      {
+        accessorKey: "fecha",
+        header: "Fecha",
+        size: 150,
+        Cell: ({ row }) => {
+          // Obtiene la cadena de fecha desde row.original.fecha
+          const dateStr = row.original.fecha;
+
+          // Crea un objeto de fecha a partir de la cadena de fecha
+          const date = new Date(dateStr);
+
+          // Verifica si la fecha es válida antes de formatearla
+          if (isNaN(date.getTime())) {
+            return "Fecha inválida";
+          }
+
+          // Formatea la fecha como día/mes/año
+          const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+
+          return formattedDate;
+        },
+      },
+      {
+        accessorKey: "h1",
+        header: "Hora de Entrada",
+        size: 200,
+      },
+      {
+        accessorKey: "h2",
+        header: "Hora de Salida",
+        size: 150,
+      },
+      {
+        accessorKey: "h3",
+        header: "Hora de Entrada 2",
+        size: 200,
+      },
+      {
+        accessorKey: "h4",
+        header: "Hora de Salida 2",
+        size: 150,
+      },
+      {
+        accessorKey: "descanso",
+        header: "Descanso",
+        size: 150,
+        Cell: ({ cell }) => (cell.value ? "Sí" : "No"),
+      },
+      {
+        accessorKey: "editar",
+        header: "EDITAR",
+        size: 150,
+        Cell: ({ cell }) => (
+          <Button size="sm" color="secondary">
+            Editar
+          </Button>
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <>
-      <Row>
-        <SidebarHorizontal />
-      </Row>
-      <br />
-      <h1 align="center">Horarios</h1>
-
-      <Container style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
-        <Card>
-          <CardHeader style={{ textAlign: "center" }}>
-            <h5>Seleccione Personal</h5>
-          </CardHeader>
-          <CardBody style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" }}>
-            <Input type="select" onChange={handleItemChange}>
-              {data.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.nombre}
-                </option>
-              ))}
-            </Input>
-            <Input type="date" value={selectedDate} onChange={handleDateChange} />
-            <Button color="primary" onClick={handleSearch}>
-              Buscar
-            </Button>
-          </CardBody>
-        </Card>
-      </Container>
-      <br />
-      <Container>
-        <br />
-        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-          <Button color="info">Guardar configuración semana</Button>
-          <Button color="success" onClick={create}>
-            Sincronizar
-          </Button>
-        </div>
-
-        <Table className="table-borderless">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Día</th>
-              <th>Hora Entrada</th>
-              <th>Hora Salida Comida</th>
-              <th>Hora Entrada Comida</th>
-              <th>Hora Salida</th>
-              <th>Descanso</th>
-            </tr>
-          </thead>
-          <tbody>
-            {weekDates.map((date, index) => (
-              <tr key={index}>
-                <td>{date.toLocaleDateString()}</td>
-                <td>{getDayOfWeek(date)}</td>
-                <td>
-                  <Input
-                    type="time"
-                    name={`h1-${index}`}
-                    id={`h1-${index}`}
-                    onChange={(e) => {
-                      const { value } = e.target;
-                      setForm((prevForm) => ({
-                        ...prevForm,
-                        [`h1-${index}`]: value,
-                      }));
-                    }}
-                    value={form[`h1-${index}`] || ""}
-                    disabled={date < new Date()}
-                  />
-                </td>
-                <td>
-                  <Input
-                    type="time"
-                    name={`h2-${index}`}
-                    id={`h2-${index}`}
-                    onChange={(e) => {
-                      const { value } = e.target;
-                      setForm((prevForm) => ({
-                        ...prevForm,
-                        [`h2-${index}`]: value,
-                      }));
-                    }}
-                    value={form[`h2-${index}`] || ""}
-                    disabled={date < new Date()}
-                  />
-                </td>
-                <td>
-                  <Input
-                    type="time"
-                    name={`h3-${index}`}
-                    id={`h3-${index}`}
-                    onChange={(e) => {
-                      const { value } = e.target;
-                      setForm((prevForm) => ({
-                        ...prevForm,
-                        [`h3-${index}`]: value,
-                      }));
-                    }}
-                    value={form[`h3-${index}`] || ""}
-                    disabled={date < new Date()}
-                  />
-                </td>
-                <td>
-                  <Input
-                    type="time"
-                    name={`h4-${index}`}
-                    id={`h4-${index}`}
-                    onChange={(e) => {
-                      const { value } = e.target;
-                      setForm((prevForm) => ({
-                        ...prevForm,
-                        [`h4-${index}`]: value,
-                      }));
-                    }}
-                    value={form[`h4-${index}`] || ""}
-                    disabled={date < new Date()}
-                  />
-                </td>
-                <td className="text-center">
-                  <Input
-                    type="checkbox"
-                    name={`descanso-${index}`}
-                    id={`descanso-${index}`}
-                    checked={form[`descanso-${index}`] || false}
-                    onChange={(e) => {
-                      const { checked } = e.target;
-                      setForm((prevForm) => ({
-                        ...prevForm,
-                        [`descanso-${index}`]: checked,
-                      }));
-                    }}
-                    disabled={date < new Date()}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Container>
+      <div>
+        <SidebarHorizontal></SidebarHorizontal>
+        <p>horarios 2.0 en construccion...</p>
+        <Container>
+          <MaterialReactTable columns={columns} data={horarios} />;
+        </Container>
+      </div>
+      );
     </>
   );
 }

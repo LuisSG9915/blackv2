@@ -353,7 +353,7 @@ function Almacenes() {
   };
   function DataTable() {
     return (
-      <div style={{ height: 350, width: "90%" }}>
+      <div style={{ height: 500, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={data}
