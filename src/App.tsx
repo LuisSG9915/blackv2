@@ -1,18 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Container, FormGroup } from "reactstrap";
-import { useNavigate } from "react-router-dom";
 import SidebarHorizontal from "./components/SidebarHorizontal";
 import { Usuario } from "./models/Usuario";
-import { useReactToPrint } from "react-to-print";
-import { AnyAction } from "@reduxjs/toolkit";
-import { Br, Cut, Line, Printer, render, Row, Text } from "react-thermal-printer";
-import { connect } from "node:net";
-import { useMutation } from "@tanstack/react-query";
+import { Button } from "reactstrap";
+// import nodemailer from "nodemailer";
 
 const App = () => {
-  const navigate = useNavigate();
   const [form, setForm] = useState<Usuario[]>([]);
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -28,12 +22,36 @@ const App = () => {
       console.log("userLoggedv2 not found in localStorage");
     }
   }, []);
+
+  const sendMail = async () => {
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      port: 587,
+      auth: {
+        user: "soporte@cbinformatica.net",
+        pass: "xlcrvcqovbsywcze",
+      },
+    });
+    const mailOptions = {
+      from: "soporte@cbinformatica.net",
+      to: "luis.sg9915@gmail.com",
+      subject: "Prueba de correo desde React.js",
+      text: "Este es un correo de prueba enviado desde React.js y Nodemailer.",
+    };
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Correo enviado:", info.response);
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+    }
+  };
   return (
     <>
       <SidebarHorizontal />
       {/* {form[0]?.sucursal}
       {form[0]?.d_sucursal}
       {form[0]?.idCia} */}
+      {/* <Button onClick={() => null}>Envío</Button> */}
     </>
   );
 };
