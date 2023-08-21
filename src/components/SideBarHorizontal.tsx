@@ -319,19 +319,23 @@ const SidebarHorizontal = () => {
                         <ListGroup flush>
                           <ListGroupItem>Nombre: {form.length > 0 && form[0].nombre}</ListGroupItem>
                           {/* <ListGroupItem>Sucursal: {form.length > 0 && form[0].d_sucursal}</ListGroupItem> */}
-                          <ListGroupItem>
-                            <Input
-                              value={form.length > 0 && form[0].sucursal}
-                              type="select"
-                              bsSize="sm"
-                              style={{ fontSize: 10, fontStyle: "oblique" }}
-                              onChange={handleChange}
-                            >
-                              {dataSucursales.map((suc) => (
-                                <option value={suc.sucursal}> Sucursal: {suc.nombre}</option>
-                              ))}
-                            </Input>
-                          </ListGroupItem>
+                          {form[0]?.clave_perfil === 27 ? (
+                            <ListGroupItem>
+                              <Input
+                                value={form.length > 0 && form[0].sucursal}
+                                type="select"
+                                bsSize="sm"
+                                style={{ fontSize: 10, fontStyle: "oblique" }}
+                                onChange={handleChange}
+                              >
+                                {dataSucursales.map((suc) => (
+                                  <option value={suc.sucursal}> Sucursal: {suc.nombre}</option>
+                                ))}
+                              </Input>
+                            </ListGroupItem>
+                          ) : (
+                            <ListGroupItem>Sucursal: {form.length > 0 && form[0]?.d_sucursal}</ListGroupItem>
+                          )}
                         </ListGroup>
                       </Card>
                     </DropdownItem>
