@@ -40,6 +40,8 @@ import { useAjusteBusqueda } from "../../hooks/getsHooks/useAjusteBusqueda";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
 import { BiAddToQueue } from "react-icons/bi";
+import { BiSearchAlt } from "react-icons/bi";
+// VscNewFile
 
 
 
@@ -541,6 +543,7 @@ function MovimientoDiversos() {
               fetchAjustesBusquedas();
             }}
           >
+            <BiSearchAlt size={30} />
             Busqueda
           </Button>
         </InputGroup>
