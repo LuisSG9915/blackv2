@@ -67,7 +67,6 @@ function Compras() {
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
   const toggleCrearModal = () => {
     if (!dataCompras.folioDocumento || !dataCompras.folioDocumento) {
-      alert("Falta la fecha o documento por ingresar");
       Swal.fire("", "Falta la fecha o documento por ingresar", "info");
     } else {
       fetchProduct4();
@@ -613,8 +612,8 @@ function Compras() {
         <br />
         <h1>Compras</h1>
         <br />
-        <div className="form-grid">
-          <div>
+        <Row>
+          <Col md="6">
             <Label>Proveedor:</Label>
             <Input
               onClick={() => {
@@ -636,9 +635,10 @@ function Compras() {
                 <option value={proveedor.id}> {proveedor.nombre} </option>
               ))}
             </Input>
-          </div>
+            <br />
+          </Col>
 
-          <div>
+          <Col md="6">
             <Label>Fecha de documento:</Label>
             <Input
               type="date"
@@ -648,8 +648,10 @@ function Compras() {
               value={dataCompras.fechaDocumento || dataCompras.fecha || ""} // Prioriza fechaDocumento si existe, si no, muestra fecha, y si no, cadena vacía
               bsSize="sm"
             />
-          </div>
-          <div>
+            <br />
+          </Col>
+
+          <Col md="6">
             <Label for="documento">Documento:</Label>
             <Input
               disabled={disabledFecha}
@@ -659,17 +661,12 @@ function Compras() {
               value={dataCompras.folioDocumento ? dataCompras.folioDocumento : ""}
               bsSize="sm"
             />
-          </div>
-          {/* <div>
-            <Label>Fecha {fechaHoy} </Label>
             <br />
-            <Label>Sucursal: {dataUsuarios2[0]?.d_sucursal.toUpperCase()}</Label>
-            <br />
-            <Label> Usuario: {dataUsuarios2 ? dataUsuarios2[0]?.nombre.toLocaleUpperCase() : ""} </Label>
-          </div> */}
-        </div>
+          </Col>
+
+        </Row>
       </Container>
-      <br />
+
       {/* <Label>Usuario: {dataUsuarios[0].d_perfil ? dataUsuarios[0].d_perfil : "cbinfortmatica"}</Label> */}
       <Container>
         <div className="alineación-derecha">
@@ -773,69 +770,75 @@ function Compras() {
           <tfoot>
             <tr>
               <th colSpan={10}>
-                <UncontrolledAccordion defaultOpen="2">
-                  <AccordionItem>
-                    <AccordionHeader targetId="1">
-                      <strong>Totales</strong>
-                    </AccordionHeader>
-                    <AccordionBody accordionId="1">
-                      <table style={{ width: "100%" }}>
-                        <tr>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Claves</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }} width="100"></th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad facturada</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Mal estado</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Costo en catalogo</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Costo compra</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Importe:</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Bonificación</th>
-                          <th colSpan={1} width="80"></th>
-                        </tr>
-                        <tr>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.length}
-                          </td>
-                          <td style={{ fontSize: "13px" }} width="100"></td>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.cantidad, 0)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadFactura, 0)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadMalEstado, 0)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral
-                              .reduce((total, dato) => total + dato.costoUnitario, 0)
-                              .toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                                minimumFractionDigits: 2,
-                              })}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral
-                              .reduce((total, dato) => total + dato.costoCompra * dato.cantidadFactura, 0)
-                              .toLocaleString("en-US", options)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.bonificaciones, 0)}
-                          </td>
-                          <td colSpan={1}></td>
-                        </tr>
-                      </table>
-                    </AccordionBody>
-                  </AccordionItem>
-                </UncontrolledAccordion>
+
               </th>
             </tr>
           </tfoot>
         </Table>
+        <div>
+          <UncontrolledAccordion defaultOpen="2">
+            <AccordionItem>
+              <AccordionHeader targetId="1">
+                <strong>Totales</strong>
+              </AccordionHeader>
+              <AccordionBody accordionId="1">
+                <table style={{ width: "100%" }}>
+                  <tr>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Claves</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }} width="100"></th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad facturada</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Mal estado</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Costo en catalogo</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Costo compra</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Importe:</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Bonificación</th>
+                    <th colSpan={1} width="80"></th>
+                  </tr>
+                  <tr>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.length}
+                    </td>
+                    <td style={{ fontSize: "13px" }} width="100"></td>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.cantidad, 0)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadFactura, 0)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadMalEstado, 0)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral
+                        .reduce((total, dato) => total + dato.costoUnitario, 0)
+                        .toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          minimumFractionDigits: 2,
+                        })}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral
+                        .reduce((total, dato) => total + dato.costoCompra * dato.cantidadFactura, 0)
+                        .toLocaleString("en-US", options)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.bonificaciones, 0)}
+                    </td>
+                    <td colSpan={1}></td>
+                  </tr>
+                </table>
+              </AccordionBody>
+            </AccordionItem>
+          </UncontrolledAccordion>
+
+        </div>
+
+
         <div style={{ display: "flex", justifyContent: "end" }}>
           <p style={{ backgroundColor: "#dee2e6" }}>
             {" "}
