@@ -9,6 +9,7 @@ import logoImage from "../../assets/Logo.png";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import { Sucursal } from "../../models/Sucursal";
 
 function Home() {
   const navigate = useNavigate();
@@ -25,27 +26,28 @@ function Home() {
   };
   const [modalSucursal, setModalSucursal] = useState(false);
   const [responseData, setResponseData] = useState([]);
+
+  const getSucursalForeignKey = (idTableCia: number) => {
+    const cia = dataSucursales.filter((cia: Sucursal) => cia.sucursal === idTableCia);
+    return cia;
+  };
   const handleNavigation = async () => {
     setLoading(true);
     try {
       const response = await jezaApi.get(`/UsuarioPass?usuario=${username}&pass=${password}`);
-      console.log(response.data);
+      const sucursalArray = getSucursalForeignKey(response.data[0].sucursal);
+      const nuevoResponse = response.data.map((item) => {
+        return {
+          ...item,
+          idCia: sucursalArray[0].cia,
+        };
+      });
       if (response.data[0].acceso === 1) {
         if (response.data[0].clave_perfil == 27) {
-          setResponseData(response.data);
+          setResponseData(nuevoResponse);
           setModalSucursal(true);
-          // const arregloModificado = response.data.map((item: any) => {
-          //   return {
-          //     ...item,
-          //     sucursal: 21,
-          //     d_sucursal: "BARRIO",
-          //   };
-          // });
-          // localStorage.setItem("userLoggedv2", JSON.stringify(arregloModificado));
-        }
-        //
-        else {
-          localStorage.setItem("userLoggedv2", JSON.stringify(response.data));
+        } else {
+          localStorage.setItem("userLoggedv2", JSON.stringify(nuevoResponse));
           navigate("/app");
         }
       } else {
