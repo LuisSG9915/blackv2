@@ -224,10 +224,14 @@ const SidebarHorizontal = () => {
                     <DropdownItem divider />
                     <DropdownItem header>Comerciales</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Marcas")}>Marcas</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/AreaDeptoClases")}>Área, Departamentos y Clases</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/AreaDeptoClases")}>
+                      Área, Departamentos y Clases
+                    </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Clientes")}>Clientes</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
+                      Configuración de puntos por departamentos
+                    </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
@@ -305,6 +309,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Seguridad</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/ShopifySinc")}>Anticipos</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
@@ -350,7 +355,12 @@ const SidebarHorizontal = () => {
           {isTimerExpired() ? (
             <Timer limitInMinutes={60} onExpiration={handleLogout} redirectPath={undefined} onUpdate={undefined} />
           ) : (
-            <Timer limitInMinutes={60} onExpiration={handleLogout} onUpdate={handleTimerUpdate} redirectPath={undefined} />
+            <Timer
+              limitInMinutes={60}
+              onExpiration={handleLogout}
+              onUpdate={handleTimerUpdate}
+              redirectPath={undefined}
+            />
           )}
         </div>
       </>
