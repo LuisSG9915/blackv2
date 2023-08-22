@@ -1217,6 +1217,8 @@ const Ventas = () => {
     numVenta: 0,
     idProducto: 0,
     clave: 0,
+    Cve_cliente: 0,
+    fecha: ""
   });
   useEffect(() => {
     loadHistorialDetalle();
@@ -1226,7 +1228,7 @@ const Ventas = () => {
     if (paramsDetalles.numVenta > 0) {
       await jezaApi
         .get(
-          `/HistorialDetalle?suc=${paramsDetalles.sucursal}&cliente=${dataTemporal.Cve_cliente}&venta=${paramsDetalles.numVenta}&serv=${paramsDetalles.idProducto}`
+          `/HistorialDetalle?suc=${paramsDetalles.sucursal}&cliente=${paramsDetalles.Cve_cliente}&venta=${paramsDetalles.numVenta}&serv=${paramsDetalles.idProducto}`
         )
         .then((response) => {
           // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
@@ -1265,16 +1267,31 @@ const Ventas = () => {
             size="sm"
             onClick={() => {
               setParamsDetalles({
+                Cve_cliente: row.original.Cve_cliente,
                 idProducto: row.original.idProducto,
                 numVenta: row.original.NumVenta,
                 sucursal: row.original.sucursal,
                 clave: row.original.id,
+                fecha: row.original.Fecha,
               });
+              setIsModalOpen(true);
             }}
           >
             Detalle
           </Button>
         ),
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Cve_cliente",
+        header: "Cliente",
+        flex: 1,
+        size: 1,
         muiTableBodyCellProps: {
           align: "center",
         },
@@ -2644,26 +2661,87 @@ const Ventas = () => {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={isModalOpen} toggle={setIsModalOpen}>
-        <ModalHeader toggle={handleCloseModal}>Historial Detalle: </ModalHeader>
+
+      <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} size="lg">
+        <ModalHeader toggle={handleCloseModal}>Historial detalle</ModalHeader>
+        <ModalBody>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            <Row>
+              <Col md="4">
+                <p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p>
+
+              </Col>
+
+              <Col md="4">
+                <p><strong>No. enta: </strong>{paramsDetalles.numVenta}</p>
+              </Col>
+
+              <Col md="4">
+                <p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p>
+              </Col>
+            </Row>
+
+            <Table borderless>
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th >Cantidad</th>
+                  <th>Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historialDetalle.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.Insumo}</td>
+                    <td>{item.Cant}</td>
+                    <td>$ 10.00</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <div>
+              <p style={{ textAlign: "left" }}><strong>Total: $20.00</strong></p>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+
+      {/* 
+      <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} size="lg">
+        <ModalHeader toggle={handleCloseModal}>Historial Detalle</ModalHeader>
         <ModalBody>
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
             {historialDetalle.map((item, index) => (
               <div key={index}>
-                <p>Fecha: {item.Fecha}</p>
+                <Table borderless>
+                  <thead>
+                    <tr>
+                      <th>Fecha: {item.Fecha}</th>
+                      <th>Número de Venta: {item.NumVenta}</th>
+                      <th>Sucursal: {item.Sucursal}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Insumo: {item.Insumo}</td>
+                      <td>Cantidad: {item.Cant}</td>
+                      <td>Precio $</td>
+                    </tr>
+                  </tbody>
+                </Table> */}
+      {/* <p>Fecha: {item.Fecha}</p>
                 <p>Número de Venta: {item.NumVenta}</p>
                 <p>Sucursal: {item.Sucursal}</p>
                 <p>Estilista: {item.Estilista}</p>
                 <p>Servicio: {item.Servicio}</p>
-                <p>Insumo: {item.Insumo}</p>
+                <p></p>
                 <p>Cantidad: {item.Cant}</p>
-                <p>test</p>
-                <hr />
-              </div>
+                <hr /> */}
+      {/* </div>
             ))}
           </div>
         </ModalBody>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

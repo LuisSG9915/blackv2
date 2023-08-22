@@ -40,6 +40,12 @@ import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import { MdAttachMoney, MdOutlineReceiptLong, MdAccessTime } from "react-icons/md";
+import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
+import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
+import { CgPlayListCheck } from "react-icons/cg";  //PARA BOTÓN FINALIZAR
+import { BiTag } from "react-icons/bi";  //PARA BOTÓN NUEVO 
+
+
 
 function Compras() {
   const { dataProveedores } = useProveedor();
@@ -671,6 +677,11 @@ function Compras() {
       <Container>
         <div className="alineación-derecha">
           <InputGroup className="alineación-derecha">
+
+            <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
+              <BiAddToQueue size={30} />
+              Agregar
+            </Button>
             <Button
               disabled={!Number(dataCompras?.folioValidacion) > 0}
               color="primary"
@@ -697,11 +708,11 @@ function Compras() {
                 setDisabledFecha(false);
               }}
             >
+
               Nuevo
+              <BiTag size={30} />
             </Button>
-            <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
-              Agregar
-            </Button>
+
           </InputGroup>
         </div>
         <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
@@ -851,20 +862,22 @@ function Compras() {
           <Col md={"8"} className="">
             <br />
             <div className="d-flex  justify-content-start ">
+              <Button
+                disabled={disabledFecha || dataComprasGeneral.length === 0}
+                style={{ marginRight: 10 }}
+                onClick={() => putFinalizaCompra()}
+                color="success"
+              >
+                Finalizado
+                <CgPlayListCheck size={30} />
+              </Button>
               <InputGroup size="sm">
                 <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
+                  <BiSearchAlt size={35} />
                   Consultar
-                  <MdAttachMoney size={35} />
+
                 </Button>
-                <Button
-                  disabled={disabledFecha || dataComprasGeneral.length === 0}
-                  style={{ marginRight: 10 }}
-                  onClick={() => putFinalizaCompra()}
-                  color="success"
-                >
-                  Finalizado
-                  <MdOutlineReceiptLong size={30} />
-                </Button>
+
               </InputGroup>
             </div>
           </Col>
