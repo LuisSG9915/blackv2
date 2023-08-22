@@ -3,7 +3,6 @@ import SidebarHorizontal from "../../components/SidebarHorizontal";
 import "./shopify.css";
 import { Button, Container } from "reactstrap";
 import axios from "axios";
-import { jezaApi } from "../../api/jezaApi";
 
 function ShopifySinc() {
   const [ordersJson, setOrdersJson] = useState(null);
@@ -13,23 +12,47 @@ function ShopifySinc() {
     try {
       const response = await axios.get("http://localhost:3001/api/orders"); // Obtener datos de órdenes
 
-      // Verificar si response.data es válido antes de enviarlo
       if (response.data) {
-        // Convertir los datos de órdenes a una cadena JSON y agregar comillas al inicio y al final
-        const ordersJsonString = `'${JSON.stringify(response.data)}'`;
-
-        // Realizar la solicitud PUT con los datos de órdenes
-        const apicb = await jezaApi.put(`/ShopifyOrders?Json=${encodeURIComponent(ordersJsonString)}`);
-        console.log("Respuesta de jezaApi.put:", apicb.data);
-
-        setOrdersJson(response.data); // Actualizar el estado con los datos de órdenes recibidos
+        setOrdersJson(response.data);
         setError(null);
+
+        await sendOrdersToJeza(response.data);
       } else {
         setError("Los datos de órdenes no son válidos.");
       }
     } catch (error) {
       console.error("Error al obtener las órdenes:", error);
       setError("Ocurrió un error al obtener las órdenes.");
+    }
+  };
+
+  const sendOrdersToJeza = async (ordersData) => {
+    try {
+      // Crear un objeto con la configuración de la solicitud PUT
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ json: ordersData }), // Enviar datos como objeto JSON
+      };
+  
+      // URL de la API (actualiza con la URL correcta)
+      const apiUrl = 'http://cbinfo.no-ip.info:9089/ShopifyOrders?json=';
+      
+      // Realizar la solicitud PUT utilizando fetch
+      const response = await fetch(apiUrl, requestOptions);
+  
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Respuesta de la API:", responseData);
+      } else {
+        console.error("Error en la solicitud PUT:", response.status);
+        // Manejar errores de la solicitud PUT aquí
+      }
+    } catch (error) {
+      console.error("Error al enviar las órdenes a Jeza:", error);
+      // Manejar errores aquí
     }
   };
 
@@ -51,26 +74,14 @@ function ShopifySinc() {
 
       {error && <p className="error-message">{error}</p>}
 
-      {ordersJson && <div>{/* <pre>{JSON.stringify(ordersJson, null, 2)}</pre> */}</div>}
+      {ordersJson && (
+        <div>
+          <h2>Respuesta JSON de Órdenes:</h2>
+          <pre>{JSON.stringify(ordersJson, null, 2)}</pre>
+        </div>
+      )}
     </>
   );
 }
 
 export default ShopifySinc;
-
-//   // Función para obtener las órdenes de Shopify
-//   const fetchOrders = async () => {
-//     try {
-//       const response = await axios.get("http://localhost:3001/api/orders");
-//       // Ruta de tu servidor backend
-//       setOrdersJson(response.data);
-//       setError(null);
-
-//       const apicb = await jezaApi.put(`/ShopifyOrders?Json=${ordersJson}`);
-//       console.log("Respuesta de jezaApi.put:", apicb.data);
-
-//     } catch (error) {
-//       console.error("Error al obtener las órdenes:", error);
-//       setError("Ocurrió un error al obtener las órdenes.");
-//     }
-//   };

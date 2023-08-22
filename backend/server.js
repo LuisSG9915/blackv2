@@ -5,17 +5,12 @@ const axios = require("axios");
 const app = express();
 const port = 3001; // Puerto de tu servidor
 
-// Configura el middleware CORS para permitir solicitudes desde http://localhost:5173
+// Configura el middleware CORS para permitir solicitudes desde http://127.0.0.1:5173
 const corsOptions = {
-  origin: "http://localhost:5173", // Cambia esto al origen de tu aplicación de React
+  origin: "http://127.0.0.1:5173", // Cambia esto al origen de tu aplicación de React
 };
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // Reemplaza '*' con el dominio de tu aplicación frontend si es específico.
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+app.use(cors(corsOptions));
 
 // Ruta para obtener órdenes desde Shopify
 app.get("/api/orders", async (req, res) => {
@@ -47,18 +42,3 @@ app.get("/api/orders", async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor Express en ejecución en el puerto ${port}`);
 });
-
-// Ruta para obtener las órdenes de Shopify
-// app.get('/api/orders', async (req, res) => {
-//   try {
-//     const response = await axios.get('https://tnbmx.myshopify.com/admin/api/2023-07/orders.json', {
-//       headers: {
-//         'X-Shopify-Access-Token': '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',
-//       },
-//     });
-//     res.json(response.data);
-//   } catch (error) {
-//     console.error('Error al obtener las órdenes:', error);
-//     res.status(500).json({ error: 'Error al obtener las órdenes de Shopify' });
-//   }
-// });
