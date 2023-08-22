@@ -68,7 +68,7 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Acción"];
+  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado", "Acción"];
 
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
   const toggleCrearModal = () => {
@@ -173,6 +173,7 @@ function Compras() {
     cantidadFactura: 0,
     cantidadMalEstado: 0,
     folioValidacion: 0,
+    d_Encargado: "",
   });
   const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(
     dataCompras.idProveedor,
@@ -206,6 +207,7 @@ function Compras() {
       idProveedor: dato.idProveedor,
       fecha: dato.fecha !== undefined ? dato.fecha.split("T")[0] : "",
       id_compra: dato.id_compra,
+      d_Encargado: dato.nombreEncargado,
     });
 
     setIsOpen(false);
@@ -669,7 +671,18 @@ function Compras() {
             />
             <br />
           </Col>
-
+          <Col md="6">
+            <Label for="documento">Nombre del encargado:</Label>
+            <Input
+              disabled
+              type="text"
+              onChange={handleChange}
+              name="folioDocumento"
+              value={dataCompras.d_Encargado ? dataCompras.d_Encargado : ""}
+              bsSize="sm"
+            />
+            <br />
+          </Col>
         </Row>
       </Container>
 
@@ -780,9 +793,7 @@ function Compras() {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan={10}>
-
-              </th>
+              <th colSpan={10}></th>
             </tr>
           </tfoot>
         </Table>
@@ -846,9 +857,7 @@ function Compras() {
               </AccordionBody>
             </AccordionItem>
           </UncontrolledAccordion>
-
         </div>
-
 
         <div style={{ display: "flex", justifyContent: "end" }}>
           <p style={{ backgroundColor: "#dee2e6" }}>
@@ -1067,6 +1076,7 @@ function Compras() {
                     <td>{"$" + dato.importe.toFixed(2)}</td>
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
+                    <td>{dato.nombreEncargado}</td>
                     <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
                   </tr>
                 ))}
@@ -1328,6 +1338,8 @@ function Compras() {
                     <td>{"$" + dato.importe.toFixed(2)}</td>
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
+                    <td>{dato.nombreEncargado}</td>
+
                     <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
                   </tr>
                 ))}
