@@ -40,6 +40,12 @@ import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import { MdAttachMoney, MdOutlineReceiptLong, MdAccessTime } from "react-icons/md";
+import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
+import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
+import { CgPlayListCheck } from "react-icons/cg";  //PARA BOTÓN FINALIZAR
+import { BiTag } from "react-icons/bi";  //PARA BOTÓN NUEVO 
+
+
 
 function Compras() {
   const { dataProveedores } = useProveedor();
@@ -62,7 +68,7 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Acción"];
+  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado", "Acción"];
 
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
   const toggleCrearModal = () => {
@@ -167,6 +173,7 @@ function Compras() {
     cantidadFactura: 0,
     cantidadMalEstado: 0,
     folioValidacion: 0,
+    d_Encargado: "",
   });
   const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(
     dataCompras.idProveedor,
@@ -200,6 +207,7 @@ function Compras() {
       idProveedor: dato.idProveedor,
       fecha: dato.fecha !== undefined ? dato.fecha.split("T")[0] : "",
       id_compra: dato.id_compra,
+      d_Encargado: dato.nombreEncargado,
     });
 
     setIsOpen(false);
@@ -663,7 +671,18 @@ function Compras() {
             />
             <br />
           </Col>
-
+          <Col md="6">
+            <Label for="documento">Nombre del encargado:</Label>
+            <Input
+              disabled
+              type="text"
+              onChange={handleChange}
+              name="folioDocumento"
+              value={dataCompras.d_Encargado ? dataCompras.d_Encargado : ""}
+              bsSize="sm"
+            />
+            <br />
+          </Col>
         </Row>
       </Container>
 
@@ -671,6 +690,11 @@ function Compras() {
       <Container>
         <div className="alineación-derecha">
           <InputGroup className="alineación-derecha">
+
+            <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
+              <BiAddToQueue size={30} />
+              Agregar
+            </Button>
             <Button
               disabled={!Number(dataCompras?.folioValidacion) > 0}
               color="primary"
@@ -697,11 +721,11 @@ function Compras() {
                 setDisabledFecha(false);
               }}
             >
+
               Nuevo
+              <BiTag size={30} />
             </Button>
-            <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
-              Agregar
-            </Button>
+
           </InputGroup>
         </div>
         <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
@@ -769,9 +793,7 @@ function Compras() {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan={10}>
-
-              </th>
+              <th colSpan={10}></th>
             </tr>
           </tfoot>
         </Table>
@@ -835,9 +857,7 @@ function Compras() {
               </AccordionBody>
             </AccordionItem>
           </UncontrolledAccordion>
-
         </div>
-
 
         <div style={{ display: "flex", justifyContent: "end" }}>
           <p style={{ backgroundColor: "#dee2e6" }}>
@@ -851,20 +871,22 @@ function Compras() {
           <Col md={"8"} className="">
             <br />
             <div className="d-flex  justify-content-start ">
+              <Button
+                disabled={disabledFecha || dataComprasGeneral.length === 0}
+                style={{ marginRight: 10 }}
+                onClick={() => putFinalizaCompra()}
+                color="success"
+              >
+                Finalizado
+                <CgPlayListCheck size={30} />
+              </Button>
               <InputGroup size="sm">
                 <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
+                  <BiSearchAlt size={35} />
                   Consultar
-                  <MdAttachMoney size={35} />
+
                 </Button>
-                <Button
-                  disabled={disabledFecha || dataComprasGeneral.length === 0}
-                  style={{ marginRight: 10 }}
-                  onClick={() => putFinalizaCompra()}
-                  color="success"
-                >
-                  Finalizado
-                  <MdOutlineReceiptLong size={30} />
-                </Button>
+
               </InputGroup>
             </div>
           </Col>
@@ -1054,6 +1076,7 @@ function Compras() {
                     <td>{"$" + dato.importe.toFixed(2)}</td>
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
+                    <td>{dato.nombreEncargado}</td>
                     <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
                   </tr>
                 ))}
@@ -1315,6 +1338,8 @@ function Compras() {
                     <td>{"$" + dato.importe.toFixed(2)}</td>
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
+                    <td>{dato.nombreEncargado}</td>
+
                     <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
                   </tr>
                 ))}

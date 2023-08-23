@@ -4,7 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import SidebarHorizontal from "./components/SidebarHorizontal";
 import { Usuario } from "./models/Usuario";
 import { Button } from "reactstrap";
+import ReactDOMServer from "react-dom/server";
+import { useSucursales } from "./hooks/getsHooks/useSucursales";
+import { Sucursal } from "./models/Sucursal";
+import { DataGrid } from "@mui/x-data-grid";
+import { jezaApi } from "./api/jezaApi";
+import axios from "axios";
 // import nodemailer from "nodemailer";
+
+// const sgMail = require("@sendgrid/mail");
+// sgMail.setApiKey("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");
 
 const App = () => {
   const [form, setForm] = useState<Usuario[]>([]);
@@ -23,35 +32,22 @@ const App = () => {
     }
   }, []);
 
-  const sendMail = async () => {
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      port: 587,
-      auth: {
-        user: "soporte@cbinformatica.net",
-        pass: "xlcrvcqovbsywcze",
-      },
-    });
-    const mailOptions = {
-      from: "soporte@cbinformatica.net",
+  const envioCorreo = () => {
+    axios.post("http://localhost:5000/send-email", {
       to: "luis.sg9915@gmail.com",
-      subject: "Prueba de correo desde React.js",
-      text: "Este es un correo de prueba enviado desde React.js y Nodemailer.",
-    };
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Correo enviado:", info.response);
-    } catch (error) {
-      console.error("Error al enviar el correo:", error);
-    }
+      subject: "Hello",
+      text: "Hello world?",
+      html: "<a>a</a>",
+    });
   };
+
   return (
     <>
       <SidebarHorizontal />
       {/* {form[0]?.sucursal}
       {form[0]?.d_sucursal}
       {form[0]?.idCia} */}
-      {/* <Button onClick={() => null}>Envío</Button> */}
+      <Button onClick={() => envioCorreo()}>Enviar</Button>
     </>
   );
 };

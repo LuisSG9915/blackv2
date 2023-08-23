@@ -41,6 +41,9 @@ import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
 import { BiAddToQueue } from "react-icons/bi";
 import { BiSearchAlt } from "react-icons/bi";
+import { CgPlayListCheck } from "react-icons/cg";
+import { BiTag } from "react-icons/bi";
+
 // VscNewFile
 
 
@@ -329,8 +332,8 @@ function MovimientoDiversos() {
       <br />
       <Container className="px-2">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Ajustes diversos</h1>
-          <BsScrewdriver size={30}></BsScrewdriver>
+          <h1> Ajustes diversos     <BsScrewdriver size={30}></BsScrewdriver></h1>
+          {/* <BsScrewdriver size={30}></BsScrewdriver> */}
         </div>
         <FormGroup>
           <Container></Container>
@@ -448,6 +451,8 @@ function MovimientoDiversos() {
                     }}
                   >
                     Nuevo
+
+                    <BiTag size={30} />
                   </Button>
                 </InputGroup>
               </div>
@@ -535,6 +540,7 @@ function MovimientoDiversos() {
         <InputGroup>
           {/* <Button onClick={putFinalizado} color="success" disabled={estados || !dataAjustes ? true : false}> */}
           <Button onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
+            <CgPlayListCheck size={30} />
             Finalizar
           </Button>
           <Button

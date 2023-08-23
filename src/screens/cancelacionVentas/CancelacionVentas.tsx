@@ -43,10 +43,10 @@ function CancelacionVentas() {
 
   const navigate = useNavigate();
   const [form, setForm] = useState<Cancelacion>({
-    No_venta: 1,
-    Sucursal: 1,
+    No_venta: 0,
+    Sucursal: 0,
     nombre: "",
-    Total: 1,
+    Total: 0,
     Estatus: "",
   });
   const [datos, setDatos] = useState([]);
@@ -54,11 +54,11 @@ function CancelacionVentas() {
 
   const DataTableHeader = ["No. Venta", "Cliente", "Total Venta", "Estado", "Acciones"];
 
-  const mostrarModalActualizar = (dato: Marca) => {
-    setForm(dato);
-    console.log(dato);
-    setModalActualizar(true);
-  };
+  // const mostrarModalActualizar = (dato: Marca) => {
+  //   setForm(dato);
+  //   console.log(dato);
+  //   setModalActualizar(true);
+  // };
 
   /* alertas */
   const [eliminado, setVisible3] = useState(false);
@@ -88,7 +88,7 @@ function CancelacionVentas() {
   };
 
   const getCancelacionesVtas = () => {
-    jezaApi.get("/VentaCanceladas?id=0").then((response) => {
+    jezaApi.get("/VentasDia?id=0").then((response) => {
       setDatos(response.data);
     });
   };
