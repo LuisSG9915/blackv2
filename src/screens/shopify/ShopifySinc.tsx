@@ -193,7 +193,7 @@ function ShopifySinc() {
         </div>
       </Container>
       {error && <p className="error-message">{error}</p>}
-      fetchProduct
+      
       {/* {ordersJson && (
         <div>
           <h2>Respuesta JSON de Órdenes:</h2>

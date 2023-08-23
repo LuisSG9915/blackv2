@@ -1,35 +1,73 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Row, Container, Button, Input, Table, Card, CardHeader, CardBody } from "reactstrap";
+import { Row, Container, Button, Input, Table, Card, CardHeader, CardBody, InputGroup, Col, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { jezaApi } from "../../api/jezaApi";
 import { Trabajador } from "../../models/Trabajador";
 import { Horario } from "../../models/Horario";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+import { MdEmojiPeople, MdPendingActions } from "react-icons/md";
 
 function Horarios() {
   const [horarios, setHorarios] = useState([]);
+  const [trabajador, setTrabajadores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    // Realizar la solicitud fetch a la API
-    fetch("http://cbinfo.no-ip.info:9089/Horario?idTrabajador=2132&fecha=2023-08-07")
-      .then((response) => response.json())
-      .then((data) => {
-        setHorarios(data);
-        setLoading(false);
+    // Dentro de useEffect, realizamos la solicitud a la API
+    jezaApi.get("/Trabajador?id=0")
+      .then((response) => {
+        // Cuando la solicitud sea exitosa, actualizamos el estado
+        setTrabajadores(response.data);
       })
       .catch((error) => {
-        console.error("Error al cargar los datos:", error);
-        setLoading(false);
+        // Manejo de errores
+        console.error("Error al cargar los trabajadores:", error);
       });
-  }, []);
+  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
+
+
+
+  const consulta = () => {
+    jezaApi.get("/Horario?idTrabajador=2132&fecha=2023-08-07")
+      .then((response) => setHorarios(response.data))
+      .catch((e) => console.log(e));
+  };
+
+  const columnsTrabajador = useMemo<MRT_ColumnDef<Trabajador>[]>(
+    () => [
+
+
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        header: "Acciones",
+        Cell: ({ row }) => (
+          <Button
+            size="sm"
+           
+          >
+            Detalle
+          </Button>
+        ),
+        
+      },
+
+    ],
+    []
+  );
+  
+
 
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [
       {
         accessorKey: "diaSemana",
         header: "Día",
-        size: 150,
+        size: 100,
         Cell: ({ row }) => {
           const dayNumber = row.original.diaSemana;
           let dayName = "";
@@ -56,7 +94,7 @@ function Horarios() {
       {
         accessorKey: "fecha",
         header: "Fecha",
-        size: 150,
+        size: 100,
         Cell: ({ row }) => {
           // Obtiene la cadena de fecha desde row.original.fecha
           const dateStr = row.original.fecha;
@@ -78,33 +116,33 @@ function Horarios() {
       {
         accessorKey: "h1",
         header: "Hora de Entrada",
-        size: 200,
+        size: 100,
       },
       {
         accessorKey: "h2",
         header: "Hora de Salida",
-        size: 150,
+        size: 100,
       },
       {
         accessorKey: "h3",
         header: "Hora de Entrada 2",
-        size: 200,
+        size: 100,
       },
       {
         accessorKey: "h4",
         header: "Hora de Salida 2",
-        size: 150,
+        size: 100,
       },
       {
         accessorKey: "descanso",
         header: "Descanso",
-        size: 150,
+        size: 100,
         Cell: ({ cell }) => (cell.value ? "Sí" : "No"),
       },
       {
         accessorKey: "editar",
         header: "EDITAR",
-        size: 150,
+        size: 100,
         Cell: ({ cell }) => (
           <Button size="sm" color="secondary">
             Editar
@@ -121,10 +159,27 @@ function Horarios() {
         <SidebarHorizontal></SidebarHorizontal>
         {/* <p>horarios 2.0 en construccion...</p> */}
         <Container>
+          <InputGroup>
+          <Input type="text"></Input>
+          <Button color="secondary" onClick={() => setModalOpen(true)}>Elegir</Button>
+ 
+          <Button color="primary" onClick={consulta}>Consultar</Button>
+          </InputGroup>
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
       </div>
       );
+
+      {/* modal trabajador */}
+      <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
+  <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
+  <ModalBody>
+  <MaterialReactTable columns={columnsTrabajador} data={trabajador} />;
+  </ModalBody>
+  <ModalFooter>
+    <Button color="primary" onClick={() => setModalOpen(!modalOpen)}>Cerrar</Button>
+  </ModalFooter>
+</Modal>
     </>
   );
 }
