@@ -2666,28 +2666,16 @@ const Ventas = () => {
         <ModalHeader toggle={handleCloseModal}>Historial detalle</ModalHeader>
         <ModalBody>
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
-            <Row>
-              <Col md="4">
-                <p>
-                  <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
-                </p>
-              </Col>
-
-              <Col md="4">
-                <p>
-                  <strong>No. venta: </strong>
-                  {paramsDetalles.numVenta}
-                </p>
-              </Col>
-
-              <Col md="4">
-                <p>
-                  <strong>Sucursal:</strong> {paramsDetalles.sucursal}
-                </p>
-              </Col>
-            </Row>
-
-            <Table borderless>
+            <Table>
+              <thead >
+                <tr>
+                  <th><p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p></th>
+                  <th><p><strong>No. Venta: </strong>{paramsDetalles.numVenta}</p></th>
+                  <th><p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p></th>
+                </tr>
+              </thead>
+            </Table>
+            <Table>
               <thead>
                 <tr>
                   <th>Insumo</th>
