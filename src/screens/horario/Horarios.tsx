@@ -119,7 +119,7 @@ function Horarios() {
     <>
       <div>
         <SidebarHorizontal></SidebarHorizontal>
-        <p>horarios 2.0 en construccion...</p>
+        {/* <p>horarios 2.0 en construccion...</p> */}
         <Container>
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
