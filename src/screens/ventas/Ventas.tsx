@@ -696,7 +696,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
 
@@ -1138,11 +1138,16 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
         }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
       )
       .then(() => {
@@ -1218,29 +1223,22 @@ const Ventas = () => {
     idProducto: 0,
     clave: 0,
     Cve_cliente: 0,
-    fecha: ""
+    fecha: "",
   });
-  useEffect(() => {
-    loadHistorialDetalle();
-  }, [paramsDetalles.sucursal, paramsDetalles.numVenta, paramsDetalles.numVenta, paramsDetalles.clave]);
 
-  const loadHistorialDetalle = async () => {
-    if (paramsDetalles.numVenta > 0) {
-      await jezaApi
-        .get(
-          `/HistorialDetalle?suc=${paramsDetalles.sucursal}&cliente=${paramsDetalles.Cve_cliente}&venta=${paramsDetalles.numVenta}&serv=${paramsDetalles.idProducto}`
-        )
-        .then((response) => {
-          // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
-          console.log(response.data);
-          // Asigna los datos de respuesta a la variable local historialDetalle
-          handleOpenModal();
-          setHistorialDetalle(response.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+  const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
+    await jezaApi
+      .get(`/HistorialDetalle?suc=${idSucursal}&cliente=${cveCliente}&venta=${noVenta}&serv=${idProducto}`)
+      .then((response) => {
+        // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
+        console.log(response.data);
+        // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
+        setHistorialDetalle(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1253,6 +1251,7 @@ const Ventas = () => {
   const handleCloseModal = () => {
     setSelectedId(null);
     setIsModalOpen(!isModalOpen);
+    // loadHistorialDetalle(  )
   };
   // useEffect(() => {
 
@@ -1266,11 +1265,13 @@ const Ventas = () => {
           <Button
             size="sm"
             onClick={() => {
+              console.log(row.original);
+              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
               setParamsDetalles({
                 Cve_cliente: row.original.Cve_cliente,
                 idProducto: row.original.idProducto,
                 numVenta: row.original.NumVenta,
-                sucursal: row.original.sucursal,
+                sucursal: row.original.NombreSuc,
                 clave: row.original.id,
                 fecha: row.original.Fecha,
               });
@@ -2411,9 +2412,9 @@ const Ventas = () => {
           <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ? (
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2638,7 +2639,7 @@ const Ventas = () => {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalOpen} toggle={toggleModalHistorial} size="lg">
+      <Modal isOpen={modalOpen} toggle={toggleModalHistorial} fullscreen>
         <ModalHeader toggle={toggleModalHistorial}>Historial </ModalHeader>
         <ModalBody>
           <MaterialReactTable
@@ -2651,16 +2652,15 @@ const Ventas = () => {
               },
               density: "compact",
             }}
-          // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+            // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
           />
         </ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={toggleModalHistorial}>
+          <Button color="danger" onClick={toggleModalHistorial}>
             Cerrar
           </Button>
         </ModalFooter>
       </Modal>
-
 
       <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} size="lg">
         <ModalHeader toggle={handleCloseModal}>Historial detalle</ModalHeader>
@@ -2668,16 +2668,22 @@ const Ventas = () => {
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
             <Row>
               <Col md="4">
-                <p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p>
-
+                <p>
+                  <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                </p>
               </Col>
 
               <Col md="4">
-                <p><strong>No. enta: </strong>{paramsDetalles.numVenta}</p>
+                <p>
+                  <strong>No. venta: </strong>
+                  {paramsDetalles.numVenta}
+                </p>
               </Col>
 
               <Col md="4">
-                <p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p>
+                <p>
+                  <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                </p>
               </Col>
             </Row>
 
@@ -2685,7 +2691,7 @@ const Ventas = () => {
               <thead>
                 <tr>
                   <th>Insumo</th>
-                  <th >Cantidad</th>
+                  <th>Cantidad</th>
                   <th>Precio</th>
                 </tr>
               </thead>
@@ -2700,7 +2706,9 @@ const Ventas = () => {
               </tbody>
             </Table>
             <div>
-              <p style={{ textAlign: "left" }}><strong>Total: $20.00</strong></p>
+              <p style={{ textAlign: "left" }}>
+                <strong>Total: $20.00</strong>
+              </p>
             </div>
           </div>
         </ModalBody>

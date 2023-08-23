@@ -47,7 +47,7 @@ const App = () => {
       {/* {form[0]?.sucursal}
       {form[0]?.d_sucursal}
       {form[0]?.idCia} */}
-      <Button onClick={() => envioCorreo()}>Enviar</Button>
+      {/* <Button onClick={() => envioCorreo()}>Enviar</Button> */}
     </>
   );
 };
