@@ -24,7 +24,6 @@ import useModalHook from "../../hooks/useModalHook";
 
 import CButton from "../../components/CButton";
 import TableEstilistas from "./Components/TableEstilistas";
-import { useGentlemanContext } from "./context/VentasContext";
 import TableProductos from "./Components/TableProductos";
 import TableClientesProceso from "./Components/TableClientesProceso";
 import TableCliente from "./Components/TableCliente";
@@ -54,9 +53,6 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
 import { LuCalendarSearch } from "react-icons/lu";
-
-
-
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -613,7 +609,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
 
@@ -893,7 +889,7 @@ const Ventas = () => {
       headerClassName: "custom-header",
     },
   ];
-
+  const [anticipoId, setAnticipoId] = useState(0);
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
@@ -907,6 +903,7 @@ const Ventas = () => {
               observaciones: params.row.observaciones,
               importe: params.row.importe,
             });
+            setAnticipoId(Number(params.row.id));
             // console.log(formAnticipo);
             setModalAnticipo(false);
             // setModalTipoVenta(false);
@@ -1013,7 +1010,7 @@ const Ventas = () => {
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
           // Quiero que me valide si formaPago =  100 me ingrese "Anticipo"
-          referencia: Number(elemento.formaPago) === 94 ? "Anticipo" : elemento.referencia ? elemento.referencia : "Efectivo",
+          referencia: Number(elemento.formaPago) === 94 ? anticipoId : elemento.referencia ? elemento.referencia : "Efectivo",
           importe: elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
@@ -1179,7 +1176,8 @@ const Ventas = () => {
       {
         header: "Acciones",
         Cell: ({ row }) => (
-          <LuCalendarSearch size={23}
+          <LuCalendarSearch
+            size={23}
             onClick={() => {
               console.log(row.original);
               loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
@@ -1193,8 +1191,6 @@ const Ventas = () => {
               });
               setIsModalOpen(true);
             }}
-
-
           />
         ),
         muiTableBodyCellProps: {
@@ -1941,7 +1937,7 @@ const Ventas = () => {
                     {/* Utilizamos "justify-content-end" para alinear el botón a la derecha */}
                     <Button
                       onClick={() => {
-                        if (Number(pago.formaPago) === 11) {
+                        if (Number(pago.formaPago) === 1) {
                           // efectivo
                           eliminarElemento(2, index, Number(pago.importe));
                         } else if (Number(pago.formaPago) === 96) {
@@ -2328,9 +2324,9 @@ const Ventas = () => {
           <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ? (
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2366,7 +2362,7 @@ const Ventas = () => {
                   text: "Por favor, ingrese un importe válido.",
                 });
                 return;
-              } else if (dataArregloTemporal.formaPago != 11 && !dataArregloTemporal.referencia) {
+              } else if (dataArregloTemporal.formaPago != 1 && !dataArregloTemporal.referencia) {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
@@ -2382,7 +2378,7 @@ const Ventas = () => {
                   Number(dataArregloTemporal.formaPago) === 92
                 ) {
                   setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
-                } else if (Number(dataArregloTemporal.formaPago) === 11) {
+                } else if (Number(dataArregloTemporal.formaPago) === 1) {
                   setFormPago({ ...formPago, efectivo: Number(dataArregloTemporal.importe) });
                 }
                 setArregloTemporal([...arregloTemporal, dataArregloTemporal]);
@@ -2568,7 +2564,7 @@ const Ventas = () => {
               },
               density: "compact",
             }}
-          // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+            // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
           />
         </ModalBody>
         <ModalFooter>
