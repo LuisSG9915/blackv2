@@ -34,4 +34,5 @@ export interface UserResponse {
   fecha_cambio: string;
   clave_perfil: number;
   password: string;
+  idCia: number;
 }

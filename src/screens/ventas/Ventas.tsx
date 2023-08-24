@@ -343,44 +343,6 @@ const Ventas = () => {
     setModalActualizar(true);
   };
 
-  const handleInsumoSelection = () => {
-    Swal.fire({
-      title: `Ingrese el descuento entre: ${descuento.min} - ${descuento.max} `,
-      input: "number",
-      inputAttributes: {
-        min: "0.01", // Establece un valor mínimo para el input (por ejemplo, 0.01 para permitir decimales)
-        step: "0.01", // Define los pasos para incrementar/decrementar el valor (por ejemplo, 0.01 para decimales)
-      },
-      showCancelButton: true,
-      confirmButtonText: "Guardar",
-      cancelButtonText: "Cancelar",
-      showLoaderOnConfirm: true,
-      preConfirm: (cantidad) => {
-        return new Promise((resolve, reject) => {
-          // Realizar cualquier validación adicional aquí si es necesario
-          const cantidadNumber = parseFloat(cantidad);
-          if (isNaN(cantidadNumber) || cantidadNumber <= 0) {
-            reject("La cantidad debe ser mayor a cero.");
-          } else {
-            resolve(cantidadNumber);
-          }
-        });
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const cantidad = result.value;
-        // Realiza aquí la lógica para guardar la cantidad seleccionada
-        setDataTemporal({ ...dataTemporal, Descuento: Number(cantidad) });
-        // setForm((prevState) => {
-        //   const updatedForm = { ...prevState, id_insumo: id, cantidad };
-        //   return updatedForm;
-        // });
-        setModalOpen2(false);
-      }
-    });
-  };
-
   const [descuento, setDescuento] = useState({
     min: 0,
     max: 0,
@@ -445,33 +407,13 @@ const Ventas = () => {
 
     setFormPago((prev) => ({ ...prev, [name]: value }));
   };
-  // const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-
-  //   const { name, value } = e.target;
-  //   if ((name === "formaPago" && Number(value) === 60) || (name === "formaPago" && Number(value) === 2059)) {
-  //     setModalAnticipo(true);
-  //   }
-  //   // if (name === "formaPago" && Number(value) === 58) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 60) {
-  //   //   setFormPago({ ...formPago, anticipos: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 1057) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 2058) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 2059) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // }
-
-  //   setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
-  // };
 
   const [selectedFormasPago, setSelectedFormasPago] = useState<Set<number>>(new Set());
   const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     // Comprueba si el método de pago seleccionado ya está en el arregloTemporal
-    const isAlreadySelected = arregloTemporal.some((pago) => pago.formaPago === value);
+    const isAlreadySelected = arregloTemporal.some((pago) => Number(pago.formaPago) === Number(value));
 
     if (isAlreadySelected && name === "formaPago") {
       Swal.fire({
@@ -480,7 +422,7 @@ const Ventas = () => {
         text: `¡Método de pago ya seleccionado!`,
         confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
       });
-    } else if (name === "formaPago" && Number(value) === 100) {
+    } else if (name === "formaPago" && Number(value) === 94) {
       setModalAnticipo(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     } else if (name === "importe") {
@@ -589,7 +531,7 @@ const Ventas = () => {
         .post("/Venta", null, {
           params: {
             id: 0,
-            Cia: 26,
+            Cia: dataUsuarios2[0]?.idCia,
             Sucursal: dataUsuarios2[0]?.sucursal,
             Fecha: today2,
             Caja: 1,
@@ -641,35 +583,6 @@ const Ventas = () => {
     } catch (error) {
       console.error(error);
     }
-  };
-  // TODO Add this function
-  const insertarPago = () => {
-    jezaApi.post("/VentaPago", null, {
-      params: {},
-    });
-  };
-
-  const createInsumoTrue = () => {
-    jezaApi.post("insumo", null, { params: { id_venta: datoVentaSeleccionado.id, id_insumo: 1, cantidad: 1 } });
-  };
-
-  const createInsumo = () => {
-    console.log({ formPago });
-    jezaApi
-      .post("/VentaPago", null, {
-        params: {
-          cliente: dataTemporal.Cve_cliente,
-          suc: dataUsuarios2[0]?.sucursal,
-          total: total,
-          efectivo: formPago.efectivo,
-          tc: formPago.tc,
-          anticipos: formPago.anticipos,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        setDatoTicket(response.data);
-      });
   };
 
   const deleteVenta = async (dato: Venta): Promise<void> => {
@@ -858,7 +771,7 @@ const Ventas = () => {
     console.log(dato);
     jezaApi
       .get(
-        `/TicketInsumosEstilsta?cia=26&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
+        `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
       )
       .then((response) => {
         setDatoTicketEstilista(response.data);
@@ -1086,7 +999,6 @@ const Ventas = () => {
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
       const tempIdPago = getIdPago(Number(elemento.formaPago));
-
       jezaApi.post("/MedioPago", null, {
         params: {
           caja: 1,
@@ -1096,7 +1008,8 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
-          referencia: elemento.referencia ? elemento.referencia : "efectivo",
+          // Quiero que me valide si formaPago =  100 me ingrese "Anticipo"
+          referencia: Number(elemento.formaPago) === 94 ? "Anticipo" : elemento.referencia ? elemento.referencia : "Efectivo",
           importe: elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
@@ -1138,7 +1051,7 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
           dataUsuarios2[0]?.sucursal
         }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
           dataVentaEdit.Cant_producto
@@ -2028,7 +1941,7 @@ const Ventas = () => {
                         if (Number(pago.formaPago) === 11) {
                           // efectivo
                           eliminarElemento(2, index, Number(pago.importe));
-                        } else if (Number(pago.formaPago) === 90) {
+                        } else if (Number(pago.formaPago) === 96) {
                           // anticipo
                           eliminarElemento(1, index, Number(pago.importe));
                         } else {
@@ -2667,11 +2580,24 @@ const Ventas = () => {
         <ModalBody>
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
             <Table>
-              <thead >
+              <thead>
                 <tr>
-                  <th><p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p></th>
-                  <th><p><strong>No. Venta: </strong>{paramsDetalles.numVenta}</p></th>
-                  <th><p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p></th>
+                  <th>
+                    <p>
+                      <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>No. Venta: </strong>
+                      {paramsDetalles.numVenta}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                    </p>
+                  </th>
                 </tr>
               </thead>
             </Table>

@@ -42,10 +42,8 @@ import { Box } from "@mui/material";
 import { MdAttachMoney, MdOutlineReceiptLong, MdAccessTime } from "react-icons/md";
 import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
 import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
-import { CgPlayListCheck } from "react-icons/cg";  //PARA BOTÓN FINALIZAR
-import { BiTag } from "react-icons/bi";  //PARA BOTÓN NUEVO 
-
-
+import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
+import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
 
 function Compras() {
   const { dataProveedores } = useProveedor();
@@ -178,7 +176,8 @@ function Compras() {
   const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(
     dataCompras.idProveedor,
     idSeleccionado,
-    dataUsuarios2[0]?.sucursal
+    dataUsuarios2[0]?.sucursal,
+    dataUsuarios2[0]?.idCia
   );
   const handle = (dato: Producto) => {
     fetchProduct();
@@ -226,7 +225,7 @@ function Compras() {
         params: {
           id_compra: 0,
           fecha: new Date(),
-          cia: 26,
+          cia: dataUsuarios2[0]?.idCia,
           idSucursal: dataUsuarios2[0]?.sucursal,
           idProveedor: dataCompras.idProveedor,
           clave_prod: dataCompras.clave_prod,
@@ -420,7 +419,12 @@ function Compras() {
     } else {
       setDisabledFecha(false);
     }
-    setDataCompras({ ...dataCompras, folioDocumento: ultimoFolio, fecha: ultiFecha.split("T")[0], folioValidacion: ultimoFolio });
+    setDataCompras({
+      ...dataCompras,
+      folioDocumento: ultimoFolio,
+      fecha: ultiFecha.split("T")[0],
+      folioValidacion: ultimoFolio,
+    });
     const descripciones = dataComprasGeneral.map((item) => item.claveProd);
     setProductoSelected(descripciones);
   }, [dataComprasGeneral]);
@@ -435,6 +439,7 @@ function Compras() {
     fecha1: formFechas.fecha1,
     fecha2: formFechas.fecha2,
     sucursal: dataUsuarios2[0]?.sucursal,
+    cia: dataUsuarios2[0]?.idCia,
   });
 
   interface TicketPrintProps {
@@ -677,7 +682,7 @@ function Compras() {
               disabled
               type="text"
               onChange={handleChange}
-              name="folioDocumento"
+              name="d_Encargado"
               value={dataCompras.d_Encargado ? dataCompras.d_Encargado : ""}
               bsSize="sm"
             />
@@ -690,7 +695,6 @@ function Compras() {
       <Container>
         <div className="alineación-derecha">
           <InputGroup className="alineación-derecha">
-
             <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
               <BiAddToQueue size={30} />
               Agregar
@@ -721,11 +725,9 @@ function Compras() {
                 setDisabledFecha(false);
               }}
             >
-
               Nuevo
               <BiTag size={30} />
             </Button>
-
           </InputGroup>
         </div>
         <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
@@ -884,9 +886,7 @@ function Compras() {
                 <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
                   <BiSearchAlt size={35} />
                   Consultar
-
                 </Button>
-
               </InputGroup>
             </div>
           </Col>

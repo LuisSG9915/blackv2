@@ -492,7 +492,7 @@ const Ventas = () => {
     console.log(formattedDate);
     jezaApi
       .get(
-        `/TicketInsumosEstilsta?cia=2&sucursal=21&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
+        `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=21&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
       )
       .then((response) => {
         setDatoTicketEstilista(response.data);
@@ -713,9 +713,7 @@ const Ventas = () => {
               if (dataTemporal.cliente) {
                 setModalOpen(true);
               } else {
-
                 Swal.fire("Ingrese un cliente");
-
               }
             }}
           >
