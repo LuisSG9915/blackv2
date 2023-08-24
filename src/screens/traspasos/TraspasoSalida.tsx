@@ -114,7 +114,7 @@ function TraspasoSalida() {
     jezaApi
       .post("/Traspaso", null, {
         params: {
-          cia: 26,
+          cia: dataUsuarios2[0]?.idCia,
           sucursal: dataUsuarios2 ? dataUsuarios2[0].sucursal : 0,
           clave_prod: form.clave_prod,
           costo: form.costo,

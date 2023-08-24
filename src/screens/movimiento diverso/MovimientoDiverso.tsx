@@ -46,8 +46,6 @@ import { BiTag } from "react-icons/bi";  //PARA BOTÓN NUEVO
 
 // VscNewFile
 
-
-
 function MovimientoDiversos() {
   const [dataUsuarios, setDataUsuarios] = useState<Usuario[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -142,7 +140,7 @@ function MovimientoDiversos() {
     jezaApi
       .post("/Ajuste", null, {
         params: {
-          cia: 26,
+          cia: dataUsuarios2[0]?.idCia,
           sucursal: dataUsuarios2[0]?.sucursal,
           folio: 0,
           fecha: new Date(),
@@ -202,7 +200,6 @@ function MovimientoDiversos() {
       .catch((e) => console.log(e));
   };
   const putFinalizado = () => {
-
     jezaApi
       .put(`/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
@@ -285,7 +282,10 @@ function MovimientoDiversos() {
         </Card> */}
         <UncontrolledAccordion defaultOpen="1">
           <AccordionItem>
-            <AccordionHeader targetId="1"> <strong>Totales</strong></AccordionHeader>
+            <AccordionHeader targetId="1">
+              {" "}
+              <strong>Totales</strong>
+            </AccordionHeader>
             <AccordionBody accordionId="1">
               <table style={{ width: "100%" }}>
                 <thead>
@@ -332,7 +332,10 @@ function MovimientoDiversos() {
       <br />
       <Container className="px-2">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Ajustes diversos     <BsScrewdriver size={30}></BsScrewdriver></h1>
+          <h1>
+            {" "}
+            Ajustes diversos <BsScrewdriver size={30}></BsScrewdriver>
+          </h1>
           {/* <BsScrewdriver size={30}></BsScrewdriver> */}
         </div>
         <FormGroup>
@@ -434,7 +437,7 @@ function MovimientoDiversos() {
                     disabled={!estados}
                     onClick={() => {
                       setform({
-                        cia: 26,
+                        cia: dataUsuarios2[0]?.idCia,
                         sucursal: dataUsuarios2[0]?.sucursal,
                         folio: 0,
                         fecha: "",
@@ -451,7 +454,6 @@ function MovimientoDiversos() {
                     }}
                   >
                     Nuevo
-
                     <BiTag size={30} />
                   </Button>
                 </InputGroup>
@@ -684,28 +686,28 @@ function MovimientoDiversos() {
               <tbody>
                 {dataAjustesBusquedas
                   ? dataAjustesBusquedas.map((ajuste) => (
-                    <tr>
-                      <td>
-                        <AiOutlineSelect
-                          onClick={() => {
-                            setform({
-                              ...form,
-                              folio: Number(ajuste.folio),
-                              tipo_movto: ajuste.tipo_movto,
-                              fecha: ajuste.fecha.split("T")[0],
-                            });
-                            setModalBusqueda(false);
-                            console.log(ajuste);
-                          }}
-                        ></AiOutlineSelect>
-                      </td>
-                      <td>{ajuste.folio}</td>
-                      <td>{ajuste.descripcion}</td>
-                      <td>{ajuste.items}</td>
-                      <td>{ajuste.nombreUsuario}</td>
-                      <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                    </tr>
-                  ))
+                      <tr>
+                        <td>
+                          <AiOutlineSelect
+                            onClick={() => {
+                              setform({
+                                ...form,
+                                folio: Number(ajuste.folio),
+                                tipo_movto: ajuste.tipo_movto,
+                                fecha: ajuste.fecha.split("T")[0],
+                              });
+                              setModalBusqueda(false);
+                              console.log(ajuste);
+                            }}
+                          ></AiOutlineSelect>
+                        </td>
+                        <td>{ajuste.folio}</td>
+                        <td>{ajuste.descripcion}</td>
+                        <td>{ajuste.items}</td>
+                        <td>{ajuste.nombreUsuario}</td>
+                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                      </tr>
+                    ))
                   : null}
               </tbody>
             </Table>

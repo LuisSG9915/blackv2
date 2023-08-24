@@ -140,7 +140,7 @@ function CorteCajaParcial() {
 
     jezaApi
       .post(
-        `/Corte?cia=26&sucursal=${
+        `/Corte?cia=${dataUsuarios2[0]?.idCia}&sucursal=${
           dataUsuarios2[0].sucursal
         }&fecha=${fechaFormateada}&caja=${1}&corte=${1}&corteParcial=${1}&corteFinal=${1}&totalEfectivo=${
           dataCorteParcial[0]?.importe ? dataCorteParcial[0]?.importe : 0
