@@ -67,6 +67,7 @@ import Anticipo from "./screens/anticipo/Anticipo";
 import ReporteTool from "./screens/ReporteTool/ReporteTool";
 import DemoTresTablas from "./screens/ReporteTool/DemoTresTablas";
 import ShopifySinc from "./screens/shopify/ShopifySinc";
+import ClientesShopify from "./screens/clienteshopify/ClientesShopify";
 
 const router = createBrowserRouter([
   {
@@ -186,6 +187,10 @@ const router = createBrowserRouter([
   {
     path: "/Clientes",
     element: <Clientes />,
+  },
+  {
+    path: "/ClientesShopify",
+    element: <ClientesShopify />,
   },
   {
     path: "/ClienteCrear",

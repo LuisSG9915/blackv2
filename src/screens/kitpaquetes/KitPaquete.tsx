@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { FcPlus } from "react-icons/fc";
 import { Button } from "reactstrap";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
@@ -21,6 +21,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 
 function KitPaquete() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -28,9 +29,9 @@ function KitPaquete() {
     useModalHook();
   const { dataProductos } = useProductos();
   const [formKit, setFormKit] = useState<Kit>({
-    cantidad: 1,
-    idInsumo: 1,
-    idProducto: 1,
+    cantidad: 0,
+    idInsumo: 0,
+    idProducto: 0,
     d_insumo: "",
     d_kit: "",
     id: 0,
@@ -298,6 +299,7 @@ function KitPaquete() {
   const handleInsumoButtonClick = () => {
     setIsInsumoSelected(!isInsumoSelected);
   };
+
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
   const columns: GridColDef[] = [
     {
@@ -312,6 +314,40 @@ function KitPaquete() {
     { field: "precio", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
   ];
 
+  //TABLA COMPONENETE GRANDE 
+  const columnsKIT: MRT_ColumnDef<Producto>[] = useMemo(
+    () => [
+      {
+        accessorKey: "clave_prod",
+        header: "Clave producto",
+        size: 100,
+      },
+      {
+        accessorKey: "descripcion",
+        header: "Descripción",
+        size: 100,
+      },
+      {
+        header: "Nueva Acción", // Título de la nueva columna
+        size: 100,
+        Cell: ({ cell }) => (
+          <ComponentInsumos
+            params={{
+              row: {
+                id: cell.row.original.id, // Asegúrate de proporcionar las propiedades necesarias
+                descripcion: cell.row.original.descripcion, // que necesita ComponentInsumos
+              },
+            }}
+          />
+        ),
+      },
+    ],
+    []
+  );
+
+
+
+  ///TABLA AGREGAR INSUMOS 
   const columnsInsumos: GridColDef[] = [
     {
       field: "Acción",
@@ -380,6 +416,12 @@ function KitPaquete() {
       </div>
     );
   }
+
+
+
+
+
+
   const navigate = useNavigate();
   const handleRedirect = () => {
     navigate("/app");
@@ -553,7 +595,7 @@ function KitPaquete() {
             <br />
             <br />
             <div>
-              <p style={{ textAlign: "right" }}><strong>Total paquete: {totalImporte.toFixed(2)}</strong></p>
+              <p style={{ textAlign: "right" }}><strong>Total paquete: ${totalImporte.toFixed(2)}</strong></p>
             </div>
 
 
@@ -580,7 +622,9 @@ function KitPaquete() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <DataGrid rows={filteredDataFalse} columns={columnsInsumos} />
+
+          <MaterialReactTable columns={columnsKIT} data={filteredDataFalse} initialState={{ density: "compact" }} />
+          {/* <DataGrid rows={filteredDataFalse} columns={columnsInsumos} /> */}
         </ModalBody>
         <ModalFooter>
           <CButton color="btn btn-danger" onClick={() => setModalKit(false)} text="Salir" />
@@ -610,8 +654,8 @@ function KitPaquete() {
             color="success"
             onClick={() => {
               insertar();
-              setModalInsert(true);
-              setModalKit(true);
+              setModalInsert(false);
+              setModalKit(false);
             }}
             text="Agregar insumos al kit"
           />

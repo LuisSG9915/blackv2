@@ -39,10 +39,10 @@ import { jezaApi } from "../../api/jezaApi";
 import { useAjusteBusqueda } from "../../hooks/getsHooks/useAjusteBusqueda";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
-import { BiAddToQueue } from "react-icons/bi";
-import { BiSearchAlt } from "react-icons/bi";
-import { CgPlayListCheck } from "react-icons/cg";
-import { BiTag } from "react-icons/bi";
+import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
+import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
+import { CgPlayListCheck } from "react-icons/cg";  //PARA BOTÓN FINALIZAR
+import { BiTag } from "react-icons/bi";  //PARA BOTÓN NUEVO 
 
 // VscNewFile
 
