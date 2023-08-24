@@ -293,22 +293,22 @@ function Horarios() {
       },
       {
         accessorKey: "h1",
-        header: "Hora de Entrada",
+        header: "Hora de entrada",
         size: 100,
       },
       {
         accessorKey: "h2",
-        header: "Hora de Salida",
+        header: "Hora de salida",
         size: 100,
       },
       {
         accessorKey: "h3",
-        header: "Hora de Entrada 2",
+        header: "Hora de entrada 2",
         size: 100,
       },
       {
         accessorKey: "h4",
-        header: "Hora de Salida 2",
+        header: "Hora de salida 2",
         size: 100,
       },
       {
