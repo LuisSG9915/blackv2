@@ -53,6 +53,10 @@ import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
+import { LuCalendarSearch } from "react-icons/lu";
+
+
+
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -609,7 +613,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) {}
+        } catch (error) { }
       }
     });
 
@@ -1175,8 +1179,7 @@ const Ventas = () => {
       {
         header: "Acciones",
         Cell: ({ row }) => (
-          <Button
-            size="sm"
+          <LuCalendarSearch size={23}
             onClick={() => {
               console.log(row.original);
               loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
@@ -1190,9 +1193,9 @@ const Ventas = () => {
               });
               setIsModalOpen(true);
             }}
-          >
-            Detalle
-          </Button>
+
+
+          />
         ),
         muiTableBodyCellProps: {
           align: "center",
@@ -2325,9 +2328,9 @@ const Ventas = () => {
           <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-          dataArregloTemporal.formaPago == 91 ||
-          dataArregloTemporal.formaPago == 80 ||
-          dataArregloTemporal.formaPago == 92 ? (
+            dataArregloTemporal.formaPago == 91 ||
+            dataArregloTemporal.formaPago == 80 ||
+            dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2565,7 +2568,7 @@ const Ventas = () => {
               },
               density: "compact",
             }}
-            // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+          // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
           />
         </ModalBody>
         <ModalFooter>

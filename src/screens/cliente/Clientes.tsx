@@ -37,7 +37,11 @@ import useModalHook from "../../hooks/useModalHook";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
-import MaterialReactTable from "material-react-table";
+
+import { LuCalendarSearch } from "react-icons/lu";
+import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+
+
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
   const {
@@ -347,9 +351,9 @@ function Clientes() {
   };
 
   const mostrarModalDetalle = (dato: Cliente) => {
+    setModalDetalle(true);
     historial(dato.id_cliente);
     setClienteSeleccionado(dato);
-    setModalDetalle(true);
   };
 
   // const mostrarModalDetalle = async (dato: Cliente) => {
@@ -477,6 +481,7 @@ function Clientes() {
     window.location.reload();
   };
 
+
   const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
   const historial = (id) => {
     jezaApi.get(`/Historial?cliente=${id}`).then((response) => {
@@ -485,25 +490,90 @@ function Clientes() {
     });
   };
 
+  const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
+  const [flagDetalles, setFlagDetalles] = useState(false);
+  const [paramsDetalles, setParamsDetalles] = useState({
+    sucursal: 0,
+    numVenta: 0,
+    idProducto: 0,
+    clave: 0,
+    Cve_cliente: 0,
+    fecha: "",
+  });
+
+  const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
+    await jezaApi
+      .get(`/HistorialDetalle?suc=${idSucursal}&cliente=${cveCliente}&venta=${noVenta}&serv=${idProducto}`)
+      .then((response) => {
+        // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
+        console.log(response.data);
+        // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
+        setHistorialDetalle(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedId(null);
+    setIsModalOpen(!isModalOpen);
+    // loadHistorialDetalle(  )
+  };
+  // useEffect(() => {
+
+  // }, [])
+
   const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
     () => [
-      // {
-      //   header: "Acciones",
-      //   Cell: ({ row }) => (
-      //     <Button
-      //       size="sm"
-      //       onClick={() => loadHistorialDetalle(row.original.sucursal, row.original.NumVenta, row.original.idProducto)}
-      //     >
-      //       Detalle
-      //     </Button>
-      //   ),
-      //   muiTableBodyCellProps: {
-      //     align: "center",
-      //   },
-      //   muiTableHeadCellProps: {
-      //     align: "center",
-      //   },
-      // },
+      {
+        header: "Acciones",
+        Cell: ({ row }) => (
+          <LuCalendarSearch size={23}
+            onClick={() => {
+              console.log(row.original);
+              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+              setParamsDetalles({
+                Cve_cliente: row.original.Cve_cliente,
+                idProducto: row.original.idProducto,
+                numVenta: row.original.NumVenta,
+                sucursal: row.original.NombreSuc,
+                clave: row.original.id,
+                fecha: row.original.Fecha,
+              });
+              setIsModalOpen(true);
+            }}
+
+
+          />
+        ),
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Cve_cliente",
+        header: "Cliente",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
       {
         accessorKey: "NumVenta",
         header: "NumVenta",
@@ -587,11 +657,7 @@ function Clientes() {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => (
-          <span>
-            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        ),
+        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -637,18 +703,103 @@ function Clientes() {
     []
   );
 
+  const columnsclientes: MRT_ColumnDef<Cliente>[] = useMemo(
+    () => [
+      {
+        accessorKey: "acciones",
+        header: "Acción",
+        size: 100,
+        Cell: ({ cell }) => (
+          <>
+            <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} />
+            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
+            <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} />
+          </>
+        ),
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        accessorKey: "telefono",
+        header: "Teléfono",
+        size: 100,
+      },
+      {
+        accessorKey: "fecha_alta",
+        header: "Fecha alta",
+        size: 100,
+        Cell: ({ cell }) => {
+          const fechaCompleta = cell.row.original.fecha_alta;
+          const fecha = fechaCompleta.split("T")[0]; // Obtener solo la parte de la fecha
+
+          return <span>{fecha}</span>;
+        },
+      },
+
+    ],
+    []
+  );
+
+
   return (
     <>
       <Row>
         <SidebarHorizontal />
       </Row>
       <Container>
+        <Row>
+          <Container fluid>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
+            </div>
+
+            <br />
+
+            <Row>
+              <div>
+                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                  <Button
+                    style={{ marginLeft: "auto" }}
+                    color="success"
+                    onClick={() => {
+                      setModalInsertar(true);
+                      setEstado("insert");
+                      LimpiezaForm();
+                    }}
+                  >
+                    Crear cliente
+                  </Button>
+
+                  <Button color="primary" onClick={handleRedirect}>
+                    <IoIosHome size={20}></IoIosHome>
+                  </Button>
+                  <Button onClick={handleReload}>
+                    <IoIosRefresh size={20}></IoIosRefresh>
+                  </Button>
+                </ButtonGroup>
+                <br />
+                <br />
+                <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+              </div>
+            </Row>
+          </Container>
+          <br />
+          <br />
+        </Row>
+      </Container>
+
+      {/* <Row>
+        <SidebarHorizontal />
+      </Row>
+      <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Clientes </h1>
-          <BsPersonBoundingBox size={35}></BsPersonBoundingBox>
+          <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
-        <br />
         <br />
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
           <Button
@@ -673,9 +824,17 @@ function Clientes() {
 
         <br />
         <br />
-        <br />
-        <DataTable></DataTable>
-      </Container>
+        <div>
+
+          <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+        </div>
+
+
+        <br /> */}
+      {/* <DataTable></DataTable> */}
+
+      {/* 
+      </Container> */}
 
       {/* Modals */}
       {/* create */}
@@ -1199,11 +1358,53 @@ function Clientes() {
         
             </div>
           )} */}
+
         </ModalBody>
         <ModalFooter>
           <CButton text="Cerrar" color="danger" onClick={() => setModalDetalle(false)} />
         </ModalFooter>
       </Modal>
+
+      <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} size="lg">
+        <ModalHeader toggle={handleCloseModal}>Historial detalle</ModalHeader>
+        <ModalBody>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            <Table>
+              <thead >
+                <tr>
+                  <th><p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p></th>
+                  <th><p><strong>No. Venta: </strong>{paramsDetalles.numVenta}</p></th>
+                  <th><p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p></th>
+                </tr>
+              </thead>
+            </Table>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historialDetalle.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.Insumo}</td>
+                    <td>{item.Cant}</td>
+                    <td>$ 10.00</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <div>
+              <p style={{ textAlign: "left" }}>
+                <strong>Total: $20.00</strong>
+              </p>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+
 
       {/* Modal for showing client details */}
       {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
