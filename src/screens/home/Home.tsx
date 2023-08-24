@@ -10,6 +10,7 @@ import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+import Swal from "sweetalert2";
 
 function Home() {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ function Home() {
     const cia = dataSucursales.filter((cia: Sucursal) => cia.sucursal === idTableCia);
     return cia;
   };
+
   const handleNavigation = async () => {
     setLoading(true);
     try {
@@ -75,6 +77,7 @@ function Home() {
   const [sucData, setSucData] = useState({ idSuc: 0, dSuc: "" });
   const onDismiss = () => setVisible(false);
   const { dataSucursales } = useSucursales();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const desc = dataSucursales.find((suc) => Number(suc.sucursal) == Number(value));
@@ -165,9 +168,23 @@ function Home() {
                 };
               });
               localStorage.setItem("userLoggedv2", JSON.stringify(arregloModificado));
-              setTimeout(() => {
-                navigate("/app");
-              }, 1000);
+
+              if (sucData.idSuc == 0) {
+                Swal.fire({
+                  icon: "error",
+                  title: "¡Favor de seleccionar sucursal!",
+                  text: `Es requerido seleccionar una sucursal para iniciar sesión...`,
+                  confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+                });
+
+                // alert("Prueba")
+              } else {
+                setTimeout(() => {
+                  navigate("/app");
+                }, 1000);
+              }
+
+
             }}
             text="Guardar"
           />

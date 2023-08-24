@@ -228,6 +228,7 @@ const SidebarHorizontal = () => {
                       Área, Departamentos y Clases
                     </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Clientes")}>Clientes</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
                       Configuración de puntos por departamentos
