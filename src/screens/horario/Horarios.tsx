@@ -125,11 +125,14 @@ function Horarios() {
     updatedFormData[dayIndex]["descanso"] = checked; // Actualiza el campo "descanso"
     setFormData(updatedFormData);
   };
+  useEffect(() => {
+    consulta();
+  }, [formData]);
 
   const handleDateChange = (e) => {
     const newDate = e.target.value;
     setSelectedDate(newDate);
-    consulta();
+    // consulta();
     // Calcular las fechas correspondientes para cada día de la semana
     const selectedDateObj = new Date(newDate);
 
@@ -329,7 +332,9 @@ function Horarios() {
         accessorKey: "descanso",
         header: "Descanso",
         size: 100,
-        Cell: ({ cell }) => (cell.value ? "Sí" : "No"),
+        Cell: ({ row }) => (
+          <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>
+        ),
       },
       {
         accessorKey: "editar",
