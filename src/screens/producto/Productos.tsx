@@ -858,7 +858,13 @@ function Productos() {
     { id: "descripcion", header: "Descripción", accessorFn: (row) => row.descripcion, size: 350 },
     { id: "marca", header: "Marca", accessorFn: (row) => row.marca, size: 50 },
     { id: "costo_unitario", header: "Costo unitario", accessorFn: (row) => row.costo_unitario, size: 5 },
-    { id: "precio", header: "Precio", accessorFn: (row) => row.precio, size: 5 },
+    // { id: "precio", header: "Precio", accessorFn: (row) => row.precio, size: 5 },
+    {
+      accessorKey: "precio",
+      header: "Precio",
+      Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+    },
+
     { id: "inventariable", header: "Inventariable", accessorFn: (row) => row.inventariable, size: 5 },
     { id: "es_producto", header: "Es producto", accessorFn: (row) => row.es_producto, size: 5 },
     { id: "es_servicio", header: "Es servicio", accessorFn: (row) => row.es_servicio, size: 5 },
