@@ -1052,16 +1052,11 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
-          dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
-          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
         }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
       )
       .then(() => {
@@ -1139,6 +1134,19 @@ const Ventas = () => {
     Cve_cliente: 0,
     fecha: "",
   });
+
+  const [totalImportes, setTotalImportes] = useState(0);
+
+  // Cuando cambia historialDetalle, recalcula el total de importes
+  useEffect(() => {
+    const total = historialDetalle.reduce((accumulator, item) => {
+      const importe = parseFloat(item.importe);
+      return accumulator + importe;
+    }, 0);
+    setTotalImportes(total);
+  }, [historialDetalle]);
+
+
 
   const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
     await jezaApi
@@ -2606,6 +2614,7 @@ const Ventas = () => {
                   <th>Insumo</th>
                   <th>Cantidad</th>
                   <th>Precio</th>
+                  <th>Importe</th>
                 </tr>
               </thead>
               <tbody>
@@ -2613,14 +2622,15 @@ const Ventas = () => {
                   <tr key={index}>
                     <td>{item.Insumo}</td>
                     <td>{item.Cant}</td>
-                    <td>$ 10.00</td>
+                    <td>{item.precio}</td>
+                    <td>{item.importe}</td>
                   </tr>
                 ))}
               </tbody>
             </Table>
             <div>
               <p style={{ textAlign: "left" }}>
-                <strong>Total: $20.00</strong>
+                <strong>Total: ${totalImportes.toFixed(2)}</strong>
               </p>
             </div>
           </div>
