@@ -160,69 +160,56 @@ function DemoTresTablas() {
             <AccordionBody accordionId="1">
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div>
-                  {" "}
                   <Label>Reporte</Label>
                   <Input type="text"></Input>
                 </div>
               </div>
               <div className="formulario">
                 <div>
-                  {" "}
                   <Label>Fecha inicial</Label>
                   <Input type="date"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Fecha final</Label>
                   <Input type="date"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Sucursal</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Compañia</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Cliente</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Almacen</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Tipo de movimiento</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Proveedor</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Estilista</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Metodo de pago</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Empresa</Label>
                   <Input type="text"></Input>
                 </div>
                 <div>
-                  {" "}
                   <Label>Sucursal destino</Label>
                   <Input type="text"></Input>
                 </div>
