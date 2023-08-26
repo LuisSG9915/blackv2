@@ -1,300 +1,95 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import "./shopify.css";
 import { Button, Container } from "reactstrap";
 import axios from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import Swal from "sweetalert2";
-
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 function ShopifySinc() {
+  const { filtroSeguridad, session } = useSeguridad();
   const [ordersJson, setOrdersJson] = useState(null);
   const [clientJson, setClientJson] = useState(null);
   const [productJson, setProductJson] = useState(null);
   const [error, setError] = useState(null);
   const [jsonString, setJsonString] = useState("");
 
-  const fetchOrders = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/api/orders");
-
-      if (response.data) {
-        setOrdersJson(response.data);
-        setError(null);
-        const jsonString = transformToJsonString(response.data);
-        setJsonString(jsonString); // Actualiza el estado con la cadena JSON transformada
-        await sendOrders(response.data);
-      } else {
-        setError("Los datos de órdenes no son válidos.");
-      }
-    } catch (error) {
-      console.error("Error al obtener las órdenes:", error);
-      setError("Ocurrió un error al obtener las órdenes.");
+  const fetchClientes = async () => {
+    const permiso = await filtroSeguridad("sinc_cliente");
+    if (permiso === false) {
+      return;
     }
-  };
 
-  const sendOrders = async (ordersData) => {
     try {
-      // Convierte el objeto JSON a una cadena y escapa las comillas dobles
-      const jsonString = JSON.stringify(ordersData).replace(/"/g, '\\"');
+      // Mostrar SweetAlert de carga
+      const loadingAlert = Swal.fire({
+        title: "Sincronizando...",
+        allowOutsideClick: false, // Evita que el usuario cierre la alerta
+        showConfirmButton: false, // Oculta el botón de confirmación
+        timerProgressBar: true, // Muestra la barra de progreso de tiempo
+        didOpen: () => {
+          Swal.showLoading();
+          setTimeout(async () => {
+            const response = await axios.get("http://localhost:3001/api/clientes");
 
-      // Envuelve la cadena JSON entre comillas
-      const wrappedJsonString = `"${jsonString}"`;
-
-      // Realiza la solicitud POST con la cadena JSON envuelta en comillas como cuerpo
-      await jezaApi
-        .post("/ShopifyOrders", wrappedJsonString, {
-          headers: {
-            "Content-Type": "application/json", // Indica que el cuerpo es texto plano
-          },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Sincronización exitosa",
-            confirmButtonColor: "#3085d6",
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+            if (response.data) {
+              // Ocultar SweetAlert de carga y mostrar el mensaje de éxito
+              Swal.fire({
+                title: "¡Sincronización exitosa!",
+                icon: "success",
+              });
+              setClientJson(response.data);
+              setError(null);
+            } else {
+              setError("Los datos de clientes no son válidos.");
+            }
+          }, 3000); // Cambiar el tiempo según tus necesidades
+        },
+      });
     } catch (error) {
-      console.error("Error al enviar las órdenes a Jeza:", error);
-      // Manejar errores aquí
-    }
-  };
-
-  // const fetchClientes = async () => {
-  //   try {
-  //     const response = await axios.get("http://localhost:3001/api/clientes");
-
-  //     if (response.data) {
-  //       setClientJson(response.data);
-  //       setError(null);
-  //       const jsonString = transformToJsonString(response.data);
-  //       setJsonString(jsonString); // Actualiza el estado con la cadena JSON transformada
-  //       await sendClientes(response.data);
-  //     } else {
-  //       setError("Los datos de órdenes no son válidos.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al obtener las órdenes:", error);
-  //     setError("Ocurrió un error al obtener las órdenes.");
-  //   }
-  // };
-
-  
-  // const fetchClientes = async (pageInfo = '') => {
-  //   try {
-  //     // Realiza la solicitud GET al servidor utilizando el valor de page_info
-  //     const response = await axios.get(`http://localhost:3001/api/clientes?page_info=${pageInfo}`);
-      
-  //     if (response.data) {
-  //       setClientJson(response.data);
-  //       setError(null);
-  //       const jsonString = transformToJsonString(response.data);
-  //       setJsonString(jsonString); // Actualiza el estado con la cadena JSON transformada
-  //       await sendClientes(response.data);
-        
-  //       // Verifica si hay un enlace a la siguiente página en el encabezado link
-  //       const linkHeader = response.headers.link;
-  //       const nextLink = linkHeader && linkHeader.match(/<([^>]+)>;\s*rel="next"/);
-  
-  //       if (nextLink) {
-  //         const nextUrl = nextLink[1];
-  //         // Extrae el valor de page_info de la URL para la próxima página
-  //         const nextPageInfo = nextUrl.match(/page_info=([^&]+)/)[1];
-  
-  //         // Espera un segundo antes de hacer la siguiente solicitud
-  //         setTimeout(() => {
-  //           fetchClientes(nextPageInfo);
-  //         }, 1000);
-  //       } else {
-  //         // Todos los clientes se han sincronizado
-  //         Swal.fire({
-  //           icon: "success",
-  //           text: "Sincronización exitosa",
-  //           confirmButtonColor: "#3085d6",
-  //         });
-  //       }
-  //     } else {
-  //       setError("Los datos de clientes no son válidos.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al obtener los clientes:", error);
-  //     setError("Ocurrió un error al obtener los clientes.");
-  //   }
-  // };
-  
-  
-  
-  
-  
-  // const sendClientes = async (clientData) => {
-  //   try {
-  //     // Convierte el objeto JSON a una cadena y escapa las comillas dobles
-  //     const jsonString = JSON.stringify(clientData).replace(/"/g, '\\"');
-
-  //     // Envuelve la cadena JSON entre comillas
-  //     const wrappedJsonString = `"${jsonString}"`;
-
-  //     // Realiza la solicitud POST con la cadena JSON envuelta en comillas como cuerpo
-  //     await jezaApi
-  //       .post("/ShopifyClientes", wrappedJsonString, {
-  //         headers: {
-  //           "Content-Type": "application/json", // Indica que el cuerpo es texto plano
-  //         },
-  //       })
-  //       .then((response) => {
-  //         Swal.fire({
-  //           icon: "success",
-  //           text: "Sincronización exitosa",
-  //           confirmButtonColor: "#3085d6",
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   } catch (error) {
-  //     console.error("Error al enviar las órdenes a Jeza:", error);
-  //     // Manejar errores aquí
-  //   }
-  // };
-
-  const fetchClientes = async (pageInfo = '') => {
-    try {
-      // Realiza la solicitud GET al servidor utilizando el valor de page_info
-      const response = await axios.get(`http://localhost:3001/api/clientes?page_info=${pageInfo}`);
-      
-      if (response.data) {
-        setClientJson(response.data);
-        setError(null);
-        const jsonString = transformToJsonString(response.data);
-        setJsonString(jsonString); // Actualiza el estado con la cadena JSON transformada
-        await sendClientes(response.data);
-  
-        // Verifica si hay un enlace a la siguiente página en el encabezado link
-        const linkHeader = response.headers.link;
-        const nextLink = linkHeader && linkHeader.match(/<([^>]+)>;\s*rel="next"/);
-  
-        if (nextLink) {
-          const nextUrl = nextLink[1];
-          // Extrae el valor de page_info de la URL para la próxima página
-          const nextPageInfo = nextUrl.match(/page_info=([^&]+)/)[1];
-  
-          // Espera un segundo antes de hacer la siguiente solicitud
-          setTimeout(() => {
-            fetchClientes(nextPageInfo);
-          }, 1000);
-        } else {
-          // Todos los clientes se han sincronizado
-          // Swal.fire({
-          //   icon: "success",
-          //   text: "Sincronización exitosa",
-          //   confirmButtonColor: "#3085d6",
-          // });
-        }
-      } else {
-        setError("Los datos de clientes no son válidos.");
-      }
-    } catch (error) {
+      // Mostrar un mensaje de error
       console.error("Error al obtener los clientes:", error);
       setError("Ocurrió un error al obtener los clientes.");
     }
   };
-  
-  
-  const sendClientes = async (clientData) => {
+
+  const fetchOrdenes = async () => {
+    const permiso = await filtroSeguridad("sinc_orden");
+    if (permiso === false) {
+      return;
+    }
     try {
-      // Convierte el objeto JSON a una cadena y escapa las comillas dobles
-      const jsonString = JSON.stringify(clientData).replace(/"/g, '\\"');
-  
-      // Envuelve la cadena JSON entre comillas
-      const wrappedJsonString = `"${jsonString}"`;
-  
-      // Realiza la solicitud POST con la cadena JSON envuelta en comillas como cuerpo
-      await jezaApi
-        .post("/ShopifyClientes", wrappedJsonString, {
-          headers: {
-            "Content-Type": "application/json", // Indica que el cuerpo es texto plano
-          },
-        })
-        .then((response) => {
-          // Swal.fire({
-          //   icon: "success",
-          //   text: "Sincronización exitosa",
-          //   confirmButtonColor: "#3085d6",
-          // });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      // Mostrar SweetAlert de carga
+      const loadingAlert = Swal.fire({
+        title: "Sincronizando...",
+        allowOutsideClick: false, // Evita que el usuario cierre la alerta
+        showConfirmButton: false, // Oculta el botón de confirmación
+        timerProgressBar: true, // Muestra la barra de progreso de tiempo
+        didOpen: () => {
+          Swal.showLoading();
+          setTimeout(async () => {
+            const response = await axios.get("http://localhost:3001/api/ordenes");
+
+            if (response.data) {
+              // Ocultar SweetAlert de carga y mostrar el mensaje de éxito
+              Swal.fire({
+                title: "¡Sincronización exitosa!",
+                icon: "success",
+              });
+              setClientJson(response.data);
+              setError(null);
+            } else {
+              setError("Los datos de clientes no son válidos.");
+            }
+          }, 3000); // Cambiar el tiempo según tus necesidades
+        },
+      });
     } catch (error) {
-      console.error("Error al enviar las órdenes a Jeza:", error);
-      // Manejar errores aquí
+      // Mostrar un mensaje de error
+      console.error("Error al obtener los clientes:", error);
+      setError("Ocurrió un error al obtener los clientes.");
     }
   };
-  
-
-  const fetchProduct = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/api/productos");
-
-      if (response.data) {
-        setProductJson(response.data);
-        setError(null);
-        const jsonString = transformToJsonString(response.data);
-        setJsonString(jsonString); // Actualiza el estado con la cadena JSON transformada
-        await sendProducts(response.data);
-      } else {
-        setError("Los datos de órdenes no son válidos.");
-      }
-    } catch (error) {
-      console.error("Error al obtener las órdenes:", error);
-      setError("Ocurrió un error al obtener las órdenes.");
-    }
-  };
-
-  const sendProducts = async (productsData) => {
-    try {
-      // Convierte el objeto JSON a una cadena y reemplaza las comillas simples por dobles
-      let jsonString = JSON.stringify(productsData).replace(/'/g, '"');
-
-      // Escapa las comillas dobles dentro de la cadena JSON
-      jsonString = jsonString.replace(/"/g, '\\"');
-
-      // Envuelve la cadena JSON entre comillas
-      const wrappedJsonString = `"${jsonString}"`;
-
-      alert(wrappedJsonString);
-
-      // Realiza la solicitud POST con la cadena JSON envuelta en comillas como cuerpo
-      //   await jezaApi
-      //     .post("/ShopifyProducts", wrappedJsonString, {
-      //       headers: {
-      //         "Content-Type": "application/json", // Indica que el cuerpo es texto plano
-      //       },
-      //     })
-      //     .then((response) => {
-      //       Swal.fire({
-      //         icon: "success",
-      //         text: "Sincronización exitosa",
-      //         confirmButtonColor: "#3085d6",
-      //       });
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     });
-    } catch (error) {
-      console.error("Error al enviar las órdenes a Jeza:", error);
-      // Manejar errores aquí
-    }
-  };
-
-  function transformToJsonString(data) {
-    let jsonString = JSON.stringify(data);
-    jsonString = jsonString.replace(/"/g, '\\"').replace(/\\/g, "\\\\");
-    return jsonString;
-  }
 
   return (
     <>
@@ -303,32 +98,18 @@ function ShopifySinc() {
         <h1>Sincronización Shopify</h1>
 
         <div className="centrado">
-          <Button color="primary" onClick={fetchOrders}>
+          <Button color="primary" onClick={() => fetchOrdenes()}>
             Órdenes
           </Button>
-          <Button color="primary" onClick={() => fetchClientes('')}>
-  Clientes
-</Button>
+          <Button color="primary" onClick={() => fetchClientes()}>
+            Clientes
+          </Button>
 
-          <Button color="primary" disabled="true" onClick={fetchProduct}>
-            Productos...en construccion
+          <Button color="primary" disabled="true" /* onClick={fetchProduct} */>
+            Productos
           </Button>
         </div>
       </Container>
-      {error && <p className="error-message">{error}</p>}
-      
-      {/* {ordersJson && (
-        <div>
-          <h2>Respuesta JSON de Órdenes:</h2>
-          <pre>{JSON.stringify(ordersJson, null, 2)}</pre>
-        </div>
-      )} */}
-      {jsonString && (
-        <div>
-          <h2>JSON con caracteres cambiados:</h2>
-          <pre>{jsonString}</pre>
-        </div>
-      )}
     </>
   );
 }
