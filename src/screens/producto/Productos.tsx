@@ -859,6 +859,7 @@ function Productos() {
     { id: "marca", header: "Marca", accessorFn: (row) => row.marca, size: 50 },
     { id: "costo_unitario", header: "Costo unitario", accessorFn: (row) => row.costo_unitario, size: 5 },
     // { id: "precio", header: "Precio", accessorFn: (row) => row.precio, size: 5 },
+
     {
       accessorKey: "precio",
       header: "Precio",
@@ -895,29 +896,29 @@ function Productos() {
 
               <br />
               <br />
-              <Container className="d-flex ">
-                <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                  <Button
-                    style={{ marginLeft: "auto" }}
-                    color="success"
-                    onClick={() => {
-                      setModalInsertar(true);
-                      setEstado("insert");
-                      LimpiezaForm();
-                      // handleNav();
-                    }}
-                  >
-                    Crear producto
-                  </Button>
 
-                  <Button color="primary" onClick={handleRedirect}>
-                    <IoIosHome size={20}></IoIosHome>
-                  </Button>
-                  <Button onClick={handleReload}>
-                    <IoIosRefresh size={20}></IoIosRefresh>
-                  </Button>
-                </ButtonGroup>
-              </Container>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button
+
+                  color="success"
+                  onClick={() => {
+                    setModalInsertar(true);
+                    setEstado("insert");
+                    LimpiezaForm();
+                    // handleNav();
+                  }}
+                >
+                  Crear producto
+                </Button>
+
+                <Button color="primary" onClick={handleRedirect}>
+                  <IoIosHome size={20}></IoIosHome>
+                </Button>
+                <Button onClick={handleReload}>
+                  <IoIosRefresh size={20}></IoIosRefresh>
+                </Button>
+              </ButtonGroup>
+
               <br />
               <br />
             </Container>
