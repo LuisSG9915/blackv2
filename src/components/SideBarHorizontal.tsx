@@ -19,6 +19,7 @@ import {
   ListGroup,
   ListGroupItem,
   Input,
+  Button,
 } from "reactstrap";
 import { Usuario } from "../models/Usuario";
 import Usuarios from "../screens/Usuarios";
@@ -28,8 +29,100 @@ import Swal from "sweetalert2";
 import "../../css/sidebar.css";
 import logoImage from "../assets/logoN.png";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
+import axios from "axios";
 
 const SidebarHorizontal = () => {
+  /* sincronizacionshopify */
+  const [ordersJson, setOrdersJson] = useState(null);
+  const [clientJson, setClientJson] = useState(null);
+  const [productJson, setProductJson] = useState(null);
+  const [error, setError] = useState(null);
+  const [jsonString, setJsonString] = useState("");
+
+  const [loadingVisible, setLoadingVisible] = useState(false);
+  const [loadingVisible_o, setLoadingVisible_o] = useState(false);
+
+  const showLoading_o = () => {
+    setLoadingVisible_o(true);
+    const loadingDiv = document.getElementById("loading-div-o");
+    if (loadingDiv) {
+      loadingDiv.style.visibility = "visible"; // Se vuelve visible
+    }
+  };
+
+  const hideLoading_o = () => {
+    setLoadingVisible_o(false);
+    const loadingDiv = document.getElementById("loading-div-o");
+    if (loadingDiv) {
+      loadingDiv.style.visibility = "hidden"; // Se oculta
+    }
+  };
+
+  const showLoading_c = () => {
+    setLoadingVisible(true);
+    const loadingDiv = document.getElementById("loading-div-c");
+    if (loadingDiv) {
+      loadingDiv.style.visibility = "visible"; // Se vuelve visible
+    }
+  };
+
+  const hideLoading_c = () => {
+    setLoadingVisible(false);
+    const loadingDiv = document.getElementById("loading-div-c");
+    if (loadingDiv) {
+      loadingDiv.style.visibility = "hidden"; // Se oculta
+    }
+  };
+
+  const fetchClientes = async () => {
+    try {
+      showLoading_c(); // Mostrar el div de carga
+
+      const response = await axios.get("http://localhost:3001/api/clientes");
+
+      if (response.data) {
+        // Ocultar el div de carga y mostrar un mensaje de éxito (puedes personalizar esto)
+        hideLoading_c();
+
+        setClientJson(response.data);
+        setError(null);
+      } else {
+        setError("Los datos de clientes no son válidos.");
+      }
+    } catch (error) {
+      // Mostrar un mensaje de error
+      console.error("Error al obtener los clientes:", error);
+      setError("Ocurrió un error al obtener los clientes.");
+    } finally {
+      hideLoading_c(); // Asegurarse de ocultar el div de carga incluso en caso de error
+    }
+  };
+  const fetchOrdenes = async () => {
+    try {
+      showLoading_o(); // Mostrar el div de carga
+
+      const response = await axios.get("http://localhost:3001/api/ordenes");
+
+      if (response.data) {
+        // Ocultar el div de carga y mostrar un mensaje de éxito (puedes personalizar esto)
+        hideLoading_o();
+
+        setClientJson(response.data);
+        setError(null);
+      } else {
+        setError("Los datos de clientes no son válidos.");
+      }
+    } catch (error) {
+      // Mostrar un mensaje de error
+      console.error("Error al obtener los clientes:", error);
+      setError("Ocurrió un error al obtener los clientes.");
+    } finally {
+      hideLoading_o(); // Asegurarse de ocultar el div de carga incluso en caso de error
+    }
+  };
+
+  /* fin sincronizacion shopify */
+
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState<Usuario[]>([]);
   // const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -351,6 +444,12 @@ const SidebarHorizontal = () => {
               </Nav>
             </Collapse>
           </Navbar>
+          <Button color="primary" onClick={() => fetchOrdenes()}>
+            Ordenes
+          </Button>
+          <Button color="primary" onClick={() => fetchClientes()}>
+            Clientes
+          </Button>
         </div>
         <div className="">
           {isTimerExpired() ? (
@@ -365,7 +464,17 @@ const SidebarHorizontal = () => {
           )}
         </div>
       </>
-      {/* )} */}
+
+      <div id="loading-div-o" className="loading">
+        <div className="loader"></div>
+        <p>Sincronizando ordenes shopify...</p>
+      </div>
+
+      {/* Div de carga para clientes */}
+      <div id="loading-div-c" className="loading">
+        <div className="loader"></div>
+        <p>Sincronizando clientes shopify...</p>
+      </div>
     </>
   );
 };
