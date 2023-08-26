@@ -22,9 +22,7 @@ function DemoTresTablas() {
 
   //TABLA 1
   useEffect(() => {
-    // Realizar la solicitud GET a la API
     fetch("http://cbinfo.no-ip.info:9089/Cia?id=0")
-      // fetch("http://cbinfo.no-ip.info:9089/Usuario?id=0")
       .then((response) => response.json())
       .then((responseData) => {
         setReportes(responseData);
@@ -35,8 +33,6 @@ function DemoTresTablas() {
           const columns = columnKeys.map((key) => ({
             accessorKey: key,
             header: key,
-            // size: 200,
-            flex: 1,
           }));
           setColumnas(columns);
         }
@@ -58,7 +54,7 @@ function DemoTresTablas() {
           const columns = columnKeys.map((key) => ({
             accessorKey: key,
             header: key,
-            flex: 1,
+            // size: "flex",
           }));
           setColumnasTabla2(columns);
         }
@@ -228,25 +224,101 @@ function DemoTresTablas() {
                 </div>
               </div>
               <br />
-
-              <div className="d-flex justify-content-end ">
-                <Button className="ml-auto">Consultar</Button>
+          <AccordionItem>
+            <AccordionHeader targetId="1">filtros</AccordionHeader>
+            <AccordionBody accordionId="1">
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div>
+                  {" "}
+                  <Label>Reporte</Label>
+                  <Input type="text"></Input>
+                </div>
               </div>
-            </AccordionBody>
-          </AccordionItem>
-        </UncontrolledAccordion>
-        <hr />
-      </Container>
-      <Container style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
-        <div style={{ width: "400px", overflow: "auto" }}>
-          <div className="juntos"></div>
-          <MaterialReactTable
-            columns={columnas.map((col) => ({
-              ...col,
-              size: "flex", // Establecer el tamaño de la columna como flex: 1
-            }))}
-            data={reportes} // Reemplaza "reportes1" con tus datos de la primera tabla
-            enableRowSelection={false}
+              <div className="formulario">
+                <div>
+                  {" "}
+                  <Label>Fecha inicial</Label>
+                  <Input type="date"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Fecha final</Label>
+                  <Input type="date"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Sucursal</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Compañia</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Cliente</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Almacen</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Tipo de movimiento</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Proveedor</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Estilista</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Metodo de pago</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Empresa</Label>
+                  <Input type="text"></Input>
+                </div>
+                <div>
+                  {" "}
+                  <Label>Sucursal destino</Label>
+                  <Input type="text"></Input>
+                </div>
+              </div>
+              <br />
+
+        <div className="d-flex justify-content-end ">
+          <Button className="ml-auto">Consultar</Button>
+        </div>
+      
+    </AccordionBody>
+  </AccordionItem>
+
+</UncontrolledAccordion>
+<hr />   
+      </Container> 
+<Container style={{ display: "flex",flexWrap: "wrap", gap: "20px" }}>
+  <div style={{ width: "400px", overflow: "auto" }}>
+    <div className="juntos">
+    </div>
+    <MaterialReactTable
+      columns={columnas.map((col) => ({
+        ...col,
+        size: "flex", // Establecer el tamaño de la columna como flex: 1
+      }))}
+      data={reportes} // Reemplaza "reportes1" con tus datos de la primera tabla
+      enableRowSelection={false}
             rowSelectionCheckboxes={false}
             initialState={{ density: "compact" }}
             renderTopToolbarCustomActions={({ table }) => (
@@ -320,6 +392,9 @@ function DemoTresTablas() {
                 </Button>
               </>
             )}
+          />
+        </div>
+      </Container>
           />
         </div>
       </Container>
