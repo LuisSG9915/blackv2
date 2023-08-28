@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import { AccordionBody, AccordionHeader, AccordionItem, Button, Col, Container, Input, Label, Row, UncontrolledAccordion } from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
@@ -9,6 +9,8 @@ import { Padding } from "@mui/icons-material";
 import axios from "axios";
 import { UserResponse } from "../../models/Home";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useCortesEmail } from "../../hooks/getsHooks/useCortesEmail";
+import { CorteA, CorteB, CorteC } from "../../models/CortesEmail";
 
 function DemoTresTablas() {
   const [reportes, setReportes] = useState([]);
@@ -124,7 +126,75 @@ function DemoTresTablas() {
       .then(() => alert("Correo enviado correctamente"));
   };
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({
+    sucursal: dataUsuarios2[0]?.sucursal,
+    fecha: fechaPost,
+  });
 
+  const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
+    () => [
+      {
+        accessorKey: "FormadePago",
+        header: "Forma de pago",
+        size: 5,
+      },
+      {
+        accessorKey: "Importe",
+        header: "Importe",
+        size: 5,
+      },
+    ],
+    []
+  );
+
+  const columnsB: MRT_ColumnDef<CorteB>[] = useMemo(
+    () => [
+      {
+        accessorKey: "FechaCita",
+        header: "Fecha de cita",
+        size: 1,
+        Cell: ({ cell }) => {
+          return cell.row.original.FechaCita.split("T")[0];
+        },
+      },
+      {
+        accessorKey: "DescripcionCita",
+        header: "Descripcion de cita",
+        size: 10,
+      },
+    ],
+    []
+  );
+  const columnsC: MRT_ColumnDef<CorteC>[] = useMemo(
+    () => [
+      {
+        accessorKey: "Responsable",
+        header: "Responsable",
+        maxSize: 1,
+      },
+      {
+        accessorKey: "Servicio",
+        header: "Servicio",
+        size: 5,
+      },
+      {
+        accessorKey: "Venta",
+        header: "Venta",
+        size: 10,
+      },
+      {
+        accessorKey: "Color",
+        header: "Color",
+        size: 10,
+      },
+      {
+        accessorKey: "Productos",
+        header: "Productos",
+        size: 10,
+      },
+    ],
+    []
+  );
   return (
     <>
       <Row>
@@ -144,6 +214,7 @@ function DemoTresTablas() {
               placeholder="date placeholder"
               type="date"
               max={today}
+              defaultValue={new Date().toISOString().split("T")[0]}
               onChange={(value) => {
                 setFechaPost(new Date(value.target.value));
               }}
@@ -154,7 +225,7 @@ function DemoTresTablas() {
           </Col>
         </Row>
         <br />
-        <UncontrolledAccordion defaultOpen="2">
+        {/* <UncontrolledAccordion defaultOpen="2">
           <AccordionItem>
             <AccordionHeader targetId="1">filtros</AccordionHeader>
             <AccordionBody accordionId="1">
@@ -221,24 +292,21 @@ function DemoTresTablas() {
               </div>
             </AccordionBody>
           </AccordionItem>
-        </UncontrolledAccordion>
+        </UncontrolledAccordion> */}
         <hr />
       </Container>
       <Container style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
           <MaterialReactTable
-            columns={columnas.map((col) => ({
-              ...col,
-              size: "flex", // Establecer el tamaño de la columna como flex: 1
-            }))}
-            data={reportes} // Reemplaza "reportes1" con tus datos de la primera tabla
+            columns={columnsA}
+            data={dataCorteEmailA} // Reemplaza "reportes1" con tus datos de la primera tabla
             enableRowSelection={false}
             rowSelectionCheckboxes={false}
             initialState={{ density: "compact" }}
             renderTopToolbarCustomActions={({ table }) => (
               <>
-                <h4>EMPRESAS</h4>
+                <h4>1</h4>
                 <Button
                   onClick={handleExportData}
                   variant="contained"
@@ -256,11 +324,8 @@ function DemoTresTablas() {
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
           <MaterialReactTable
-            columns={columnasTabla2.map((col) => ({
-              ...col,
-              size: "flex", // Establecer el tamaño de la columna como flex: 1
-            }))}
-            data={reportesTabla2} // Reemplaza "reportes1" con tus datos de la primera tabla
+            columns={columnsB}
+            data={dataCorteEmailB} // Reemplaza "reportes1" con tus datos de la primera tabla
             enableRowSelection={false}
             rowSelectionCheckboxes={false}
             initialState={{ density: "compact" }}
@@ -284,11 +349,8 @@ function DemoTresTablas() {
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
           <MaterialReactTable
-            columns={columnasTabla3.map((col) => ({
-              ...col,
-              size: "flex", // Establecer el tamaño de la columna como flex: 1
-            }))}
-            data={reportesTabla3} // Reemplaza "reportes1" con tus datos de la primera tabla
+            columns={columnsC}
+            data={dataCorteEmailC} // Reemplaza "reportes1" con tus datos de la primera tabla
             enableRowSelection={false}
             rowSelectionCheckboxes={false}
             initialState={{ density: "compact" }}
