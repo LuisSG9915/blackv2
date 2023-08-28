@@ -203,8 +203,8 @@ function DemoTresTablas() {
 
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> DEMO </h1>
-          <AiOutlineFileText size={30}></AiOutlineFileText>
+          <h1> Corte <AiOutlineFileText size={30} /></h1>
+
         </div>
         <Row>
           <Col xs={2}>
@@ -306,7 +306,7 @@ function DemoTresTablas() {
             initialState={{ density: "compact" }}
             renderTopToolbarCustomActions={({ table }) => (
               <>
-                <h4>1</h4>
+                <h4>Corte 1</h4>
                 <Button
                   onClick={handleExportData}
                   variant="contained"
@@ -331,7 +331,7 @@ function DemoTresTablas() {
             initialState={{ density: "compact" }}
             renderTopToolbarCustomActions={({ table }) => (
               <>
-                <h4>USUARIOS</h4>
+                <h4>Corte 2</h4>
                 <Button
                   onClick={handleExportData}
                   variant="contained"
@@ -356,7 +356,7 @@ function DemoTresTablas() {
             initialState={{ density: "compact" }}
             renderTopToolbarCustomActions={({ table }) => (
               <>
-                <h4>VENTAS</h4>
+                <h4>Corte 3</h4>
                 <Button
                   onClick={handleExportData}
                   variant="contained"
