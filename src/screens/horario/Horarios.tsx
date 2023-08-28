@@ -192,6 +192,8 @@ function Horarios() {
     setModalCrearOpen(!modalCrearOpen);
   };
 
+  const [selectedId, setSelectedId] = useState(null);
+
   const handleModalSelect = (id: React.SetStateAction<string>, name: React.SetStateAction<string>) => {
     setSelectedId(id); // Actualiza el estado con el ID seleccionado
     setSelectedName(name); // Actualiza el estado con el nombre seleccionado

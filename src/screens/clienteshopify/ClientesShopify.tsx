@@ -480,7 +480,6 @@ function ClientesShopify() {
     window.location.reload();
   };
 
-
   const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
   const historial = (id) => {
     jezaApi.get(`/Historial?cliente=${id}`).then((response) => {
@@ -536,10 +535,16 @@ function ClientesShopify() {
       {
         header: "Acciones",
         Cell: ({ row }) => (
-          <LuCalendarSearch size={23}
+          <LuCalendarSearch
+            size={23}
             onClick={() => {
               console.log(row.original);
-              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+              loadHistorialDetalle(
+                row.original.Cve_cliente,
+                row.original.NumVenta,
+                row.original.idProducto,
+                row.original.sucursal
+              );
               setParamsDetalles({
                 Cve_cliente: row.original.Cve_cliente,
                 idProducto: row.original.idProducto,
@@ -550,8 +555,6 @@ function ClientesShopify() {
               });
               setIsModalOpen(true);
             }}
-
-
           />
         ),
         muiTableBodyCellProps: {
@@ -656,7 +659,11 @@ function ClientesShopify() {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -711,7 +718,11 @@ function ClientesShopify() {
         Cell: ({ cell }) => (
           <>
             {/* <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} /> */}
-            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
+            <AiFillEdit
+              className="mr-2"
+              onClick={() => mostrarModalActualizar(cell.row.original)}
+              size={23}
+            ></AiFillEdit>
             {/* <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} /> */}
           </>
         ),
@@ -737,11 +748,121 @@ function ClientesShopify() {
           return <span>{fecha}</span>;
         },
       },
-
     ],
     []
   );
 
+  /* fin de las cosas que hizo abigail */
+  /* inicia alex */
+
+  const [reportesTabla2, setReportesTabla2] = useState([]);
+  const [columnasTabla2, setColumnasTabla2] = useState([]);
+  const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionado
+  const [modalOpen, setModalOpen] = useState(false);
+  const [trabajador, setTrabajadores] = useState([]);
+  //TABLA 2
+  useEffect(() => {
+    // Realiza la solicitud GET a la API para la Tabla 2
+    fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
+      .then((response) => response.json())
+      .then((responseData) => {
+        setReportesTabla2(responseData);
+
+        // Construye las columnas dinámicamente a partir de la primera entrada de reportes
+        // if (responseData.length > 0) {
+        //   const columnKeys = Object.keys(responseData[0]);
+        //   const columns = columnKeys.map((key) => ({
+        //     accessorKey: key,
+        //     header: key,
+        //     flex: 1,
+        //   }));
+        //   setColumnasTabla2(columns);
+        // }
+      })
+      .catch((error) => console.error("Error al obtener los datos:", error));
+  }, []);
+
+  const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
+    () => [
+      {
+        accessorKey: "acciones",
+        header: "Acciones",
+        size: 5,
+        Cell: ({ row }) => <CButton color="secondary" onClick={() => setModalOpen(true)} text="  Elegir"></CButton>,
+      },
+      {
+        accessorKey: "id",
+        header: "Id shopify",
+        size: 5,
+      },
+      {
+        accessorKey: "nombreShopify",
+        header: "Nombre shopify",
+        sortDescFirst: false,
+        size: 5,
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+        size: 5,
+      },
+      {
+        accessorKey: "idCliente",
+        header: "Id Cliente",
+        size: 5,
+      },
+      {
+        accessorKey: "nombreCliente",
+        header: "Nombre Cliente",
+        size: 5,
+      },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    // Dentro de useEffect, realizamos la solicitud a la API
+    jezaApi
+      .get("/Cliente?id=0")
+      .then((response) => {
+        // Cuando la solicitud sea exitosa, actualizamos el estado
+        setTrabajadores(response.data);
+      })
+      .catch((error) => {
+        // Manejo de errores
+        console.error("Error al cargar los trabajadores:", error);
+      });
+  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
+
+  const handleModalSelect = (id: React.SetStateAction<string>, name: React.SetStateAction<string>) => {
+    setSelectedId(id); // Actualiza el estado con el ID seleccionado
+    setSelectedName(name); // Actualiza el estado con el nombre seleccionado
+    // setModalOpen(false); // Cierra el modal
+  };
+
+  const columnsTrabajador = useMemo<MRT_ColumnDef<Trabajador>[]>(
+    () => [
+      {
+        accessorKey: "id",
+        header: "ID",
+        size: 100,
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        header: "Acciones",
+        Cell: ({ row }) => (
+          <Button size="sm" onClick={() => handleModalSelect(row.original.id, row.original.nombre)}>
+            seleccionar
+          </Button>
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -752,7 +873,9 @@ function ClientesShopify() {
         <Row>
           <Container fluid>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1>Shopify clientes <FaShopify size={35} /></h1>
+              <h1>
+                Shopify clientes <FaShopify size={35} />
+              </h1>
             </div>
 
             <Row>
@@ -779,7 +902,21 @@ function ClientesShopify() {
                 </ButtonGroup>
                 <br />
                 <br />
-                <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+
+                <MaterialReactTable
+                  columns={columnsA}
+                  data={reportesTabla2} // Reemplaza "reportes1" con tus datos de la primera tabla
+                  enableRowSelection={false}
+                  rowSelectionCheckboxes={false}
+                  initialState={{
+                    density: "compact",
+
+                    sorting: [
+                      { id: "nombreShopify", desc: true }, //sort by state in ascending order by default
+                    ],
+                  }}
+                />
+                {/* <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} /> */}
               </div>
             </Row>
           </Container>
@@ -1330,7 +1467,7 @@ function ClientesShopify() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                   </TabPane>
@@ -1355,7 +1492,6 @@ function ClientesShopify() {
         
             </div>
           )} */}
-
         </ModalBody>
         <ModalFooter>
           <CButton text="Cerrar" color="danger" onClick={() => setModalDetalle(false)} />
@@ -1367,11 +1503,24 @@ function ClientesShopify() {
         <ModalBody>
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
             <Table>
-              <thead >
+              <thead>
                 <tr>
-                  <th><p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p></th>
-                  <th><p><strong>No. Venta: </strong>{paramsDetalles.numVenta}</p></th>
-                  <th><p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p></th>
+                  <th>
+                    <p>
+                      <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>No. Venta: </strong>
+                      {paramsDetalles.numVenta}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                    </p>
+                  </th>
                 </tr>
               </thead>
             </Table>
@@ -1401,7 +1550,6 @@ function ClientesShopify() {
           </div>
         </ModalBody>
       </Modal>
-
 
       {/* Modal for showing client details */}
       {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
@@ -1510,6 +1658,27 @@ function ClientesShopify() {
           </Button>{" "}
         </ModalFooter>
       </Modal> */}
+
+      {/* modal trabajador */}
+      <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
+        <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
+        <ModalBody>
+          <h1>Seleccione cliente</h1>
+          <Input type="text" value={selectedName} />
+
+          <MaterialReactTable
+            columns={columnsTrabajador}
+            data={trabajador}
+            onSelect={(id, name) => handleModalSelect(id, name)} // Pasa la función de selección
+            initialState={{ density: "compact" }}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={() => setModalOpen(!modalOpen)}>
+            Cerrar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 }
