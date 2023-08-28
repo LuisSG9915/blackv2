@@ -207,7 +207,7 @@ function DemoTresTablas() {
 
         </div>
         <Row>
-          <Col xs={2}>
+          <Col xs={3}>
             <Input
               id="exampleDate"
               name="date"
@@ -220,7 +220,7 @@ function DemoTresTablas() {
               }}
             />
           </Col>
-          <Col xs={1}>
+          <Col xs={3}>
             <Button onClick={() => sendEmail()}>Enviar correo</Button>
           </Col>
         </Row>
