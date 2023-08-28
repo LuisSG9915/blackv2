@@ -41,88 +41,94 @@ const SidebarHorizontal = () => {
 
   const [loadingVisible, setLoadingVisible] = useState(false);
   const [loadingVisible_o, setLoadingVisible_o] = useState(false);
+  const [countdown_o, setCountdown_o] = useState(localStorage.getItem("countdown_o") || 7200);
+  const [countdown_c, setCountdown_c] = useState(localStorage.getItem("countdown_c") || 7200);
 
+  useEffect(() => {
+    const timer_o = setInterval(() => {
+      if (countdown_o > 0) {
+        setCountdown_o((prevCountdown_o) => prevCountdown_o - 1);
+        localStorage.setItem("countdown_o", countdown_o - 1);
+      } else {
+        showLoading_o();
+        showLoading_c();
+      }
+    }, 1000);
+
+    // const timer_c = setInterval(() => {
+    //   if (countdown_c > 0) {
+    //     setCountdown_c((prevCountdown_c) => prevCountdown_c - 1);
+    //     localStorage.setItem("countdown_c", countdown_c - 1);
+    //   } else {
+    //     showLoading_c();
+    //   }
+    // }, 1000);
+
+    return () => {
+      clearInterval(timer_o);
+      // clearInterval(timer_c);
+    };
+  }, [countdown_o, countdown_c]);
   const showLoading_o = () => {
     setLoadingVisible_o(true);
-    const loadingDiv = document.getElementById("loading-div-o");
-    if (loadingDiv) {
-      loadingDiv.style.visibility = "visible"; // Se vuelve visible
-    }
+
+    // Realiza la solicitud axios para obtener órdenes aquí
+    axios
+      .get("http://localhost:3001/api/ordenes")
+      .then((response) => {
+        if (response.data) {
+          setClientJson(response.data);
+          setError(null);
+        } else {
+          setError("Los datos de órdenes no son válidos.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener las órdenes:", error);
+        setError("Ocurrió un error al obtener las órdenes.");
+      })
+      .finally(() => {
+        // Asegúrate de ocultar el div de carga incluso en caso de error
+        hideLoading_o();
+      });
+    setCountdown_o(7200);
+    localStorage.setItem("countdown_o", 7200);
   };
 
   const hideLoading_o = () => {
     setLoadingVisible_o(false);
-    const loadingDiv = document.getElementById("loading-div-o");
-    if (loadingDiv) {
-      loadingDiv.style.visibility = "hidden"; // Se oculta
-    }
   };
 
   const showLoading_c = () => {
     setLoadingVisible(true);
-    const loadingDiv = document.getElementById("loading-div-c");
-    if (loadingDiv) {
-      loadingDiv.style.visibility = "visible"; // Se vuelve visible
-    }
+
+    // Realiza la solicitud axios para obtener clientes aquí
+    axios
+      .get("http://localhost:3001/api/clientes")
+      .then((response) => {
+        if (response.data) {
+          setClientJson(response.data);
+          setError(null);
+        } else {
+          setError("Los datos de clientes no son válidos.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al obtener los clientes:", error);
+        setError("Ocurrió un error al obtener los clientes.");
+      })
+      .finally(() => {
+        // Asegúrate de ocultar el div de carga incluso en caso de error
+        hideLoading_c();
+      });
+    setCountdown_c(7200);
+    localStorage.setItem("countdown_c", 7200);
   };
 
   const hideLoading_c = () => {
     setLoadingVisible(false);
-    const loadingDiv = document.getElementById("loading-div-c");
-    if (loadingDiv) {
-      loadingDiv.style.visibility = "hidden"; // Se oculta
-    }
   };
-
-  const fetchClientes = async () => {
-    try {
-      showLoading_c(); // Mostrar el div de carga
-
-      const response = await axios.get("http://localhost:3001/api/clientes");
-
-      if (response.data) {
-        // Ocultar el div de carga y mostrar un mensaje de éxito (puedes personalizar esto)
-        hideLoading_c();
-
-        setClientJson(response.data);
-        setError(null);
-      } else {
-        setError("Los datos de clientes no son válidos.");
-      }
-    } catch (error) {
-      // Mostrar un mensaje de error
-      console.error("Error al obtener los clientes:", error);
-      setError("Ocurrió un error al obtener los clientes.");
-    } finally {
-      hideLoading_c(); // Asegurarse de ocultar el div de carga incluso en caso de error
-    }
-  };
-  const fetchOrdenes = async () => {
-    try {
-      showLoading_o(); // Mostrar el div de carga
-
-      const response = await axios.get("http://localhost:3001/api/ordenes");
-
-      if (response.data) {
-        // Ocultar el div de carga y mostrar un mensaje de éxito (puedes personalizar esto)
-        hideLoading_o();
-
-        setClientJson(response.data);
-        setError(null);
-      } else {
-        setError("Los datos de clientes no son válidos.");
-      }
-    } catch (error) {
-      // Mostrar un mensaje de error
-      console.error("Error al obtener los clientes:", error);
-      setError("Ocurrió un error al obtener los clientes.");
-    } finally {
-      hideLoading_o(); // Asegurarse de ocultar el div de carga incluso en caso de error
-    }
-  };
-
-  /* fin sincronizacion shopify */
-
+  //------------------
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState<Usuario[]>([]);
   // const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -299,6 +305,25 @@ const SidebarHorizontal = () => {
               <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" />
             </NavbarBrand>
             <NavbarToggler onClick={toggle} />
+            <div className="containersinc">
+              <div
+                id="loading-div-o"
+                className={`loading ${loadingVisible_o ? "" : "hidden"}`}
+                hidden={!loadingVisible_o}
+              >
+                <div className="loader-container">
+                  <div className="loader"></div>
+                  <p className="no-spin">Sincronizando órdenes shopify...</p>
+                </div>
+              </div>
+
+              <div id="loading-div-c" className={`loading ${loadingVisible ? "" : "hidden"}`} hidden={!loadingVisible}>
+                <div className="loader-container">
+                  <div className="loader"></div>
+                  <p className="no-spin">Sincronizando clientes shopify...</p>
+                </div>
+              </div>
+            </div>
             <Collapse isOpen={isOpen} navbar>
               <Nav className="ml-auto" navbar justified={true}>
                 <UncontrolledDropdown>
@@ -437,6 +462,12 @@ const SidebarHorizontal = () => {
                           )}
                         </ListGroup>
                       </Card>
+                      <div>
+                        <p>
+                          Tiempo restante para obtener órdenes: {Math.floor(countdown_o / 60)} minutos{" "}
+                          {countdown_o % 60} segundos
+                        </p>
+                      </div>
                     </DropdownItem>
                     <DropdownItem onClick={cierraSesion}>Cerrar sesión</DropdownItem>
                   </DropdownMenu>
@@ -444,12 +475,6 @@ const SidebarHorizontal = () => {
               </Nav>
             </Collapse>
           </Navbar>
-          <Button color="primary" onClick={() => fetchOrdenes()}>
-            Ordenes
-          </Button>
-          <Button color="primary" onClick={() => fetchClientes()}>
-            Clientes
-          </Button>
         </div>
         <div className="">
           {isTimerExpired() ? (
@@ -464,17 +489,6 @@ const SidebarHorizontal = () => {
           )}
         </div>
       </>
-
-      <div id="loading-div-o" className="loading">
-        <div className="loader"></div>
-        <p>Sincronizando ordenes shopify...</p>
-      </div>
-
-      {/* Div de carga para clientes */}
-      <div id="loading-div-c" className="loading">
-        <div className="loader"></div>
-        <p>Sincronizando clientes shopify...</p>
-      </div>
     </>
   );
 };
