@@ -407,7 +407,7 @@ const Ventas = () => {
 
     setFormPago((prev) => ({ ...prev, [name]: value }));
   };
-
+  const [anticipoSelected, setAnticipoSelected] = useState(false);
   const [selectedFormasPago, setSelectedFormasPago] = useState<Set<number>>(new Set());
   const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -424,11 +424,9 @@ const Ventas = () => {
       });
     } else if (name === "formaPago" && Number(value) === 94) {
       setModalAnticipo(true);
+      setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
-    } else if (name === "importe") {
-      const cleanedValue = value?.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
-      setDataArregloTemporal((prev) => ({ ...prev, [name]: Number(cleanedValue) }));
-    } else {
+    }  else {
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -526,62 +524,73 @@ const Ventas = () => {
       today.setMilliseconds(0);
       horaDateTime = today.toISOString();
     }
-    try {
-      await jezaApi
-        .post("/Venta", null, {
-          params: {
-            id: 0,
-            Cia: dataUsuarios2[0]?.idCia,
-            Sucursal: dataUsuarios2[0]?.sucursal,
-            Fecha: today2,
-            Caja: 1,
-            No_venta: 0,
-            no_venta2: 0,
-            Clave_prod: dataTemporal.Clave_prod,
-            Cant_producto: dataTemporal.Cant_producto,
-            Cve_cliente: dataTemporal.Cve_cliente,
-            Tasa_iva: "0.16",
-            Observacion: dataTemporal.Observacion,
-            Descuento: dataTemporal.Descuento,
-            Clave_Descuento: dataTemporal.Clave_Descuento,
-            // usuario: form[0].id,
-            usuario: dataTemporal.idEstilista,
-            Corte: 1,
-            Corte_parcial: 1,
-            Costo: 1,
-            // Precio: dataTemporal.Precio_base === 0 ? dataTemporal.Precio : dataTemporal.Precio_base,
-            Precio: dataTemporal.Precio,
-            Precio_base: dataTemporal.Precio,
-            No_venta_original: 0,
-            cancelada: false,
-            folio_estilista: 0,
-            hora: horaDateTime,
-            tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
-            terminado: false,
-            validadoServicio: false,
-            ieps: "0",
-            Credito: false,
-            idEstilista: dataTemporal.idEstilista,
-            idestilistaAux: dataTemporal.idestilistaAux ? dataTemporal.idestilistaAux : 0,
-            idRecepcionista: dataUsuarios2[0]?.id,
-          },
-        })
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Venta registrada con éxito",
-            confirmButtonColor: "#3085d6",
+    if (dataTemporal.Cant_producto > 0) {
+      try {
+        await jezaApi
+          .post("/Venta", null, {
+            params: {
+              id: 0,
+              Cia: dataUsuarios2[0]?.idCia,
+              Sucursal: dataUsuarios2[0]?.sucursal,
+              Fecha: today2,
+              Caja: 1,
+              No_venta: 0,
+              no_venta2: 0,
+              Clave_prod: dataTemporal.Clave_prod,
+              Cant_producto: dataTemporal.Cant_producto,
+              Cve_cliente: dataTemporal.Cve_cliente,
+              Tasa_iva: "0.16",
+              Observacion: dataTemporal.Observacion,
+              // Descuento: dataTemporal.Descuento,
+              // Clave_Descuento: dataTemporal.Clave_Descuento,
+              Descuento: dataTemporal.Descuento ? dataTemporal.Descuento : 0,
+              Clave_Descuento: dataTemporal.Clave_Descuento ? dataTemporal.Clave_Descuento : 0,
+              // usuario: form[0].id,
+              usuario: dataTemporal.idEstilista,
+              Corte: 1,
+              Corte_parcial: 1,
+              Costo: 1,
+              // Precio: dataTemporal.Precio_base === 0 ? dataTemporal.Precio : dataTemporal.Precio_base,
+              Precio: dataTemporal.Precio,
+              Precio_base: dataTemporal.Precio,
+              No_venta_original: 0,
+              cancelada: false,
+              folio_estilista: 0,
+              hora: horaDateTime,
+              tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
+              terminado: false,
+              validadoServicio: false,
+              ieps: "0",
+              Credito: false,
+              idEstilista: dataTemporal.idEstilista,
+              idestilistaAux: dataTemporal.idestilistaAux ? dataTemporal.idestilistaAux : 0,
+              idRecepcionista: dataUsuarios2[0]?.id,
+            },
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Venta registrada con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            fetchVentas();
+            setDataTemporal((prevData) => ({
+              ...datosInicialesArreglo[0],
+              cliente: prevData.cliente,
+              Cve_cliente: prevData.Cve_cliente,
+            }));
+            setDescuento({ min: 0, max: 0 });
           });
-          fetchVentas();
-          setDataTemporal((prevData) => ({
-            ...datosInicialesArreglo[0],
-            cliente: prevData.cliente,
-            Cve_cliente: prevData.Cve_cliente,
-          }));
-          setDescuento({ min: 0, max: 0 });
-        });
-    } catch (error) {
-      console.error(error);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Advertencia",
+        text: `El campo de cantidad a vender solo acepta numeros, favor de verificar`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
     }
   };
 
@@ -895,7 +904,7 @@ const Ventas = () => {
       <>
         <Button
           onClick={() => {
-            setFormPago({ ...formPago, anticipos: Number(formPago.anticipos) + Number(params.row.importe) });
+            console.log(params.row);
             setFormAnticipo({
               ...formAnticipo,
               id: params.row.id,
@@ -903,15 +912,16 @@ const Ventas = () => {
               observaciones: params.row.observaciones,
               importe: params.row.importe,
             });
-            setAnticipoId(Number(params.row.id));
-            // console.log(formAnticipo);
-            setModalAnticipo(false);
-            // setModalTipoVenta(false);
+
             setDataArregloTemporal({
               ...dataArregloTemporal,
               importe: params.row.importe,
               referencia: params.row.referencia.toString(),
             });
+            setAnticipoId(Number(params.row.id));
+            // console.log(formAnticipo);
+            setModalAnticipo(false);
+            // setModalTipoVenta(false);
           }}
         >
           Seleccionar
@@ -1052,11 +1062,16 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
         }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
       )
       .then(() => {
@@ -1145,8 +1160,6 @@ const Ventas = () => {
     }, 0);
     setTotalImportes(total);
   }, [historialDetalle]);
-
-
 
   const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
     await jezaApi
@@ -1450,7 +1463,7 @@ const Ventas = () => {
             Agregar venta o servicio
           </Button>
         </div>
-
+        <div style={{ flex: 1 }}></div>
         <br />
         <Alert style={{ width: 400, marginLeft: 20 }} color="success" isOpen={visible} toggle={onDismiss}>
           Venta registrada con éxito
@@ -1688,7 +1701,7 @@ const Ventas = () => {
             </Col>
             <Col md={4}>
               <Label>Cantidad a vender:</Label>
-              <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} />
+              <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} type="number" />
               <br />
             </Col>
           </Row>
@@ -2329,7 +2342,13 @@ const Ventas = () => {
           </Input>
           <br />
           <Label> Importe </Label>
-          <Input type="number" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
+          <Input
+            type="number"
+            onChange={handleFormaPagoTemporal}
+            value={dataArregloTemporal.importe}
+            name={"importe"}
+            disabled={anticipoSelected}
+          ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
           dataArregloTemporal.formaPago == 91 ||
@@ -2348,13 +2367,14 @@ const Ventas = () => {
             color="danger"
             onClick={() => {
               setModalTipoVenta(false);
+              setAnticipoSelected(false);
             }}
             text="Salir"
           />
           <CButton
             color="success"
             onClick={() => {
-              console.log(dataArregloTemporal);
+              setAnticipoSelected(false);
               // Validación de campos
               if (!dataArregloTemporal.formaPago || dataArregloTemporal.formaPago === 0) {
                 Swal.fire({
@@ -2378,19 +2398,23 @@ const Ventas = () => {
                 });
                 return;
               } else {
-                console.log(dataArregloTemporal);
-                // AAQUI TENGO LOS INSERTS
-                if (
-                  Number(dataArregloTemporal.formaPago) === 90 ||
-                  Number(dataArregloTemporal.formaPago) === 91 ||
-                  Number(dataArregloTemporal.formaPago) === 92
-                ) {
-                  setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
-                } else if (Number(dataArregloTemporal.formaPago) === 1) {
-                  setFormPago({ ...formPago, efectivo: Number(dataArregloTemporal.importe) });
+                // Tarjetas / Movimientos bancarios
+                if (anticipoId > 0) {
+                  setFormPago({ ...formPago, anticipos: Number(formPago.anticipos) + Number(formAnticipo.importe) });
+                } else {
+                  if (
+                    Number(dataArregloTemporal.formaPago) === 90 ||
+                    Number(dataArregloTemporal.formaPago) === 91 ||
+                    Number(dataArregloTemporal.formaPago) === 92
+                  ) {
+                    setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
+                    // Efectivo
+                  } else if (Number(dataArregloTemporal.formaPago) === 1) {
+                    setFormPago({ ...formPago, efectivo: Number(dataArregloTemporal.importe) });
+                  }
                 }
                 setArregloTemporal([...arregloTemporal, dataArregloTemporal]);
-
+                setAnticipoId(0);
                 setModalTipoVenta(false);
                 setDataArregloTemporal({ d_formaPago: "", formaPago: 0, importe: 0, referencia: "" });
               }
