@@ -28,7 +28,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import CButton from "../../components/CButton";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { BsPersonBoundingBox } from "react-icons/bs";
 import Swal from "sweetalert2";
@@ -776,40 +776,19 @@ function ClientesShopify() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Agregar!",
-    }).then(async (result) => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        try {
-          await jezaApi.put(`sp_ShopifyClientesUpd?id=${shopifyId}&idCliente=${idCliente}`);
-          Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
-        } catch (error) {
-          console.error("Error:", error);
-          Swal.fire("Error", "Ocurrió un error al asignar el usuario.", "error");
-        }
+        jezaApi
+          .put(`sp_ShopifyClientesUpd?id=${shopId}&idCliente=${idCliente}`)
+          .then(() => {
+            Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
+          })
+          .catch((error) => {
+            console.error("Error al realizar la actualización:", error);
+          });
       }
     });
   };
-
-  // Verifica si se ha seleccionado un trabajador y se ha ingresado una fecha
-  // if (selectedId && selectedName) {
-  //   alert(selectedId);
-
-  //   // Realiza la solicitud a la API con los parámetros
-  //   // jezaApi
-  //   //   .get(`/Horario?idTrabajador=${selectedId}&fecha=${selectedDate}`)
-  //   //   .then((response) => {
-  //   //     setHorarios(response.data);
-  //   //     // Verifica si el resultado de la consulta es cero
-  //   //     if (response.data.length === 0) {
-  //   //       setShowButton(true); // Habilita el botón
-  //   //     } else {
-  //   //       setShowButton(false); // Deshabilita el botón
-  //   //     }
-  //   //   })
-  //   //   .catch((e) => console.log(e));
-  // } else {
-  //   // Muestra un mensaje de error o realiza alguna acción apropiada
-  //   console.log("Por favor, selecciona un trabajador y una fecha válida.");
-  // }
 
   //TABLA 2
   useEffect(() => {
@@ -833,99 +812,59 @@ function ClientesShopify() {
       .catch((error) => console.error("Error al obtener los datos:", error));
   }, []);
 
-  const [shopifyId, setShopifyId] = useState<number>(1);
+  const [shopifyId, setShopifyId] = useState<number>(0);
   const [shopifyName, setShopifyName] = useState<string>("");
 
   const setIdShopify = (shopID: number, shopNAME: string) => {
-    setShopifyId(shopID ? Number(shopID) : 1);
+    setShopifyId(shopID);
     setShopifyName(shopNAME);
     setModalOpen(true);
   };
 
-  // const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
-  //   () => [
-  //     {
-  //       accessorKey: "acciones",
-  //       header: "Acciones",
-  //       size: 5,
-  //       Cell: ({ row }) => {
-  //         console.log(shopifyId);
-  //         return <CButton color="secondary" onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)} text="  Elegir"></CButton>;
-  //       },
-  //     },
-  //     {
-  //       accessorKey: "id",
-  //       header: "Id shopify",
-  //       size: 5,
-  //     },
-  //     {
-  //       accessorKey: "nombreShopify",
-  //       header: "Nombre shopify",
-  //       sortDescFirst: false,
-  //       size: 5,
-  //     },
-  //     {
-  //       accessorKey: "email",
-  //       header: "Email",
-  //       size: 5,
-  //     },
-  //     {
-  //       accessorKey: "idCliente",
-  //       header: "Id Cliente",
-  //       size: 5,
-  //     },
-  //     {
-  //       accessorKey: "nombreCliente",
-  //       header: "Nombre Cliente",
-  //       size: 5,
-  //     },
-  //   ],
-  //   []
-  // );
-  const columnsA = useMemo(
+  const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
     () => [
       {
-        field: "acciones",
-        headerName: "Acciones",
-        renderCell: (params: GridCellParams) => {
-          const { id, nombreShopify } = params.row;
-          return (
-            <CButton
-              color="secondary"
-              onClick={() => {
-                // setIdShopify(id, nombreShopify);
-                setShopifyId(id);
-                setModalOpen(true);
-              }}
-              text="Elegir"
-            ></CButton>
-          );
-        },
+        accessorKey: "acciones",
+        header: "Acciones",
+        size: 5,
+        Cell: ({ row }) => (
+          <CButton
+            color="secondary"
+            onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)}
+            text="  Elegir"
+          ></CButton>
+        ),
       },
       {
-        field: "id",
-        headerName: "Id shopify",
+        accessorKey: "id",
+        header: "Id shopify",
+        size: 5,
       },
       {
-        field: "nombreShopify",
-        headerName: "Nombre shopify",
-        sortDirection: "asc", // Change this based on your sorting preference
+        accessorKey: "nombreShopify",
+        header: "Nombre shopify",
+        sortDescFirst: false,
+        size: 5,
       },
       {
-        field: "email",
-        headerName: "Email",
+        accessorKey: "email",
+        header: "Email",
+        size: 5,
       },
       {
-        field: "idCliente",
-        headerName: "Id Cliente",
+        accessorKey: "idCliente",
+        header: "Id Cliente",
+        size: 5,
       },
       {
-        field: "nombreCliente",
-        headerName: "Nombre Cliente",
+        accessorKey: "nombreCliente",
+        header: "Nombre Cliente",
+        size: 5,
       },
     ],
-    [] // Dependencias de useMemo
+    []
   );
+
   useEffect(() => {
     // Dentro de useEffect, realizamos la solicitud a la API
     jezaApi
@@ -978,29 +917,6 @@ function ClientesShopify() {
     []
   );
 
-  const columnsTrabajador = [
-    {
-      field: "id_cliente",
-      headerName: "ID",
-      width: 100,
-    },
-    {
-      field: "nombre",
-      headerName: "Nombre",
-      width: 100,
-    },
-    {
-      field: "acciones",
-      headerName: "Acciones",
-      width: 150,
-      renderCell: (params: GridCellParams) => (
-        <Button size="small" onClick={() => handleModalSelect(params.row.id_cliente, params.row.nombre)}>
-          seleccionar
-        </Button>
-      ),
-    },
-  ];
-
   return (
     <>
       <Row>
@@ -1039,24 +955,21 @@ function ClientesShopify() {
                 </ButtonGroup>
                 <br />
                 <br />
-                <Box sx={{ overflow: "auto" }}>
-                  <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
-                    <DataGrid
-                      columns={columnsA}
-                      rows={reportesTabla2}
-                      checkboxSelection={false}
-                      density="compact"
-                      sortingOrder={["asc", "desc"]}
-                      sortModel={[
-                        {
-                          field: "nombreShopify",
-                          sort: "asc", // Change this based on your default sorting preference
-                        },
-                      ]}
-                    />
-                    {/* <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} /> */}
-                  </Box>
-                </Box>
+
+                <MaterialReactTable
+                  columns={columnsA}
+                  data={reportesTabla2} // Reemplaza "reportes1" con tus datos de la primera tabla
+                  enableRowSelection={false}
+                  rowSelectionCheckboxes={false}
+                  initialState={{
+                    density: "compact",
+
+                    sorting: [
+                      { id: "nombreShopify", desc: true }, //sort by state in ascending order by default
+                    ],
+                  }}
+                />
+                {/* <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} /> */}
               </div>
             </Row>
           </Container>
@@ -1064,6 +977,51 @@ function ClientesShopify() {
           <br />
         </Row>
       </Container>
+
+      {/* <Row>
+        <SidebarHorizontal />
+      </Row>
+      <Container>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
+
+        </div>
+        <div className="col align-self-start d-flex justify-content-center "></div>
+        <br />
+        <ButtonGroup variant="contained" aria-label="outlined primary button group">
+          <Button
+            style={{ marginLeft: "auto" }}
+            color="success"
+            onClick={() => {
+              setModalInsertar(true);
+              setEstado("insert");
+              LimpiezaForm();
+            }}
+          >
+            Crear cliente
+          </Button>
+
+          <Button color="primary" onClick={handleRedirect}>
+            <IoIosHome size={20}></IoIosHome>
+          </Button>
+          <Button onClick={handleReload}>
+            <IoIosRefresh size={20}></IoIosRefresh>
+          </Button>
+        </ButtonGroup>
+
+        <br />
+        <br />
+        <div>
+
+          <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+        </div>
+
+
+        <br /> */}
+      {/* <DataTable></DataTable> */}
+
+      {/* 
+      </Container> */}
 
       {/* Modals */}
       {/* create */}
@@ -1347,8 +1305,115 @@ function ClientesShopify() {
                       />
                       <br />
                     </Col>
+
+                    {/* <Col sm="6">
+                      <Label>Sucursal origen:</Label>
+                      <Input type="select" name="sucursal_origen" id="exampleSelect" value={form.sucursal_origen} onChange={handleChange}>
+                        <option value="">Selecciona sucursal</option>
+                        {dataSucursales.map((sucursal) => (
+                          <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                            {sucursal.nombre}
+                          </option>
+                        ))}
+                      </Input>
+
+
+
+                      <br />
+                    </Col> */}
                   </Row>
                 </TabPane>
+                {/* 
+                <TabPane tabId="3">
+                  <Row>
+                    <Col sm="6">
+                      <Label>Número de plástico:</Label>
+                      <Input
+                        type="text"
+                        name="num_plastico"
+                        onChange={(e) => setForm({ ...form, num_plastico: String(e.target.value) })}
+                        defaultValue={form.num_plastico}
+                      />
+
+                      <br />
+                    </Col>
+                    <Col sm="6">
+                      <Label>Sucursal asignada al plástico:</Label>
+                      <Input type="select" name="suc_asig_plast" id="exampleSelect" value={form.suc_asig_plast} onChange={handleChange}>
+                        <option value="">Selecciona sucursal</option>
+                        {dataSucursales.map((sucursal) => (
+                          <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                            {sucursal.nombre}
+                          </option>
+                        ))}
+                      </Input>
+                      <br />
+                    </Col>
+                    <Col sm="6"> */}
+                {/* <Label>Fecha de asignación del plástico:</Label>
+                      <Input
+                        type="date"
+                        name="fecha_asig_plast"
+                        onChange={(e) => setForm({ ...form, fecha_asig_plast: String(e.target.value) })}
+                        defaultValue={form.fecha_asig_plast}
+
+                      /> */}
+
+                {/* <Label for="exampleDate">Fecha de asignación del plástico:</Label>
+                      <Input
+                        id="exampleDate"
+                        name="fecha_asig_plast"
+                        type="date"
+                        onChange={handleChange}
+                        defaultValue={form.fecha_asig_plast ? form.fecha_asig_plast.split("T")[0] : form.fecha_asig_plast}
+                      />
+
+                      <br />
+                    </Col> */}
+
+                {/* <Col sm="6">
+                      <Label>Usuario de asignación del plástico:</Label>
+                      <Input
+                        type="text"
+                        name="usr_asig_plast"
+                        onChange={(e) => setForm({ ...form, usr_asig_plast: String(e.target.value) })}
+                        defaultValue={form.usr_asig_plast}
+
+                      />
+                      <br />
+                    </Col> */}
+
+                {/* <Col sm="6">
+                      <Label>Clave de registro móvil:</Label>
+                      <Input
+                        type="text"
+                        name="claveRegistroMovil"
+                        onChange={(e) => setForm({ ...form, claveRegistroMovil: String(e.target.value) })}
+                        defaultValue={form.claveRegistroMovil}
+                      />
+                      <br />
+                    </Col>
+
+                    <Col sm="6">
+                      <label className="checkbox-container">
+                        <input type="checkbox" checked={form.plastico_activo} onChange={handleChange} name="plastico_activo" />
+                        <span className="checkmark"></span>
+                        Plástico Activo
+                      </label>
+                      <br />
+                    </Col>
+
+                    <Col sm="6">
+                      <label className="checkbox-container">
+                        <input type="checkbox" checked={form.suspendido} onChange={handleChange} name="suspendido" />
+                        <span className="checkmark"></span>
+                        Suspendido
+                      </label>
+                      <br />
+                    </Col>
+                  </Row>
+                </TabPane> */}
+                {/* <AlertComponent error={error} onDismiss={onDismiss} visible={visible} /> */}
               </TabContent>
             </Card>
           </Container>
@@ -1463,6 +1528,23 @@ function ClientesShopify() {
               </Card>
             </Container>
           )}
+
+          {/* 
+
+          {clienteSeleccionado && (
+            <div>
+              <p><strong>Nombre:</strong> {clienteSeleccionado.nombre}</p>
+              <p><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</p>
+              <p><strong>Domicilio:</strong> {clienteSeleccionado.domicilio}</p>
+              <p><strong>Email:</strong> {clienteSeleccionado.email}</p>
+              <p><strong>Ciudad:</strong> {clienteSeleccionado.ciudad}</p>
+              <p><strong>Estado:</strong> {clienteSeleccionado.estado}</p>
+              <p><strong>Colonia:</strong> {clienteSeleccionado.colonia}</p>
+              <p><strong>Código Postal:</strong> {clienteSeleccionado.cp}</p>
+
+        
+            </div>
+          )} */}
         </ModalBody>
         <ModalFooter>
           <CButton text="Cerrar" color="danger" onClick={() => setModalDetalle(false)} />
@@ -1522,18 +1604,127 @@ function ClientesShopify() {
         </ModalBody>
       </Modal>
 
+      {/* Modal for showing client details */}
+      {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
+        <ModalHeader toggle={toggleModalDetalle}>Detalles del Cliente</ModalHeader>
+        <ModalBody> */}
+      {/* Display the client details */}
+      {/* <p><strong>Nombre:</strong> {form.nombre}</p>
+          <p><strong>Teléfono:</strong> {form.telefono}</p>
+          <p><strong>Domicilio:</strong> {form.domicilio}</p>
+          <p><strong>Email:</strong> {form.email}</p>
+          <p><strong>Ciudad:</strong> {form.ciudad}</p>
+          <p><strong>Estado:</strong> {form.estado}</p>
+          <p><strong>Colonia:</strong> {form.colonia}</p>
+          <p><strong>Código Postal:</strong> {form.cp}</p> */}
+      {/* ... (display other details here) */}
+      {/* </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggleModalDetalle}>Cerrar</Button>
+        </ModalFooter>
+      </Modal> */}
+
+      {/* modal para Detalles */}
+      {/* <Modal isOpen={modalDetalle} fullscreen={true}>
+        <ModalHeader >Detalles del Cliente</ModalHeader>
+        <ModalBody>
+          <div className="row">
+            <div className="col">
+              <p>
+                <strong>Nombre:</strong> {form.nombre}
+              </p>
+              <p>
+                <strong>Teléfono:</strong> {form.telefono}
+              </p>
+              <p>
+                <strong>Domicilio:</strong> {form.domicilio}
+              </p>
+              <p>
+                <strong>Email:</strong> {form.email}
+              </p>
+              <p>
+                <strong>Ciudad:</strong> {form.ciudad}
+              </p>
+              <p>
+                <strong>Estado:</strong> {form.estado}
+              </p>
+              <p>
+                <strong>Colonia:</strong> {form.colonia}
+              </p>
+              <p>
+                <strong>Código Postal:</strong> {form.cp}
+              </p>
+            </div>
+            <div className="col">
+              <p>
+                <strong>Sucursal Alta:</strong> {form.sucursal_origen}
+              </p>
+              <p>
+                <strong>Fecha Alta:</strong>{" "}
+                {form.fecha_alta}
+              </p>
+              <p>
+                <strong>Cuenta Activa:</strong> {form.plastico_activo ? "Sí" : "No"}
+              </p>
+              <p>
+                <strong>RFC:</strong> {form.rfc}
+              </p>
+              <p>
+                <strong>Nombre Fiscal:</strong> {form.nombre_fiscal}
+              </p>
+              <p>
+                <strong>Número de Plástico:</strong> {form.num_plastico}
+              </p>
+              <p>
+                <strong>Sucursal Asignada al Plástico:</strong> {form.suc_asig_plast}
+              </p>
+              <p>
+                <strong>Fecha de Asignación del Plástico:</strong>{" "}
+                {form.fecha_asig_plast}
+              </p>
+              <p>
+                <strong>Usuario de Asignación del Plástico:</strong> {form.usr_asig_plast}
+              </p>
+              <p>
+                <strong>Fecha de Nacimiento:</strong>{" "}
+                {form.fecha_nac}
+              </p>
+              <p>
+                <strong>Correo de Facturación:</strong> {form.correo_factura}
+              </p>
+              <p>
+                <strong>Regimen Fiscal:</strong> {form.regimenFiscal}
+              </p>
+              <p>
+                <strong>Clave de Registro Móvil:</strong> {form.claveRegistroMovil}
+              </p>
+              <p>
+                <strong>Suspendido:</strong> {form.suspendido ? "Sí" : "No"}
+              </p>
+            </div>
+          </div>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button color="primary" onClick={cerrarModalDetalle}>
+            Cerrar
+          </Button>{" "}
+        </ModalFooter>
+      </Modal> */}
+
       {/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
         <ModalBody>
           <h1 onClick={() => alert(shopifyId)}>Seleccione cliente</h1>
           {/* <Input type="text" value={selectedName} /> */}
-          <DataGrid
+
+          <MaterialReactTable
             columns={columnsTrabajador}
-            rows={trabajador}
-            density="compact"
-            getRowId={(row) => row.id_cliente} // Usando id_cliente como identificador único
-          />{" "}
+            data={trabajador}
+            onSelect={(id_cliente, name) => handleModalSelect(id_cliente, name)} // Pasa la función de selección
+            initialState={{ density: "compact" }}
+          />
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={() => setModalOpen(!modalOpen)}>

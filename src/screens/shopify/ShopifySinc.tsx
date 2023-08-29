@@ -15,10 +15,10 @@ function ShopifySinc() {
   const [jsonString, setJsonString] = useState("");
 
   const fetchClientes = async () => {
-    const permiso = await filtroSeguridad("sinc_cliente");
-    if (permiso === false) {
-      return;
-    }
+    // const permiso = await filtroSeguridad("sinc_cliente");
+    // if (permiso === false) {
+    //   return;
+    // }
 
     try {
       // Mostrar SweetAlert de carga
@@ -54,10 +54,10 @@ function ShopifySinc() {
   };
 
   const fetchOrdenes = async () => {
-    const permiso = await filtroSeguridad("sinc_orden");
-    if (permiso === false) {
-      return;
-    }
+    // const permiso = await filtroSeguridad("sinc_orden");
+    // if (permiso === false) {
+    //   return;
+    // }
     try {
       // Mostrar SweetAlert de carga
       const loadingAlert = Swal.fire({
