@@ -44,18 +44,10 @@ import { FaShopify } from "react-icons/fa";
 import { useClienteShopify } from "../../hooks/getsHooks/useClienteShopify";
 import { ShopifyCliente } from "../../models/ShopifyCliente";
 
-
 function ClientesShopify() {
   const { filtroSeguridad, session } = useSeguridad();
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -72,8 +64,6 @@ function ClientesShopify() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   ///Cliente SHOPIFY
   const [dataClieSho, setDataClieSho] = useState<ShopifyCliente[]>([]);
-
-
 
   const [form, setForm] = useState<Cliente>({
     id_cliente: 0,
@@ -130,17 +120,7 @@ function ClientesShopify() {
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof Cliente)[] = [
-      "nombre",
-      "domicilio",
-      "ciudad",
-      "estado",
-      "colonia",
-      "cp",
-      "telefono",
-      "email",
-      "fecha_nac",
-    ];
+    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -436,15 +416,13 @@ function ClientesShopify() {
       field: "fecha_alta",
       headerName: "Fecha alta",
       flex: 1,
-      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) =>
-        new Date(params.row.fecha_alta).toLocaleDateString(),
+      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) => new Date(params.row.fecha_alta).toLocaleDateString(),
     },
     {
       field: "plastico_activo",
       headerName: "Cuenta activa",
       flex: 1,
-      renderCell: (params: { row: { plastico_activo: any } }) =>
-        params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>,
+      renderCell: (params: { row: { plastico_activo: any } }) => (params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>),
     },
   ];
 
@@ -526,7 +504,7 @@ function ClientesShopify() {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState<number>(0);
 
   const handleOpenModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -550,12 +528,7 @@ function ClientesShopify() {
             size={23}
             onClick={() => {
               console.log(row.original);
-              loadHistorialDetalle(
-                row.original.Cve_cliente,
-                row.original.NumVenta,
-                row.original.idProducto,
-                row.original.sucursal
-              );
+              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
               setParamsDetalles({
                 Cve_cliente: row.original.Cve_cliente,
                 idProducto: row.original.idProducto,
@@ -670,11 +643,7 @@ function ClientesShopify() {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => (
-          <span>
-            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        ),
+        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -729,11 +698,7 @@ function ClientesShopify() {
         Cell: ({ cell }) => (
           <>
             {/* <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} /> */}
-            <AiFillEdit
-              className="mr-2"
-              onClick={() => mostrarModalActualizar(cell.row.original)}
-              size={23}
-            ></AiFillEdit>
+            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
             {/* <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} /> */}
           </>
         ),
@@ -772,7 +737,7 @@ function ClientesShopify() {
   const [modalOpen, setModalOpen] = useState(false);
   const [trabajador, setTrabajadores] = useState([]);
 
-  const vinculo = (idCliente, nombreCliente, shopId, shopName) => {
+  const vinculo = (idCliente: any, nombreCliente: any, shopId: any, shopName: any) => {
     Swal.fire({
       text: `¿Desea asignar el cliente ${nombreCliente} al usuario Shopify ${shopName}?`,
       icon: "warning",
@@ -781,7 +746,9 @@ function ClientesShopify() {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, Agregar!",
     }).then((result) => {
-      // jezaApi.put(`sp_ShopifyClientesUpd?id=${shopId}&idCliente=${idCliente}`);
+      setTimeout(() => {
+        jezaApi.put(`sp_ShopifyClientesUpd?id=${shopifyId}&idCliente=${idCliente}`);
+      }, 1500);
 
       if (result.isConfirmed) {
         Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
@@ -833,10 +800,10 @@ function ClientesShopify() {
       .catch((error) => console.error("Error al obtener los datos:", error));
   }, []);
 
-  const [shopifyId, setShopifyId] = useState([]);
-  const [shopifyName, setShopifyName] = useState([]);
+  const [shopifyId, setShopifyId] = useState<number>(0);
+  const [shopifyName, setShopifyName] = useState<string>("");
 
-  const setIdShopify = (shopID, shopNAME) => {
+  const setIdShopify = (shopID: number, shopNAME: string) => {
     setShopifyId(shopID);
     setShopifyName(shopNAME);
     setModalOpen(true);
@@ -849,11 +816,7 @@ function ClientesShopify() {
         header: "Acciones",
         size: 5,
         Cell: ({ row }) => (
-          <CButton
-            color="secondary"
-            onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)}
-            text="  Elegir"
-          ></CButton>
+          <CButton color="secondary" onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)} text="  Elegir"></CButton>
         ),
       },
       {
@@ -900,8 +863,8 @@ function ClientesShopify() {
       });
   }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
-  const handleModalSelect = (id_cliente: React.SetStateAction<string>, name: React.SetStateAction<string>) => {
-    setSelectedId(id_cliente); // Actualiza el estado con el ID seleccionado
+  const handleModalSelect = (id_cliente: number, name: string) => {
+    setSelectedId(id_cliente ? id_cliente : 0); // Actualiza el estado con el ID seleccionado
     setSelectedName(name); // Actualiza el estado con el nombre seleccionado
     setModalOpen(false); // Cierra el modal
     vinculo(id_cliente, name, shopifyId, shopifyName);
@@ -921,11 +884,14 @@ function ClientesShopify() {
       },
       {
         header: "Acciones",
-        Cell: ({ row }) => (
-          <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
-            seleccionar
-          </Button>
-        ),
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
+              seleccionar
+            </Button>
+          );
+        },
       },
     ],
     []
@@ -1048,12 +1014,7 @@ function ClientesShopify() {
           <Row>
             <Col sm="6">
               <Label>Nombre:</Label>
-              <Input
-                type="text"
-                name={"nombre"}
-                onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })}
-                defaultValue={form.nombre}
-              />
+              <Input type="text" name={"nombre"} onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })} defaultValue={form.nombre} />
               <br />
             </Col>
 
@@ -1069,22 +1030,12 @@ function ClientesShopify() {
             </Col>
             <Col sm="6">
               <Label>Ciudad:</Label>
-              <Input
-                type="text"
-                name={"ciudad"}
-                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
-                defaultValue={form.ciudad}
-              />
+              <Input type="text" name={"ciudad"} onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })} defaultValue={form.ciudad} />
               <br />
             </Col>
             <Col sm="6">
               <Label>Estado:</Label>
-              <Input
-                type="text"
-                name={"Estado"}
-                onChange={(e) => setForm({ ...form, estado: String(e.target.value) })}
-                defaultValue={form.estado}
-              />
+              <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
               <br />
             </Col>
             <Col sm="6">
@@ -1099,12 +1050,7 @@ function ClientesShopify() {
             </Col>
             <Col sm="6">
               <Label>Código postal:</Label>
-              <Input
-                type="text"
-                name={"cp"}
-                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                defaultValue={form.cp}
-              />
+              <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
               <br />
             </Col>
             <Col sm="6">
@@ -1119,12 +1065,7 @@ function ClientesShopify() {
             </Col>
             <Col sm="6">
               <Label>E-mail:</Label>
-              <Input
-                type="email"
-                name={"email"}
-                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
-                defaultValue={form.email}
-              />
+              <Input type="email" name={"email"} onChange={(e) => setForm({ ...form, email: String(e.target.value) })} defaultValue={form.email} />
               <br />
             </Col>
 
@@ -1244,22 +1185,12 @@ function ClientesShopify() {
 
                     <Col sm="6">
                       <Label>Código postal:</Label>
-                      <Input
-                        type="text"
-                        name={"cp"}
-                        onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                        defaultValue={form.cp}
-                      />
+                      <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
                       <br />
                     </Col>
                     <Col sm="6">
                       <Label>RFC:</Label>
-                      <Input
-                        type="text"
-                        name="rfc"
-                        onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })}
-                        defaultValue={form.rfc}
-                      />
+                      <Input type="text" name="rfc" onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })} defaultValue={form.rfc} />
                       <br />
                     </Col>
                   </Row>
@@ -1534,7 +1465,7 @@ function ClientesShopify() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                   </TabPane>
@@ -1730,7 +1661,7 @@ function ClientesShopify() {
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
         <ModalBody>
-          <h1>Seleccione cliente</h1>
+          <h1 onClick={() => alert(shopifyId)}>Seleccione cliente</h1>
           {/* <Input type="text" value={selectedName} /> */}
 
           <MaterialReactTable
