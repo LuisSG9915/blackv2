@@ -123,7 +123,8 @@ function DemoTresTablas() {
         sucursal: dataUsuarios2[0]?.sucursal,
         fecha: new Date(),
       })
-      .then(() => alert("Correo enviado correctamente"));
+      .then(() => alert("Correo enviado correctamente"))
+      .catch((error) => alert(error));
   };
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
   const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({

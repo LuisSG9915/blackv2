@@ -46,6 +46,7 @@ import TableClienteAnticipos from "../ventas/Components/TableClienteAnticipos";
 import { FormaPago } from "../../models/FormaPago";
 import MaterialReactTable from "material-react-table";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 
 function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -526,7 +527,6 @@ function Anticipo() {
     return fechaISO8601.slice(0, 4) + fechaISO8601.slice(5, 7) + fechaISO8601.slice(8, 10);
   };
   const [formasPagosFiltradas, setFormasPagosFiltradas] = useState<FormaPago[]>([]);
-
   useEffect(() => {
     const formasPagosFiltradas = dataPago.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
     setFormasPagosFiltradas(formasPagosFiltradas);
