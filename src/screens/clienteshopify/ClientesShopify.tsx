@@ -769,6 +769,46 @@ function ClientesShopify() {
   const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionado
   const [modalOpen, setModalOpen] = useState(false);
   const [trabajador, setTrabajadores] = useState([]);
+
+  const vinculo = (idCliente, nombreCliente, shopId, shopName) => {
+    Swal.fire({
+      text: `¿Desea asignar el cliente ${nombreCliente} al usuario Shopify ${shopName}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Agregar!",
+    }).then((result) => {
+      // jezaApi.put(`sp_ShopifyClientesUpd?id=${shopId}&idCliente=${idCliente}`);
+
+      if (result.isConfirmed) {
+        Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
+      }
+    });
+
+    // Verifica si se ha seleccionado un trabajador y se ha ingresado una fecha
+    // if (selectedId && selectedName) {
+    //   alert(selectedId);
+
+    //   // Realiza la solicitud a la API con los parámetros
+    //   // jezaApi
+    //   //   .get(`/Horario?idTrabajador=${selectedId}&fecha=${selectedDate}`)
+    //   //   .then((response) => {
+    //   //     setHorarios(response.data);
+    //   //     // Verifica si el resultado de la consulta es cero
+    //   //     if (response.data.length === 0) {
+    //   //       setShowButton(true); // Habilita el botón
+    //   //     } else {
+    //   //       setShowButton(false); // Deshabilita el botón
+    //   //     }
+    //   //   })
+    //   //   .catch((e) => console.log(e));
+    // } else {
+    //   // Muestra un mensaje de error o realiza alguna acción apropiada
+    //   console.log("Por favor, selecciona un trabajador y una fecha válida.");
+    // }
+  };
+
   //TABLA 2
   useEffect(() => {
     // Realiza la solicitud GET a la API para la Tabla 2
@@ -791,13 +831,28 @@ function ClientesShopify() {
       .catch((error) => console.error("Error al obtener los datos:", error));
   }, []);
 
+  const [shopifyId, setShopifyId] = useState([]);
+  const [shopifyName, setShopifyName] = useState([]);
+
+  const setIdShopify = (shopID, shopNAME) => {
+    setShopifyId(shopID);
+    setShopifyName(shopNAME);
+    setModalOpen(true);
+  };
+
   const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
     () => [
       {
         accessorKey: "acciones",
         header: "Acciones",
         size: 5,
-        Cell: ({ row }) => <CButton color="secondary" onClick={() => setModalOpen(true)} text="  Elegir"></CButton>,
+        Cell: ({ row }) => (
+          <CButton
+            color="secondary"
+            onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)}
+            text="  Elegir"
+          ></CButton>
+        ),
       },
       {
         accessorKey: "id",
@@ -843,16 +898,17 @@ function ClientesShopify() {
       });
   }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
-  const handleModalSelect = (id: React.SetStateAction<string>, name: React.SetStateAction<string>) => {
-    setSelectedId(id); // Actualiza el estado con el ID seleccionado
+  const handleModalSelect = (id_cliente: React.SetStateAction<string>, name: React.SetStateAction<string>) => {
+    setSelectedId(id_cliente); // Actualiza el estado con el ID seleccionado
     setSelectedName(name); // Actualiza el estado con el nombre seleccionado
-    // setModalOpen(false); // Cierra el modal
+    setModalOpen(false); // Cierra el modal
+    vinculo(id_cliente, name, shopifyId, shopifyName);
   };
 
   const columnsTrabajador = useMemo<MRT_ColumnDef<Trabajador>[]>(
     () => [
       {
-        accessorKey: "id",
+        accessorKey: "id_cliente",
         header: "ID",
         size: 100,
       },
@@ -864,7 +920,7 @@ function ClientesShopify() {
       {
         header: "Acciones",
         Cell: ({ row }) => (
-          <Button size="sm" onClick={() => handleModalSelect(row.original.id, row.original.nombre)}>
+          <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
             seleccionar
           </Button>
         ),
@@ -1673,12 +1729,12 @@ function ClientesShopify() {
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
         <ModalBody>
           <h1>Seleccione cliente</h1>
-          <Input type="text" value={selectedName} />
+          {/* <Input type="text" value={selectedName} /> */}
 
           <MaterialReactTable
             columns={columnsTrabajador}
             data={trabajador}
-            onSelect={(id, name) => handleModalSelect(id, name)} // Pasa la función de selección
+            onSelect={(id_cliente, name) => handleModalSelect(id_cliente, name)} // Pasa la función de selección
             initialState={{ density: "compact" }}
           />
         </ModalBody>
