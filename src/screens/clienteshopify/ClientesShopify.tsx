@@ -191,6 +191,8 @@ function ClientesShopify() {
       }
     });
 
+
+    ////gggg
     setCamposFaltantes(camposVacios);
 
     if (camposVacios.length > 0) {
