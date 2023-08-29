@@ -41,6 +41,10 @@ import { LuCalendarSearch } from "react-icons/lu";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { FaShopify } from "react-icons/fa";
 
+import { useClienteShopify } from "../../hooks/getsHooks/useClienteShopify";
+import { ShopifyCliente } from "../../models/ShopifyCliente";
+
+
 function ClientesShopify() {
   const { filtroSeguridad, session } = useSeguridad();
   const {
@@ -66,6 +70,11 @@ function ClientesShopify() {
   const { dataSucursales } = useSucursales();
   const [data, setData] = useState<Cliente[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  ///Cliente SHOPIFY
+  const [dataClieSho, setDataClieSho] = useState<ShopifyCliente[]>([]);
+
+
+
   const [form, setForm] = useState<Cliente>({
     id_cliente: 0,
     nombre: "",
@@ -1467,7 +1476,7 @@ function ClientesShopify() {
                           },
                           density: "compact",
                         }}
-                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                   </TabPane>
