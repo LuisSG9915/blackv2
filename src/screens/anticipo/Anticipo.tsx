@@ -133,7 +133,7 @@ function Anticipo() {
   const formattedDate = format(currentDate, "yyyyMMdd");
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "referencia", "importe", "observaciones"];
+    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "importe", "observaciones"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof AnticipoGet) => {
@@ -168,7 +168,7 @@ function Anticipo() {
       await jezaApi
         .post("/Anticipo", null, {
           params: {
-            cia: 26,
+            cia: dataUsuarios2[0]?.idCia,
             sucursal: dataUsuarios2[0]?.sucursal,
             caja: 1,
             fecha: form.fechaMovto.replace(/-/g, ""),
@@ -179,7 +179,7 @@ function Anticipo() {
             tipoMovto: 2,
             referencia: form.referencia,
             id_formaPago: formPago.id,
-            importe: form.importe,
+            importe: form.importe * -1,
             observaciones: form.observaciones,
           },
         })
@@ -192,6 +192,8 @@ function Anticipo() {
           setModalInsertar(false);
           fetchAnticipos();
           ejecutaPeticion(formulario.reporte);
+
+          // LIMPIEZA DE CAMPOS . ... . . . . . . .. . .
         })
         .catch((error) => {
           console.log(error);
@@ -280,12 +282,17 @@ function Anticipo() {
     }
     console.log(form);
   };
-
+  const [disabledReferencia, setdisabledReferencia] = useState(false);
   const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedId = parseInt(event.target.value);
     const selectedFormaPago = dataPago.find((formapago) => formapago.id === selectedId);
     if (selectedFormaPago) {
       setFormPago(selectedFormaPago);
+    }
+    if (selectedFormaPago?.tipo == 1) {
+      setdisabledReferencia(true);
+    } else {
+      setdisabledReferencia(false);
     }
   };
 
@@ -730,11 +737,12 @@ function Anticipo() {
                 ))}
               </Input>
             </FormGroup>
-
-            <FormGroup>
-              <Label for="referencia">Referencia</Label>
-              <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
-            </FormGroup>
+            {!disabledReferencia ? (
+              <FormGroup>
+                <Label for="referencia">Referencia</Label>
+                <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
+              </FormGroup>
+            ) : null}
             <FormGroup>
               <Label for="importe">Importe</Label>
               <Input type="number" name="importe" id="importe" value={form.importe} onChange={handleChange} />

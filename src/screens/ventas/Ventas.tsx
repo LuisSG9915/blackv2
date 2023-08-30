@@ -426,7 +426,7 @@ const Ventas = () => {
       setModalAnticipo(true);
       setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
-    }  else {
+    } else {
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -899,6 +899,7 @@ const Ventas = () => {
     },
   ];
   const [anticipoId, setAnticipoId] = useState(0);
+  const [anticipoIdentificador, setAnticipoIdentificador] = useState(0);
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
@@ -915,10 +916,12 @@ const Ventas = () => {
 
             setDataArregloTemporal({
               ...dataArregloTemporal,
-              importe: params.row.importe,
-              referencia: params.row.referencia.toString(),
+              importe: params.row.importe * -1,
+              referencia: params.row.referencia ? params.row.referencia.toString() : ".",
             });
             setAnticipoId(Number(params.row.id));
+            setAnticipoIdentificador(Number(params.row.id));
+
             // console.log(formAnticipo);
             setModalAnticipo(false);
             // setModalTipoVenta(false);
@@ -1020,7 +1023,7 @@ const Ventas = () => {
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
           // Quiero que me valide si formaPago =  100 me ingrese "Anticipo"
-          referencia: Number(elemento.formaPago) === 94 ? anticipoId : elemento.referencia ? elemento.referencia : "Efectivo",
+          referencia: Number(elemento.formaPago) === 94 ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
           importe: elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
@@ -1819,6 +1822,19 @@ const Ventas = () => {
             dataTemporal={dataTemporal}
             setDataTemporal={setDataTemporal}
           ></TableProductos>
+          {/* <TableProductosv2
+            productoSelected={productoSelected}
+            sucursal={dataUsuarios2 ? dataUsuarios2[0]?.sucursal : 21}
+            data={data}
+            setModalOpen2={setModalOpen3}
+            dataVentaEdit={dataVentaEdit}
+            setDataVentaEdit={setDataVentaEdit}
+            dataTemporal={dataTemporal}
+            setDataTemporal={setDataTemporal}
+            almacen={1}
+            cia={dataUsuarios2[0]?.cia}
+            idCliente={dataTemporal.Cve_cliente}
+          ></TableProductosv2> */}
         </ModalBody>
         <ModalFooter>
           <CButton color="danger" onClick={() => setModalOpen3(false)} text="Salir" />
@@ -1961,7 +1977,7 @@ const Ventas = () => {
                         if (Number(pago.formaPago) === 1) {
                           // efectivo
                           eliminarElemento(2, index, Number(pago.importe));
-                        } else if (Number(pago.formaPago) === 96) {
+                        } else if (Number(pago.formaPago) === 94) {
                           // anticipo
                           eliminarElemento(1, index, Number(pago.importe));
                         } else {
@@ -2400,7 +2416,8 @@ const Ventas = () => {
               } else {
                 // Tarjetas / Movimientos bancarios
                 if (anticipoId > 0) {
-                  setFormPago({ ...formPago, anticipos: Number(formPago.anticipos) + Number(formAnticipo.importe) });
+                  let anticipoTemp = (Number(formPago.anticipos) + Number(formAnticipo.importe)) * -1;
+                  setFormPago({ ...formPago, anticipos: anticipoTemp });
                 } else {
                   if (
                     Number(dataArregloTemporal.formaPago) === 90 ||
