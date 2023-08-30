@@ -176,8 +176,15 @@ function ClientesShopify() {
         Cell: ({ row }) => (
           <CButton
             color="secondary"
-            onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)}
+            onClick={() => {
+              if (!row.original.idCliente) {
+                setIdShopify(row.original.id, row.original.nombreShopify);
+              } else {
+                alert("Este usuario ya tiene vinculado un cliente");
+              }
+            }}
             text="  Elegir"
+            disabled={!!row.original.idCliente}
           ></CButton>
         ),
       },
@@ -359,7 +366,7 @@ function ClientesShopify() {
             <CButton
               style={{ marginLeft: "auto" }}
               color="success"
-              onClick={() => vinculo(selectedIdShop, selectedNameShop, selectedId, selectedName)}
+              onClick={() => vinculo(selectedId, selectedName, selectedIdShop, selectedNameShop)}
               text="Vincular"
             ></CButton>
           </ButtonGroup>
