@@ -128,6 +128,9 @@ function ClientesShopify() {
           .put(`sp_ShopifyClientesUpd?id=${shopId}&idCliente=${idCliente}`)
           .then(() => {
             Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
+            cerrarModalvinculo();
+            setModalOpen(!modalOpen);
+            consulta();
           })
           .catch((error) => {
             console.error("Error al realizar la actualización:", error);
@@ -136,9 +139,7 @@ function ClientesShopify() {
     });
   };
 
-  //TABLA 2
-  useEffect(() => {
-    // Realiza la solicitud GET a la API para la Tabla 2
+  const consulta = () => {
     fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
       .then((response) => response.json())
       .then((responseData) => {
@@ -156,6 +157,10 @@ function ClientesShopify() {
         // }
       })
       .catch((error) => console.error("Error al obtener los datos:", error));
+  };
+  //TABLA 2
+  useEffect(() => {
+    consulta();
   }, []);
 
   const [shopifyId, setShopifyId] = useState<number>(0);
