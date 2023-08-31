@@ -14,6 +14,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Label
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { jezaApi } from "../../api/jezaApi";
@@ -23,6 +24,9 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { MdEmojiPeople, MdPendingActions } from "react-icons/md";
 import "./horarios.css";
 import Swal from "sweetalert2";
+import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
+
+
 function Horarios() {
   const [horarios, setHorarios] = useState([]);
   const [trabajador, setTrabajadores] = useState([]);
@@ -260,6 +264,21 @@ function Horarios() {
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [
       {
+        accessorKey: "editar",
+        header: "Acción",
+        size: 100,
+        Cell: ({ row }) => {
+          const fechaHorario = new Date(row.original.fecha); // Convierte la fecha del horario a un objeto Date
+          const esFechaAnterior = fechaHorario < fechaActual; // Comprueba si la fecha es anterior a la fecha actual
+
+          return (
+            <Button size="sm" color="secondary" disabled={esFechaAnterior} onClick={() => openEditModal(row.original)}>
+              <MdEditCalendar size={30} />
+            </Button>
+          );
+        },
+      },
+      {
         accessorKey: "diaSemana",
         header: "Día",
         size: 100,
@@ -315,17 +334,17 @@ function Horarios() {
       },
       {
         accessorKey: "h2",
-        header: "Hora de salida",
+        header: "Hora de comida",
         size: 100,
       },
       {
         accessorKey: "h3",
-        header: "Hora de entrada 2",
+        header: "Hora de regreso",
         size: 100,
       },
       {
         accessorKey: "h4",
-        header: "Hora de salida 2",
+        header: "Hora de salida",
         size: 100,
       },
       {
@@ -336,21 +355,7 @@ function Horarios() {
           <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>
         ),
       },
-      {
-        accessorKey: "editar",
-        header: "EDITAR",
-        size: 100,
-        Cell: ({ row }) => {
-          const fechaHorario = new Date(row.original.fecha); // Convierte la fecha del horario a un objeto Date
-          const esFechaAnterior = fechaHorario < fechaActual; // Comprueba si la fecha es anterior a la fecha actual
 
-          return (
-            <Button size="sm" color="secondary" disabled={esFechaAnterior} onClick={() => openEditModal(row.original)}>
-              Editar
-            </Button>
-          );
-        },
-      },
     ],
     []
   );
@@ -461,28 +466,65 @@ function Horarios() {
         <SidebarHorizontal></SidebarHorizontal>
         {/* <p>horarios 2.0 en construccion...</p> */}
         <Container>
-          <h1>Horarios</h1>
+          <h1>Horarios <MdHistoryToggleOff size={35} /></h1>
           <Card>
             <CardBody>
-              <div className="form">
-                <InputGroup>
-                  <Input type="text" value={selectedName} />
-                  <Button color="secondary" onClick={() => setModalOpen(true)}>
-                    Elegir
-                  </Button>
-                </InputGroup>
+              <Row>
+                <Col sm="12">
+                  <h3>Horario de: {selectedName}</h3>
+                  <br />
+                </Col>
+                <Col sm="6">
+                  <Label> Seleccione un trabajador: </Label>
+                  <InputGroup>
+                    <Input type="text" value={selectedName} />
+                    <Button color="secondary" onClick={() => setModalOpen(true)}>
+                      Elegir
+                    </Button>
+                  </InputGroup>
+                  <br />
+                </Col>
                 {/* <Input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} /> */}
-                <Input type="date" value={selectedDate} onChange={handleDateChange} />
 
-                <Button color="primary" onClick={consulta}>
-                  Consultar
-                </Button>
-              </div>
+                <Col sm="6">
+                  <Label> Seleccione una fecha: </Label>
+                  <Input type="date" value={selectedDate} onChange={handleDateChange} />
+                  <br />
+                </Col>
+                <Col sm="6">
+                  <Button color="primary" onClick={consulta}>
+                    Consultar
+                  </Button>
+                  {showButton && (
+                    <Button
+                      color="primary"
+                      onClick={() => {
+                        const fechaSeleccionada = new Date(selectedDate); // Convierte la fecha seleccionada a un objeto Date
+                        const esFechaAnterior = fechaSeleccionada < fechaActual; // Comprueba si la fecha seleccionada es anterior a la fecha actual
+
+                        if (esFechaAnterior) {
+                          // Si la fecha es anterior, muestra una alerta de SweetAlert
+                          Swal.fire({
+                            icon: "info",
+                            title: "",
+                            text: "No se puede crear un horario para una fecha anterior",
+                          });
+                        } else {
+                          // Si la fecha es posterior o igual, abre el modal de creación
+                          toggleModalCrear();
+                        }
+                      }}
+                    >
+                      Crear horario
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+
+
             </CardBody>
           </Card>
-          <br />
-          <h3>Horario de: {selectedName}</h3>
-          <br />
+          {/* 
           {showButton && (
             <Button
               color="primary"
@@ -505,7 +547,7 @@ function Horarios() {
             >
               Crear
             </Button>
-          )}
+          )} */}
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
       </div>
@@ -612,7 +654,7 @@ function Horarios() {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit}>
-            Guardar
+            Actualzar horario
           </Button>{" "}
           <Button color="secondary" onClick={toggleModalCrear}>
             Cancelar
@@ -620,9 +662,10 @@ function Horarios() {
         </ModalFooter>
       </Modal>
       {/* modal editar */}
-      <Modal isOpen={editModalOpen} toggle={() => setEditModalOpen(!editModalOpen)}>
+      <Modal isOpen={editModalOpen} size="lg" toggle={() => setEditModalOpen(!editModalOpen)}>
         <ModalHeader toggle={() => setEditModalOpen(!editModalOpen)}>
           {/* Editar Horario: {formatFecha(selectedHorario.fecha)} */}
+          <h3>Editar horario</h3>
         </ModalHeader>
         <ModalBody>
           {selectedHorario && (
@@ -631,9 +674,9 @@ function Horarios() {
                 <tr>
                   <th> </th>
                   <th>Hora de entrada</th>
+                  <th>Hora de comida</th>
+                  <th>Hora de regreso</th>
                   <th>Hora de salida</th>
-                  <th>Hora de entrada 2</th>
-                  <th>Hora de salida 2</th>
                   <th>Descanso</th>
                 </tr>
               </thead>
@@ -682,9 +725,9 @@ function Horarios() {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleEditSubmit}>
-            Guardar
+            Actualizar horario
           </Button>{" "}
-          <Button color="secondary" onClick={() => setEditModalOpen(!editModalOpen)}>
+          <Button color="danger" onClick={() => setEditModalOpen(!editModalOpen)}>
             Cancelar
           </Button>
         </ModalFooter>
