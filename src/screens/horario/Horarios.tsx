@@ -428,8 +428,8 @@ function Horarios() {
               // Muestra una alerta de SweetAlert cuando todas las solicitudes hayan terminado
               Swal.fire({
                 icon: "success",
-                title: "Solicitudes completadas",
-                text: "Todas las solicitudes se han completado con éxito.",
+                title: "Creación de horararios exitosa",
+                text: "Todos los horarios de ha actualizado.",
               });
               consulta();
               toggleModalCrear();
@@ -538,7 +538,7 @@ function Horarios() {
                     icon: "info",
                     title: "",
                     text: "No se puede crear un horario para una fecha anterior",
-                  });
+                  }); 
                 } else {
                   // Si la fecha es posterior o igual, abre el modal de creación
                   toggleModalCrear();
@@ -569,8 +569,8 @@ function Horarios() {
         </ModalFooter>
       </Modal>
       {/* modal crear */}
-      <Modal isOpen={modalCrearOpen} toggle={toggleModalCrear} size="lg">
-        <ModalHeader toggle={toggleModalCrear}>Crear Horarios</ModalHeader>
+      <Modal size="lg" isOpen={modalCrearOpen} toggle={toggleModalCrear} size="lg">
+        <ModalHeader toggle={toggleModalCrear}><h3>Crear horarios</h3></ModalHeader>
         <ModalBody>
           <Table>
             <thead>
@@ -578,10 +578,10 @@ function Horarios() {
                 <th>Día de la Semana</th>
                 {/* <th>ID Empleado</th> */}
                 <th>Fecha</th>
-                <th>H1</th>
-                <th>H2</th>
-                <th>H3</th>
-                <th>H4</th>
+                <th>Entrada</th>
+                <th>Comida</th>
+                <th>Regreso</th>
+                <th>Salida</th>
                 <th>Descanso</th>
               </tr>
             </thead>
@@ -654,9 +654,9 @@ function Horarios() {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit}>
-            Actualzar horario
+            Actualizar horario
           </Button>{" "}
-          <Button color="secondary" onClick={toggleModalCrear}>
+          <Button color="danger" onClick={toggleModalCrear}>
             Cancelar
           </Button>
         </ModalFooter>

@@ -662,8 +662,9 @@ function Anticipo() {
                 <AccordionBody accordionId="1">
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}></div>
                   <br />
-                  <div className="formulario">
-                    <div>
+
+                  <Row>
+                    <Col sm="3">
                       <Label>Fecha inicial:</Label>
                       <Input
                         type="date"
@@ -672,8 +673,9 @@ function Anticipo() {
                         onChange={handleChange3}
                         bsSize="sm"
                       />
-                    </div>
-                    <div>
+                    </Col>
+
+                    <Col sm="3">
                       <Label>Fecha final:</Label>
                       <Input
                         type="date"
@@ -682,9 +684,9 @@ function Anticipo() {
                         onChange={handleChange3}
                         bsSize="sm"
                       />
-                    </div>
+                    </Col>
 
-                    <div>
+                    <Col sm="3">
                       <Label>Sucursal:</Label>
                       <Input
                         type="select"
@@ -699,8 +701,9 @@ function Anticipo() {
                           <option value={item.sucursal}>{item.nombre}</option>
                         ))}
                       </Input>
-                    </div>
-                    <div>
+                    </Col>
+
+                    <Col sm="3">
                       <Label>Empresa:</Label>
                       <Input
                         type="select"
@@ -715,9 +718,12 @@ function Anticipo() {
                           <option value={item.id}>{item.nombre}</option>
                         ))}
                       </Input>
-                    </div>
+                      <br />
+                    </Col>
 
-                    <div>
+
+                    <Col sm="6">
+
                       <Label>Clientes:</Label>
                       <InputGroup>
                         {" "}
@@ -728,18 +734,18 @@ function Anticipo() {
                           // bsSize="sm"
                           placeholder="Ingrese el cliente"
                         />
-                        <CButton Size="sm" color="secondary" text="Seleccionar" onClick={abrirModal}></CButton>
+                        <CButton color="secondary" text="Seleccionar" onClick={abrirModal}></CButton>
                       </InputGroup>
-                    </div>
-                  </div>
+                    </Col>
+                  </Row>
                   <br />
-                  <div className="d-flex justify-content-end">
+                  <Col sm="6">
                     <CButton
                       color="primary"
                       text="Consultar"
                       onClick={() => ejecutaPeticion(formulario.reporte)}
                     ></CButton>
-                  </div>
+                  </Col>
                 </AccordionBody>
               </AccordionItem>
             </UncontrolledAccordion>
@@ -753,10 +759,10 @@ function Anticipo() {
             />
           </Col>
         </Row>
-      </Container>
+      </Container >
 
       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalActualizar} size="xl">
+      < Modal isOpen={modalActualizar} size="xl" >
         <ModalHeader>
           <div>
             <h3>Editar anticipo </h3>
@@ -811,10 +817,10 @@ function Anticipo() {
           />
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
-      </Modal>
+      </Modal >
 
       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalInsertar}>
+      < Modal isOpen={modalInsertar} >
         <ModalHeader>
           <div>
             <h3>Crear anticipo</h3>
@@ -887,7 +893,7 @@ function Anticipo() {
             text="Cancelar"
           />
         </ModalFooter>
-      </Modal>
+      </Modal >
 
       <Modal isOpen={modalCliente} size="lg">
         <ModalHeader> Cliente </ModalHeader>

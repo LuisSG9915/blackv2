@@ -18,6 +18,11 @@ import {
   InputGroup,
   Row,
   Table,
+  Card,
+  CardBody,
+  CardTitle,
+  CardSubtitle,
+  CardText
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
@@ -608,7 +613,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) {}
+        } catch (error) { }
       }
     });
 
@@ -985,16 +990,11 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
-          dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
-          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
         }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
       )
       .then(() => {
@@ -1057,9 +1057,42 @@ const Ventas = () => {
       setData(response.data);
       toggleModalHistorial(); // Abrir o cerrar el modal cuando los datos se hayan cargado
     });
+    historialCitaFutura(dataTemporal.Cve_cliente);
   };
 
+
+  const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
+
+  const toggleModalHistorialFutura = () => {
+    setModalOpenH(!modalOpen);
+  };
+
+
+  // const historialCitaFutura = (dato: any) => {
+  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+  //     setData1(response.data);
+  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+  //   });
+  // };
+
+
+  const historialCitaFutura = (dato: any) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`)
+      .then((response) => {
+        const dataConFechasFormateadas = response.data.map((item: any) => ({
+          ...item,
+          fechaCita: new Date(item.fechaCita).toLocaleDateString(),
+          fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
+        }));
+        setData1(dataConFechasFormateadas);
+        toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+      });
+  };
+
+
+
   const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
+
   const [paramsDetalles, setParamsDetalles] = useState({
     sucursal: 0,
     numVenta: 0,
@@ -2056,9 +2089,9 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-          dataArregloTemporal.formaPago == 91 ||
-          dataArregloTemporal.formaPago == 80 ||
-          dataArregloTemporal.formaPago == 92 ? (
+            dataArregloTemporal.formaPago == 91 ||
+            dataArregloTemporal.formaPago == 80 ||
+            dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2290,7 +2323,7 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalOpen} toggle={toggleModalHistorial} fullscreen>
-        <ModalHeader toggle={toggleModalHistorial}>Historial </ModalHeader>
+        <ModalHeader toggle={toggleModalHistorial}><h3>Historial del cliente</h3> </ModalHeader>
         <ModalBody>
           <TableHistorial
             datah={datah}
@@ -2298,6 +2331,49 @@ const Ventas = () => {
             setIsModalOpen={setIsModalOpen}
             setParamsDetalles={setParamsDetalles}
           ></TableHistorial>
+          <br />
+          <div>
+            <Card style={{ width: '1500px', height: '400px' }}>
+
+              <CardBody>
+                <h3>Historial citas futuras</h3>
+                <br />
+                <div>
+                  <Table hover className="table-responsive">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Sucursal</th>
+                        <th>Servicio</th>
+                        <th>Estilista</th>
+                        <th>Usuario</th>
+                        <th>Feha alta cita</th>
+                        {/* Agrega más encabezados según tus datos */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {datah1.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.fechaCita}</td>
+                          <td>{item.hora}</td>
+                          <td>{item.nombreSuc}</td>
+                          <td>{item.Servicio}</td>
+                          <td>{item.Estilista}</td>
+                          <td>{item.nombreUsrRegistra}</td>
+                          <td>{item.fechaAlta}</td>
+                          {/* Agrega más celdas según tus datos */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+
+          <br />
+
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={toggleModalHistorial}>

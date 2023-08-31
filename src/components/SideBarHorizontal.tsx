@@ -347,6 +347,7 @@ const SidebarHorizontal = () => {
                     </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Clientes")}>Clientes</DropdownItem>
                     <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
                       Configuración de puntos por departamentos
@@ -375,8 +376,9 @@ const SidebarHorizontal = () => {
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/Ventas")}>Ventas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/CancelacionVentas")}> Cancelaciones</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/CorteCajaParcial")}>Corte parcial</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/CorteCaja")}>Corte final del día</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DemoTresTablas")}>Reporte de cortes</DropdownItem>
+                    {/* <DropdownItem onClick={() => navigate("/CorteCajaParcial")}>Corte parcial</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/CorteCaja")}>Corte final del día</DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
@@ -416,7 +418,7 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DemoTresTablas")}>DEMO</DropdownItem>
+
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
@@ -427,7 +429,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/usuarios")}>Usuarios</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Seguridad</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
+
                     <DropdownItem onClick={() => navigate("/ShopifySinc")}>SINC SHOPIFY</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>

@@ -84,12 +84,14 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
   };
 
   const [filtroProductos, setFiltroProductos] = useState("");
+
   const [productoFilter, setProductoFilter] = useState({
     insumo: 0,
     inventariable: 2,
     obsoleto: 0,
     servicio: 0,
   });
+
   const { dataProductos4, fetchProduct4, isLoading } = useProductosFiltradoExistenciaProducto({
     descripcion: filtroProductos,
     insumo: productoFilter.insumo,
