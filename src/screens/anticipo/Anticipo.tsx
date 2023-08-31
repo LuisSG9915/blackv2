@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Autocomplete, TextField } from "@mui/material";
@@ -50,13 +50,85 @@ import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 
 function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
   const { dataAnticipos, fetchAnticipos } = useAnticipos();
   const [modalCliente, setModalCliente] = useState(false);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
+  const [trabajador, setTrabajadores] = useState([]);
+  const [modalOpenCli, setModalOpenCli] = useState(false);
+  const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionado
+  const [selectedIdC, setSelectedIdC] = useState(""); // Estado para almacenar el nombre seleccionado
+  useEffect(() => {
+    // Dentro de useEffect, realizamos la solicitud a la API
+    jezaApi
+      .get("/Cliente?id=0")
+      .then((response) => {
+        // Cuando la solicitud sea exitosa, actualizamos el estado
+        setTrabajadores(response.data);
+      })
+      .catch((error) => {
+        // Manejo de errores
+        console.error("Error al cargar los trabajadores:", error);
+      });
+  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
+
+  const handleModalSelect = async (id_cliente: number, name: string) => {
+    setSelectedIdC(id_cliente);
+    setFormulario({
+      ...formulario,
+      cliente: id_cliente, // O formulario.cliente: name si deseas guardar el nombre
+    });
+    setSelectedName(name);
+    cerrarModal();
+  };
+
+  const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
+    () => [
+      {
+        accessorKey: "id_cliente",
+        header: "ID",
+        size: 100,
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        header: "Acciones",
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
+              seleccionar
+            </Button>
+          );
+        },
+      },
+    ],
+    []
+  );
+
+  // Función para abrir el modal
+  const abrirModal = () => {
+    setModalOpenCli(true);
+  };
+
+  // Función para cerrar el modal
+  const cerrarModal = () => {
+    setModalOpenCli(false);
+  };
+
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -214,7 +286,9 @@ function Anticipo() {
 
     if (validarCampos() === true) {
       await jezaApi
-        .put(`/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`)
+        .put(
+          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
+        )
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -591,16 +665,34 @@ function Anticipo() {
                   <div className="formulario">
                     <div>
                       <Label>Fecha inicial:</Label>
-                      <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaInicial"
+                        value={formulario.fechaInicial}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </div>
                     <div>
                       <Label>Fecha final:</Label>
-                      <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaFinal"
+                        value={formulario.fechaFinal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </div>
 
                     <div>
                       <Label>Sucursal:</Label>
-                      <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="sucursal"
+                        value={formulario.sucursal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
@@ -608,22 +700,15 @@ function Anticipo() {
                         ))}
                       </Input>
                     </div>
-
-                    <div>
-                      <Label>Clientes:</Label>
-
-                      <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange3} bsSize="sm">
-                        <option value="">Seleccione el cliente</option>
-
-                        {dataClientes.map((item) => (
-                          <option value={item.id_cliente}>{item.nombre}</option>
-                        ))}
-                      </Input>
-                    </div>
-
                     <div>
                       <Label>Empresa:</Label>
-                      <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="empresa"
+                        value={formulario.empresa}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la empresa</option>
 
                         {dataCias.map((item) => (
@@ -631,10 +716,29 @@ function Anticipo() {
                         ))}
                       </Input>
                     </div>
+
+                    <div>
+                      <Label>Clientes:</Label>
+                      <InputGroup>
+                        {" "}
+                        <Input
+                          type="text"
+                          name="cliente"
+                          value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                          // bsSize="sm"
+                          placeholder="Ingrese el cliente"
+                        />
+                        <CButton Size="sm" color="secondary" text="Seleccionar" onClick={abrirModal}></CButton>
+                      </InputGroup>
+                    </div>
                   </div>
                   <br />
                   <div className="d-flex justify-content-end">
-                    <CButton color="primary" text="Consultar" onClick={() => ejecutaPeticion(formulario.reporte)}></CButton>
+                    <CButton
+                      color="primary"
+                      text="Consultar"
+                      onClick={() => ejecutaPeticion(formulario.reporte)}
+                    ></CButton>
                   </div>
                 </AccordionBody>
               </AccordionItem>
@@ -688,7 +792,13 @@ function Anticipo() {
             </FormGroup> */}
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>{" "}
         </ModalBody>
@@ -721,7 +831,14 @@ function Anticipo() {
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
               <InputGroup>
-                <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
+                <Input
+                  disabled
+                  type="text"
+                  name="d_cliente"
+                  id="d_cliente"
+                  value={form.d_cliente}
+                  onChange={handleChange}
+                />
                 <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
               </InputGroup>
             </FormGroup>
@@ -749,7 +866,13 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>
         </ModalBody>
@@ -766,10 +889,15 @@ function Anticipo() {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalCliente} size="md">
+      <Modal isOpen={modalCliente} size="lg">
         <ModalHeader> Cliente </ModalHeader>
         <ModalBody>
-          <TableClienteAnticipos form={form} setForm={setForm} data={dataClientes} setModalCliente={setModalCliente}></TableClienteAnticipos>
+          <TableClienteAnticipos
+            form={form}
+            setForm={setForm}
+            data={dataClientes}
+            setModalCliente={setModalCliente}
+          ></TableClienteAnticipos>
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -780,6 +908,22 @@ function Anticipo() {
             }}
             text="Salir"
           />
+        </ModalFooter>
+      </Modal>
+      <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
+        <ModalHeader toggle={cerrarModal}>Modal Cliente</ModalHeader>
+        <ModalBody>
+          <MaterialReactTable
+            columns={columnsTrabajador}
+            data={trabajador}
+            onSelect={(id_cliente, name) => handleModalSelect(id_cliente, name)} // Pasa la función de selección
+            initialState={{ density: "compact" }}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={cerrarModal}>
+            Cerrar
+          </Button>
         </ModalFooter>
       </Modal>
     </>
