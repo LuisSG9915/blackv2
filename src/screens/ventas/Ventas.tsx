@@ -53,6 +53,8 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
 import { LuCalendarSearch } from "react-icons/lu";
+import TableHistorial from "./Components/TableHistorial";
+import TableAnticipos from "./Components/TableAnticipos";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -350,10 +352,6 @@ const Ventas = () => {
   const cambios = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "hora") {
-      // const partesHora = value.split(":");
-      // const hora = parseInt(partesHora[0], 10); // Convertir la parte de la hora a entero
-      // const minutos = parseInt(partesHora[1], 10); // Convertir la parte de los minutos a entero
-      // let horaInt = hora + minutos / 60; // Calcular el valor entero de la hora con fracciones de minut
       setDataTemporal((prev) => ({ ...prev, [name]: value }));
       console.log(dataTemporal.hora);
     } else if (name === "Clave_Descuento") {
@@ -402,13 +400,8 @@ const Ventas = () => {
     }
     console.log(name);
   };
-  const cambiosPagos = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
 
-    setFormPago((prev) => ({ ...prev, [name]: value }));
-  };
   const [anticipoSelected, setAnticipoSelected] = useState(false);
-  const [selectedFormasPago, setSelectedFormasPago] = useState<Set<number>>(new Set());
   const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
@@ -427,6 +420,7 @@ const Ventas = () => {
       setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     } else {
+      setAnticipoSelected(false);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -437,7 +431,7 @@ const Ventas = () => {
     setFormInsumo((prev) => ({ ...prev, [name]: value }));
     console.log(formInsumo);
   };
-
+  // SUMATORIAS
   useEffect(() => {
     const totalCobro = Number(formPago.anticipos) + Number(formPago.efectivo) + Number(formPago.tc);
     const totalCambio = Number(totalCobro) - Number(total);
@@ -448,7 +442,9 @@ const Ventas = () => {
     }));
     console.log({ formPago });
   }, [formPago.anticipos, formPago.efectivo, formPago.tc]);
+
   const [flag, setFlag] = useState(false);
+
   useEffect(() => {
     if (flag === true) {
       const importeFinal = Number(dataTemporal.Precio) - Number(dataTemporal.Precio) * Number(dataTemporal.Descuento);
@@ -479,12 +475,6 @@ const Ventas = () => {
     }
     return opciones;
   };
-  // const getinsumo = async (dato: Venta) => {
-  //   await jezaApi.get(`/VentaInsumo?id_venta=${datoVentaSeleccionado.id}`).then((response) => {
-  //     setDatoInsumo(response.data);
-  //     console.log(response);
-  //   });
-  // };
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -710,12 +700,6 @@ const Ventas = () => {
     obtenerFechaHoy();
   }, []);
 
-  const obtenerHoraFormateada = (hora: any) => {
-    const fecha = new Date(hora);
-    const horaFormateada = fecha.toLocaleString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
-    return horaFormateada;
-  };
-
   useEffect(() => {
     let totalPorProducto = 0;
 
@@ -765,13 +749,6 @@ const Ventas = () => {
       return listaEstilistas;
     }, []);
     setEstilistaProceso(estilistasUnicos);
-
-    // const temporal = dataVentas[0]?.hora ? dataVentas[0]?.hora : "";
-    // const partesHora = temporal.split(":");
-    // const hora = parseInt(partesHora[0], 10); // Convertir la parte de la hora a entero
-    // const minutos = parseInt(partesHora[1], 10); // Convertir la parte de los minutos a entero
-    // let horaInt = hora + minutos / 60; // Calcular el valor entero de la hora con fracciones de minut
-    // setDataTemporal({ ...dataTemporal, hora: horaInt });
   }, [dataVentas]);
 
   const postEstilistaTicket = (dato: any) => {
@@ -849,89 +826,30 @@ const Ventas = () => {
       // anticipoPost(Number(response.data.mensaje2));
     });
   };
-
   const { dataAnticipos } = useAnticipoVentas({
     cliente: Number(dataTemporal.Cve_cliente),
-    suc: dataUsuarios2[0]?.sucursal,
+    suc: "%",
   });
-  // ////////////////////////////////////
-  const columns: GridColDef[] = [
-    {
-      field: "Acción",
-      renderCell: (params) => <ComponentChiquito params={params} />,
-      flex: 1, // Ancho flexible
-      minWidth: 120, // Ancho mínimo
-      headerClassName: "custom-header",
-    },
-    // { field: "sucursal", headerName: "ID", width: 200, headerClassName: "custom-header", },
-    {
-      field: "importe",
-      headerName: "Importe",
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-      width: 150,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "referencia",
-      headerName: "Referencia",
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-      width: 150,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "observaciones",
-      headerName: "Observaciones",
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-      width: 150,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "fecha",
-      headerName: "Fecha de movimientos",
-      renderCell: (params) => <p>{params.row.fecha.split("T")[0]}</p>,
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-
-      headerClassName: "custom-header",
-    },
-  ];
   const [anticipoId, setAnticipoId] = useState(0);
   const [anticipoIdentificador, setAnticipoIdentificador] = useState(0);
-  const ComponentChiquito = ({ params }: { params: any }) => {
-    return (
-      <>
-        <Button
-          onClick={() => {
-            console.log(params.row);
-            setFormAnticipo({
-              ...formAnticipo,
-              id: params.row.id,
-              referencia: params.row.referencia,
-              observaciones: params.row.observaciones,
-              importe: params.row.importe,
-            });
-
-            setDataArregloTemporal({
-              ...dataArregloTemporal,
-              importe: params.row.importe * -1,
-              referencia: params.row.referencia ? params.row.referencia.toString() : ".",
-            });
-            setAnticipoId(Number(params.row.id));
-            setAnticipoIdentificador(Number(params.row.id));
-
-            // console.log(formAnticipo);
-            setModalAnticipo(false);
-            // setModalTipoVenta(false);
-          }}
-        >
-          Seleccionar
-        </Button>
-      </>
-    );
+  const anticipoSelectedFunction = (params) => {
+    setFormAnticipo({
+      ...formAnticipo,
+      id: params.row.id,
+      referencia: params.row.referencia,
+      observaciones: params.row.observaciones,
+      importe: params.row.importe,
+    });
+    setDataArregloTemporal({
+      ...dataArregloTemporal,
+      importe: params.row.importe * -1,
+      referencia: params.row.referencia ? params.row.referencia.toString() : ".",
+    });
+    setAnticipoId(Number(params.row.id));
+    setAnticipoIdentificador(Number(params.row.id));
+    setModalAnticipo(false);
   };
+
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1); // Inicialmente, no hay ningún índice seleccionado
 
   // Función para eliminar un elemento del arreglo según su índice
@@ -954,12 +872,14 @@ const Ventas = () => {
       setSelectedItemIndex(-1); // Reseteamos el índice seleccionado para que no haya elemento seleccionado
     }
   };
+
   function DataTable() {
     const getRowId = (row: AnticipoGet) => row.id;
     return (
       <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
         <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
-          <DataGrid
+          <TableAnticipos anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableAnticipos>
+          {/* <DataGrid
             rows={dataAnticipos}
             columns={columns}
             hideFooter={false}
@@ -970,7 +890,7 @@ const Ventas = () => {
             }}
             pageSizeOptions={[5, 10]}
             getRowId={getRowId}
-          />
+          /> */}
         </div>
       </div>
     );
@@ -1123,9 +1043,6 @@ const Ventas = () => {
 
   const [selectedTime, setSelectedTime] = useState(null);
 
-  const handleTimeChange = (time) => {
-    setSelectedTime(time);
-  };
   const [time, setTime] = useState("12:34pm");
 
   const [datah, setData] = useState<any[]>([]); // Definir el estado datah
@@ -1143,7 +1060,6 @@ const Ventas = () => {
   };
 
   const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
-  const [flagDetalles, setFlagDetalles] = useState(false);
   const [paramsDetalles, setParamsDetalles] = useState({
     sucursal: 0,
     numVenta: 0,
@@ -1195,206 +1111,8 @@ const Ventas = () => {
 
   // }, [])
 
-  const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-      {
-        header: "Acciones",
-        Cell: ({ row }) => (
-          <LuCalendarSearch
-            size={23}
-            onClick={() => {
-              console.log(row.original);
-              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
-              setParamsDetalles({
-                Cve_cliente: row.original.Cve_cliente,
-                idProducto: row.original.idProducto,
-                numVenta: row.original.NumVenta,
-                sucursal: row.original.NombreSuc,
-                clave: row.original.id,
-                fecha: row.original.Fecha,
-              });
-              setIsModalOpen(true);
-            }}
-          />
-        ),
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Cve_cliente",
-        header: "Cliente",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "NumVenta",
-        header: "NumVenta",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "NombreSuc",
-        header: "Sucursal",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Fecha",
-        header: "Fecha",
-        flex: 1,
-        size: 1,
-        Cell: ({ cell }) => {
-          const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
-          const dia = fecha.getDate().toString().padStart(2, "0"); // Obtener el día con dos dígitos
-          const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // Obtener el mes con dos dígitos (los meses en JavaScript son base 0)
-          const anio = fecha.getFullYear().toString(); // Obtener el año con cuatro dígitos
-
-          return <span>{`${dia}/${mes}/${anio}`}</span>;
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Clave",
-        header: "Clave",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Producto_Servicio",
-        header: "Producto/Servicio",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Cantidad",
-        header: "Cantidad",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Precio",
-        header: "Precio",
-        flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
-        muiTableBodyCellProps: {
-          align: "right",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        size: 1,
-      },
-      {
-        accessorKey: "Estilista",
-        header: "Estilista",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Descuento",
-        header: "Descuento",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Forma_pago",
-        header: "Forma de pago",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-    ],
-    []
-  );
-  // const renderDetailPanel = ({ row }: { row: any }) => {
-  //   // Cargar los detalles del historial al expandir un row
-  //   useEffect(() => {
-  //     loadHistorialDetalle(row.original.NumVenta);
-  //   }, [row.original.NumVenta]); // Se ejecutará cada vez que cambie la NumVenta en el row
-
-  //   return (
-  //     <div style={{ display: "grid" }}>
-  //       {/* Renderizar los detalles del historial */}
-  //       {historialDetalle.length > 0 && (
-  //         <div>
-  //           <span>Detalles del historial:</span>
-  //           <span>Fecha: {historialDetalle[0].Fecha}</span>
-  //           <span>NumVenta: {historialDetalle[0].NumVenta}</span>
-  //           <span>Sucursal: {historialDetalle[0].Sucursal}</span>
-  //           <span>Estilista: {historialDetalle[0].Estilista}</span>
-  //           <span>Servicio: {historialDetalle[0].Servicio}</span>
-  //           <span>Insumo: {historialDetalle[0].Insumo}</span>
-  //           <span>Cantidad: {historialDetalle[0].Cant}</span>
-  //           {/* ... */}
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
   const [flagEstilistas, setFlagEstilistas] = useState(false);
 
-  // const handleInputChange = (event) => {
-  //   const cleanedValue = event.target.value.replace(/[^0-9]/g, ""); // Remover caracteres no numéricos
-  //   setInputValue(cleanedValue);
-  // };
   return (
     <>
       <Row>
@@ -1419,29 +1137,7 @@ const Ventas = () => {
                     <MdPendingActions size={23} />
                   </Button>
                 </InputGroup>
-
-                {/* <Label>Cliente</Label>
-                <Input
-                  disabled
-                  value={dataTemporal.cliente ? dataTemporal.cliente : ""}
-                  onChange={cambios}
-                  name={"Cve_cliente"}
-                />
-                <Button onClick={() => setModalCliente(true)}>Elegir</Button> */}
               </Col>
-
-              {/* <Col md={"10"}>
-                <Label>Cliente</Label>
-                <Input disabled value={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"Cve_cliente"} />
-              </Col>
-              <Col md={"1"}>
-                <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                  <Button onClick={() => setModalCliente(true)}>Elegir</Button>
-                  <Button disabled={!dataTemporal.cliente} color="primary" size="sm" onClick={() => historial(dataTemporal.id)}>
-                    Historial
-                  </Button>
-                </ButtonGroup>
-              </Col> */}
             </Row>
           </Col>
         </Row>
@@ -1997,14 +1693,6 @@ const Ventas = () => {
           ))}
 
           <hr className="my-4" />
-          {/* <Row>
-            <Col md="7">
-              <Label>Efectivo: </Label>
-            </Col>
-            <Col md="5">
-              <Input onChange={cambiosPagos} name="efectivo" value={formPago.efectivo}></Input>
-            </Col>
-          </Row> */}
           <br />
           <Row>
             <Col md="7">
@@ -2116,7 +1804,7 @@ const Ventas = () => {
                     <>
                       <td>{dato.d_insumo}</td>
                       <td align="center">{dato.cantidad}</td>
-                      <td align="center">{dato.unidadMedida}</td>
+                      <td align="left">{dato.unidadMedida}</td>
                       <td className="gap-5">
                         <AiFillEdit
                           className="mr-2"
@@ -2321,6 +2009,7 @@ const Ventas = () => {
           />
         </ModalFooter>
       </Modal>
+
       <Modal isOpen={modalAnticipo} size="xl">
         <ModalHeader>Selección de anticipo</ModalHeader>
         <ModalBody>
@@ -2603,18 +2292,12 @@ const Ventas = () => {
       <Modal isOpen={modalOpen} toggle={toggleModalHistorial} fullscreen>
         <ModalHeader toggle={toggleModalHistorial}>Historial </ModalHeader>
         <ModalBody>
-          <MaterialReactTable
-            columns={cHistorial}
-            data={datah}
-            initialState={{
-              pagination: {
-                pageSize: 5,
-                pageIndex: 0,
-              },
-              density: "compact",
-            }}
-            // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
-          />
+          <TableHistorial
+            datah={datah}
+            loadHistorialDetalle={loadHistorialDetalle}
+            setIsModalOpen={setIsModalOpen}
+            setParamsDetalles={setParamsDetalles}
+          ></TableHistorial>
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={toggleModalHistorial}>
