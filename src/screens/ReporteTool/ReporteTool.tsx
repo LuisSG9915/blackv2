@@ -1,6 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
-import { AccordionBody, AccordionHeader, AccordionItem, Button, Container, Input, Label, Row, UncontrolledAccordion } from "reactstrap";
+import {
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+  Button,
+  Container,
+  Input,
+  InputGroup,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  UncontrolledAccordion,
+} from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
 import "../../../css/reportes.css";
 import { ExportToCsv } from "export-to-csv";
@@ -12,6 +27,7 @@ import { useClientes } from "../../hooks/getsHooks/useClientes";
 import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Box } from "@mui/material";
+import Swal from "sweetalert2";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -21,11 +37,28 @@ function ReporteTool() {
   const { dataUsuarios, fetchUsuarios } = useUsuarios();
   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
   const { dataSucursales, fetchSucursales } = useSucursales();
-
+  const [modalOpenCli, setModalOpenCli] = useState(false);
+  const [selectedIdC, setSelectedIdC] = useState("");
+  const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
+  const [trabajador, setTrabajadores] = useState([]);
   const [tablaData, setTablaData] = useState({
     data: [],
     columns: [],
   });
+
+  useEffect(() => {
+    // Dentro de useEffect, realizamos la solicitud a la API
+    jezaApi
+      .get("/Cliente?id=0")
+      .then((response) => {
+        // Cuando la solicitud sea exitosa, actualizamos el estado
+        setTrabajadores(response.data);
+      })
+      .catch((error) => {
+        // Manejo de errores
+        console.error("Error al cargar los trabajadores:", error);
+      });
+  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
   const getReporte = () => {
     jezaApi
@@ -58,10 +91,21 @@ function ReporteTool() {
       }
     }
 
+    if (reporte === "") {
+      Swal.fire("", "Debe seleccionar un tipo de reporte", "info");
+      return;
+    }
+
+    if (formData.fechaInicial === "%" || formData.fechaInicial === "%") {
+      Swal.fire("", "Debe seleccionar el rango de fechas", "info");
+      return;
+    }
+
     // Construimos la cadena de consulta manualmente
     const queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
 
     jezaApi
+
       .get(queryString)
       .then((response) => response.data)
       .then((responseData) => {
@@ -137,6 +181,52 @@ function ReporteTool() {
     ejecutaReporte(reporte);
   };
 
+  const handleModalSelect = async (id_cliente: number, name: string) => {
+    setSelectedIdC(id_cliente);
+    setFormulario({
+      ...formulario,
+      cliente: id_cliente, // O formulario.cliente: name si deseas guardar el nombre
+    });
+    setSelectedName(name);
+    cerrarModal();
+  };
+
+  // Función para abrir el modal
+  const abrirModal = () => {
+    setModalOpenCli(true);
+  };
+
+  // Función para cerrar el modal
+  const cerrarModal = () => {
+    setModalOpenCli(false);
+  };
+  const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
+    () => [
+      {
+        accessorKey: "id_cliente",
+        header: "ID",
+        size: 100,
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        header: "Acciones",
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
+              seleccionar
+            </Button>
+          );
+        },
+      },
+    ],
+    []
+  );
+
   return (
     <>
       <Row>
@@ -182,7 +272,14 @@ function ReporteTool() {
                 </div>
                 <div>
                   <Label>Fecha final:</Label>
-                  <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange} disabled={!data[0]?.f2} bsSize="sm" />
+                  <Input
+                    type="date"
+                    name="fechaFinal"
+                    value={formulario.fechaFinal}
+                    onChange={handleChange}
+                    disabled={!data[0]?.f2}
+                    bsSize="sm"
+                  />
                 </div>
 
                 <div>
@@ -198,18 +295,37 @@ function ReporteTool() {
 
                 <div>
                   <Label>Clientes:</Label>
-                  <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange} bsSize="sm">
+                  {/* <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange} bsSize="sm">
                     <option value="">Seleccione el cliente</option>
 
                     {dataClientes.map((item) => (
                       <option value={item.id_cliente}>{item.nombre}</option>
                     ))}
-                  </Input>
+                  </Input> */}
+                  <InputGroup>
+                    {" "}
+                    <Input
+                      type="text"
+                      name="cliente"
+                      value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                      bsSize="sm"
+                      placeholder="Ingrese el cliente"
+                    />
+                    <Button size="sm" color="secondary" onClick={abrirModal}>
+                      seleccionar
+                    </Button>
+                  </InputGroup>
                 </div>
 
                 <div>
                   <Label>Estilista:</Label>
-                  <Input type="select" name="estilista" value={formulario.estilista} onChange={handleChange} bsSize="sm">
+                  <Input
+                    type="select"
+                    name="estilista"
+                    value={formulario.estilista}
+                    onChange={handleChange}
+                    bsSize="sm"
+                  >
                     <option value="">Seleccione un Estilista</option>
 
                     {dataUsuarios.map((item) => (
@@ -341,6 +457,22 @@ function ReporteTool() {
           />
         </div>
       </Container>
+      <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
+        <ModalHeader toggle={cerrarModal}>Modal Cliente</ModalHeader>
+        <ModalBody>
+          <MaterialReactTable
+            columns={columnsTrabajador}
+            data={trabajador}
+            onSelect={(id_cliente, name) => handleModalSelect(id_cliente, name)} // Pasa la función de selección
+            initialState={{ density: "compact" }}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={cerrarModal}>
+            Cerrar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 }

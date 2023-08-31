@@ -28,8 +28,6 @@ export interface Estilistas {
   estilista: string;
 }
 const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFetch, datoInsumosProducto }: Props) => {
-  const TableDataHeader = ["Insumo", "Acciones"];
-  const [estilistasFiltrado, setEstilistasFiltrado] = useState<Estilistas[]>([]);
   const [form, setForm] = useState({
     marca: "",
     cantidad: "",
@@ -123,6 +121,17 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
       accessorKey: "unidad_medida",
       flex: 1,
       Cell: ({ cell }) => <p>{getCiaForeignKey(cell.getValue())}</p>,
+    },
+    {
+      header: "Marca",
+      accessorKey: "marca",
+      flex: 1,
+    },
+    {
+      header: "Precio",
+      accessorKey: "precio",
+      flex: 1,
+      Cell: ({ cell }) => <p> {"$" + cell.getValue().toFixed(2)} </p>,
     },
     {
       header: "Acciones",
