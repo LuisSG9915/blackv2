@@ -14,7 +14,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Label
+  Label,
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { jezaApi } from "../../api/jezaApi";
@@ -25,7 +25,6 @@ import { MdEmojiPeople, MdPendingActions } from "react-icons/md";
 import "./horarios.css";
 import Swal from "sweetalert2";
 import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
-
 
 function Horarios() {
   const [horarios, setHorarios] = useState([]);
@@ -287,19 +286,19 @@ function Horarios() {
           let dayName = "";
 
           if (dayNumber === 1) {
-            dayName = "Lunes";
-          } else if (dayNumber === 2) {
-            dayName = "Martes";
-          } else if (dayNumber === 3) {
-            dayName = "Miércoles";
-          } else if (dayNumber === 4) {
-            dayName = "Jueves";
-          } else if (dayNumber === 5) {
-            dayName = "Viernes";
-          } else if (dayNumber === 6) {
-            dayName = "Sábado";
-          } else if (dayNumber === 7) {
             dayName = "Domingo";
+          } else if (dayNumber === 2) {
+            dayName = "Lunes";
+          } else if (dayNumber === 3) {
+            dayName = "Martes";
+          } else if (dayNumber === 4) {
+            dayName = "Miercoles";
+          } else if (dayNumber === 5) {
+            dayName = "Jueves";
+          } else if (dayNumber === 6) {
+            dayName = "Viernes";
+          } else if (dayNumber === 7) {
+            dayName = "Sabado";
           }
 
           return dayName;
@@ -355,7 +354,6 @@ function Horarios() {
           <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>
         ),
       },
-
     ],
     []
   );
@@ -466,7 +464,9 @@ function Horarios() {
         <SidebarHorizontal></SidebarHorizontal>
         {/* <p>horarios 2.0 en construccion...</p> */}
         <Container>
-          <h1>Horarios <MdHistoryToggleOff size={35} /></h1>
+          <h1>
+            Horarios <MdHistoryToggleOff size={35} />
+          </h1>
           <Card>
             <CardBody>
               <Row>
@@ -520,8 +520,6 @@ function Horarios() {
                   )}
                 </Col>
               </Row>
-
-
             </CardBody>
           </Card>
           {/* 
@@ -569,8 +567,10 @@ function Horarios() {
         </ModalFooter>
       </Modal>
       {/* modal crear */}
-      <Modal size="lg" isOpen={modalCrearOpen} toggle={toggleModalCrear} size="lg">
-        <ModalHeader toggle={toggleModalCrear}><h3>Crear horarios</h3></ModalHeader>
+      <Modal size="lg" isOpen={modalCrearOpen} toggle={toggleModalCrear}>
+        <ModalHeader toggle={toggleModalCrear}>
+          <h3>Crear horarios</h3>
+        </ModalHeader>
         <ModalBody>
           <Table>
             <thead>
