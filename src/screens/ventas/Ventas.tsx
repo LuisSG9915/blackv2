@@ -2333,7 +2333,7 @@ const Ventas = () => {
           ></TableHistorial>
           <br />
           <div>
-            <Card style={{ width: '1500px', height: '400px' }}>
+            <Card style={{ width: '1650px', height: '400px' }}>
 
               <CardBody>
                 <h3>Historial citas futuras</h3>
