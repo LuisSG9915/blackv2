@@ -185,7 +185,14 @@ function ClientesShopify() {
               if (!row.original.idCliente) {
                 setIdShopify(row.original.id, row.original.nombreShopify);
               } else {
-                alert("Este usuario ya tiene vinculado un cliente");
+                Swal.fire({
+                  icon: "error",
+                  title: "Cliente vinculado",
+                  text: `Este usuario ya tiene vinculado un cliente `,
+                  confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+                });
+
+                // alert("Este usuario ya tiene vinculado un cliente");
               }
             }}
             text="  Elegir"

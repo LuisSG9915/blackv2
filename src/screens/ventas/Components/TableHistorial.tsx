@@ -197,7 +197,7 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
         },
         density: "compact",
       }}
-      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+    // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
     />
   );
 }
