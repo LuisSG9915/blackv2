@@ -7,6 +7,9 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { useUnidadMedida } from "../../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../../models/UnidadMedidaModel";
 import { VentaInsumo } from "../../../models/VentaInsumo";
+import { AiOutlineBarcode } from "react-icons/ai";
+
+import { Box } from "@mui/material";
 interface Venta {
   id: number;
   estilista: string;
@@ -33,12 +36,21 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     cantidad: "",
     id_insumo: 0,
   });
+
+  useEffect(() => {
+    fetchInsumosGenerales({ marca: form.marca });
+  }, [form.marca]);
+
   const { dataInsumoGenerales, fetchInsumosGenerales } = useInsumosGenerales({ marca: form.marca });
 
   const createInsumoTrue = (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
     jezaApi
       .post("/VentaInsumo", null, {
-        params: { id_venta: datoVentaSeleccionado, id_insumo: Number(updatedForm.id_insumo), cantidad: Number(updatedForm.cantidad) },
+        params: {
+          id_venta: datoVentaSeleccionado,
+          id_insumo: Number(updatedForm.id_insumo),
+          cantidad: Number(updatedForm.cantidad),
+        },
       })
       .then((re) =>
         Swal.fire({
@@ -118,9 +130,9 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     },
     {
       header: "Unidad de medida",
-      accessorKey: "unidad_medida",
+      accessorKey: "d_unidad_medida",
       flex: 1,
-      Cell: ({ cell }) => <p>{getCiaForeignKey(cell.getValue())}</p>,
+      // Cell: ({ cell }) => <p>{getCiaForeignKey(cell.getValue())}</p>,
     },
     {
       header: "Marca",
@@ -156,6 +168,17 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
           },
           density: "compact",
         }}
+        renderTopToolbarCustomActions={({ table }) => (
+          <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Input
+              type="text"
+              placeholder="Codigo de barras"
+              value={form.marca}
+              onChange={(e) => setForm({ ...form, marca: e.target.value })}
+            />
+            <AiOutlineBarcode style={{ fontSize: "24px" }} />
+          </Box>
+        )}
       />
     </>
   );
