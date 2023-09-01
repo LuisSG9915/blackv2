@@ -188,7 +188,7 @@ function ClientesShopify() {
                 Swal.fire({
                   icon: "error",
                   title: "Cliente vinculado",
-                  text: `Este usuario ya tiene vinculado un cliente: `,
+                  text: `Este usuario ya tiene vinculado un cliente `,
                   confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
                 });
 
