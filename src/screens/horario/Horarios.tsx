@@ -38,10 +38,11 @@ function Horarios() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedHorario, setSelectedHorario] = useState(null);
   const fechaActual = new Date(); // Esto te dará la fecha y hora actual
+  // const [cantHorarios, setcantHorarios] = useState([]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState([]);
-  const daysOfWeek = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+  const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const handleEditInputChange = (field, value) => {
     // Desmarcar el checkbox si h1 a h4 tienen un valor distinto de "00:00"
     if (field === "h1" || field === "h2" || field === "h3" || field === "h4") {
@@ -62,6 +63,13 @@ function Horarios() {
       }));
     }
   };
+
+  const diasConRegistros = new Set(
+    horarios.map((horario) => {
+      const fechaHorario = new Date(horario.fecha);
+      return fechaHorario.getDay(); // Devuelve el número del día de la semana (0 para Domingo, 1 para Lunes, etc.)
+    })
+  );
 
   const handleEditCheckboxChange = (field, checked) => {
     if (checked) {
@@ -132,6 +140,48 @@ function Horarios() {
     consulta();
   }, [formData]);
 
+  // const handleDateChange = (e) => {
+  //   const newDate = e.target.value;
+  //   setSelectedDate(newDate);
+  //   // consulta();
+
+  //   // const filteredHorarios = horarios.filter((horario) => {
+  //   //   const horarioDate = new Date(horario.fecha);
+  //   //   return (
+  //   //     horarioDate.getFullYear() === selectedDateObj.getFullYear() &&
+  //   //     horarioDate.getMonth() === selectedDateObj.getMonth() &&
+  //   //     horarioDate.getDate() === selectedDateObj.getDate()
+  //   //   );
+  //   // });
+
+  //   // Calcular las fechas correspondientes para cada día de la semana
+  //   const selectedDateObj = new Date(newDate);
+
+  //   // Obtener el día de la semana actual (0 para Domingo, 1 para Lunes, etc.)
+  //   const currentDay = selectedDateObj.getDay();
+
+  //   // Calcular la diferencia en días para ajustar la fecha al día de la semana correcto
+  //   const daysUntilMonday = 0 - currentDay; // Lunes
+  //   selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
+
+  //   // Actualizar las fechas en el formulario
+  //   const updatedFormData = daysOfWeek.map((day, dayIndex) => {
+  //     const date = new Date(selectedDateObj); // Clonar la fecha seleccionada
+  //     date.setDate(date.getDate() + dayIndex); // Añadir días según el día de la semana
+  //     return {
+  //       id_empleado: "", // Puedes establecer un valor predeterminado aquí
+  //       fecha: formatDate(date), // Utiliza la función auxiliar para formatear la fecha
+  //       h1: "", // Puedes establecer otros campos del formulario aquí
+  //       h2: "",
+  //       h3: "",
+  //       h4: "",
+  //       descanso: false, // Puedes establecer valores predeterminados para otros campos
+  //     };
+  //   });
+
+  //   setFormData(updatedFormData);
+  // };
+
   const handleDateChange = (e) => {
     const newDate = e.target.value;
     setSelectedDate(newDate);
@@ -143,7 +193,7 @@ function Horarios() {
     const currentDay = selectedDateObj.getDay();
 
     // Calcular la diferencia en días para ajustar la fecha al día de la semana correcto
-    const daysUntilMonday = 1 - currentDay; // Lunes
+    const daysUntilMonday = 0 - currentDay; // Lunes
     selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
 
     // Actualizar las fechas en el formulario
@@ -223,11 +273,12 @@ function Horarios() {
         .get(`/Horario?idTrabajador=${selectedId}&fecha=${selectedDate}`)
         .then((response) => {
           setHorarios(response.data);
+
           // Verifica si el resultado de la consulta es cero
-          if (response.data.length === 0) {
-            setShowButton(true); // Habilita el botón
+          if (diasConRegistros.size < 7) {
+            setShowButton(true); // Habilita el botón si hay días sin registros
           } else {
-            setShowButton(false); // Deshabilita el botón
+            setShowButton(false); // Deshabilita el botón si todos los días tienen registros
           }
         })
         .catch((e) => console.log(e));
@@ -358,61 +409,31 @@ function Horarios() {
     []
   );
 
-  //  console.log(
-  //    `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
-  //  );
-
-  // const handleSubmit = () => {
-  //   // Realiza la validación de que todos los campos h1 a h4 estén llenos
-  //   const isFormValid = formData.every((dayData) => {
-  //     // Verifica si los campos h1 a h4 están llenos
-  //     return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4;
-  //   });
-  //   if (isFormValid) {
-
-  //     // Realiza la solicitud POST con los datos del formulario
-  //     for (let i = 0; i < formData.length; i++) {
-  //       const dayData = formData[i];
-
-  //       jezaApi
-  //         .post(
-  //           `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
-  //         )
-  //         .then((response) => {
-  //           // Realiza alguna acción después de que la solicitud sea exitosa
-  //           console.log(`Solicitud POST exitosa para ${daysOfWeek[i]}:`, response.data);
-  //           // Puedes realizar una nueva consulta o actualizar la vista según tus necesidades
-  //         })
-  //         .catch((error) => {
-  //           // Manejo de errores
-  //           console.error(`Error en la solicitud POST para ${daysOfWeek[i]}:`, error);
-  //         });
-  //     }
-  //   } else {
-  //     // Mostrar un mensaje de error o realizar alguna acción apropiada
-
-  //     Swal.fire({
-  //       icon: "info",
-  //       title: "",
-  //       text: "Por favor, completa todos los campos antes de guardar",
-  //     });
-  //   }
-  // };
-
   const handleSubmit = () => {
-    // Realiza la validación de que todos los campos h1 a h4 estén llenos
-    const isFormValid = formData.every((dayData) => {
-      // Verifica si los campos h1 a h4 están llenos
+    // Verifica si todos los campos h1 a h4 están llenos en al menos un día
+    const allFieldsFilled = formData.some((dayData) => {
       return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4;
     });
 
-    if (isFormValid) {
-      // Inicializa un contador para llevar un registro de las solicitudes exitosas
-      let successfulRequests = 0;
+    // Si no se llenaron todos los campos h1 a h4, muestra una alerta y no realiza la solicitud POST
+    if (!allFieldsFilled) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Debes completar todos los campos H1 a H4 en al menos un día.",
+      });
+      return;
+    }
 
-      // Realiza la solicitud POST con los datos del formulario
-      for (let i = 0; i < formData.length; i++) {
-        const dayData = formData[i];
+    let successfulRequests = 0;
+
+    // Realiza la solicitud POST solo para los días sin registros
+    for (let i = 0; i < formData.length; i++) {
+      const dayData = formData[i];
+      const dayIndex = i;
+
+      // Verifica si ya hay registros para este día
+      if (!diasConRegistros.has(dayIndex)) {
         jezaApi
           .post(
             `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
@@ -422,12 +443,12 @@ function Horarios() {
             successfulRequests++;
 
             // Verifica si todas las solicitudes han terminado
-            if (successfulRequests === formData.length) {
+            if (successfulRequests === formData.length - diasConRegistros.size) {
               // Muestra una alerta de SweetAlert cuando todas las solicitudes hayan terminado
               Swal.fire({
                 icon: "success",
-                title: "Creación de horararios exitosa",
-                text: "Todos los horarios de ha actualizado.",
+                title: "Creación de horarios exitosa",
+                text: "Todos los horarios se han actualizado.",
               });
               consulta();
               toggleModalCrear();
@@ -438,15 +459,19 @@ function Horarios() {
           .catch((error) => {
             // Manejo de errores
             console.error(`Error en la solicitud POST para ${daysOfWeek[i]}:`, error);
+            Swal.fire({
+              icon: "success",
+              title: "Creación de horarios exitosa",
+              text: "Todos los horarios se han actualizado.",
+            });
+            consulta();
+
+            toggleModalCrear();
           });
+      } else {
+        // Si ya hay registros para este día, simplemente incrementa el contador
+        successfulRequests++;
       }
-    } else {
-      // Mostrar un mensaje de error o realizar alguna acción apropiada
-      Swal.fire({
-        icon: "info",
-        title: "",
-        text: "Por favor, completa todos los campos antes de guardar",
-      });
     }
   };
 
@@ -522,30 +547,6 @@ function Horarios() {
               </Row>
             </CardBody>
           </Card>
-          {/* 
-          {showButton && (
-            <Button
-              color="primary"
-              onClick={() => {
-                const fechaSeleccionada = new Date(selectedDate); // Convierte la fecha seleccionada a un objeto Date
-                const esFechaAnterior = fechaSeleccionada < fechaActual; // Comprueba si la fecha seleccionada es anterior a la fecha actual
-
-                if (esFechaAnterior) {
-                  // Si la fecha es anterior, muestra una alerta de SweetAlert
-                  Swal.fire({
-                    icon: "info",
-                    title: "",
-                    text: "No se puede crear un horario para una fecha anterior",
-                  }); 
-                } else {
-                  // Si la fecha es posterior o igual, abre el modal de creación
-                  toggleModalCrear();
-                }
-              }}
-            >
-              Crear
-            </Button>
-          )} */}
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
       </div>
@@ -567,7 +568,7 @@ function Horarios() {
         </ModalFooter>
       </Modal>
       {/* modal crear */}
-      <Modal size="lg" isOpen={modalCrearOpen} toggle={toggleModalCrear}>
+      <Modal size="xl" isOpen={modalCrearOpen} toggle={toggleModalCrear}>
         <ModalHeader toggle={toggleModalCrear}>
           <h3>Crear horarios</h3>
         </ModalHeader>
@@ -585,11 +586,17 @@ function Horarios() {
                 <th>Descanso</th>
               </tr>
             </thead>
-            <tbody>
+            {/* <tbody>
               {daysOfWeek.map((day, dayIndex) => (
-                <tr key={dayIndex}>
-                  <td>{day}</td>
-                  {/* <td>
+                <tr key={dayIndex}> */}
+            <tbody>
+              {daysOfWeek.map((day, dayIndex) => {
+                if (!diasConRegistros.has(dayIndex)) {
+                  // Solo muestra el formulario para los días sin registros
+                  return (
+                    <tr key={dayIndex}>
+                      <td>{day}</td>
+                      {/* <td>
                     <Input
                       type="text"
                       name="id_empleado"
@@ -597,58 +604,62 @@ function Horarios() {
                       onChange={(e) => handleInputChange(e, dayIndex)}
                     />
                   </td> */}
-                  <td>
-                    <Input
-                      disabled="disabled"
-                      type="date"
-                      name="fecha"
-                      value={formData[dayIndex]?.fecha || ""}
-                      // onChange={(e) => handleDateChange(e, dayIndex)}
-                      onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      type="time"
-                      name="h1"
-                      value={formData[dayIndex]?.h1 || ""}
-                      onChange={(e) => handleInputChange(e, dayIndex)}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      type="time"
-                      name="h2"
-                      value={formData[dayIndex]?.h2 || ""}
-                      onChange={(e) => handleInputChange(e, dayIndex)}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      type="time"
-                      name="h3"
-                      value={formData[dayIndex]?.h3 || ""}
-                      onChange={(e) => handleInputChange(e, dayIndex)}
-                    />
-                  </td>
-                  <td>
-                    <Input
-                      type="time"
-                      name="h4"
-                      value={formData[dayIndex]?.h4 || ""}
-                      onChange={(e) => handleInputChange(e, dayIndex)}
-                    />
-                  </td>
-                  <td align="center">
-                    <Input
-                      type="checkbox"
-                      name="descanso"
-                      checked={formData[dayIndex]?.descanso || false}
-                      onChange={(e) => handleCheckboxChange(e, dayIndex)}
-                    />
-                  </td>
-                </tr>
-              ))}
+                      <td>
+                        <Input
+                          disabled="disabled"
+                          type="date"
+                          name="fecha"
+                          value={formData[dayIndex]?.fecha || ""}
+                          // onChange={(e) => handleDateChange(e, dayIndex)}
+                          onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="time"
+                          name="h1"
+                          value={formData[dayIndex]?.h1 || ""}
+                          onChange={(e) => handleInputChange(e, dayIndex)}
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="time"
+                          name="h2"
+                          value={formData[dayIndex]?.h2 || ""}
+                          onChange={(e) => handleInputChange(e, dayIndex)}
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="time"
+                          name="h3"
+                          value={formData[dayIndex]?.h3 || ""}
+                          onChange={(e) => handleInputChange(e, dayIndex)}
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          type="time"
+                          name="h4"
+                          value={formData[dayIndex]?.h4 || ""}
+                          onChange={(e) => handleInputChange(e, dayIndex)}
+                        />
+                      </td>
+                      <td align="center">
+                        <Input
+                          type="checkbox"
+                          name="descanso"
+                          checked={formData[dayIndex]?.descanso || false}
+                          onChange={(e) => handleCheckboxChange(e, dayIndex)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                } else {
+                  return null; // No muestra nada para los días que ya tienen registros
+                }
+              })}
             </tbody>
           </Table>
         </ModalBody>
