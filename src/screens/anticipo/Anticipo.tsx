@@ -50,15 +50,8 @@ import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 
 function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
   const { dataAnticipos, fetchAnticipos } = useAnticipos();
   const [modalCliente, setModalCliente] = useState(false);
@@ -230,7 +223,17 @@ function Anticipo() {
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
-
+  const limpiezaFormAnticipos = () => {
+    setForm({
+      ...form,
+      fechaMovto: "",
+      d_cliente: "",
+      id: 0,
+      referencia: "",
+      importe: 0,
+      observaciones: "",
+    });
+  };
   const insertar = async () => {
     const permiso = await filtroSeguridad("CAT_ANT_ADD");
     if (permiso === false) {
@@ -264,7 +267,7 @@ function Anticipo() {
           setModalInsertar(false);
           fetchAnticipos();
           ejecutaPeticion(formulario.reporte);
-
+          limpiezaFormAnticipos();
           // LIMPIEZA DE CAMPOS . ... . . . . . . .. . .
         })
         .catch((error) => {
@@ -286,9 +289,7 @@ function Anticipo() {
 
     if (validarCampos() === true) {
       await jezaApi
-        .put(
-          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
-        )
+        .put(`/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`)
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -666,35 +667,17 @@ function Anticipo() {
                   <Row>
                     <Col sm="3">
                       <Label>Fecha inicial:</Label>
-                      <Input
-                        type="date"
-                        name="fechaInicial"
-                        value={formulario.fechaInicial}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      />
+                      <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
                     </Col>
 
                     <Col sm="3">
                       <Label>Fecha final:</Label>
-                      <Input
-                        type="date"
-                        name="fechaFinal"
-                        value={formulario.fechaFinal}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      />
+                      <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange3} bsSize="sm" />
                     </Col>
 
                     <Col sm="3">
                       <Label>Sucursal:</Label>
-                      <Input
-                        type="select"
-                        name="sucursal"
-                        value={formulario.sucursal}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      >
+                      <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange3} bsSize="sm">
                         <option value="">Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
@@ -705,13 +688,7 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Empresa:</Label>
-                      <Input
-                        type="select"
-                        name="empresa"
-                        value={formulario.empresa}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      >
+                      <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange3} bsSize="sm">
                         <option value="">Seleccione la empresa</option>
 
                         {dataCias.map((item) => (
@@ -721,9 +698,7 @@ function Anticipo() {
                       <br />
                     </Col>
 
-
                     <Col sm="6">
-
                       <Label>Clientes:</Label>
                       <InputGroup>
                         {" "}
@@ -740,11 +715,7 @@ function Anticipo() {
                   </Row>
                   <br />
                   <Col sm="6">
-                    <CButton
-                      color="primary"
-                      text="Consultar"
-                      onClick={() => ejecutaPeticion(formulario.reporte)}
-                    ></CButton>
+                    <CButton color="primary" text="Consultar" onClick={() => ejecutaPeticion(formulario.reporte)}></CButton>
                   </Col>
                 </AccordionBody>
               </AccordionItem>
@@ -759,10 +730,10 @@ function Anticipo() {
             />
           </Col>
         </Row>
-      </Container >
+      </Container>
 
       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      < Modal isOpen={modalActualizar} size="xl" >
+      <Modal isOpen={modalActualizar} size="xl">
         <ModalHeader>
           <div>
             <h3>Editar anticipo </h3>
@@ -798,13 +769,7 @@ function Anticipo() {
             </FormGroup> */}
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input
-                type="text"
-                name="observaciones"
-                id="observaciones"
-                value={form.observaciones}
-                onChange={handleChange}
-              />
+              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
             </FormGroup>
           </Form>{" "}
         </ModalBody>
@@ -815,12 +780,19 @@ function Anticipo() {
             onClick={() => editar(idActualizar)} // Pasa el id como parámetro
             text="Actualizar"
           />
-          <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
+          <CButton
+            color="danger"
+            onClick={() => {
+              cerrarModalActualizar();
+              limpiezaFormAnticipos();
+            }}
+            text="Cancelar"
+          />
         </ModalFooter>
-      </Modal >
+      </Modal>
 
       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      < Modal isOpen={modalInsertar} >
+      <Modal isOpen={modalInsertar}>
         <ModalHeader>
           <div>
             <h3>Crear anticipo</h3>
@@ -837,22 +809,15 @@ function Anticipo() {
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
               <InputGroup>
-                <Input
-                  disabled
-                  type="text"
-                  name="d_cliente"
-                  id="d_cliente"
-                  value={form.d_cliente}
-                  onChange={handleChange}
-                />
+                <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
                 <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
               </InputGroup>
             </FormGroup>
 
             <FormGroup>
               <Label>Forma de pago:</Label>
-              <Input type="select" name="id" id="id" defaultValue={formPago.id} onChange={handleChange1}>
-                <option value="">Selecciona forma de pago</option>
+              <Input type="select" name="id" id="id" value={formPago.id} onChange={handleChange1}>
+                <option value={0}>Selecciona forma de pago</option>
                 {formasPagosFiltradas.map((formapago: FormaPago) => (
                   <option key={formapago.id} value={formapago.id}>
                     {formapago.descripcion}
@@ -872,13 +837,7 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input
-                type="text"
-                name="observaciones"
-                id="observaciones"
-                value={form.observaciones}
-                onChange={handleChange}
-              />
+              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
             </FormGroup>
           </Form>
         </ModalBody>
@@ -888,22 +847,17 @@ function Anticipo() {
             color="danger"
             onClick={() => {
               setModalInsertar(false);
-              console.log(modalCliente);
+              limpiezaFormAnticipos();
             }}
             text="Cancelar"
           />
         </ModalFooter>
-      </Modal >
+      </Modal>
 
       <Modal isOpen={modalCliente} size="lg">
         <ModalHeader> Cliente </ModalHeader>
         <ModalBody>
-          <TableClienteAnticipos
-            form={form}
-            setForm={setForm}
-            data={dataClientes}
-            setModalCliente={setModalCliente}
-          ></TableClienteAnticipos>
+          <TableClienteAnticipos form={form} setForm={setForm} data={dataClientes} setModalCliente={setModalCliente}></TableClienteAnticipos>
         </ModalBody>
         <ModalFooter>
           <CButton

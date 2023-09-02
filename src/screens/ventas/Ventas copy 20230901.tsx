@@ -292,7 +292,7 @@ const Ventas = () => {
     Caja: 1,
     No_venta: 1,
     Clave_prod: 1,
-    Cant_producto: 1,
+    Cant_producto: 0,
     Precio: 0,
     Precio_base: 0,
     Cve_cliente: 0,
@@ -571,7 +571,6 @@ const Ventas = () => {
             fetchVentas();
             setDataTemporal((prevData) => ({
               ...datosInicialesArreglo[0],
-              Cant_producto: 1,
               cliente: prevData.cliente,
               Cve_cliente: prevData.Cve_cliente,
             }));
@@ -885,12 +884,56 @@ const Ventas = () => {
       <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
         <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
           <TableAnticipos anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableAnticipos>
+          {/* <DataGrid
+            rows={dataAnticipos}
+            columns={columns}
+            hideFooter={false}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 15 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+            getRowId={getRowId}
+          /> */}
         </div>
       </div>
     );
   }
 
- 
+  // const anticipoPost = (noVenta: number) => {
+  //   if (formAnticipo.importe > 0) {
+  //     jezaApi
+  //       .post("/AnticipoAplicado", null, {
+  //         params: {
+  //           cia: 26,
+  //           sucursal: dataUsuarios2[0]?.sucursal,
+  //           caja: 1,
+  //           fecha: fechaHoy,
+  //           no_venta: noVenta,
+  //           fechaMovto: 20230726,
+  //           idCliente: dataTemporal.Cve_cliente,
+  //           idUsuario: dataUsuarios2[0]?.id,
+  //           tipoMovto: 1,
+  //           referencia: formAnticipo.referencia,
+  //           importe: formAnticipo.importe,
+  //           observaciones: formAnticipo.observaciones,
+  //           idAnticipo: formAnticipo.id,
+  //         },
+  //       })
+  //       .then(() => {
+  //         setTimeout(() => {
+  //           Swal.fire({
+  //             icon: "success",
+  //             text: "Venta finalizada con éxito",
+  //             confirmButtonColor: "#3085d6",
+  //           });
+  //         }, 1500);
+  //       });
+  //   } else {
+  //     null;
+  //   }
+  // };
 
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
@@ -2180,6 +2223,7 @@ const Ventas = () => {
               </Row>
             </>
           ) : null}
+          <br />
           <Row>
             <Col>
               <Label>Cantidad en existencia: </Label>
@@ -2199,10 +2243,6 @@ const Ventas = () => {
             <Col>
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
-            </Col>
-            <Col>
-              <Label>Tiempo:</Label>
-              <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
             </Col>
           </Row>
           <br />

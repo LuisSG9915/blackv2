@@ -1,6 +1,7 @@
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import React, { useMemo } from "react";
 import { LuCalendarSearch } from "react-icons/lu";
+import { FaShoppingCart, FaUser } from "react-icons/fa";
 
 interface Props {
   datah: any[];
@@ -20,25 +21,73 @@ interface Props {
 function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsModalOpen }: Props) {
   const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
     () => [
+      // {
+      //   header: "Acciones",
+      //   Cell: ({ row }) => (
+      //     <LuCalendarSearch
+      //       size={23}
+      //       onClick={() => {
+      //         loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+      //         setParamsDetalles({
+      //           Cve_cliente: row.original.Cve_cliente,
+      //           idProducto: row.original.idProducto,
+      //           numVenta: row.original.NumVenta,
+      //           sucursal: row.original.NombreSuc,
+      //           clave: row.original.id,
+      //           fecha: row.original.Fecha,
+      //         });
+      //         setIsModalOpen(true);
+      //       }}
+      //     />
+      //   ),
+      //   muiTableBodyCellProps: {
+      //     align: "center",
+      //   },
+      //   muiTableHeadCellProps: {
+      //     align: "center",
+      //   },
+      // },
       {
         header: "Acciones",
-        Cell: ({ row }) => (
-          <LuCalendarSearch
-            size={23}
-            onClick={() => {
-              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
-              setParamsDetalles({
-                Cve_cliente: row.original.Cve_cliente,
-                idProducto: row.original.idProducto,
-                numVenta: row.original.NumVenta,
-                sucursal: row.original.NombreSuc,
-                clave: row.original.id,
-                fecha: row.original.Fecha,
-              });
-              setIsModalOpen(true);
-            }}
-          />
-        ),
+        Cell: ({ row }) => {
+          let icono;
+          let isDisabled = false; // Por defecto, el botón no está deshabilitado
+
+          // Analizar la clave para determinar si es un producto o un servicio
+          if (row.original.Clave.endsWith("P")) {
+            // Si la clave termina con "P", se trata de un producto
+            icono = <FaShoppingCart size={23} />;
+            isDisabled = true; // Marcar el botón como deshabilitado para productos
+          } else if (row.original.Clave.endsWith("S")) {
+            // Si la clave termina con "S", se trata de un servicio
+            icono = <FaUser size={23} />;
+          } else {
+            // Si no coincide con ninguna de las anteriores, se usa un icono predeterminado
+            icono = <LuCalendarSearch size={23} />;
+          }
+
+          return (
+            <div>
+              <button
+                disabled={isDisabled} // Establecer la propiedad disabled según isDisabled
+                onClick={() => {
+                  loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+                  setParamsDetalles({
+                    Cve_cliente: row.original.Cve_cliente,
+                    idProducto: row.original.idProducto,
+                    numVenta: row.original.NumVenta,
+                    sucursal: row.original.NombreSuc,
+                    clave: row.original.id,
+                    fecha: row.original.Fecha,
+                  });
+                  setIsModalOpen(true);
+                }}
+              >
+                {icono}
+              </button>
+            </div>
+          );
+        },
         muiTableBodyCellProps: {
           align: "center",
         },
@@ -46,6 +95,7 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
           align: "center",
         },
       },
+
       {
         accessorKey: "Cve_cliente",
         header: "Cliente",

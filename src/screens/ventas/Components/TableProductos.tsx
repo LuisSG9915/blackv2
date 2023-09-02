@@ -159,6 +159,7 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
         <Col xs={1}>
           <Input
             checked={state}
+            disabled={isLoading}
             type="switch"
             role="switch"
             onClick={() => {
@@ -183,7 +184,7 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
           density: "compact",
           showGlobalFilter: false,
           pagination: {
-            pageSize: 5,
+            pageSize: 8,
             pageIndex: 0,
           },
           sorting: [{ id: "descripcion", desc: false }],
