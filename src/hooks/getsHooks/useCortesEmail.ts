@@ -21,7 +21,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const fetchCorteA = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
-        `/CorteSeccionA?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd")}`
+        `/CorteSeccionA?suc=${sucursal}&fecha=${fecha ? format(fecha, "yyyy-MM-dd") : format(currentDate, "yyyy-MM-dd")}`
       );
       setDataCorteEmailA(response.data);
     } catch (error) {
@@ -31,7 +31,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const fetchCorteB = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
-        `/CorteSeccionB?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd")}`
+        `/CorteSeccionB?suc=${sucursal}&fecha=${fecha ? format(fecha, "yyyy-MM-dd") : format(currentDate, "yyyy-MM-dd")}`
       );
       setDataCorteEmailB(response.data);
       if (response.data.length > 0) {
@@ -50,7 +50,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const fetchCorteC = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
-        `/CorteSeccionC?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd")}`
+        `/CorteSeccionC?suc=${sucursal}&fecha=${fecha ? format(fecha, "yyyy-MM-dd") : format(currentDate, "yyyy-MM-dd")}`
       );
       setDataCorteEmailC(response.data);
       if (response.data.length > 0) {
