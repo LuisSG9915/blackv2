@@ -355,19 +355,17 @@ function ClientesShopify() {
 
       {/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
-        <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
+        <ModalHeader toggle={() => setModalOpen(!modalOpen)}> <h3>Seleccione cliente</h3></ModalHeader>
         <ModalBody>
-          <h1>Seleccione cliente</h1>
-
-          <Label>ID Cliente shopify</Label>
+          <Label>Id cliente shopify:</Label>
           <Input type="text" value={selectedIdShop} disabled="disabled" />
-          <Label>Nombre Cliente shopify</Label>
+          <br />
+          <Label>Nombre cliente shopify:</Label>
           <Input type="text" value={selectedNameShop} disabled="disabled" />
+          <br />
+          <Label>Nombre cliente sistema: </Label>
 
-          <Label>ID Cliente Sistema</Label>
-          <Input type="text" value={selectedId} />
-          <Label>Nombre Cliente Sistema</Label>
-          <ButtonGroup>
+          <InputGroup>
             <Input type="text" value={selectedName} />
             <CButton
               style={{ marginLeft: "auto" }}
@@ -375,20 +373,23 @@ function ClientesShopify() {
               onClick={abrirModalvinculo}
               text="Seleccionar"
             ></CButton>
-            <CButton
-              style={{ marginLeft: "auto" }}
-              color="success"
-              onClick={() => vinculo(selectedId, selectedName, selectedIdShop, selectedNameShop)}
-              text="Vincular"
-            ></CButton>
-          </ButtonGroup>
+          </InputGroup>
+          <br />
+          <Label>Id cliente sistema: </Label>
+          <Input type="text" value={selectedId} />
+          <br />
+          <CButton
+            style={{ marginLeft: "auto" }}
+            color="success"
+            onClick={() => vinculo(selectedId, selectedName, selectedIdShop, selectedNameShop)}
+            text="Vincular"
+          ></CButton>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={() => setModalOpen(!modalOpen)}>
-            Cerrar
-          </Button>
+          <CButton text="Cancelar" color="danger" onClick={() => setModalOpen(!modalOpen)} />
+
         </ModalFooter>
-      </Modal>
+      </Modal >
     </>
   );
 }
