@@ -136,9 +136,8 @@ interface Props {
 }
 
 const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: Props) => {
-  const { dataClientes, fetchClientes, setDataClientes } = useClientes();
+  const { dataClientes, setDataClientes } = useClientes();
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
-  const [filtroCliente, setFiltroCliente] = useState("");
 
   const TableDataHeader = ["First Name", "Last Name", "Actions"]; // Add "Actions" column header
 
@@ -156,26 +155,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
 
   const toggleModalHistorial = () => {
     setModalOpen(!modalOpen);
-  };
-
-  const historial = (dato: Cliente) => {
-    jezaApi.get(`/Historial?cliente=${dato.id_cliente}`).then((response) => {
-      setData(response.data);
-      toggleModalHistorial(); // Abrir o cerrar el modal cuando los datos se hayan cargado
-    });
-  };
-
-  const filtroClientes = (datoMedico: string) => {
-    var resultado = dataClientes.filter((elemento: Cliente) => {
-      if ((datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.nombre.length > 2) {
-        return elemento;
-      }
-    });
-    setDataClientes(resultado);
-  };
-
-  const handleOpenNewWindowCreateCita = () => {
-    // ... (unchanged)
   };
 
   const dataClientesConAcciones = useMemo(

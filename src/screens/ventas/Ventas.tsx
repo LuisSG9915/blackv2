@@ -120,6 +120,17 @@ const Ventas = () => {
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
   const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal });
 
+  const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
+  const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
+  const idCliente = new URLSearchParams(window.location.search).get("idCliente");
+  useEffect(() => {
+    setDataTemporal((prevDataTemporal) => ({
+      ...prevDataTemporal,
+      cliente: nombreCliente ? nombreCliente.toString() : "nada",
+      Cve_cliente: Number(idCliente),
+    }));
+  }, [nombreCliente, idCliente]);
+
   const [datoVentaSeleccionado, setDatoVentaSeleccionado] = useState<any>({
     Caja: 1,
     Cant_producto: 1,
@@ -890,8 +901,6 @@ const Ventas = () => {
     );
   }
 
- 
-
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
       const tempIdPago = getIdPago(Number(elemento.formaPago));
@@ -1118,7 +1127,7 @@ const Ventas = () => {
             <Row className="align-items-end">
               <Col md={"7"}>
                 <InputGroup>
-                  <Input disabled value={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"Cve_cliente"} />
+                  <Input disabled value={dataTemporal.cliente} onChange={cambios} name={"cliente"} />
                   <Button onClick={() => setModalCliente(true)}>
                     <MdEmojiPeople size={23} />
                     Elegir
