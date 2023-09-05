@@ -68,14 +68,32 @@ function Compras() {
   ];
   const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado", "Acción"];
 
+  const [estados, setEstados] = useState(false);
+
+
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
+
   const toggleCrearModal = () => {
-    if (!dataCompras.folioDocumento || !dataCompras.folioDocumento) {
-      Swal.fire("", "Falta la fecha o documento por ingresar", "info");
+    // Define los campos requeridos
+    const camposRequeridos = ["fechaDocumento", "folioDocumento"];
+
+    // Verifica si todos los campos requeridos tienen valores
+    const camposIncompletos = camposRequeridos.filter((campo) => !dataCompras[campo]);
+
+    if (!dataCompras.idProveedor || camposIncompletos.length > 0) {
+      if (!dataCompras.idProveedor) {
+        Swal.fire("", "El campo 'idProveedor' es obligatorio.", "error");
+      } else {
+        const camposFaltantes = camposIncompletos.join(", ");
+        Swal.fire("", `Faltan los siguientes campos por llenar: ${camposFaltantes}`, "error");
+      }
     } else {
+      // Si todos los campos requeridos están llenos, puedes continuar con el proceso
       fetchProduct4();
       setIsCrearOpen(!isCrearOpen);
     }
+
+    // Resto del código
     setDataCompras({
       ...dataCompras,
       costoUnitario: 0,
@@ -96,6 +114,37 @@ function Compras() {
       d_unidadTraspaso: 0,
     });
   };
+
+
+
+
+  // const toggleCrearModal = () => {
+  //   if (!dataCompras.idProveedor || dataCompras.fechaDocumento || !dataCompras.folioDocumento) {
+  //     Swal.fire("", "Falta la fecha o documento por ingresar", "info");
+  //   } else {
+  //     fetchProduct4();
+  //     setIsCrearOpen(!isCrearOpen);
+  //   }
+  //   setDataCompras({
+  //     ...dataCompras,
+  //     costoUnitario: 0,
+  //     id: 0,
+  //     id_compra: 0,
+  //     cia: 0,
+  //     idSucursal: 0,
+  //     clave_prod: 0,
+  //     cantidad: 0,
+  //     bonificaciones: 0,
+  //     costounitario: 0,
+  //     costoCompra: 0,
+  //     Usuario: 0,
+  //     finalizado: false,
+  //     d_proveedor: "",
+  //     d_producto: "",
+  //     d_unidadMedida: "",
+  //     d_unidadTraspaso: 0,
+  //   });
+  // };
 
   const filtroProducto = (datoMedico: string) => {
     var resultado = dataProductos.filter((elemento: Producto) => {
@@ -895,29 +944,32 @@ function Compras() {
       {/* Modal */}
 
       <Modal isOpen={isCrearOpen} toggle={toggleCrearModal} centered size="lg">
-        <ModalHeader toggle={toggleCrearModal}>Registro de compras</ModalHeader>
+        <ModalHeader toggle={toggleCrearModal}><h3>Registro de compras</h3></ModalHeader>
         <ModalBody>
           <Label>Producto:</Label>
           <Row>
             <Col>
-              {/* <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} /> */}
-              <Input style={{ backgroundColor: "#fafafa" }} disabled defaultValue={dataCompras.d_producto} />
-            </Col>
-            <Col md={2}>
+              <InputGroup>
+                {/* <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} /> */}
+                <Input style={{ backgroundColor: "#fafafa" }} disabled defaultValue={dataCompras.d_producto} />
+                <Button
+                  onClick={() => {
+                    setModalOpen3(true);
+                    setDataCompras({
+                      ...dataCompras,
+                      clave_prod: 0,
+                      costounitario: 0,
+                      d_producto: "",
+                    });
+                  }}
+                >
+                  Elegir
+                </Button>
+
+              </InputGroup>
+
               {/* <Button onClick={() => setModalOpen3(true)}>Elegir</Button> */}
-              <Button
-                onClick={() => {
-                  setModalOpen3(true);
-                  setDataCompras({
-                    ...dataCompras,
-                    clave_prod: 0,
-                    costounitario: 0,
-                    d_producto: "",
-                  });
-                }}
-              >
-                Elegir
-              </Button>
+
             </Col>
           </Row>
           <br />
@@ -1184,6 +1236,8 @@ function Compras() {
               )}
             />
           </div>
+          <br />
+          <br />
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={() => setModalOpen3(false)}>
