@@ -663,8 +663,22 @@ function Anticipo() {
                 <AccordionBody accordionId="1">
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}></div>
                   <br />
-
                   <Row>
+                    <Col sm="6">
+                      <Label>Clientes:</Label>
+                      <InputGroup>
+                        <Input
+                          type="text"
+                          name="cliente"
+                          value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                          // bsSize="sm"
+                          placeholder="Ingrese el cliente"
+                        />
+                        <CButton color="secondary" text="Seleccionar" onClick={abrirModal}></CButton>
+                      </InputGroup>
+                      <br />
+                    </Col>
+
                     <Col sm="3">
                       <Label>Fecha inicial:</Label>
                       <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
@@ -698,20 +712,7 @@ function Anticipo() {
                       <br />
                     </Col>
 
-                    <Col sm="6">
-                      <Label>Clientes:</Label>
-                      <InputGroup>
-                        {" "}
-                        <Input
-                          type="text"
-                          name="cliente"
-                          value={selectedName} // Usamos selectedId si formulario.cliente está vacío
-                          // bsSize="sm"
-                          placeholder="Ingrese el cliente"
-                        />
-                        <CButton color="secondary" text="Seleccionar" onClick={abrirModal}></CButton>
-                      </InputGroup>
-                    </Col>
+
                   </Row>
                   <br />
                   <Col sm="6">
