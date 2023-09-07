@@ -11,6 +11,8 @@ import { UserResponse } from "../../models/Home";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useCortesEmail } from "../../hooks/getsHooks/useCortesEmail";
 import { CorteA, CorteB, CorteC } from "../../models/CortesEmail";
+import Chart from "react-google-charts";
+import { PieChart } from "@mui/x-charts/PieChart";
 
 function DemoTresTablas() {
   const [reportes, setReportes] = useState([]);
@@ -196,6 +198,27 @@ function DemoTresTablas() {
     ],
     []
   );
+
+  const arregloOriginal = [
+    {
+      FormadePago: "Aplicacion de Anticipos ",
+      Importe: "$100.00",
+    },
+    {
+      FormadePago: "Efectivo",
+      Importe: "$350.00",
+    },
+    {
+      FormadePago: "Total ",
+      Importe: "$450.00",
+    },
+  ];
+  const arregloConID = dataCorteEmailA.map((item, index) => ({
+    id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
+    value: item.Importe ? Number(item.Importe.replace("[$,]+/g", "")) : 0,
+    label: item.FormadePago,
+  }));
+
   return (
     <>
       <Row>
@@ -204,8 +227,10 @@ function DemoTresTablas() {
 
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Corte <AiOutlineFileText size={30} /></h1>
-
+          <h1>
+            {" "}
+            Corte <AiOutlineFileText size={30} />
+          </h1>
         </div>
         <Row>
           <Col xs={3}>
@@ -224,76 +249,18 @@ function DemoTresTablas() {
           <Col xs={3}>
             <Button onClick={() => sendEmail()}>Enviar correo</Button>
           </Col>
+          <PieChart
+            series={[
+              {
+                data: arregloConID,
+              },
+            ]}
+            width={400}
+            height={200}
+          />
         </Row>
         <br />
-        {/* <UncontrolledAccordion defaultOpen="2">
-          <AccordionItem>
-            <AccordionHeader targetId="1">filtros</AccordionHeader>
-            <AccordionBody accordionId="1">
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div>
-                  <Label>Reporte</Label>
-                  <Input type="text"></Input>
-                </div>
-              </div>
-              <div className="formulario">
-                <div>
-                  <Label>Fecha inicial</Label>
-                  <Input type="date"></Input>
-                </div>
-                <div>
-                  <Label>Fecha final</Label>
-                  <Input type="date"></Input>
-                </div>
-                <div>
-                  <Label>Sucursal</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Compañia</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Cliente</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Almacen</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Tipo de movimiento</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Proveedor</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Estilista</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Metodo de pago</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Empresa</Label>
-                  <Input type="text"></Input>
-                </div>
-                <div>
-                  <Label>Sucursal destino</Label>
-                  <Input type="text"></Input>
-                </div>
-              </div>
-              <br />
 
-              <div className="d-flex justify-content-end ">
-                <Button className="ml-auto">Consultar</Button>
-              </div>
-            </AccordionBody>
-          </AccordionItem>
-        </UncontrolledAccordion> */}
         <hr />
       </Container>
       <Container style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>

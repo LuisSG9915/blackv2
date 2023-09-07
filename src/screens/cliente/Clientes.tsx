@@ -19,6 +19,7 @@ import {
   TabPane,
   Col,
   Card,
+  CardBody
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -40,7 +41,10 @@ import { Sucursal } from "../../models/Sucursal";
 
 import { LuCalendarSearch } from "react-icons/lu";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+import { Venta } from "../../models/Venta";
 
+import { FaShoppingCart, FaUser } from "react-icons/fa";
+import id from "date-fns/locale/id/index.js";
 
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -92,7 +96,52 @@ function Clientes() {
     claveRegistroMovil: "",
     fecha_alta: "",
     fecha_act: "",
+    redsocial1: "",
+    redsocial2: "",
+    redsocial3: "",
   });
+
+
+  const [dataTemporal, setDataTemporal] = useState<Venta>({
+    id: 0,
+    Sucursal: 0,
+    Fecha: "",
+    Caja: 1,
+    No_venta: 1,
+    Clave_prod: 1,
+    Cant_producto: 1,
+    Precio: 0,
+    Precio_base: 0,
+    Cve_cliente: 0,
+    Tasa_iva: 0.16,
+    ieps: 0,
+    Observacion: "",
+    Descuento: 0,
+    Clave_Descuento: 0,
+    Usuario: 0,
+    Credito: false,
+    Corte: 1,
+    Corte_parcial: 1,
+    Costo: 1,
+    cancelada: false,
+    idEstilista: 0,
+    folio_estilista: 1,
+    hora: 8,
+    tiempo: 1,
+    terminado: false,
+    validadoServicio: false,
+    Cia: 0,
+    cliente: "",
+    d_estilista: "",
+    d_producto: "",
+    d_existencia: "",
+    estilista: "",
+    producto: "",
+    formaPago: 0,
+    idestilistaAux: 0,
+    idRecepcionista: 0,
+  });
+
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
@@ -196,7 +245,52 @@ function Clientes() {
     return camposVacios.length === 0;
   };
 
+
   const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      await jezaApi
+        .post("/Cliente", null, {
+          params: {
+            nombre: form.nombre,
+            domicilio: form.domicilio,
+            ciudad: form.ciudad,
+            estado: form.estado,
+            colonia: form.colonia,
+            cp: form.cp,
+            telefono: form.telefono,
+            email: form.email,
+            fecha_nac: form.fecha_nac,
+            redsocial1: form.redsocial1,
+            redsocial2: "...",
+            redsocial3: "...",
+
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Cliente creado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalInsertar(false);
+          getCliente();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+
+  const insertar1 = async () => {
     /* CREATE */
     const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
     if (permiso === false) {
@@ -207,7 +301,9 @@ function Clientes() {
     if (validarCampos() === true) {
       await jezaApi
         .post(
-          `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
+          // `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
+          `/ Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${form.redsocial1}&redsocial2="..."&redsocial3="..."`
+
         )
         .then((response) => {
           Swal.fire({
@@ -259,6 +355,9 @@ function Clientes() {
             claveRegistroMovil: form.claveRegistroMovil ? form.claveRegistroMovil : "...",
             fecha_alta: fechaHoy,
             fecha_act: fechaHoy,
+            rs1: form.redSocial1,
+            rs2: "...",
+            rs3: "...",
           },
         })
         .then((response) => {
@@ -353,8 +452,39 @@ function Clientes() {
   const mostrarModalDetalle = (dato: Cliente) => {
     setModalDetalle(true);
     historial(dato.id_cliente);
+    historialCitaFutura(dato.id_cliente);
     setClienteSeleccionado(dato);
+
   };
+
+
+  // const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
+  const [modalOpen, setModalOpenH] = useState(false);
+
+  const toggleModalHistorialFutura = () => {
+    setModalOpenH(!modalOpen);
+  };
+
+  // const historialCitaFutura = (dato: any) => {
+  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+  //     setData1(response.data);
+  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+  //   });
+  // };
+  const [datah1, setData2] = useState<any[]>([]);
+
+  const historialCitaFutura = (dato: any) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${id}`).then((response) => {
+      const dataConFechasFormateadas = response.data.map((item: any) => ({
+        ...item,
+        fechaCita: new Date(item.fechaCita).toLocaleDateString(),
+        fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
+      }));
+      setData2(dataConFechasFormateadas);
+      toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
+  };
+
 
   // const mostrarModalDetalle = async (dato: Cliente) => {
   //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
@@ -395,6 +525,9 @@ function Clientes() {
       claveRegistroMovil: "",
       fecha_alta: "",
       fecha_act: "",
+      redsocial1: "",
+      redsocial2: "",
+      redsocial3: "",
     });
   };
 
@@ -501,6 +634,18 @@ function Clientes() {
     fecha: "",
   });
 
+  const [totalImportes, setTotalImportes] = useState(0);
+
+  // Cuando cambia historialDetalle, recalcula el total de importes
+  useEffect(() => {
+    const total = historialDetalle.reduce((accumulator, item) => {
+      const importe = parseFloat(item.importe);
+      return accumulator + importe;
+    }, 0);
+    setTotalImportes(total);
+  }, [historialDetalle]);
+
+
   const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
     await jezaApi
       .get(`/HistorialDetalle?suc=${idSucursal}&cliente=${cveCliente}&venta=${noVenta}&serv=${idProducto}`)
@@ -536,25 +681,45 @@ function Clientes() {
     () => [
       {
         header: "Acciones",
-        Cell: ({ row }) => (
-          <LuCalendarSearch size={23}
-            onClick={() => {
-              console.log(row.original);
-              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
-              setParamsDetalles({
-                Cve_cliente: row.original.Cve_cliente,
-                idProducto: row.original.idProducto,
-                numVenta: row.original.NumVenta,
-                sucursal: row.original.NombreSuc,
-                clave: row.original.id,
-                fecha: row.original.Fecha,
-              });
-              setIsModalOpen(true);
-            }}
+        Cell: ({ row }) => {
+          let icono;
+          let isDisabled = false; // Por defecto, el botón no está deshabilitado
 
+          // Analizar la clave para determinar si es un producto o un servicio
+          if (row.original.Clave.endsWith("P")) {
+            // Si la clave termina con "P", se trata de un producto
+            icono = <FaShoppingCart size={23} />;
+            isDisabled = true; // Marcar el botón como deshabilitado para productos
+          } else if (row.original.Clave.endsWith("S")) {
+            // Si la clave termina con "S", se trata de un servicio
+            icono = <FaUser size={23} />;
+          } else {
+            // Si no coincide con ninguna de las anteriores, se usa un icono predeterminado
+            icono = <LuCalendarSearch size={23} />;
+          }
 
-          />
-        ),
+          return (
+            <div>
+              <button
+                disabled={isDisabled} // Establecer la propiedad disabled según isDisabled
+                onClick={() => {
+                  loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+                  setParamsDetalles({
+                    Cve_cliente: row.original.Cve_cliente,
+                    idProducto: row.original.idProducto,
+                    numVenta: row.original.NumVenta,
+                    sucursal: row.original.NombreSuc,
+                    clave: row.original.id,
+                    fecha: row.original.Fecha,
+                  });
+                  setIsModalOpen(true);
+                }}
+              >
+                {icono}
+              </button>
+            </div>
+          );
+        },
         muiTableBodyCellProps: {
           align: "center",
         },
@@ -562,6 +727,7 @@ function Clientes() {
           align: "center",
         },
       },
+
       {
         accessorKey: "Cve_cliente",
         header: "Cliente",
@@ -702,7 +868,6 @@ function Clientes() {
     ],
     []
   );
-
   const columnsclientes: MRT_ColumnDef<Cliente>[] = useMemo(
     () => [
       {
@@ -725,6 +890,11 @@ function Clientes() {
       {
         accessorKey: "telefono",
         header: "Teléfono",
+        size: 100,
+      },
+      {
+        accessorKey: "redSocial1",
+        header: "Instagram",
         size: 100,
       },
       {
@@ -937,6 +1107,39 @@ function Clientes() {
               />
               <br />
             </Col>
+            <Col sm="6">
+              <Label>Instagram:</Label>
+              <Input
+                type="email"
+                name={"redsocial1"}
+                onChange={(e) => setForm({ ...form, redsocial1: String(e.target.value) })}
+                defaultValue={form.redsocial1}
+              />
+              <br />
+            </Col>
+            {/* <Col sm="6">
+              <Label>Red social 2:</Label>
+              <Input
+                type="email"
+                name={"redsocial2"}
+                onChange={(e) => setForm({ ...form, redsocial2: String(e.target.value) })}
+                defaultValue={form.redsocial2}
+              />
+              <br />
+            </Col>
+            <Col sm="6">
+              <Label>Red social 3:</Label>
+              <Input
+                type="email"
+                name={"redsocial3"}
+                onChange={(e) => setForm({ ...form, redsocial3: String(e.target.value) })}
+                defaultValue={form.redsocial3}
+              />
+              <br />
+            </Col> */}
+
+
+
           </Row>
         </ModalBody>
         <ModalFooter>
@@ -1085,6 +1288,16 @@ function Clientes() {
                         name={"email"}
                         onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
                         defaultValue={form.email}
+                      />
+                      <br />
+                    </Col>
+                    <Col sm="6">
+                      <Label>Instagram:</Label>
+                      <Input
+                        type="email"
+                        name={"redSocial1"}
+                        onChange={(e) => setForm({ ...form, redSocial1: String(e.target.value) })}
+                        defaultValue={form.redSocial1}
                       />
                       <br />
                     </Col>
@@ -1336,9 +1549,52 @@ function Clientes() {
                       // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
+                    <br />
+                    <div>
+                      <Card style={{ width: "700px", height: "400px" }}>
+                        <CardBody>
+                          <h3>Historial citas futuras</h3>
+                          <br />
+                          <div>
+                            <Table hover className="table-responsive">
+                              <thead>
+                                <tr>
+                                  <th>Fecha</th>
+                                  <th>Hora</th>
+                                  <th>Sucursal</th>
+                                  <th>Servicio</th>
+                                  <th>Estilista</th>
+                                  <th>Usuario</th>
+                                  <th>Feha alta cita</th>
+                                  {/* Agrega más encabezados según tus datos */}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {datah1.map((item, index) => (
+                                  <tr key={index}>
+                                    <td>{item.Fecha}</td>
+                                    <td>{item.hora}</td>
+                                    <td>{item.NombreSuc}</td>
+                                    <td>{item.Producto_Servicio}</td>
+                                    <td>{item.Estilista}</td>
+                                    <td>{item.nombreUsrRegistra}</td>
+                                    <td>{item.Fecha}</td>
+                                    {/* Agrega más celdas según tus datos */}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </div>
+
+                    <br />
                   </TabPane>
                 </TabContent>
+
               </Card>
+
             </Container>
           )}
 
@@ -1370,11 +1626,24 @@ function Clientes() {
         <ModalBody>
           <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
             <Table>
-              <thead >
+              <thead>
                 <tr>
-                  <th><p><strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}</p></th>
-                  <th><p><strong>No. Venta: </strong>{paramsDetalles.numVenta}</p></th>
-                  <th><p><strong>Sucursal:</strong> {paramsDetalles.sucursal}</p></th>
+                  <th>
+                    <p>
+                      <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>No. Venta: </strong>
+                      {paramsDetalles.numVenta}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                    </p>
+                  </th>
                 </tr>
               </thead>
             </Table>
@@ -1384,6 +1653,7 @@ function Clientes() {
                   <th>Insumo</th>
                   <th>Cantidad</th>
                   <th>Precio</th>
+                  <th>Importe</th>
                 </tr>
               </thead>
               <tbody>
@@ -1391,14 +1661,15 @@ function Clientes() {
                   <tr key={index}>
                     <td>{item.Insumo}</td>
                     <td>{item.Cant}</td>
-                    <td>$ 10.00</td>
+                    <td>{item.precio}</td>
+                    <td>{item.importe}</td>
                   </tr>
                 ))}
               </tbody>
             </Table>
             <div>
               <p style={{ textAlign: "left" }}>
-                <strong>Total: $20.00</strong>
+                <strong>Total: ${totalImportes.toFixed(2)}</strong>
               </p>
             </div>
           </div>
