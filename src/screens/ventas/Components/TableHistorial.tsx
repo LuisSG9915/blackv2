@@ -2,7 +2,10 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import React, { useMemo } from "react";
 import { LuCalendarSearch } from "react-icons/lu";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
+import { Box, Button } from "@mui/material";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
+import { ExportToCsv } from "export-to-csv"; //or use your library of choice here
 interface Props {
   datah: any[];
   loadHistorialDetalle: (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => Promise<void>;
@@ -18,6 +21,7 @@ interface Props {
   ) => void;
   setIsModalOpen: (value: React.SetStateAction<boolean>) => void;
 }
+
 function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsModalOpen }: Props) {
   const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
     () => [
@@ -71,7 +75,12 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
               <button
                 disabled={isDisabled} // Establecer la propiedad disabled según isDisabled
                 onClick={() => {
-                  loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+                  loadHistorialDetalle(
+                    row.original.Cve_cliente,
+                    row.original.NumVenta,
+                    row.original.idProducto,
+                    row.original.sucursal
+                  );
                   setParamsDetalles({
                     Cve_cliente: row.original.Cve_cliente,
                     idProducto: row.original.idProducto,
@@ -191,7 +200,11 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -236,6 +249,31 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
     ],
     []
   );
+
+  // Configuración de las opciones de exportación CSV
+  const csvOptions = {
+    fieldSeparator: ",",
+    quoteStrings: '"',
+    decimalSeparator: ".",
+    showLabels: true,
+    useBom: true,
+    useKeysAsHeaders: false,
+    headers: cHistorial.map((c) => c.header),
+  };
+
+  // Crea una instancia de ExportToCsv con las opciones
+  const csvExporter = new ExportToCsv(csvOptions);
+
+  // Función para exportar las filas especificadas
+  const handleExportRows = (rows) => {
+    csvExporter.generateCsv(rows.map((row) => row.original));
+  };
+
+  // Función para exportar todos los datos
+  const handleExportData = () => {
+    csvExporter.generateCsv(datah.map((row) => row.original));
+  };
+
   return (
     <MaterialReactTable
       columns={cHistorial}
@@ -247,7 +285,21 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
         },
         density: "compact",
       }}
-    // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+      renderTopToolbarCustomActions={({ table }) => (
+        <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}>
+          <Button
+            color="primary"
+            //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
+
+            onClick={handleExportData}
+            startIcon={<FileDownloadIcon />}
+            variant="contained"
+          >
+            Export All Data
+          </Button>
+        </Box>
+      )}
+      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
     />
   );
 }

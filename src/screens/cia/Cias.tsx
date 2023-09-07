@@ -2,7 +2,20 @@ import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { Row, Container, Col, Card, InputGroup, Alert, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import {
+  Row,
+  Container,
+  Col,
+  Card,
+  InputGroup,
+  Alert,
+  Input,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
@@ -23,8 +36,16 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [data, setData] = useState<Cia[]>([]);
   const [form, setForm] = useState<Cia>({
@@ -209,7 +230,7 @@ function Cias() {
     });
   };
 
-  const getCias = () => {
+  const getCias = async () => {
     jezaApi
       .get("/Cia?id=0")
       .then((response) => setData(response.data))
@@ -316,6 +337,8 @@ function Cias() {
     );
   }
 
+  // Verificar el permiso antes de renderizar el contenido
+
   return (
     <>
       <Row>
@@ -368,19 +391,39 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="nombre"
+                  labelName="Nombre:"
+                  value={form.nombre}
+                />
               </Col>
               <Col md="6">
                 <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="domicilio"
+                  labelName="Domicilio:"
+                  value={form.domicilio}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="regimenFiscal"
+                  labelName="Régimen fiscal:"
+                  value={form.regimenFiscal}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="cpFiscal"
+                  labelName="Código postal:"
+                  value={form.cpFiscal}
+                />
               </Col>
             </Row>
           </FormGroup>
@@ -404,19 +447,39 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="nombre"
+                  labelName="Nombre:"
+                  value={form.nombre}
+                />
               </Col>
               <Col md="6">
                 <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="domicilio"
+                  labelName="Domicilio:"
+                  value={form.domicilio}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="regimenFiscal"
+                  labelName="Régimen fiscal:"
+                  value={form.regimenFiscal}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="cpFiscal"
+                  labelName="Código postal:"
+                  value={form.cpFiscal}
+                />
               </Col>
             </Row>
           </FormGroup>

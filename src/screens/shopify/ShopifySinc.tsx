@@ -6,8 +6,8 @@ import axios from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+
 function ShopifySinc() {
-  const { filtroSeguridad, session } = useSeguridad();
   const [ordersJson, setOrdersJson] = useState(null);
   const [clientJson, setClientJson] = useState(null);
   const [productJson, setProductJson] = useState(null);
