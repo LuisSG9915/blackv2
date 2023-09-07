@@ -626,7 +626,7 @@ function AreaDeptoClases() {
     },
 
     // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
-    { field: "area", headerName: "Áreas", flex: 1, headerClassName: "custom-header" },
+    { field: "descripcion", headerName: "Áreas", flex: 1, headerClassName: "custom-header" },
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {

@@ -24,5 +24,10 @@ export interface Cliente {
     regimenFiscal:      string;
     claveRegistroMovil: string;
     fecha_alta: string
-    fecha_act: string   
+    fecha_act: string  
+    //se agregaron 06-09-2023
+    redsocial1:string;
+    redSocial1?: string;
+    redsocial2:string;
+    redsocial3: string;
 }

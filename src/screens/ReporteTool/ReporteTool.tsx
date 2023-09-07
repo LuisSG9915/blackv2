@@ -28,6 +28,7 @@ import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Box } from "@mui/material";
 import Swal from "sweetalert2";
+import { set } from "date-fns";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -41,6 +42,22 @@ function ReporteTool() {
   const [selectedIdC, setSelectedIdC] = useState("");
   const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
   const [trabajador, setTrabajadores] = useState([]);
+
+  const [showClienteInput, setShowClienteInput] = useState(false);
+  const [showSucursalInput, setShowSucursalInput] = useState(false);
+
+  const [showEstilistaInput, setShowEstilistaInput] = useState(false);
+  const [showEmpresaInput, setShowEmpresaInput] = useState(false);
+  const [showSucDesInput, setShowSucDesInput] = useState(false);
+  const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
+  const [showAlmDestInput, setShowAlmDestInput] = useState(false);
+  const [showTipoMovtoInput, setShowTipoMovtoInput] = useState(false);
+  const [showProveedorInput, setShowProveedorInput] = useState(false);
+  const [showMetodoPagoInput, setShowMetodoPagoInput] = useState(false);
+  const [showClaveProdInput, setShowClaveProdInput] = useState(false);
+  const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
+  const [showTipoPagoInput, setshowTipoPagoInput] = useState(false);
+
   const [tablaData, setTablaData] = useState({
     data: [],
     columns: [],
@@ -82,6 +99,7 @@ function ReporteTool() {
 
   const ejecutaReporte = (reporte) => {
     // Copiamos el formulario actual para no modificar el estado original
+
     const formData = { ...formulario };
 
     // Reemplazamos los campos vacíos con '%'
@@ -101,8 +119,14 @@ function ReporteTool() {
       return;
     }
 
-    // Construimos la cadena de consulta manualmente
-    const queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    let queryString = "";
+    if (reporte == "sp_reporte5_Ventas") {
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formData.clave_prod}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+    } else if (reporte == "sp_reporte4_Estilistas") {
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formData.area}&depto=${formData.depto}`;
+    } else {
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    }
 
     jezaApi
 
@@ -129,18 +153,26 @@ function ReporteTool() {
   };
 
   const handleExportData = () => {
-    const csvOptions = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalSeparator: ".",
-      showLabels: true,
-      useBom: true,
-      useKeysAsHeaders: false,
-      headers: columnas.map((col) => col.header),
-    };
+    // Verificar si reportes contiene datos
+    if (reportes.length > 0) {
+      // Obtener los nombres de las columnas de la primera fila de datos (asumiendo que todas las filas tienen las mismas columnas)
+      const columnHeaders = Object.keys(reportes[0]);
 
-    const csvExporter = new ExportToCsv(csvOptions);
-    csvExporter.generateCsv(reportes);
+      const csvOptions = {
+        fieldSeparator: ",",
+        quoteStrings: '"',
+        decimalSeparator: ".",
+        showLabels: true,
+        useBom: true,
+        useKeysAsHeaders: false,
+        headers: columnHeaders, // Utiliza los nombres de columnas obtenidos de los datos
+      };
+
+      const csvExporter = new ExportToCsv(csvOptions);
+      csvExporter.generateCsv(reportes);
+    } else {
+      Swal.fire("", "No hay datos para exportar", "info");
+    }
   };
 
   // Filtrar los datos para excluir la columna "id" y sus valores
@@ -167,6 +199,11 @@ function ReporteTool() {
     empresa: "",
     sucursalDestino: "",
     almacenDestino: "",
+    clave_prod: "",
+    tipoDescuento: "",
+    tipoPago: "",
+    area: "",
+    depto: "",
   });
 
   const handleChange = (event) => {
@@ -175,6 +212,29 @@ function ReporteTool() {
       ...prevFormulario,
       [name]: value,
     }));
+
+    if (name === "reporte") {
+      if (value === "RepVtaSucEstilista" || value === "RepVtaDetalle" || value === "RepVtaSucFecha") {
+        // Mostrar los campos para estos informes
+        setShowEmpresaInput(true);
+        setShowSucursalInput(true);
+        setShowClienteInput(true);
+        setShowEstilistaInput(true);
+      } else if (value === "sp_reporte5_Ventas") {
+        setShowEmpresaInput(true);
+        setShowSucursalInput(true);
+        setShowClaveProdInput(true);
+        setShowTipoDescuentoInput(true);
+        setShowEstilistaInput(true);
+        setShowMetodoPagoInput(true);
+      } else {
+        setShowEmpresaInput(false);
+        setShowSucursalInput(false);
+        setShowClienteInput(false);
+        setShowEstilistaInput(false);
+      }
+      // Agrega lógica similar para otros campos según sea necesario
+    }
   };
 
   const handleConsultar = (reporte) => {
@@ -281,138 +341,181 @@ function ReporteTool() {
                     bsSize="sm"
                   />
                 </div>
+                {showSucursalInput ? (
+                  <div>
+                    <Label>Sucursal:</Label>
+                    <Input
+                      type="select"
+                      name="sucursal"
+                      value={formulario.sucursal}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione la sucursal</option>
 
-                <div>
-                  <Label>Sucursal:</Label>
-                  <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione la sucursal</option>
+                      {dataSucursales.map((item) => (
+                        <option value={item.sucursal}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
 
-                    {dataSucursales.map((item) => (
-                      <option value={item.sucursal}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
+                {showClienteInput ? (
+                  <div>
+                    <>
+                      <Label>Clientes:</Label>
+                      <InputGroup>
+                        {" "}
+                        <Input
+                          type="text"
+                          name="cliente"
+                          value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                          bsSize="sm"
+                          placeholder="Ingrese el cliente"
+                        />
+                        <Button size="sm" color="secondary" onClick={abrirModal}>
+                          seleccionar
+                        </Button>
+                      </InputGroup>
+                    </>
+                  </div>
+                ) : null}
 
-                <div>
-                  <Label>Clientes:</Label>
-                  {/* <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione el cliente</option>
+                {showEstilistaInput ? (
+                  <div>
+                    <Label>Estilista:</Label>
+                    <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
 
-                    {dataClientes.map((item) => (
-                      <option value={item.id_cliente}>{item.nombre}</option>
-                    ))}
-                  </Input> */}
-                  <InputGroup>
-                    {" "}
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+                {showEmpresaInput ? (
+                  <div>
+                    <Label>Empresa:</Label>
+                    <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange} bsSize="sm">
+                      <option value="">Seleccione la empresa</option>
+
+                      {dataCias.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showSucDesInput ? (
+                  <div>
+                    <Label>Sucursal destino:</Label>
                     <Input
                       type="text"
-                      name="cliente"
-                      value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                      name="sucursalDestino"
+                      value={formulario.sucursalDestino}
+                      onChange={handleChange}
+                      disabled={!data[0]?.sucDestino}
                       bsSize="sm"
-                      placeholder="Ingrese el cliente"
                     />
-                    <Button size="sm" color="secondary" onClick={abrirModal}>
-                      seleccionar
-                    </Button>
-                  </InputGroup>
-                </div>
+                  </div>
+                ) : null}
 
-                <div>
-                  <Label>Estilista:</Label>
-                  <Input
-                    type="select"
-                    name="estilista"
-                    value={formulario.estilista}
-                    onChange={handleChange}
-                    bsSize="sm"
-                  >
-                    <option value="">Seleccione un Estilista</option>
+                {showAlmOrigenInput ? (
+                  <div>
+                    <Label>Almacen origen:</Label>
+                    <Input
+                      type="text"
+                      name="almacen"
+                      value={formulario.almacen}
+                      onChange={handleChange}
+                      disabled={!data[0]?.almacenOrigen}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showAlmDestInput ? (
+                  <div>
+                    <Label>Almacen destino:</Label>
+                    <Input
+                      type="text"
+                      name="almacendestino"
+                      value={formulario.almacenDestino}
+                      onChange={handleChange}
+                      disabled={!data[0]?.almacenDestino}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showTipoMovtoInput ? (
+                  <div>
+                    <Label>Tipo de movimiento:</Label>
+                    <Input
+                      type="text"
+                      name="tipoMovimiento"
+                      value={formulario.tipoMovimiento}
+                      onChange={handleChange}
+                      disabled={!data[0]?.tipomovto}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
 
-                    {dataUsuarios.map((item) => (
-                      <option value={item.id}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
-
-                <div>
-                  <Label>Empresa:</Label>
-                  <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione la empresa</option>
-
-                    {dataCias.map((item) => (
-                      <option value={item.id}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
-
-                <div>
-                  <Label>Sucursal destino:</Label>
-                  <Input
-                    type="text"
-                    name="sucursalDestino"
-                    value={formulario.sucursalDestino}
-                    onChange={handleChange}
-                    disabled={!data[0]?.sucDestino}
-                    bsSize="sm"
-                  />
-                </div>
-
-                <div>
-                  <Label>Almacen origen:</Label>
-                  <Input
-                    type="text"
-                    name="almacen"
-                    value={formulario.almacen}
-                    onChange={handleChange}
-                    disabled={!data[0]?.almacenOrigen}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Almacen destino:</Label>
-                  <Input
-                    type="text"
-                    name="almacendestino"
-                    value={formulario.almacenDestino}
-                    onChange={handleChange}
-                    disabled={!data[0]?.almacenDestino}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Tipo de movimiento:</Label>
-                  <Input
-                    type="text"
-                    name="tipoMovimiento"
-                    value={formulario.tipoMovimiento}
-                    onChange={handleChange}
-                    disabled={!data[0]?.tipomovto}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Proveedor:</Label>
-                  <Input
-                    type="text"
-                    name="proveedor"
-                    value={formulario.proveedor}
-                    onChange={handleChange}
-                    disabled={!data[0]?.proveedor}
-                    bsSize="sm"
-                  />
-                </div>
-
-                <div>
-                  <Label>Método de pago:</Label>
-                  <Input
-                    type="text"
-                    name="metodoPago"
-                    value={formulario.metodoPago}
-                    onChange={handleChange}
-                    disabled={!data[0]?.metodoPago}
-                    bsSize="sm"
-                  />
-                </div>
+                {showProveedorInput ? (
+                  <div>
+                    <Label>Proveedor:</Label>
+                    <Input
+                      type="text"
+                      name="proveedor"
+                      value={formulario.proveedor}
+                      onChange={handleChange}
+                      disabled={!data[0]?.proveedor}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showMetodoPagoInput ? (
+                  <div>
+                    <Label>Método de pago:</Label>
+                    <Input
+                      type="text"
+                      name="metodoPago"
+                      value={formulario.metodoPago}
+                      onChange={handleChange}
+                      disabled={!data[0]?.metodoPago}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showTipoDescuentoInput ? (
+                  <div>
+                    <Label>Tipo de descuento:</Label>
+                    <Input
+                      type="text"
+                      name="tipoDescuento"
+                      value={formulario.tipoDescuento}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showClaveProdInput ? (
+                  <div>
+                    <Label>Clave producto</Label>
+                    <Input
+                      type="text"
+                      name="clave_prod"
+                      value={formulario.clave_prod}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
               </div>
               <br />
               <div className="d-flex justify-content-end">
