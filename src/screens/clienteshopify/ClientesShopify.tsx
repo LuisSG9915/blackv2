@@ -352,7 +352,7 @@ function ClientesShopify() {
           </Button>
         </ModalFooter>
       </Modal>
-
+      +
       {/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}> <h3>Seleccione cliente</h3></ModalHeader>

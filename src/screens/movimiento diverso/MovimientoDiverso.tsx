@@ -247,6 +247,7 @@ function MovimientoDiversos() {
   }, [dataAjustes]);
 
   const [estados, setEstados] = useState(false);
+
   const [usuarioResponsable, setUsuarioResponsable] = useState("");
   const [informative, setInformative] = useState({
     totalCantidadEntrada: 0,
@@ -686,28 +687,28 @@ function MovimientoDiversos() {
               <tbody>
                 {dataAjustesBusquedas
                   ? dataAjustesBusquedas.map((ajuste) => (
-                      <tr>
-                        <td>
-                          <AiOutlineSelect
-                            onClick={() => {
-                              setform({
-                                ...form,
-                                folio: Number(ajuste.folio),
-                                tipo_movto: ajuste.tipo_movto,
-                                fecha: ajuste.fecha.split("T")[0],
-                              });
-                              setModalBusqueda(false);
-                              console.log(ajuste);
-                            }}
-                          ></AiOutlineSelect>
-                        </td>
-                        <td>{ajuste.folio}</td>
-                        <td>{ajuste.descripcion}</td>
-                        <td>{ajuste.items}</td>
-                        <td>{ajuste.nombreUsuario}</td>
-                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                      </tr>
-                    ))
+                    <tr>
+                      <td>
+                        <AiOutlineSelect
+                          onClick={() => {
+                            setform({
+                              ...form,
+                              folio: Number(ajuste.folio),
+                              tipo_movto: ajuste.tipo_movto,
+                              fecha: ajuste.fecha.split("T")[0],
+                            });
+                            setModalBusqueda(false);
+                            console.log(ajuste);
+                          }}
+                        ></AiOutlineSelect>
+                      </td>
+                      <td>{ajuste.folio}</td>
+                      <td>{ajuste.descripcion}</td>
+                      <td>{ajuste.items}</td>
+                      <td>{ajuste.nombreUsuario}</td>
+                      <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                    </tr>
+                  ))
                   : null}
               </tbody>
             </Table>

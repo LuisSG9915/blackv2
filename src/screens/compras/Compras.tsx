@@ -44,6 +44,7 @@ import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
 import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
 import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
 import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function Compras() {
   const { dataProveedores } = useProveedor();
@@ -52,6 +53,7 @@ function Compras() {
   const [isCrearOpen, setIsCrearOpen] = useState<boolean>(false);
   const [modalOpen3, setModalOpen3] = useState<boolean>(false);
   const [modalImpresion, setModalImpresion] = useState<boolean>(false);
+  const { filtroSeguridad, session } = useSeguridad();
   const TableDataHeader = ["Productos", "Existencias", "Acciones"];
   const TableDataHeaderCompras = [
     "Clave",
@@ -80,12 +82,12 @@ function Compras() {
     // Verifica si todos los campos requeridos tienen valores
     const camposIncompletos = camposRequeridos.filter((campo) => !dataCompras[campo]);
 
-    if (!dataCompras.idProveedor || camposIncompletos.length > 0) {
-      if (!dataCompras.idProveedor) {
-        Swal.fire("", "El campo 'idProveedor' es obligatorio.", "error");
+    if (dataCompras.idProveedor || camposIncompletos.length > 0) {
+      if (Number(dataCompras.idProveedor === 0)) {
+        Swal.fire("Campos obligatorios", "El campo 'idProveedor' es obligatorio.", "error");
       } else {
         const camposFaltantes = camposIncompletos.join(", ");
-        Swal.fire("", `Faltan los siguientes campos por llenar: ${camposFaltantes}`, "error");
+        Swal.fire("Campos obligatorios", `Faltan los siguientes campos por llenar: ${camposFaltantes}`, "error");
       }
     } else {
       // Si todos los campos requeridos están llenos, puedes continuar con el proceso
@@ -108,7 +110,7 @@ function Compras() {
       costoCompra: 0,
       Usuario: 0,
       finalizado: false,
-      d_proveedor: "",
+      idProveedor: 0,
       d_producto: "",
       d_unidadMedida: "",
       d_unidadTraspaso: 0,
@@ -164,6 +166,10 @@ function Compras() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name == "idProveedor" && value == "0") {
+      setDataCompras({ ...dataCompras, d_Encargado: "", idProveedor: 0 })
+
+    }
     setDataCompras((prevState: any) => ({ ...prevState, [name]: value }));
     console.log({ dataCompras });
   };
@@ -263,6 +269,10 @@ function Compras() {
   };
 
   const postCompra = () => {
+    // const permiso = await filtroSeguridad("CAT_EMPRE_UPD");
+    // if (permiso === false) {
+    //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    // }
     // Validar los datos antes de hacer la solicitud
     if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
       // alert("Por favor, complete los campos obligatorios.");
@@ -371,6 +381,7 @@ function Compras() {
       Usuario: 0,
       finalizado: false,
       d_proveedor: "",
+      d_Encargado: "",
     });
     console.log(dataCompras);
   };
@@ -665,13 +676,13 @@ function Compras() {
       </Row>
       <Container>
         {/* alertas */}
-        <Alert color="success" isOpen={creado} toggle={() => setVisible1(false)}>
+        {/* <Alert color="success" isOpen={creado} toggle={() => setVisible1(false)}>
           Registro guardado con exito
         </Alert>
         <Alert color="danger" isOpen={error} toggle={() => setVisible4(false)}>
           Error: idPaquete e idPieza no pueden ser iguales
-        </Alert>
-        <br />
+        </Alert> */}
+
         <h1>Compras</h1>
         <br />
         <Row>
@@ -743,41 +754,43 @@ function Compras() {
       {/* <Label>Usuario: {dataUsuarios[0].d_perfil ? dataUsuarios[0].d_perfil : "cbinfortmatica"}</Label> */}
       <Container>
         <div className="alineación-derecha">
-          <InputGroup className="alineación-derecha">
-            <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
-              <BiAddToQueue size={30} />
-              Agregar
-            </Button>
-            <Button
-              disabled={!Number(dataCompras?.folioValidacion) > 0}
-              color="primary"
-              onClick={() => {
-                setDataCompras({
-                  bonificaciones: 0,
-                  cantidad: 0,
-                  cantidadFactura: 0,
-                  cantidadMalEstado: 0,
-                  cia: 0,
-                  clave_prod: 0,
-                  costoCompra: 0,
-                  costounitario: 0,
-                  d_proveedor: "",
-                  fecha: "",
-                  finalizado: false,
-                  folioDocumento: "",
-                  id: 0,
-                  id_compra: 0,
-                  idProveedor: 0,
-                  idSucursal: 0,
-                  Usuario: 0,
-                });
-                setDisabledFecha(false);
-              }}
-            >
-              Nuevo
-              <BiTag size={30} />
-            </Button>
-          </InputGroup>
+
+          <Button style={{ marginRight: 5 }} disabled={Number(dataCompras?.id_compra) > 0} color="success" onClick={toggleCrearModal}>
+            <BiAddToQueue size={30} />
+            Agregar
+          </Button>
+          <Button
+            disabled={!dataComprasGeneral.length > 0}
+            color="primary"
+
+            onClick={() => {
+              setDataCompras({
+                bonificaciones: 0,
+                cantidad: 0,
+                cantidadFactura: 0,
+                cantidadMalEstado: 0,
+                cia: 0,
+                clave_prod: 0,
+                costoCompra: 0,
+                costounitario: 0,
+                d_proveedor: "",
+                fecha: "",
+                finalizado: false,
+                folioDocumento: "",
+                id: 0,
+                id_compra: 0,
+                idProveedor: 0,
+                idSucursal: 0,
+                Usuario: 0,
+                d_Encargado: "",
+              });
+              setDisabledFecha(false);
+            }}
+          >
+            Nuevo
+            <BiTag size={30} />
+          </Button>
+
         </div>
         <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
           <thead>
@@ -924,19 +937,19 @@ function Compras() {
             <div className="d-flex  justify-content-start ">
               <Button
                 disabled={disabledFecha || dataComprasGeneral.length === 0}
-                style={{ marginRight: 10 }}
+                style={{ marginRight: 5 }}
                 onClick={() => putFinalizaCompra()}
                 color="success"
               >
                 Finalizado
                 <CgPlayListCheck size={30} />
               </Button>
-              <InputGroup size="sm">
-                <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
-                  <BiSearchAlt size={35} />
-                  Consultar
-                </Button>
-              </InputGroup>
+
+              <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
+                <BiSearchAlt size={30} />
+                Consultar
+              </Button>
+
             </div>
           </Col>
         </Row>
