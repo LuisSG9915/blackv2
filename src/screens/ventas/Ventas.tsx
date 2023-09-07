@@ -126,7 +126,7 @@ const Ventas = () => {
   useEffect(() => {
     setDataTemporal((prevDataTemporal) => ({
       ...prevDataTemporal,
-      cliente: nombreCliente ? nombreCliente.toString() : "nada",
+      cliente: nombreCliente ? nombreCliente.toString() : "",
       Cve_cliente: Number(idCliente),
     }));
   }, [nombreCliente, idCliente]);
