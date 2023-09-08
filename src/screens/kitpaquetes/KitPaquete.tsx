@@ -85,11 +85,12 @@ function KitPaquete() {
   });
 
   const { dataPaquetesKits, fetchPaquetesKits } = usePaquetesKits(form);
-  const [arregloInsumo, SetarregloInsumo] = useState<number[]>([]);
+  const [arregloInsumo, setArregloInsumo] = useState<any>();
   useEffect(() => {
     const idInsumo = dataPaquetesKits.map((item) => item.idInsumo);
-    SetarregloInsumo(idInsumo);
-  }, [dataPaquetesKits]);
+    setArregloInsumo(idInsumo ? idInsumo : []);
+    console.log(arregloInsumo);
+  }, [form.id]);
 
   const [filteredData, setFilteredData] = useState([]);
   const [modalKit, setModalKit] = useState(false);
@@ -344,6 +345,7 @@ function KitPaquete() {
         <FcPlus
           className="mr-2"
           onClick={() => {
+            console.log(arregloInsumo);
             if (!arregloInsumo.includes(params.row.id)) {
               if (flagKit) {
                 setModalInsert(true);
@@ -503,6 +505,7 @@ function KitPaquete() {
                         setEstado("insert");
                         setFlagKit(true);
                         setModalKit(true);
+                        console.log(arregloInsumo);
                       }}
                     />
                   </td>

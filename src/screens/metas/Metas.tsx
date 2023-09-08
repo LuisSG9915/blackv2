@@ -59,7 +59,6 @@ function Metas() {
   const { dataCias, fetchCias } = useCias();
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
 
-
   const [form, setForm] = useState<MetasCol>({
     id: 0,
     año: 0,
@@ -148,40 +147,29 @@ function Metas() {
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    }
-    if (validarCampos() === true) {
-      await jezaApi
-        .put(`/sp_cat_colaboradoresMetasUpd`, null, {
-          params: {
-            id: form.id,
-            año: form.año,
-            mes: form.mes,
-            idcolaborador: form.idcolabolador,
-            meta1: form.meta1,
-            meta2: form.meta2,
-            meta3: form.meta3,
-            meta4: form.meta4,
-            meta5: form.meta5,
-            meta6: form.meta6,
-          },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Meta actualizada con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalActualizar(false);
-          getMetas();
-        })
-        .catch((error) => {
-          console.log(error);
+    // const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    // if (permiso === false) {
+    //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    // }
+    // if (validarCampos() === true) {
+    await jezaApi
+      .put(
+        `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=${form.meta6}`
+      )
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          text: "Meta actualizada con éxito",
+          confirmButtonColor: "#3085d6",
         });
-    } else {
-    }
+        setModalActualizar(false);
+        getMetas();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // } else {
+    // }
   };
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
@@ -350,8 +338,10 @@ function Metas() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Metas<HiBuildingStorefront size={35}></HiBuildingStorefront></h1>
-
+          <h1>
+            {" "}
+            Metas<HiBuildingStorefront size={35}></HiBuildingStorefront>
+          </h1>
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
