@@ -259,7 +259,22 @@ function KitPaquete() {
 
     { field: "clave_prod", headerName: "Clave producto", flex: 1, headerClassName: "custom-header" },
     { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
-    { field: "precio", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
+    {
+      field: "precio",
+      headerName: "Precio",
+      flex: 1,
+      headerClassName: "custom-header",
+      renderCell: (params) => {
+        return (
+          <p style={{ textAlign: "center" }}>
+            {params.row.precio.toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+            })}
+          </p>
+        );
+      },
+    },
   ];
 
   const arregloKit = useMemo(() => {
@@ -455,7 +470,15 @@ function KitPaquete() {
                     <Input onChange={handleChange} name="descripcion" defaultValue={form.descripcion} disabled></Input>
                   </td>
                   <td>
-                    <Input onChange={handleChange} name="precio" defaultValue={form.precio} disabled></Input>
+                    <Input
+                      onChange={handleChange}
+                      name="precio"
+                      value={form.precio.toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                      })}
+                      disabled
+                    ></Input>
                   </td>
 
                   <td>
@@ -510,8 +533,18 @@ function KitPaquete() {
                     {/* <td>{falsos.id}</td> */}
                     <td>{falsos.d_insumo}</td>
                     <td>{falsos.cantidad}</td>
-                    <td>{falsos.costo.toFixed(2)}</td>
-                    <td>{falsos.importe.toFixed(2)}</td>
+                    <td>
+                      {falsos.costo.toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                      })}
+                    </td>
+                    <td>
+                      {falsos.importe.toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                      })}
+                    </td>
                     <td></td>
                   </tr>
                 ))}
@@ -521,7 +554,13 @@ function KitPaquete() {
             <br />
             <div>
               <p style={{ textAlign: "right" }}>
-                <strong>Total paquete: ${totalImporte.toFixed(2)}</strong>
+                <strong>
+                  Total paquete:{" "}
+                  {totalImporte.toLocaleString("es-MX", {
+                    style: "currency",
+                    currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                  })}
+                </strong>
               </p>
             </div>
           </Container>
