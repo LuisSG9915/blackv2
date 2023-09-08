@@ -68,6 +68,7 @@ import ReporteTool from "./screens/ReporteTool/ReporteTool";
 import DemoTresTablas from "./screens/ReporteTool/DemoTresTablas";
 import ShopifySinc from "./screens/shopify/ShopifySinc";
 import ClientesShopify from "./screens/clienteshopify/ClientesShopify";
+import Metas from "./screens/metas/Metas";
 
 const router = createBrowserRouter([
   {
@@ -331,6 +332,10 @@ const router = createBrowserRouter([
   {
     path: "/ShopifySinc",
     element: <ShopifySinc />,
+  },
+  {
+    path: "/Metas",
+    element: <Metas />,
   },
 ]);
 

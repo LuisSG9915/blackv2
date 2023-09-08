@@ -118,36 +118,6 @@ function Compras() {
   };
 
 
-
-
-  // const toggleCrearModal = () => {
-  //   if (!dataCompras.idProveedor || dataCompras.fechaDocumento || !dataCompras.folioDocumento) {
-  //     Swal.fire("", "Falta la fecha o documento por ingresar", "info");
-  //   } else {
-  //     fetchProduct4();
-  //     setIsCrearOpen(!isCrearOpen);
-  //   }
-  //   setDataCompras({
-  //     ...dataCompras,
-  //     costoUnitario: 0,
-  //     id: 0,
-  //     id_compra: 0,
-  //     cia: 0,
-  //     idSucursal: 0,
-  //     clave_prod: 0,
-  //     cantidad: 0,
-  //     bonificaciones: 0,
-  //     costounitario: 0,
-  //     costoCompra: 0,
-  //     Usuario: 0,
-  //     finalizado: false,
-  //     d_proveedor: "",
-  //     d_producto: "",
-  //     d_unidadMedida: "",
-  //     d_unidadTraspaso: 0,
-  //   });
-  // };
-
   const filtroProducto = (datoMedico: string) => {
     var resultado = dataProductos.filter((elemento: Producto) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
@@ -199,8 +169,6 @@ function Compras() {
   });
 
   /* alertas */
-  const [creado, setVisible1] = useState(false);
-  const [error, setVisible4] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [idSeleccionado, setIdSeleccionado] = useState(0);
   const [filtroProductos, setFiltroProductos] = useState("");
@@ -269,11 +237,7 @@ function Compras() {
   };
 
   const postCompra = () => {
-    // const permiso = await filtroSeguridad("CAT_EMPRE_UPD");
-    // if (permiso === false) {
-    //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    // }
-    // Validar los datos antes de hacer la solicitud
+
     if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
       // alert("Por favor, complete los campos obligatorios.");
       Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
@@ -609,14 +573,6 @@ function Compras() {
     );
   };
 
-  // const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
-  //   descripcion: "%",
-  //   insumo: 1,
-  //   inventariable: 1,
-  //   obsoleto: 0,
-  //   servicio: 0,
-  //   sucursal: dataUsuarios2[0]?.sucursal,
-  // });
 
   const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
     descripcion: filtroProductos,

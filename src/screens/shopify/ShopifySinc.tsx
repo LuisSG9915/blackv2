@@ -8,18 +8,10 @@ import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function ShopifySinc() {
-  const [ordersJson, setOrdersJson] = useState(null);
   const [clientJson, setClientJson] = useState(null);
-  const [productJson, setProductJson] = useState(null);
   const [error, setError] = useState(null);
-  const [jsonString, setJsonString] = useState("");
 
   const fetchClientes = async () => {
-    // const permiso = await filtroSeguridad("sinc_cliente");
-    // if (permiso === false) {
-    //   return;
-    // }
-
     try {
       // Mostrar SweetAlert de carga
       const loadingAlert = Swal.fire({
@@ -30,7 +22,7 @@ function ShopifySinc() {
         didOpen: () => {
           Swal.showLoading();
           setTimeout(async () => {
-            const response = await axios.get("http://localhost:3001/api/clientes");
+            const response = await axios.get("http://cbinfo.no-ip.info:9086/api/clientes");
 
             if (response.data) {
               // Ocultar SweetAlert de carga y mostrar el mensaje de éxito
@@ -68,7 +60,7 @@ function ShopifySinc() {
         didOpen: () => {
           Swal.showLoading();
           setTimeout(async () => {
-            const response = await axios.get("http://localhost:3001/api/ordenes");
+            const response = await axios.get("http://cbinfo.no-ip.info:9086/api/ordenes");
 
             if (response.data) {
               // Ocultar SweetAlert de carga y mostrar el mensaje de éxito
