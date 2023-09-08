@@ -79,11 +79,11 @@ function Metas() {
   };
 
   //VALIDACIÓN---->
-  const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
+  const [camposFaltantes, setCamposFaltantes] = useState<Number[]>([]);
 
   const validarCampos = () => {
     const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador"];
-    const camposVacios: string[] = [];
+    const camposVacios: Number[] = [];
 
     camposRequeridos.forEach((campo: keyof MetasCol) => {
       const fieldValue = form[campo];
@@ -152,6 +152,9 @@ function Metas() {
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    // alert("si entra");
+
+
     if (validarCampos() === true) {
       await jezaApi
         .put(`/sp_cat_colaboradoresMetasUpd`, null, {
@@ -175,7 +178,7 @@ function Metas() {
             confirmButtonColor: "#3085d6",
           });
           setModalActualizar(false);
-          getMetas();
+          // getMetas();
         })
         .catch((error) => {
           console.log(error);
@@ -186,7 +189,7 @@ function Metas() {
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
-  const eliminar = async (dato: Sucursal) => {
+  const eliminar = async (dato: MetasCol) => {
     const permiso = await filtroSeguridad("CAT_SUC_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -387,14 +390,13 @@ function Metas() {
       <Modal isOpen={modalActualizar} size="xl">
         <ModalHeader>
           <div>
-            <h3>Editar sucursal</h3>
+            <h3>Editar meta</h3>
           </div>
         </ModalHeader>
 
         <ModalBody>
           <FormGroup>
             <Row>
-              {/* Debe de coincidir el inputname con el value */}
               <Col md={"6"}>
                 <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
               </Col>
@@ -403,7 +405,7 @@ function Metas() {
               </Col>
               <Col md={"6"}>
                 <Label>Trabajadores:</Label>
-                <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.id} onChange={handleChange}>
+                <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
                   <option value="">Selecciona empresa</option>
                   {dataTrabajadores.map((colaborador: Trabajador) => (
                     <option key={colaborador.id} value={colaborador.id}>
@@ -411,6 +413,24 @@ function Metas() {
                     </option>
                   ))}
                 </Input>
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta 1:" value={form.meta1} />
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta 2:" value={form.meta2} />
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta 3:" value={form.meta3} />
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta 4:" value={form.meta4} />
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta 5:" value={form.meta5} />
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="meta6" labelName="Meta 6:" value={form.meta6} />
               </Col>
             </Row>
           </FormGroup>
