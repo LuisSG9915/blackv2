@@ -45,7 +45,6 @@ function ReporteTool() {
 
   const [showClienteInput, setShowClienteInput] = useState(false);
   const [showSucursalInput, setShowSucursalInput] = useState(false);
-
   const [showEstilistaInput, setShowEstilistaInput] = useState(false);
   const [showEmpresaInput, setShowEmpresaInput] = useState(false);
   const [showSucDesInput, setShowSucDesInput] = useState(false);
@@ -56,7 +55,8 @@ function ReporteTool() {
   const [showMetodoPagoInput, setShowMetodoPagoInput] = useState(false);
   const [showClaveProdInput, setShowClaveProdInput] = useState(false);
   const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
-  const [showTipoPagoInput, setshowTipoPagoInput] = useState(false);
+  const [showAreaInput, setShowAreaInput] = useState(false);
+  const [showDeptoInput, setShowDeptoInput] = useState(false);
 
   const [tablaData, setTablaData] = useState({
     data: [],
@@ -206,6 +206,23 @@ function ReporteTool() {
     depto: "",
   });
 
+  function setShowAllInputsToFalse() {
+    setShowClienteInput(false);
+    setShowSucursalInput(false);
+    setShowEstilistaInput(false);
+    setShowEmpresaInput(false);
+    setShowSucDesInput(false);
+    setShowAlmOrigenInput(false);
+    setShowAlmDestInput(false);
+    setShowTipoMovtoInput(false);
+    setShowProveedorInput(false);
+    setShowMetodoPagoInput(false);
+    setShowClaveProdInput(false);
+    setShowTipoDescuentoInput(false);
+    setShowAreaInput(false);
+    setShowDeptoInput(false);
+  }
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormulario((prevFormulario) => ({
@@ -220,6 +237,17 @@ function ReporteTool() {
         setShowSucursalInput(true);
         setShowClienteInput(true);
         setShowEstilistaInput(true);
+        //------------------------------------
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
       } else if (value === "sp_reporte5_Ventas") {
         setShowEmpresaInput(true);
         setShowSucursalInput(true);
@@ -227,11 +255,46 @@ function ReporteTool() {
         setShowTipoDescuentoInput(true);
         setShowEstilistaInput(true);
         setShowMetodoPagoInput(true);
-      } else {
-        setShowEmpresaInput(false);
-        setShowSucursalInput(false);
+        //----------------------------------------------------------------
+        setShowClienteInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+      } else if (value === "sp_reporte4_Estilistas") {
+        setShowEmpresaInput(true);
+        setShowSucursalInput(true);
+        setShowAreaInput(true);
+        setShowDeptoInput(true);
+        //------------------------------------------------------
         setShowClienteInput(false);
         setShowEstilistaInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+      } else {
+        setShowClienteInput(false);
+        setShowSucursalInput(false);
+        setShowEstilistaInput(false);
+        setShowEmpresaInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
       }
       // Agrega lógica similar para otros campos según sea necesario
     }
@@ -514,6 +577,18 @@ function ReporteTool() {
                       onChange={handleChange}
                       bsSize="sm"
                     />
+                  </div>
+                ) : null}
+                {showAreaInput ? (
+                  <div>
+                    <Label>Area:</Label>
+                    <Input type="text" name="Area" value={formulario.area} onChange={handleChange} bsSize="sm" />
+                  </div>
+                ) : null}
+                {showDeptoInput ? (
+                  <div>
+                    <Label>Departamento:</Label>
+                    <Input type="text" name="Depto" value={formulario.depto} onChange={handleChange} bsSize="sm" />
                   </div>
                 ) : null}
               </div>
