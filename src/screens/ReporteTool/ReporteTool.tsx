@@ -6,6 +6,7 @@ import {
   AccordionItem,
   Button,
   Container,
+  FormGroup,
   Input,
   InputGroup,
   Label,
@@ -29,17 +30,26 @@ import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Box } from "@mui/material";
 import Swal from "sweetalert2";
 import { set } from "date-fns";
+import { useAreas } from "../../hooks/getsHooks/useAreas";
+import { useDeptos } from "../../hooks/getsHooks/useDeptos";
+import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
+import { Departamento } from "../../models/Departamento";
+import { Clase } from "../../models/Clase";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
   const [data, setData] = useState<ReporteTool[]>([]);
   const { dataCias, fetchCias } = useCias();
+  const { dataAreas, fetchAreas1 } = useAreas();
+  const { dataDeptos, fetchAreas } = useDeptos();
+  const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
   const { dataUsuarios, fetchUsuarios } = useUsuarios();
   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
   const { dataSucursales, fetchSucursales } = useSucursales();
   const [modalOpenCli, setModalOpenCli] = useState(false);
   const [selectedIdC, setSelectedIdC] = useState("");
+  const [descuento, setDescuento] = useState("");
   const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
   const [trabajador, setTrabajadores] = useState([]);
 
@@ -57,11 +67,43 @@ function ReporteTool() {
   const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
   const [showAreaInput, setShowAreaInput] = useState(false);
   const [showDeptoInput, setShowDeptoInput] = useState(false);
-
+  const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const [tablaData, setTablaData] = useState({
     data: [],
     columns: [],
   });
+
+  const [formClase, setClase] = useState<Clase>({
+    id: 0,
+    clase: 0,
+    area: 1,
+    d_area: "",
+    depto: 1,
+    d_depto: "",
+    descripcion: "",
+  });
+
+  useEffect(() => {
+    const quePedo = dataDeptos.filter((data) => data.area === Number(formClase.area));
+    setDataDeptosFiltrado(quePedo);
+
+    // Si el área es 0, establece el departamento como 0
+    if (formClase.area === "0") {
+      setClase((prevState) => ({ ...prevState, depto: "0" }));
+    }
+  }, [formClase.area]);
+
+  const getDescuento = () => {
+    jezaApi
+      .get("/Tipodescuento?id=0")
+      .then((response) => {
+        setDescuento(response.data);
+      })
+      .catch((e) => console.log(e));
+  };
+  useEffect(() => {
+    getDescuento();
+  }, []);
 
   useEffect(() => {
     // Dentro de useEffect, realizamos la solicitud a la API
@@ -91,9 +133,24 @@ function ReporteTool() {
       .catch((e) => console.log(e));
   };
 
+  const getArea = () => {
+    jezaApi
+      .get("/Area?area=0")
+      .then((response) => setData(response.data))
+      .catch((e) => console.log(e));
+  };
+
   useEffect(() => {
     getReporte();
   }, []);
+
+  const handleChangeAreaDeptoClase = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setClase((prevState) => ({ ...prevState, [name]: value }));
+    // console.log(formClase);
+  };
 
   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
 
@@ -106,6 +163,11 @@ function ReporteTool() {
     for (const campo in formData) {
       if (formData[campo] === "") {
         formData[campo] = "%";
+      }
+    }
+    for (const campos in formClase) {
+      if (formClase[campos] == 0) {
+        formClase[campos] = "%";
       }
     }
 
@@ -123,7 +185,7 @@ function ReporteTool() {
     if (reporte == "sp_reporte5_Ventas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formData.clave_prod}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
     } else if (reporte == "sp_reporte4_Estilistas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formData.area}&depto=${formData.depto}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
@@ -265,13 +327,14 @@ function ReporteTool() {
         setShowAreaInput(false);
         setShowDeptoInput(false);
       } else if (value === "sp_reporte4_Estilistas") {
-        setShowEmpresaInput(true);
+        setShowEstilistaInput(true);
         setShowSucursalInput(true);
         setShowAreaInput(true);
         setShowDeptoInput(true);
+
         //------------------------------------------------------
         setShowClienteInput(false);
-        setShowEstilistaInput(false);
+        setShowEmpresaInput(false);
         setShowSucDesInput(false);
         setShowAlmOrigenInput(false);
         setShowAlmDestInput(false);
@@ -545,26 +608,40 @@ function ReporteTool() {
                 {showMetodoPagoInput ? (
                   <div>
                     <Label>Método de pago:</Label>
+
                     <Input
-                      type="text"
-                      name="metodoPago"
-                      value={formulario.metodoPago}
+                      type="select"
+                      name="tipoPago"
+                      value={formulario.tipoPago}
                       onChange={handleChange}
-                      disabled={!data[0]?.metodoPago}
                       bsSize="sm"
-                    />
+                    >
+                      <option value="">Seleccione el tipo de pago</option>
+
+                      {dataFormasPagos.map((item) => (
+                        <option value={item.id}>{item.descripcion}</option>
+                      ))}
+                    </Input>
                   </div>
                 ) : null}
+
                 {showTipoDescuentoInput ? (
                   <div>
                     <Label>Tipo de descuento:</Label>
+
                     <Input
-                      type="text"
+                      type="select"
                       name="tipoDescuento"
                       value={formulario.tipoDescuento}
                       onChange={handleChange}
                       bsSize="sm"
-                    />
+                    >
+                      <option value="">Seleccione el tipo de descuento:</option>
+
+                      {descuento.map((item) => (
+                        <option value={item.id}>{item.descripcion}</option>
+                      ))}
+                    </Input>
                   </div>
                 ) : null}
                 {showClaveProdInput ? (
@@ -581,14 +658,38 @@ function ReporteTool() {
                 ) : null}
                 {showAreaInput ? (
                   <div>
-                    <Label>Area:</Label>
-                    <Input type="text" name="Area" value={formulario.area} onChange={handleChange} bsSize="sm" />
+                    <Label for="area">Área:</Label>
+                    <Input
+                      type="select"
+                      name="area"
+                      id="exampleSelect"
+                      value={formClase.area}
+                      onChange={handleChangeAreaDeptoClase}
+                      bsSize="sm"
+                    >
+                      <option value={0}>Seleccione un área</option>
+                      {dataAreas.map((area) => (
+                        <option value={area.area}>{area.descripcion}</option>
+                      ))}{" "}
+                    </Input>
                   </div>
                 ) : null}
                 {showDeptoInput ? (
                   <div>
-                    <Label>Departamento:</Label>
-                    <Input type="text" name="Depto" value={formulario.depto} onChange={handleChange} bsSize="sm" />
+                    <Label for="departamento">Departamento:</Label>
+                    <Input
+                      bsSize="sm"
+                      type="select"
+                      name="depto"
+                      id="exampleSelect"
+                      value={formClase.depto}
+                      onChange={handleChangeAreaDeptoClase}
+                    >
+                      <option value={0}>Seleccione un departamento</option>
+                      {dataDeptosFiltrado.map((depto) => (
+                        <option value={depto.depto}>{depto.descripcion}</option>
+                      ))}{" "}
+                    </Input>
                   </div>
                 ) : null}
               </div>
