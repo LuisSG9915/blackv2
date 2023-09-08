@@ -122,8 +122,6 @@ function KitPaquete() {
   //     .catch((e) => console.log(e));
   // };
 
-
-
   const editar = async () => {
     const permiso = await filtroSeguridad("CAT_KIT_UPD");
     if (permiso === false) {
@@ -190,7 +188,6 @@ function KitPaquete() {
     });
   };
 
-
   //VALIDACIÓN---->
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
@@ -220,25 +217,6 @@ function KitPaquete() {
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
-
-
-  // const insertar = () => {
-  //   jezaApi
-  //     .post("/Kit", null, {
-  //       params: {
-  //         idProducto: form.id,
-  //         idInsumo: formKit.id,
-  //         cantidad: Number(formKit.cantidad),
-  //       },
-  //     })
-  //     .then(() => {
-  //       fetchPaquetesKits();
-  //     })
-  //     .catch((e) => console.log(e));
-  //   setModalInsertar(false);
-  // };
-
-  // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
   const insertar = async () => {
     const permiso = await filtroSeguridad("CAT_KIT_ADD");
     if (permiso === false) {
@@ -271,9 +249,6 @@ function KitPaquete() {
     }
   };
 
-
-
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -291,7 +266,6 @@ function KitPaquete() {
 
     const filteredFalse = dataProductos.filter((item: Producto) => item.es_kit === false);
     setFilteredDataFalse(filteredFalse);
-    console.log(filteredDataFalse);
   }, [dataProductos]);
 
   const [isInsumoSelected, setIsInsumoSelected] = useState(false);
@@ -314,7 +288,7 @@ function KitPaquete() {
     { field: "precio", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
   ];
 
-  //TABLA COMPONENETE GRANDE 
+  //TABLA COMPONENETE GRANDE
   const columnsKIT: MRT_ColumnDef<Producto>[] = useMemo(
     () => [
       {
@@ -345,9 +319,7 @@ function KitPaquete() {
     []
   );
 
-
-
-  ///TABLA AGREGAR INSUMOS 
+  ///TABLA AGREGAR INSUMOS
   const columnsInsumos: GridColDef[] = [
     {
       field: "Acción",
@@ -377,10 +349,11 @@ function KitPaquete() {
                 setModalInsert(true);
                 setFormKit(params.row);
                 console.log(params);
-              } else {
-                setFormKit({ ...formKit, idInsumo: params.row.id, d_insumo: params.row.descripcion });
-                setModalKit(false);
               }
+              //  else {
+              //   setFormKit({ ...formKit, idInsumo: params.row.id, d_insumo: params.row.descripcion });
+              //   setModalKit(false);
+              // }
             } else {
               Swal.fire({
                 icon: "error",
@@ -417,11 +390,6 @@ function KitPaquete() {
     );
   }
 
-
-
-
-
-
   const navigate = useNavigate();
   const handleRedirect = () => {
     navigate("/app");
@@ -447,7 +415,6 @@ function KitPaquete() {
     setTotalImporte(sumaTotal);
   }, [dataPaquetesKits]);
 
-
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
   // const LimpiezaForm = () => {
@@ -457,8 +424,6 @@ function KitPaquete() {
 
   //   });
   // };
-
-
 
   return (
     <>
@@ -519,7 +484,6 @@ function KitPaquete() {
               </thead>
               <tbody>
                 <tr>
-
                   <td>
                     <Input onChange={handleChange} name="clave_prod" defaultValue={form.clave_prod} disabled></Input>
                   </td>
@@ -530,9 +494,7 @@ function KitPaquete() {
                     <Input onChange={handleChange} name="precio" defaultValue={form.precio} disabled></Input>
                   </td>
 
-
                   <td>
-
                     <FcPlus
                       className="center"
                       size={35}
@@ -586,8 +548,6 @@ function KitPaquete() {
                     <td>{falsos.costo.toFixed(2)}</td>
                     <td>{falsos.importe.toFixed(2)}</td>
                     <td></td>
-
-
                   </tr>
                 ))}
               </tbody>
@@ -595,9 +555,10 @@ function KitPaquete() {
             <br />
             <br />
             <div>
-              <p style={{ textAlign: "right" }}><strong>Total paquete: ${totalImporte.toFixed(2)}</strong></p>
+              <p style={{ textAlign: "right" }}>
+                <strong>Total paquete: ${totalImporte.toFixed(2)}</strong>
+              </p>
             </div>
-
 
             {/* <div> */}
             {/* Renderiza los datos y el total */}
@@ -622,7 +583,6 @@ function KitPaquete() {
           </div>
         </ModalHeader>
         <ModalBody>
-
           <MaterialReactTable columns={columnsKIT} data={filteredDataFalse} initialState={{ density: "compact" }} />
           {/* <DataGrid rows={filteredDataFalse} columns={columnsInsumos} /> */}
         </ModalBody>

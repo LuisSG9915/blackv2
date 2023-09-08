@@ -215,8 +215,20 @@ function DemoTresTablas() {
   ];
   const arregloConID = dataCorteEmailA.map((item, index) => ({
     id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
-    value: item.Importe ? Number(item.Importe.replace("[$,]+/g", "")) : 0,
+    value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
     label: item.FormadePago,
+  }));
+  const arregloFormateado = arregloConID.slice(0, -1);
+
+  const arregloCorte3Servicio = dataCorteEmailC.map((item, index) => ({
+    id: index + 1,
+    value: item.Servicio,
+    label: item.Responsable,
+  }));
+  const arregloCorte3Venta = dataCorteEmailC.map((item, index) => ({
+    id: index + 1,
+    value: item.Venta,
+    label: item.Responsable,
   }));
 
   return (
@@ -249,15 +261,6 @@ function DemoTresTablas() {
           <Col xs={3}>
             <Button onClick={() => sendEmail()}>Enviar correo</Button>
           </Col>
-          <PieChart
-            series={[
-              {
-                data: arregloConID,
-              },
-            ]}
-            width={400}
-            height={200}
-          />
         </Row>
         <br />
 
@@ -337,6 +340,71 @@ function DemoTresTablas() {
                 </Button>
               </>
             )}
+          />
+        </div>
+        <div>
+          <h2>Corte 1 </h2>
+          <PieChart
+            series={[
+              {
+                arcLabel: (item) =>
+                  `${item.label} (${item.value.toLocaleString("es-MX", {
+                    style: "currency",
+                    currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                  })})`,
+                data: arregloFormateado,
+                highlightScope: { faded: "global", highlighted: "item" },
+                faded: { innerRadius: 30, additionalRadius: -30 },
+              },
+            ]}
+            width={350}
+            height={350}
+          />
+        </div>
+        <div>
+          <h2>Corte 3 servicios</h2>
+          <PieChart
+            series={[
+              {
+                arcLabel: (item) => {
+                  if (item.value > 10)
+                    return `${item.label} (${item.value.toLocaleString("es-MX", {
+                      style: "currency",
+                      currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                    })})`;
+                },
+
+                data: arregloCorte3Servicio,
+                highlightScope: { faded: "global", highlighted: "item" },
+                faded: { innerRadius: 30, additionalRadius: -30 },
+              },
+            ]}
+            width={350}
+            height={350}
+          />
+        </div>
+
+        <div>
+          <h2>Corte 3 ventas</h2>
+          <PieChart
+            colors={["orange", "purple", "pink"]}
+            series={[
+              {
+                arcLabel: (item) => {
+                  if (item.value > 10)
+                    return `${item.label} (${item.value.toLocaleString("es-MX", {
+                      style: "currency",
+                      currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                    })})`;
+                },
+
+                data: arregloCorte3Venta,
+                highlightScope: { faded: "global", highlighted: "item" },
+                faded: { innerRadius: 30, additionalRadius: -30 },
+              },
+            ]}
+            width={350}
+            height={350}
           />
         </div>
       </Container>
