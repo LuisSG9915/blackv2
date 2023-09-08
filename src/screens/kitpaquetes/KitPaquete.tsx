@@ -85,13 +85,12 @@ function KitPaquete() {
   });
 
   const { dataPaquetesKits, fetchPaquetesKits } = usePaquetesKits(form);
-  const [arregloInsumo, setArregloInsumo] = useState<any>();
-  useEffect(() => {
+  const [arregloInsumo, setArregloInsumo] = useState<any>([]);
+
+  const refreshArregloInsumo = () => {
     const idInsumo = dataPaquetesKits.map((item) => item.idInsumo);
     setArregloInsumo(idInsumo ? idInsumo : []);
-    console.log(arregloInsumo);
-  }, [form.id]);
-
+  };
   const [filteredData, setFilteredData] = useState([]);
   const [modalKit, setModalKit] = useState(false);
   const [modalInsert, setModalInsert] = useState(false);
@@ -99,34 +98,16 @@ function KitPaquete() {
   const [filteredDataFalse, setFilteredDataFalse] = useState([]);
 
   const DataTableHeaderkit = ["Acciones", "Producto", "Cantidad", "Costo", "Importe"];
-  const DataInsumoHeader = ["Clave", "Producto", "Acciones"];
 
   const mostrarModalActualizar = (dato: Producto) => {
     setForm(dato);
     setModalActualizar(true);
   };
 
-  // const editar = () => {
-  //   jezaApi
-  //     .put(`/Kit`, null, {
-  //       params: {
-  //         id: formKit.id,
-  //         idProducto: formKit.idProducto,
-  //         idInsumo: formKit.idInsumo,
-  //         cantidad: formKit.cantidad,
-  //       },
-  //     })
-  //     .then(() => {
-  //       console.log("realizado");
-  //       fetchPaquetesKits();
-  //     })
-  //     .catch((e) => console.log(e));
-  // };
-
   const editar = async () => {
     const permiso = await filtroSeguridad("CAT_KIT_UPD");
     if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      return;
     }
     if (validarCampos() === true) {
       await jezaApi
@@ -153,14 +134,6 @@ function KitPaquete() {
     } else {
     }
   };
-  // const eliminar = (dato: Kit) => {
-  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el insumo: ${dato.id}`);
-  //   if (opcion) {
-  //     jezaApi.delete(`/Kit?id=${dato.id}`).then(() => {
-  //       fetchPaquetesKits();
-  //     });
-  //   }
-  // };
 
   const eliminar = async (dato: Kit) => {
     const permiso = await filtroSeguridad("CAT_KIT_DEL");
@@ -289,6 +262,12 @@ function KitPaquete() {
     { field: "precio", headerName: "Precio", flex: 1, headerClassName: "custom-header" },
   ];
 
+  const arregloKit = useMemo(() => {
+    return dataPaquetesKits.map((item) => item.idInsumo);
+  }, [dataPaquetesKits]);
+
+  const [flagKit, setFlagKit] = useState(false);
+
   //TABLA COMPONENETE GRANDE
   const columnsKIT: MRT_ColumnDef<Producto>[] = useMemo(
     () => [
@@ -303,35 +282,29 @@ function KitPaquete() {
         size: 100,
       },
       {
-        header: "Nueva Acción", // Título de la nueva columna
+        header: "Nueva Acción",
         size: 100,
         Cell: ({ cell }) => (
           <ComponentInsumos
             params={{
               row: {
-                id: cell.row.original.id, // Asegúrate de proporcionar las propiedades necesarias
-                descripcion: cell.row.original.descripcion, // que necesita ComponentInsumos
+                id: cell.row.original.id,
+                descripcion: cell.row.original.descripcion,
               },
             }}
+            arregloKit={arregloKit}
+            flagKit={flagKit}
+            setModalInsert={setModalInsert}
+            setFormKit={setFormKit}
+            setModalKit={setModalKit}
+            formKit={formKit}
           />
         ),
       },
     ],
-    []
+    [arregloKit, flagKit, setModalInsert, setFormKit, setModalKit, formKit]
   );
 
-  ///TABLA AGREGAR INSUMOS
-  const columnsInsumos: GridColDef[] = [
-    {
-      field: "Acción",
-      renderCell: (params) => <ComponentInsumos params={params} />,
-      flex: 0,
-      headerClassName: "custom-header",
-    },
-
-    { field: "clave_prod", headerName: "Clave producto", flex: 1, headerClassName: "custom-header" },
-    { field: "descripcion", headerName: "Descripción", flex: 3, headerClassName: "custom-header" },
-  ];
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
@@ -339,29 +312,42 @@ function KitPaquete() {
       </>
     );
   };
-  const ComponentInsumos = ({ params }: { params: any }) => {
+  const ComponentInsumos = ({
+    params,
+    arregloKit,
+    flagKit,
+    setModalInsert,
+    setFormKit,
+    setModalKit,
+    formKit,
+  }: {
+    params: any;
+    arregloKit: any[];
+    flagKit: boolean;
+    setModalInsert: Function;
+    setFormKit: Function;
+    setModalKit: Function;
+    formKit: any;
+  }) => {
     return (
       <>
         <FcPlus
           className="mr-2"
           onClick={() => {
-            console.log(arregloInsumo);
-            if (!arregloInsumo.includes(params.row.id)) {
+            if (!arregloKit.includes(params.row.id)) {
               if (flagKit) {
                 setModalInsert(true);
                 setFormKit(params.row);
-                console.log(params);
+              } else {
+                setFormKit({ ...formKit, idInsumo: params.row.id, d_insumo: params.row.descripcion });
+                setModalKit(false);
               }
-              //  else {
-              //   setFormKit({ ...formKit, idInsumo: params.row.id, d_insumo: params.row.descripcion });
-              //   setModalKit(false);
-              // }
             } else {
               Swal.fire({
                 icon: "error",
                 title: "Error",
                 text: `Producto repetido, favor de intentarlo nuevamente`,
-                confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+                confirmButtonColor: "#3085d6",
               });
             }
           }}
@@ -401,8 +387,6 @@ function KitPaquete() {
     window.location.reload();
   };
 
-  const [flagKit, setFlagKit] = useState(false);
-
   const [totalImporte, setTotalImporte] = useState(0);
 
   // Calcula la suma de los importes
@@ -412,20 +396,10 @@ function KitPaquete() {
   };
 
   // Actualiza el total de importe cuando cambia el arreglo de datos
-  React.useEffect(() => {
+  useEffect(() => {
     const sumaTotal = calcularTotalImporte();
     setTotalImporte(sumaTotal);
   }, [dataPaquetesKits]);
-
-  //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
-
-  // const LimpiezaForm = () => {
-  //   setForm({
-  //     id: 0,
-  //     cantidad: 0,
-
-  //   });
-  // };
 
   return (
     <>
@@ -441,18 +415,6 @@ function KitPaquete() {
         <br />
         <br />
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          {/* <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              // setEstado("insert");
-              // LimpiezaForm();
-            }}
-          >
-            Crear kit
-          </Button> */}
-
           <Button color="primary" onClick={handleRedirect}>
             <IoIosHome size={20}></IoIosHome>
           </Button>
@@ -469,7 +431,7 @@ function KitPaquete() {
 
       <Modal isOpen={modalActualizar} size="lg" fullscreen={"lg"}>
         <ModalHeader>
-          <div>
+          <div onClick={() => console.log(arregloKit)}>
             <h3>Catálogo Kit</h3>
           </div>
         </ModalHeader>
@@ -502,10 +464,10 @@ function KitPaquete() {
                       size={35}
                       color="success"
                       onClick={() => {
+                        refreshArregloInsumo();
                         setEstado("insert");
                         setFlagKit(true);
                         setModalKit(true);
-                        console.log(arregloInsumo);
                       }}
                     />
                   </td>
@@ -562,16 +524,6 @@ function KitPaquete() {
                 <strong>Total paquete: ${totalImporte.toFixed(2)}</strong>
               </p>
             </div>
-
-            {/* <div> */}
-            {/* Renderiza los datos y el total */}
-            {/* <ul>
-                {dataPaquetesKits.map(item => (
-                  <li key={item.id}>Importe: {item.importe.toFixed(2)}</li>
-                ))}
-              </ul> */}
-            {/* <p><strong>Total paquete: {totalImporte.toFixed(2)}</strong></p>
-            </div> */}
           </Container>
         </ModalBody>
         <ModalFooter>
@@ -581,7 +533,7 @@ function KitPaquete() {
 
       <Modal isOpen={modalKit} size="lg">
         <ModalHeader>
-          <div>
+          <div onClick={() => console.log(arregloKit)}>
             <h3>Seleccionar insumos</h3>
           </div>
         </ModalHeader>
