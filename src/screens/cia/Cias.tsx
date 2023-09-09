@@ -33,7 +33,7 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-
+// sssss
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
 
