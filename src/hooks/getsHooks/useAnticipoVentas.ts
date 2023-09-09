@@ -13,7 +13,7 @@ export const useAnticipoVentas = ({ cliente, suc }: Props) => {
 
   const fetchAnticipos = async () => {
     try {
-      const response: AxiosResponse<AnticipoGet[]> = await jezaApi.get(`/Anticipo?id=%&idcia=%&idsuc=${suc}&idnoVenta=%&idCliente=${cliente}&idtipoMovto=%&idformaPago=%&f1=20230101&f2=20230731`);
+      const response: AxiosResponse<AnticipoGet[]> = await jezaApi.get(`/Anticipo?id=%&idcia=%&idsuc=${suc}&idnoVenta=%&idCliente=${cliente}&idtipoMovto=%&idformaPago=%&f1=20230101&f2=20231231`);
       setAnticipos(response.data);
       console.log({ dataAnticipos });
     } catch (error) {

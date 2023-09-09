@@ -1,31 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
-import {
-  Row,
-  Container,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  CardText,
-  Input,
-  Table,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  InputGroup,
-} from "reactstrap";
+import { Row, Container, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
-import useReadHook, { DataClinica } from "../../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
 import { jezaApi } from "../../api/jezaApi";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import TabPerfil from "../TabPerfil";
-import { Perfil } from "../../models/Perfil";
 import { Descuento } from "../../models/Descuento";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { Button, ButtonGroup } from "@mui/material";
@@ -34,18 +15,9 @@ import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function Descuentos() {
-  const { filtroSeguridad, session } = useSeguridad();
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
-  const [filtroValorMedico, setFiltroValorMedico] = useState("");
-  const [filtroValorEmail, setFiltroValorEmail] = useState("");
+  const { filtroSeguridad } = useSeguridad();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const [data, setData] = useState([]);
 
   const [form, setForm] = useState<Descuento>({
@@ -54,9 +26,6 @@ function Descuentos() {
     min_descto: 0.0,
     max_descto: 0.0,
   });
-
-  const DataTableHeader = ["Descripción", "Minimo descuento", "Máximo descuento", "Acciones"];
-  const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
     const camposRequeridos: (keyof Descuento)[] = ["descripcion", "min_descto", "min_descto"];
@@ -68,8 +37,6 @@ function Descuentos() {
         camposVacios.push(campo);
       }
     });
-
-    setCamposFaltantes(camposVacios);
 
     if (camposVacios.length > 0) {
       Swal.fire({
@@ -189,11 +156,7 @@ function Descuentos() {
       flex: 1,
       renderCell: (params) => (
         <>
-          <AiFillEdit
-            className="mr-2"
-            onClick={() => mostrarModalActualizar(params.row as Descuento)}
-            size={23}
-          ></AiFillEdit>
+          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row as Descuento)} size={23}></AiFillEdit>
           <AiFillDelete color="lightred" onClick={() => eliminar(params.row as Descuento)} size={23}></AiFillDelete>
         </>
       ),
@@ -257,7 +220,7 @@ function Descuentos() {
       <Container>
         <br />
         <div style={{ display: "flex", alignItems: "", gap: 10 }}>
-          <h1> Descuentos Autorizados </h1>
+          <h1> Descuentos Autorizadosxd </h1>
           <AiOutlineUser size={30} />
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
@@ -322,24 +285,9 @@ function Descuentos() {
 
         <ModalBody>
           <Container>
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="descripcion"
-              labelName="Descripción:"
-              defaultValue={form.descripcion}
-            />
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="min_descto"
-              labelName="Minimo de descuento:"
-              defaultValue={form.min_descto}
-            />
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="max_descto"
-              labelName="Máximo de descuento:"
-              defaultValue={form.max_descto}
-            />
+            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción:" defaultValue={form.descripcion} />
+            <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Minimo de descuento:" defaultValue={form.min_descto} />
+            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo de descuento:" defaultValue={form.max_descto} />
           </Container>
         </ModalBody>
 

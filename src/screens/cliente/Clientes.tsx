@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete, AiFillEye } from "react-icons/ai";
 import {
   Row,
@@ -19,6 +19,7 @@ import {
   TabPane,
   Col,
   Card,
+  CardBody
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -37,10 +38,24 @@ import useModalHook from "../../hooks/useModalHook";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+
+import { LuCalendarSearch } from "react-icons/lu";
+import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+import { Venta } from "../../models/Venta";
+
+import { FaShoppingCart, FaUser } from "react-icons/fa";
+
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -80,7 +95,52 @@ function Clientes() {
     claveRegistroMovil: "",
     fecha_alta: "",
     fecha_act: "",
+    redsocial1: "",
+    redsocial2: "",
+    redsocial3: "",
   });
+
+
+  const [dataTemporal, setDataTemporal] = useState<Venta>({
+    id: 0,
+    Sucursal: 0,
+    Fecha: "",
+    Caja: 1,
+    No_venta: 1,
+    Clave_prod: 1,
+    Cant_producto: 1,
+    Precio: 0,
+    Precio_base: 0,
+    Cve_cliente: 0,
+    Tasa_iva: 0.16,
+    ieps: 0,
+    Observacion: "",
+    Descuento: 0,
+    Clave_Descuento: 0,
+    Usuario: 0,
+    Credito: false,
+    Corte: 1,
+    Corte_parcial: 1,
+    Costo: 1,
+    cancelada: false,
+    idEstilista: 0,
+    folio_estilista: 1,
+    hora: 8,
+    tiempo: 1,
+    terminado: false,
+    validadoServicio: false,
+    Cia: 0,
+    cliente: "",
+    d_estilista: "",
+    d_producto: "",
+    d_existencia: "",
+    estilista: "",
+    producto: "",
+    formaPago: 0,
+    idestilistaAux: 0,
+    idRecepcionista: 0,
+  });
+
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
@@ -91,6 +151,15 @@ function Clientes() {
       setActiveTab(tab);
     }
   };
+
+  const [activeTab1, setActiveTab1] = useState("1");
+
+  const toggleTab1 = (tab: React.SetStateAction<string>) => {
+    if (activeTab1 !== tab) {
+      setActiveTab1(tab);
+    }
+  };
+  //AAAa
   const [visible, setVisible] = useState(false);
 
   const [error, setError] = useState(false);
@@ -101,7 +170,17 @@ function Clientes() {
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac"];
+    const camposRequeridos: (keyof Cliente)[] = [
+      "nombre",
+      "domicilio",
+      "ciudad",
+      "estado",
+      "colonia",
+      "cp",
+      "telefono",
+      "email",
+      "fecha_nac",
+    ];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -124,7 +203,93 @@ function Clientes() {
     return camposVacios.length === 0;
   };
 
+  //VALIDACIÓN ACTUALIZACIÓN---->
+  const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
+
+  const validarCampos1 = () => {
+    const camposRequeridos: (keyof Cliente)[] = [
+      "nombre",
+      "domicilio",
+      "ciudad",
+      "estado",
+      "colonia",
+      "cp",
+      "telefono",
+      "email",
+      "fecha_nac",
+      "rfc",
+      "regimenFiscal",
+      "nombre_fiscal",
+      "correo_factura",
+    ];
+    const camposVacios: string[] = [];
+
+    camposRequeridos.forEach((campo: keyof Cliente) => {
+      const fieldValue = form[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios.push(campo);
+      }
+    });
+
+    setCamposFaltantes(camposVacios);
+
+    if (camposVacios.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios.length === 0;
+  };
+
+
   const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      await jezaApi
+        .post("/Cliente", null, {
+          params: {
+            nombre: form.nombre,
+            domicilio: form.domicilio,
+            ciudad: form.ciudad,
+            estado: form.estado,
+            colonia: form.colonia,
+            cp: form.cp,
+            telefono: form.telefono,
+            email: form.email,
+            fecha_nac: form.fecha_nac,
+            redsocial1: form.redsocial1,
+            redsocial2: "...",
+            redsocial3: "...",
+
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Cliente creado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalInsertar(false);
+          getCliente();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+
+
+  const insertar1 = async () => {
     /* CREATE */
     const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
     if (permiso === false) {
@@ -135,7 +300,9 @@ function Clientes() {
     if (validarCampos() === true) {
       await jezaApi
         .post(
-          `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
+          // `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
+          `/ Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${form.redsocial1}&redsocial2="..."&redsocial3="..."`
+
         )
         .then((response) => {
           Swal.fire({
@@ -159,7 +326,7 @@ function Clientes() {
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    if (validarCampos() === true) {
+    if (validarCampos1() === true) {
       await jezaApi
         .put(`/Cliente`, null, {
           params: {
@@ -174,19 +341,22 @@ function Clientes() {
             telefono: form.telefono,
             email: form.email,
             nombre_fiscal: form.nombre_fiscal,
-            suspendido: form.suspendido,
+            suspendido: false,
             sucursal_origen: dataUsuarios2[0]?.sucursal,
-            num_plastico: form.num_plastico,
-            suc_asig_plast: form.suc_asig_plast,
-            fecha_asig_plast: form.fecha_asig_plast,
+            num_plastico: form.num_plastico ? form.num_plastico : "...",
+            suc_asig_plast: form.suc_asig_plast ? form.suc_asig_plast : 0,
+            fecha_asig_plast: "2023-01-01",
             usr_asig_plast: dataUsuarios2[0]?.id,
-            plastico_activo: form.plastico_activo,
+            plastico_activo: false,
             fecha_nac: form.fecha_nac,
             correo_factura: form.correo_factura,
             regimenFiscal: form.regimenFiscal,
-            claveRegistroMovil: form.claveRegistroMovil,
+            claveRegistroMovil: form.claveRegistroMovil ? form.claveRegistroMovil : "...",
             fecha_alta: fechaHoy,
             fecha_act: fechaHoy,
+            rs1: form.redSocial1,
+            rs2: "...",
+            rs3: "...",
           },
         })
         .then((response) => {
@@ -249,13 +419,13 @@ function Clientes() {
     setModalActualizar(true);
   };
 
-  const mostrarModalDetalle = (dato: Cliente) => {
-    setForm(dato);
-    setModalDetalle(true);
-  };
+  // const mostrarModalDetalle = (dato: Cliente) => {
+  //   setForm(dato);
+  //   setModalDetalle(true);
+  // };
 
-  /* DETALLE */
-  const [modalDetalle, setModalDetalle] = useState(false);
+  // /* DETALLE */
+  // const [modalDetalle, setModalDetalle] = useState(false);
 
   // const toggleDetalleModal = async (idCliente: number) => {
   //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
@@ -269,6 +439,62 @@ function Clientes() {
   //   setModalDetalle(!modalDetalle);
   //   setDetalleRowData(data);
   // };
+
+  // State for the modal visibility
+  const [modalDetalle, setModalDetalle] = useState(false);
+
+  // Function to toggle the modal visibility
+  const toggleModalDetalle = () => {
+    setModalDetalle(!modalDetalle);
+  };
+
+  const mostrarModalDetalle = (dato: Cliente) => {
+    setModalDetalle(true);
+    historial(dato.id_cliente);
+    historialCitaFutura(dataTemporal.id_cliente);
+    setClienteSeleccionado(dato);
+
+  };
+
+
+  // const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
+  const [modalOpen, setModalOpenH] = useState(false);
+
+  const toggleModalHistorialFutura = () => {
+    setModalOpenH(!modalOpen);
+  };
+
+  // const historialCitaFutura = (dato: any) => {
+  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+  //     setData1(response.data);
+  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+  //   });
+  // };
+  const [datah1, setData2] = useState<any[]>([]);
+
+  const historialCitaFutura = (dato: any) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+      const dataConFechasFormateadas = response.data.map((item: any) => ({
+        ...item,
+        fechaCita: new Date(item.fechaCita).toLocaleDateString(),
+        fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
+      }));
+      setData2(dataConFechasFormateadas);
+      toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
+  };
+
+
+  // const mostrarModalDetalle = async (dato: Cliente) => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso, se sale de la función
+  //   }
+  //   setClienteSeleccionado(dato);
+  //   setModalDetalle(true);
+  // };
+
+  const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
 
   const [detalleRowData, setDetalleRowData] = useState(null);
 
@@ -298,6 +524,9 @@ function Clientes() {
       claveRegistroMovil: "",
       fecha_alta: "",
       fecha_act: "",
+      redsocial1: "",
+      redsocial2: "",
+      redsocial3: "",
     });
   };
 
@@ -329,20 +558,23 @@ function Clientes() {
       field: "fecha_alta",
       headerName: "Fecha alta",
       flex: 1,
-      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) => new Date(params.row.fecha_alta).toLocaleDateString(),
+      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) =>
+        new Date(params.row.fecha_alta).toLocaleDateString(),
     },
     {
       field: "plastico_activo",
       headerName: "Cuenta activa",
       flex: 1,
-      renderCell: (params: { row: { plastico_activo: any } }) => (params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>),
+      renderCell: (params: { row: { plastico_activo: any } }) =>
+        params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>,
     },
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
-        {/* <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
+        <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(params.row)} size={23} />
+        {/* <AiFillEye className="mr-2" onClick={() => toggleModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
         <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete>
         {/* <AiFillDelete color="lightred" onClick={() => console.log(params.row.id)} size={23}></AiFillDelete> */}
@@ -381,18 +613,362 @@ function Clientes() {
     window.location.reload();
   };
 
+
+  const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
+  const historial = (id) => {
+    jezaApi.get(`/Historial?cliente=${id}`).then((response) => {
+      setData1(response.data);
+      // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
+  };
+
+  const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
+  const [flagDetalles, setFlagDetalles] = useState(false);
+  const [paramsDetalles, setParamsDetalles] = useState({
+    sucursal: 0,
+    numVenta: 0,
+    idProducto: 0,
+    clave: 0,
+    Cve_cliente: 0,
+    fecha: "",
+  });
+
+  const [totalImportes, setTotalImportes] = useState(0);
+
+  // Cuando cambia historialDetalle, recalcula el total de importes
+  useEffect(() => {
+    const total = historialDetalle.reduce((accumulator, item) => {
+      const importe = parseFloat(item.importe);
+      return accumulator + importe;
+    }, 0);
+    setTotalImportes(total);
+  }, [historialDetalle]);
+
+
+  const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
+    await jezaApi
+      .get(`/HistorialDetalle?suc=${idSucursal}&cliente=${cveCliente}&venta=${noVenta}&serv=${idProducto}`)
+      .then((response) => {
+        // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
+        console.log(response.data);
+        // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
+        setHistorialDetalle(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedId(null);
+    setIsModalOpen(!isModalOpen);
+    // loadHistorialDetalle(  )
+  };
+  // useEffect(() => {
+
+  // }, [])
+
+  const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
+    () => [
+      {
+        header: "Acciones",
+        Cell: ({ row }) => {
+          let icono;
+          let isDisabled = false; // Por defecto, el botón no está deshabilitado
+
+          // Analizar la clave para determinar si es un producto o un servicio
+          if (row.original.Clave.endsWith("P")) {
+            // Si la clave termina con "P", se trata de un producto
+            icono = <FaShoppingCart size={23} />;
+            isDisabled = true; // Marcar el botón como deshabilitado para productos
+          } else if (row.original.Clave.endsWith("S")) {
+            // Si la clave termina con "S", se trata de un servicio
+            icono = <FaUser size={23} />;
+          } else {
+            // Si no coincide con ninguna de las anteriores, se usa un icono predeterminado
+            icono = <LuCalendarSearch size={23} />;
+          }
+
+          return (
+            <div>
+              <button
+                disabled={isDisabled} // Establecer la propiedad disabled según isDisabled
+                onClick={() => {
+                  loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+                  setParamsDetalles({
+                    Cve_cliente: row.original.Cve_cliente,
+                    idProducto: row.original.idProducto,
+                    numVenta: row.original.NumVenta,
+                    sucursal: row.original.NombreSuc,
+                    clave: row.original.id,
+                    fecha: row.original.Fecha,
+                  });
+                  setIsModalOpen(true);
+                }}
+              >
+                {icono}
+              </button>
+            </div>
+          );
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+
+      {
+        accessorKey: "Cve_cliente",
+        header: "Cliente",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "NumVenta",
+        header: "NumVenta",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "NombreSuc",
+        header: "Sucursal",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Fecha",
+        header: "Fecha",
+        flex: 1,
+        size: 1,
+        Cell: ({ cell }) => {
+          const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
+          const dia = fecha.getDate().toString().padStart(2, "0"); // Obtener el día con dos dígitos
+          const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // Obtener el mes con dos dígitos (los meses en JavaScript son base 0)
+          const anio = fecha.getFullYear().toString(); // Obtener el año con cuatro dígitos
+
+          return <span>{`${dia}/${mes}/${anio}`}</span>;
+        },
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Clave",
+        header: "Clave",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Producto_Servicio",
+        header: "Producto/Servicio",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Cantidad",
+        header: "Cantidad",
+        flex: 1,
+        size: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Precio",
+        header: "Precio",
+        flex: 1,
+        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+        muiTableBodyCellProps: {
+          align: "right",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+        size: 1,
+      },
+      {
+        accessorKey: "Estilista",
+        header: "Estilista",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Descuento",
+        header: "Descuento",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+      {
+        accessorKey: "Forma_pago",
+        header: "Forma de pago",
+        flex: 1,
+        muiTableBodyCellProps: {
+          align: "center",
+        },
+        muiTableHeadCellProps: {
+          align: "center",
+        },
+      },
+    ],
+    []
+  );
+  const columnsclientes: MRT_ColumnDef<Cliente>[] = useMemo(
+    () => [
+      {
+        accessorKey: "acciones",
+        header: "Acción",
+        size: 100,
+        Cell: ({ cell }) => (
+          <>
+            <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} />
+            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
+            <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} />
+          </>
+        ),
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        accessorKey: "telefono",
+        header: "Teléfono",
+        size: 100,
+      },
+      {
+        accessorKey: "redSocial1",
+        header: "Instagram",
+        size: 100,
+      },
+      {
+        accessorKey: "fecha_alta",
+        header: "Fecha alta",
+        size: 100,
+        Cell: ({ cell }) => {
+          const fechaCompleta = cell.row.original.fecha_alta;
+          const fecha = fechaCompleta.split("T")[0]; // Obtener solo la parte de la fecha
+
+          return <span>{fecha}</span>;
+        },
+      },
+
+    ],
+    []
+  );
+
+
   return (
     <>
       <Row>
         <SidebarHorizontal />
       </Row>
       <Container>
+        <Row>
+          <Container fluid>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
+            </div>
+
+            <br />
+
+            <Row>
+
+              <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button
+                  style={{ marginLeft: "auto" }}
+                  color="success"
+                  onClick={() => {
+                    setModalInsertar(true);
+                    setEstado("insert");
+                    LimpiezaForm();
+                  }}
+                >
+                  Crear cliente
+                </Button>
+
+                <Button color="primary" onClick={handleRedirect}>
+                  <IoIosHome size={20}></IoIosHome>
+                </Button>
+                <Button onClick={handleReload}>
+                  <IoIosRefresh size={20}></IoIosRefresh>
+                </Button>
+              </ButtonGroup>
+              <br />
+              <br />
+              <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+
+            </Row>
+          </Container>
+          <br />
+          <br />
+        </Row>
+      </Container>
+
+      {/* <Row>
+        <SidebarHorizontal />
+      </Row>
+      <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Clientes </h1>
-          <BsPersonBoundingBox size={35}></BsPersonBoundingBox>
+          <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
-        <br />
         <br />
         <ButtonGroup variant="contained" aria-label="outlined primary button group">
           <Button
@@ -417,9 +993,17 @@ function Clientes() {
 
         <br />
         <br />
-        <br />
-        <DataTable></DataTable>
-      </Container>
+        <div>
+
+          <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+        </div>
+
+
+        <br /> */}
+      {/* <DataTable></DataTable> */}
+
+      {/* 
+      </Container> */}
 
       {/* Modals */}
       {/* create */}
@@ -432,7 +1016,12 @@ function Clientes() {
           <Row>
             <Col sm="6">
               <Label>Nombre:</Label>
-              <Input type="text" name={"nombre"} onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })} defaultValue={form.nombre} />
+              <Input
+                type="text"
+                name={"nombre"}
+                onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })}
+                defaultValue={form.nombre}
+              />
               <br />
             </Col>
 
@@ -448,12 +1037,22 @@ function Clientes() {
             </Col>
             <Col sm="6">
               <Label>Ciudad:</Label>
-              <Input type="text" name={"ciudad"} onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })} defaultValue={form.ciudad} />
+              <Input
+                type="text"
+                name={"ciudad"}
+                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
+                defaultValue={form.ciudad}
+              />
               <br />
             </Col>
             <Col sm="6">
               <Label>Estado:</Label>
-              <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
+              <Input
+                type="text"
+                name={"Estado"}
+                onChange={(e) => setForm({ ...form, estado: String(e.target.value) })}
+                defaultValue={form.estado}
+              />
               <br />
             </Col>
             <Col sm="6">
@@ -468,7 +1067,12 @@ function Clientes() {
             </Col>
             <Col sm="6">
               <Label>Código postal:</Label>
-              <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
+              <Input
+                type="text"
+                name={"cp"}
+                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
+                defaultValue={form.cp}
+              />
               <br />
             </Col>
             <Col sm="6">
@@ -483,7 +1087,12 @@ function Clientes() {
             </Col>
             <Col sm="6">
               <Label>E-mail:</Label>
-              <Input type="email" name={"email"} onChange={(e) => setForm({ ...form, email: String(e.target.value) })} defaultValue={form.email} />
+              <Input
+                type="email"
+                name={"email"}
+                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
+                defaultValue={form.email}
+              />
               <br />
             </Col>
 
@@ -497,6 +1106,39 @@ function Clientes() {
               />
               <br />
             </Col>
+            <Col sm="6">
+              <Label>Instagram:</Label>
+              <Input
+                type="email"
+                name={"redsocial1"}
+                onChange={(e) => setForm({ ...form, redsocial1: String(e.target.value) })}
+                defaultValue={form.redsocial1}
+              />
+              <br />
+            </Col>
+            {/* <Col sm="6">
+              <Label>Red social 2:</Label>
+              <Input
+                type="email"
+                name={"redsocial2"}
+                onChange={(e) => setForm({ ...form, redsocial2: String(e.target.value) })}
+                defaultValue={form.redsocial2}
+              />
+              <br />
+            </Col>
+            <Col sm="6">
+              <Label>Red social 3:</Label>
+              <Input
+                type="email"
+                name={"redsocial3"}
+                onChange={(e) => setForm({ ...form, redsocial3: String(e.target.value) })}
+                defaultValue={form.redsocial3}
+              />
+              <br />
+            </Col> */}
+
+
+
           </Row>
         </ModalBody>
         <ModalFooter>
@@ -525,11 +1167,11 @@ function Clientes() {
                     Datos adicionales
                   </NavLink>
                 </NavItem>
-                <NavItem>
+                {/* <NavItem>
                   <NavLink className={activeTab === "3" ? "active" : ""} onClick={() => toggleTab("3")}>
                     Datos plástico
                   </NavLink>
-                </NavItem>
+                </NavItem> */}
               </Nav>
 
               <TabContent activeTab={activeTab}>
@@ -603,12 +1245,22 @@ function Clientes() {
 
                     <Col sm="6">
                       <Label>Código postal:</Label>
-                      <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
+                      <Input
+                        type="text"
+                        name={"cp"}
+                        onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
+                        defaultValue={form.cp}
+                      />
                       <br />
                     </Col>
                     <Col sm="6">
                       <Label>RFC:</Label>
-                      <Input type="text" name="rfc" onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })} defaultValue={form.rfc} />
+                      <Input
+                        type="text"
+                        name="rfc"
+                        onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })}
+                        defaultValue={form.rfc}
+                      />
                       <br />
                     </Col>
                   </Row>
@@ -635,6 +1287,16 @@ function Clientes() {
                         name={"email"}
                         onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
                         defaultValue={form.email}
+                      />
+                      <br />
+                    </Col>
+                    <Col sm="6">
+                      <Label>Instagram:</Label>
+                      <Input
+                        type="email"
+                        name={"redSocial1"}
+                        onChange={(e) => setForm({ ...form, redSocial1: String(e.target.value) })}
+                        defaultValue={form.redSocial1}
                       />
                       <br />
                     </Col>
@@ -686,7 +1348,7 @@ function Clientes() {
                     </Col> */}
                   </Row>
                 </TabPane>
-
+                {/* 
                 <TabPane tabId="3">
                   <Row>
                     <Col sm="6">
@@ -712,8 +1374,8 @@ function Clientes() {
                       </Input>
                       <br />
                     </Col>
-                    <Col sm="6">
-                      {/* <Label>Fecha de asignación del plástico:</Label>
+                    <Col sm="6"> */}
+                {/* <Label>Fecha de asignación del plástico:</Label>
                       <Input
                         type="date"
                         name="fecha_asig_plast"
@@ -722,7 +1384,7 @@ function Clientes() {
 
                       /> */}
 
-                      <Label for="exampleDate">Fecha de asignación del plástico:</Label>
+                {/* <Label for="exampleDate">Fecha de asignación del plástico:</Label>
                       <Input
                         id="exampleDate"
                         name="fecha_asig_plast"
@@ -732,9 +1394,9 @@ function Clientes() {
                       />
 
                       <br />
-                    </Col>
+                    </Col> */}
 
-                    {/* <Col sm="6">
+                {/* <Col sm="6">
                       <Label>Usuario de asignación del plástico:</Label>
                       <Input
                         type="text"
@@ -746,7 +1408,7 @@ function Clientes() {
                       <br />
                     </Col> */}
 
-                    <Col sm="6">
+                {/* <Col sm="6">
                       <Label>Clave de registro móvil:</Label>
                       <Input
                         type="text"
@@ -775,7 +1437,7 @@ function Clientes() {
                       <br />
                     </Col>
                   </Row>
-                </TabPane>
+                </TabPane> */}
                 {/* <AlertComponent error={error} onDismiss={onDismiss} visible={visible} /> */}
               </TabContent>
             </Card>
@@ -786,6 +1448,253 @@ function Clientes() {
           <CButton color="danger" onClick={cerrarModalActualizar} text="Cancelar"></CButton>
         </ModalFooter>
       </Modal>
+
+      <Modal isOpen={modalDetalle} size="lg">
+        <ModalHeader>Detalles del cliente</ModalHeader>
+        <ModalBody>
+          {clienteSeleccionado && (
+            <Container>
+              <Card body>
+                {/* <TabPrueba getTrab={getTrabajador} form2={form} setForm2={setForm}></TabPrueba> */}
+                <Nav tabs>
+                  <NavItem>
+                    <NavLink className={activeTab1 === "1" ? "active" : ""} onClick={() => toggleTab1("1")}>
+                      Datos personales
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink className={activeTab1 === "2" ? "active" : ""} onClick={() => toggleTab1("2")}>
+                      Datos adicionales
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink className={activeTab1 === "3" ? "active" : ""} onClick={() => toggleTab1("3")}>
+                      Historial del cliente
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+
+                <TabContent activeTab={activeTab1}>
+                  <br />
+                  <TabPane tabId="1">
+                    <Row>
+                      <Col sm="6">
+                        <p>
+                          <strong>Nombre:</strong> {clienteSeleccionado.nombre}
+                        </p>
+                        <p>
+                          <strong>Domicilio:</strong> {clienteSeleccionado.domicilio}
+                        </p>
+                        <p>
+                          <strong>Fecha de nacimiento:</strong> {clienteSeleccionado.fecha_nac}
+                        </p>
+                        <p>
+                          <strong>Ciudad:</strong> {clienteSeleccionado.ciudad}
+                        </p>
+                      </Col>
+
+                      <Col sm="6">
+                        <p>
+                          <strong>Estado:</strong> {clienteSeleccionado.estado}
+                        </p>
+                        <p>
+                          <strong>Colonia:</strong> {clienteSeleccionado.colonia}
+                        </p>
+                        <p>
+                          <strong>Código Postal:</strong> {clienteSeleccionado.cp}
+                        </p>
+                      </Col>
+                    </Row>
+                    <br />
+                  </TabPane>
+
+                  <TabPane tabId="2">
+                    <Row>
+                      <Col sm="6">
+                        <p>
+                          <strong>Teléfono:</strong> {clienteSeleccionado.telefono}
+                        </p>
+                        <p>
+                          <strong>Email:</strong> {clienteSeleccionado.email}
+                        </p>
+                        <p>
+                          <strong>Correo de facturación:</strong> {clienteSeleccionado.correo_factura}
+                        </p>
+                      </Col>
+
+                      <Col sm="6">
+                        <p>
+                          <strong>Nombre fiscal:</strong> {clienteSeleccionado.nombre_fiscal}
+                        </p>
+                        <p>
+                          <strong>Regimen fiscal:</strong> {clienteSeleccionado.regimenFiscal}
+                        </p>
+                      </Col>
+                    </Row>
+                  </TabPane>
+
+                  <TabPane tabId="3">
+                    <Row>
+                      <MaterialReactTable
+                        columns={cHistorial}
+                        data={datah}
+                        initialState={{
+                          pagination: {
+                            pageSize: 5,
+                            pageIndex: 0,
+                          },
+                          density: "compact",
+                        }}
+                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      />
+                    </Row>
+                    <br />
+                    <div>
+                      <Card style={{ width: "700px", height: "400px" }}>
+                        <CardBody>
+                          <h3>Historial citas futuras</h3>
+                          <br />
+                          <div>
+                            <Table hover className="table-responsive">
+                              <thead>
+                                <tr>
+                                  <th>Fecha</th>
+                                  <th>Hora</th>
+                                  <th>Sucursal</th>
+                                  <th>Servicio</th>
+                                  <th>Estilista</th>
+                                  <th>Usuario</th>
+                                  <th>Feha alta cita</th>
+                                  {/* Agrega más encabezados según tus datos */}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {datah1.map((item, index) => (
+                                  <tr key={index}>
+                                    <td>{item.Fecha}</td>
+                                    <td>{item.hora}</td>
+                                    <td>{item.NombreSuc}</td>
+                                    <td>{item.Producto_Servicio}</td>
+                                    <td>{item.Estilista}</td>
+                                    <td>{item.nombreUsrRegistra}</td>
+                                    <td>{item.Fecha}</td>
+                                    {/* Agrega más celdas según tus datos */}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </div>
+
+                    <br />
+                  </TabPane>
+                </TabContent>
+
+              </Card>
+
+            </Container>
+          )}
+
+          {/* 
+
+          {clienteSeleccionado && (
+            <div>
+              <p><strong>Nombre:</strong> {clienteSeleccionado.nombre}</p>
+              <p><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</p>
+              <p><strong>Domicilio:</strong> {clienteSeleccionado.domicilio}</p>
+              <p><strong>Email:</strong> {clienteSeleccionado.email}</p>
+              <p><strong>Ciudad:</strong> {clienteSeleccionado.ciudad}</p>
+              <p><strong>Estado:</strong> {clienteSeleccionado.estado}</p>
+              <p><strong>Colonia:</strong> {clienteSeleccionado.colonia}</p>
+              <p><strong>Código Postal:</strong> {clienteSeleccionado.cp}</p>
+
+        
+            </div>
+          )} */}
+
+        </ModalBody>
+        <ModalFooter>
+          <CButton text="Cerrar" color="danger" onClick={() => setModalDetalle(false)} />
+        </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} size="lg">
+        <ModalHeader toggle={handleCloseModal}>Historial detalle</ModalHeader>
+        <ModalBody>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            <Table>
+              <thead>
+                <tr>
+                  <th>
+                    <p>
+                      <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>No. Venta: </strong>
+                      {paramsDetalles.numVenta}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                    </p>
+                  </th>
+                </tr>
+              </thead>
+            </Table>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historialDetalle.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.Insumo}</td>
+                    <td>{item.Cant}</td>
+                    <td>{item.precio}</td>
+                    <td>{item.importe}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <div>
+              <p style={{ textAlign: "left" }}>
+                <strong>Total: ${totalImportes.toFixed(2)}</strong>
+              </p>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+
+
+      {/* Modal for showing client details */}
+      {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
+        <ModalHeader toggle={toggleModalDetalle}>Detalles del Cliente</ModalHeader>
+        <ModalBody> */}
+      {/* Display the client details */}
+      {/* <p><strong>Nombre:</strong> {form.nombre}</p>
+          <p><strong>Teléfono:</strong> {form.telefono}</p>
+          <p><strong>Domicilio:</strong> {form.domicilio}</p>
+          <p><strong>Email:</strong> {form.email}</p>
+          <p><strong>Ciudad:</strong> {form.ciudad}</p>
+          <p><strong>Estado:</strong> {form.estado}</p>
+          <p><strong>Colonia:</strong> {form.colonia}</p>
+          <p><strong>Código Postal:</strong> {form.cp}</p> */}
+      {/* ... (display other details here) */}
+      {/* </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggleModalDetalle}>Cerrar</Button>
+        </ModalFooter>
+      </Modal> */}
 
       {/* modal para Detalles */}
       {/* <Modal isOpen={modalDetalle} fullscreen={true}>

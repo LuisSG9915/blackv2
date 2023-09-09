@@ -397,6 +397,7 @@ function Proveedores() {
     <>
       <Row>
         <SidebarHorizontal />
+  
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

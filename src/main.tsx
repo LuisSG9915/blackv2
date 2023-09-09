@@ -25,14 +25,11 @@ import Puestos from "./screens/puesto/Puestos";
 import PuestosCrear from "./screens/puesto/PuestosCrear";
 import MarcasCrear from "./screens/marcas/MarcasCrear";
 import TipoFormasPago from "./screens/tipoPago/TipoFormasPago";
-import { Provider } from "react-redux";
-import store from "./redux/store";
 import Home from "./screens/home/Home";
 import Ventas from "./screens/ventas/Ventas";
 import { VentasProvider } from "./screens/ventas/context/VentasContext";
 import App from "./App";
 import FormasPago from "./screens/FormasPagos";
-import Cliente from "./screens/clientes/Cliente";
 import ClienteCrear from "./screens/clientes/ClienteCrear";
 import Sucursales from "./screens/sucursales/Sucursales";
 import Almacenes from "./screens/almacen/Almacenes";
@@ -68,6 +65,10 @@ import UnidadMedida from "./screens/unidad_medida/UnidadMedida";
 import TipoMovto from "./screens/tipo_movto/TipoMovto";
 import Anticipo from "./screens/anticipo/Anticipo";
 import ReporteTool from "./screens/ReporteTool/ReporteTool";
+import DemoTresTablas from "./screens/ReporteTool/DemoTresTablas";
+import ShopifySinc from "./screens/shopify/ShopifySinc";
+import ClientesShopify from "./screens/clienteshopify/ClientesShopify";
+import Metas from "./screens/metas/Metas";
 
 const router = createBrowserRouter([
   {
@@ -187,6 +188,10 @@ const router = createBrowserRouter([
   {
     path: "/Clientes",
     element: <Clientes />,
+  },
+  {
+    path: "/ClientesShopify",
+    element: <ClientesShopify />,
   },
   {
     path: "/ClienteCrear",
@@ -319,6 +324,18 @@ const router = createBrowserRouter([
   {
     path: "/ReporteTool",
     element: <ReporteTool />,
+  },
+  {
+    path: "/DemoTresTablas",
+    element: <DemoTresTablas />,
+  },
+  {
+    path: "/ShopifySinc",
+    element: <ShopifySinc />,
+  },
+  {
+    path: "/Metas",
+    element: <Metas />,
   },
 ]);
 

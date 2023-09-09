@@ -71,7 +71,7 @@ function DepartamentoRecursos() {
 
   //AQUI COMIENZA MÉTODO AGREGAR TIPO BAJA
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_DEPARTAMENTOS_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -113,7 +113,7 @@ function DepartamentoRecursos() {
   // };
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_DEPARTAMENTOS_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -154,7 +154,7 @@ function DepartamentoRecursos() {
   // };
 
   const eliminar = async (dato: RecursosDepartamento) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_DEPARTAMENTOS_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }

@@ -51,8 +51,7 @@ function Sucursales() {
   const { filtroSeguridad, session } = useSeguridad();
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
-  const [filtroValorMedico, setFiltroValorMedico] = useState("");
-  const [filtroValorEmail, setFiltroValorEmail] = useState("");
+
   const [data, setData] = useState<Sucursal[]>([]);
   const { dataCias, fetchCias } = useCias();
 
@@ -107,8 +106,7 @@ function Sucursales() {
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos());
-    console.log({ form });
+
     if (validarCampos() === true) {
       await jezaApi
         .post("/Sucursal", null, {
@@ -135,31 +133,6 @@ function Sucursales() {
     } else {
     }
   };
-
-  //ANTIGUO MÉTODO DE INSERTAR
-  // const insertar = () => {
-  //   jezaApi
-  //     .post("/Sucursal", null, {
-  //       params: {
-  //         nombre: form.nombre,
-  //         direccion: form.direccion,
-  //         es_bodega: form.es_bodega,
-  //         en_linea: form.en_linea,
-  //         cia: Number(form.cia),
-  //       },
-  //     })
-  //     .then(() => {
-  //       getSucursal();
-  //       setModalInsertar(false);
-
-  //     })
-  //     .catch((error) => {
-
-  //       // setError(true);
-  //       console.log(error);
-  //     });
-
-  // };
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
@@ -223,24 +196,6 @@ function Sucursales() {
       }
     });
   };
-
-  ///ANTIGUO MÉTODO DE ELIMINACIÓN
-  // const eliminar = (dato: any) => {
-  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.sucursal}`);
-  //   if (opcion) {
-  //     jezaApi
-  //       .delete(`/Sucursal?id=${dato.sucursal}`)
-  //       .then((response) => {
-  //         setVisible3(true);
-  //         setModalActualizar(false);
-  //         setTimeout(() => {
-  //           getSucursal();
-  //           setVisible3(false);
-  //         }, 1000);
-  //       })
-  //       .catch((e) => console.log(e));
-  //   }
-  // };
 
   //AQUI COMIENZA EL MÉTODO GET PARA VISUALIZAR LOS REGISTROS
   const getSucursal = () => {
@@ -308,11 +263,11 @@ function Sucursales() {
       // renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
 
-    { field: "nombre", headerName: "Sucursal", width: 350, headerClassName: "custom-header" },
+    { field: "nombre", headerName: "Sucursal", width: 170, headerClassName: "custom-header" },
     {
       field: "direccion",
       headerName: "Dirección",
-      width: 200,
+      width: 550,
       headerClassName: "custom-header",
     },
     {
@@ -329,15 +284,6 @@ function Sucursales() {
       headerClassName: "custom-header",
       renderCell: (params) => <span>{params.row.es_bodega ? "Sí" : "No"}</span>,
     },
-    // {
-    //   field: "es_bodega",
-    //   headerName: "Es Bodega",
-    //   width: 150,
-    //   headerClassName: "custom-header",
-    //   renderCell: (params) => (
-    //     <span>{params.row.es_bodega ? <HiBuildingStorefront size={20} /> : <AiFillDelete />}</span>
-    //   ),
-    // },
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -345,7 +291,6 @@ function Sucursales() {
       <>
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
         <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete>
-        {/* <AiFillDelete color="lightred" onClick={() => console.log(params.row.id)} size={23}></AiFillDelete> */}
       </>
     );
   };
@@ -384,33 +329,34 @@ function Sucursales() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Sucursales </h1>
-          <HiBuildingStorefront size={35}></HiBuildingStorefront>
+          <h1> Sucursales <HiBuildingStorefront size={35}></HiBuildingStorefront></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear sucursal
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear sucursal
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -438,7 +384,7 @@ function Sucursales() {
               <Col md={"6"}>
                 <Label>Empresa:</Label>
                 <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-                  <option value="">Selecciona empresa</option>
+                  <option value="">Seleccione empresa</option>
                   {dataCias.map((cia: Cia) => (
                     <option key={cia.id} value={cia.id}>
                       {cia.nombre}
@@ -494,7 +440,7 @@ function Sucursales() {
               <Col md={"6"}>
                 <Label>Empresa:</Label>
                 <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-                  <option value="">Selecciona empresa</option>
+                  <option value="">Seleccione empresa</option>
                   {dataCias.map((cia: Cia) => (
                     <option key={cia.id} value={cia.id}>
                       {cia.nombre}

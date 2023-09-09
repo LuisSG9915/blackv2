@@ -18,13 +18,17 @@ import {
   InputGroup,
   Row,
   Table,
+  Card,
+  CardBody,
+  CardTitle,
+  CardSubtitle,
+  CardText,
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 
 import CButton from "../../components/CButton";
 import TableEstilistas from "./Components/TableEstilistas";
-import { useGentlemanContext } from "./context/VentasContext";
 import TableProductos from "./Components/TableProductos";
 import TableClientesProceso from "./Components/TableClientesProceso";
 import TableCliente from "./Components/TableCliente";
@@ -51,8 +55,12 @@ import { FormaPago } from "../../models/FormaPago";
 import TimeKeeper from "react-timekeeper";
 import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
+import { LuCalendarSearch } from "react-icons/lu";
+import TableHistorial from "./Components/TableHistorial";
+import TableAnticipos from "./Components/TableAnticipos";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -78,6 +86,8 @@ const Ventas = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [tiempo, setTiempo] = useState<number>(0);
+  const [hora, setHora] = useState<string>("");
+
   const [visible, setVisible] = useState<boolean>(false);
   const [estilistaProceso, setEstilistaProceso] = useState([
     {
@@ -107,12 +117,22 @@ const Ventas = () => {
   useEffect(() => {
     const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
     setFormasPagosFiltradas(formasPagosFiltradas);
-    console.log({ formasPagosFiltradas });
   }, [dataFormasPagos]);
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
   const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal });
+
+  const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
+  const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
+  const idCliente = new URLSearchParams(window.location.search).get("idCliente");
+  useEffect(() => {
+    setDataTemporal((prevDataTemporal) => ({
+      ...prevDataTemporal,
+      cliente: nombreCliente ? nombreCliente.toString() : "",
+      Cve_cliente: Number(idCliente),
+    }));
+  }, [nombreCliente, idCliente]);
 
   const [datoVentaSeleccionado, setDatoVentaSeleccionado] = useState<any>({
     Caja: 1,
@@ -286,7 +306,7 @@ const Ventas = () => {
     Caja: 1,
     No_venta: 1,
     Clave_prod: 1,
-    Cant_producto: 0,
+    Cant_producto: 1,
     Precio: 0,
     Precio_base: 0,
     Cve_cliente: 0,
@@ -323,7 +343,6 @@ const Ventas = () => {
     setdata(datosInicialesArreglo);
   }, []);
 
-  // const TableDataHeader = ["Estilista", "Producto/Servicio", "Cantidad", "Precio", "Descuento", "Importe", "Hora", "Tiempo", "Acciones"];
   const TableDataHeader = [
     "Estilista",
     "Auxiliar",
@@ -339,49 +358,6 @@ const Ventas = () => {
   const TableDataHeaderInsumo = ["Insumo", "Cantidad", "Unidad de medida", "Acciones"];
   const TabñeDataHeaderEstilistaProceso = ["Estilista", ""];
 
-  const mostrarModalActualizar = (dato: Venta) => {
-    setDataTemporal(dato);
-    setModalActualizar(true);
-  };
-
-  const handleInsumoSelection = () => {
-    Swal.fire({
-      title: `Ingrese el descuento entre: ${descuento.min} - ${descuento.max} `,
-      input: "number",
-      inputAttributes: {
-        min: "0.01", // Establece un valor mínimo para el input (por ejemplo, 0.01 para permitir decimales)
-        step: "0.01", // Define los pasos para incrementar/decrementar el valor (por ejemplo, 0.01 para decimales)
-      },
-      showCancelButton: true,
-      confirmButtonText: "Guardar",
-      cancelButtonText: "Cancelar",
-      showLoaderOnConfirm: true,
-      preConfirm: (cantidad) => {
-        return new Promise((resolve, reject) => {
-          // Realizar cualquier validación adicional aquí si es necesario
-          const cantidadNumber = parseFloat(cantidad);
-          if (isNaN(cantidadNumber) || cantidadNumber <= 0) {
-            reject("La cantidad debe ser mayor a cero.");
-          } else {
-            resolve(cantidadNumber);
-          }
-        });
-      },
-      allowOutsideClick: () => !Swal.isLoading(),
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const cantidad = result.value;
-        // Realiza aquí la lógica para guardar la cantidad seleccionada
-        setDataTemporal({ ...dataTemporal, Descuento: Number(cantidad) });
-        // setForm((prevState) => {
-        //   const updatedForm = { ...prevState, id_insumo: id, cantidad };
-        //   return updatedForm;
-        // });
-        setModalOpen2(false);
-      }
-    });
-  };
-
   const [descuento, setDescuento] = useState({
     min: 0,
     max: 0,
@@ -389,10 +365,6 @@ const Ventas = () => {
   const cambios = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "hora") {
-      // const partesHora = value.split(":");
-      // const hora = parseInt(partesHora[0], 10); // Convertir la parte de la hora a entero
-      // const minutos = parseInt(partesHora[1], 10); // Convertir la parte de los minutos a entero
-      // let horaInt = hora + minutos / 60; // Calcular el valor entero de la hora con fracciones de minut
       setDataTemporal((prev) => ({ ...prev, [name]: value }));
       console.log(dataTemporal.hora);
     } else if (name === "Clave_Descuento") {
@@ -441,38 +413,13 @@ const Ventas = () => {
     }
     console.log(name);
   };
-  const cambiosPagos = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
 
-    setFormPago((prev) => ({ ...prev, [name]: value }));
-  };
-  // const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-
-  //   const { name, value } = e.target;
-  //   if ((name === "formaPago" && Number(value) === 60) || (name === "formaPago" && Number(value) === 2059)) {
-  //     setModalAnticipo(true);
-  //   }
-  //   // if (name === "formaPago" && Number(value) === 58) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 60) {
-  //   //   setFormPago({ ...formPago, anticipos: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 1057) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 2058) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // } else if (name === "formaPago" && Number(value) === 2059) {
-  //   //   setFormPago({ ...formPago, tc: Number(value) });
-  //   // }
-
-  //   setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
-  // };
-
-  const [selectedFormasPago, setSelectedFormasPago] = useState<Set<number>>(new Set());
+  const [anticipoSelected, setAnticipoSelected] = useState(false);
   const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     // Comprueba si el método de pago seleccionado ya está en el arregloTemporal
-    const isAlreadySelected = arregloTemporal.some((pago) => pago.formaPago === value);
+    const isAlreadySelected = arregloTemporal.some((pago) => Number(pago.formaPago) === Number(value));
 
     if (isAlreadySelected && name === "formaPago") {
       Swal.fire({
@@ -481,10 +428,12 @@ const Ventas = () => {
         text: `¡Método de pago ya seleccionado!`,
         confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
       });
-    } else if (name === "formaPago" && Number(value) === 100) {
+    } else if (name === "formaPago" && Number(value) === 94) {
       setModalAnticipo(true);
+      setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     } else {
+      setAnticipoSelected(false);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -495,7 +444,7 @@ const Ventas = () => {
     setFormInsumo((prev) => ({ ...prev, [name]: value }));
     console.log(formInsumo);
   };
-
+  // SUMATORIAS
   useEffect(() => {
     const totalCobro = Number(formPago.anticipos) + Number(formPago.efectivo) + Number(formPago.tc);
     const totalCambio = Number(totalCobro) - Number(total);
@@ -506,7 +455,9 @@ const Ventas = () => {
     }));
     console.log({ formPago });
   }, [formPago.anticipos, formPago.efectivo, formPago.tc]);
+
   const [flag, setFlag] = useState(false);
+
   useEffect(() => {
     if (flag === true) {
       const importeFinal = Number(dataTemporal.Precio) - Number(dataTemporal.Precio) * Number(dataTemporal.Descuento);
@@ -537,12 +488,6 @@ const Ventas = () => {
     }
     return opciones;
   };
-  // const getinsumo = async (dato: Venta) => {
-  //   await jezaApi.get(`/VentaInsumo?id_venta=${datoVentaSeleccionado.id}`).then((response) => {
-  //     setDatoInsumo(response.data);
-  //     console.log(response);
-  //   });
-  // };
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -582,92 +527,71 @@ const Ventas = () => {
       today.setMilliseconds(0);
       horaDateTime = today.toISOString();
     }
-    try {
-      await jezaApi
-        .post("/Venta", null, {
-          params: {
-            id: 0,
-            Cia: 26,
-            Sucursal: dataUsuarios2[0]?.sucursal,
-            Fecha: today2,
-            Caja: 1,
-            No_venta: 0,
-            no_venta2: 0,
-            Clave_prod: dataTemporal.Clave_prod,
-            Cant_producto: dataTemporal.Cant_producto,
-            Cve_cliente: dataTemporal.Cve_cliente,
-            Tasa_iva: "0.16",
-            Observacion: dataTemporal.Observacion,
-            Descuento: dataTemporal.Descuento,
-            Clave_Descuento: dataTemporal.Clave_Descuento,
-            // usuario: form[0].id,
-            usuario: dataTemporal.idEstilista,
-            Corte: 1,
-            Corte_parcial: 1,
-            Costo: 1,
-            // Precio: dataTemporal.Precio_base === 0 ? dataTemporal.Precio : dataTemporal.Precio_base,
-            Precio: dataTemporal.Precio,
-            Precio_base: dataTemporal.Precio,
-            No_venta_original: 0,
-            cancelada: false,
-            folio_estilista: 0,
-            hora: horaDateTime,
-            tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
-            terminado: false,
-            validadoServicio: false,
-            ieps: "0",
-            Credito: false,
-            idEstilista: dataTemporal.idEstilista,
-            idestilistaAux: dataTemporal.idestilistaAux ? dataTemporal.idestilistaAux : 0,
-            idRecepcionista: dataUsuarios2[0]?.id,
-          },
-        })
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Venta registrada con éxito",
-            confirmButtonColor: "#3085d6",
+    if (dataTemporal.Cant_producto > 0) {
+      try {
+        await jezaApi
+          .post("/Venta", null, {
+            params: {
+              id: 0,
+              Cia: dataUsuarios2[0]?.idCia,
+              Sucursal: dataUsuarios2[0]?.sucursal,
+              Fecha: today2,
+              Caja: 1,
+              No_venta: 0,
+              no_venta2: 0,
+              Clave_prod: dataTemporal.Clave_prod,
+              Cant_producto: dataTemporal.Cant_producto,
+              Cve_cliente: dataTemporal.Cve_cliente,
+              Tasa_iva: "0.16",
+              Observacion: dataTemporal.Observacion,
+              Descuento: dataTemporal.Descuento ? dataTemporal.Descuento : 0,
+              Clave_Descuento: dataTemporal.Clave_Descuento ? dataTemporal.Clave_Descuento : 0,
+              usuario: dataTemporal.idEstilista,
+              Corte: 1,
+              Corte_parcial: 1,
+              Costo: 1,
+              Precio: dataTemporal.Precio,
+              Precio_base: dataTemporal.Precio,
+              No_venta_original: 0,
+              cancelada: false,
+              folio_estilista: 0,
+              hora: horaDateTime,
+              tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
+              terminado: false,
+              validadoServicio: false,
+              ieps: "0",
+              Credito: false,
+              idEstilista: dataTemporal.idEstilista,
+              idestilistaAux: dataTemporal.idestilistaAux ? dataTemporal.idestilistaAux : 0,
+              idRecepcionista: dataUsuarios2[0]?.id,
+            },
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Venta registrada con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            fetchVentas();
+            setDataTemporal((prevData) => ({
+              ...datosInicialesArreglo[0],
+              Cant_producto: 1,
+              cliente: prevData.cliente,
+              Cve_cliente: prevData.Cve_cliente,
+            }));
+            setDescuento({ min: 0, max: 0 });
           });
-          fetchVentas();
-          setDataTemporal((prevData) => ({
-            ...datosInicialesArreglo[0],
-            cliente: prevData.cliente,
-            Cve_cliente: prevData.Cve_cliente,
-          }));
-          setDescuento({ min: 0, max: 0 });
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  // TODO Add this function
-  const insertarPago = () => {
-    jezaApi.post("/VentaPago", null, {
-      params: {},
-    });
-  };
-
-  const createInsumoTrue = () => {
-    jezaApi.post("insumo", null, { params: { id_venta: datoVentaSeleccionado.id, id_insumo: 1, cantidad: 1 } });
-  };
-
-  const createInsumo = () => {
-    console.log({ formPago });
-    jezaApi
-      .post("/VentaPago", null, {
-        params: {
-          cliente: dataTemporal.Cve_cliente,
-          suc: dataUsuarios2[0]?.sucursal,
-          total: total,
-          efectivo: formPago.efectivo,
-          tc: formPago.tc,
-          anticipos: formPago.anticipos,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        setDatoTicket(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Advertencia",
+        text: `El campo de cantidad a vender solo acepta numeros, favor de verificar`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
       });
+    }
   };
 
   const deleteVenta = async (dato: Venta): Promise<void> => {
@@ -697,28 +621,6 @@ const Ventas = () => {
         } catch (error) {}
       }
     });
-
-    // if (dato.Observacion === "SERV") {
-    //   const opcion = window.confirm(`¿Está seguro de eliminar esta venta? Al eliminar esta venta se eliminarán los insumos relacionados `);
-    //   console.log(dato.id);
-    //   if (opcion) {
-    //     try {
-    //       await jezaApi.delete(`/Venta?id=${dato.id}`).then((response) => console.log(response));
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
-    // } else {
-    //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento `);
-    //   console.log(dato.id);
-    //   if (opcion) {
-    //     try {
-    //       await jezaApi.delete(`/Venta?id=${dato.id}`).then((response) => console.log(response));
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }
-    // }
   };
 
   const deleteInsumo = async (dato: VentaInsumo): Promise<void> => {
@@ -758,7 +660,10 @@ const Ventas = () => {
       );
   };
 
-  const { dataVentas, fetchVentas } = useVentasV2({ idCliente: dataTemporal.Cve_cliente, sucursal: dataUsuarios2[0]?.sucursal });
+  const { dataVentas, fetchVentas } = useVentasV2({
+    idCliente: dataTemporal.Cve_cliente,
+    sucursal: dataUsuarios2[0]?.sucursal,
+  });
 
   const [fechaHoy, setFechaHoy] = useState("");
   const [fechaHoyMedioPago, setFechaHoyMedioPago] = useState("");
@@ -782,12 +687,6 @@ const Ventas = () => {
 
     obtenerFechaHoy();
   }, []);
-
-  const obtenerHoraFormateada = (hora: any) => {
-    const fecha = new Date(hora);
-    const horaFormateada = fecha.toLocaleString("en-US", { hour: "numeric", minute: "numeric", hour12: true });
-    return horaFormateada;
-  };
 
   useEffect(() => {
     let totalPorProducto = 0;
@@ -838,13 +737,6 @@ const Ventas = () => {
       return listaEstilistas;
     }, []);
     setEstilistaProceso(estilistasUnicos);
-
-    // const temporal = dataVentas[0]?.hora ? dataVentas[0]?.hora : "";
-    // const partesHora = temporal.split(":");
-    // const hora = parseInt(partesHora[0], 10); // Convertir la parte de la hora a entero
-    // const minutos = parseInt(partesHora[1], 10); // Convertir la parte de los minutos a entero
-    // let horaInt = hora + minutos / 60; // Calcular el valor entero de la hora con fracciones de minut
-    // setDataTemporal({ ...dataTemporal, hora: horaInt });
   }, [dataVentas]);
 
   const postEstilistaTicket = (dato: any) => {
@@ -853,7 +745,7 @@ const Ventas = () => {
     console.log(dato);
     jezaApi
       .get(
-        `/TicketInsumosEstilsta?cia=26&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
+        `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
       )
       .then((response) => {
         setDatoTicketEstilista(response.data);
@@ -863,9 +755,12 @@ const Ventas = () => {
   };
 
   const [productoSelected, setProductoSelected] = useState<number[]>([]);
+
   useEffect(() => {
     const descripciones = dataVentas ? dataVentas.map((item) => item.Clave_prod) : [];
     setProductoSelected(descripciones);
+    const ultimaHora = dataVentas && dataVentas.length > 0 ? dataVentas[dataVentas.length - 1].hora : "";
+    setHora(ultimaHora);
   }, [dataVentas]);
 
   const endVenta = () => {
@@ -921,84 +816,30 @@ const Ventas = () => {
       // anticipoPost(Number(response.data.mensaje2));
     });
   };
-
   const { dataAnticipos } = useAnticipoVentas({
     cliente: Number(dataTemporal.Cve_cliente),
-    suc: dataUsuarios2[0]?.sucursal,
+    suc: "%",
   });
-  // ////////////////////////////////////
-  const columns: GridColDef[] = [
-    {
-      field: "Acción",
-      renderCell: (params) => <ComponentChiquito params={params} />,
-      flex: 1, // Ancho flexible
-      minWidth: 120, // Ancho mínimo
-      headerClassName: "custom-header",
-    },
-    // { field: "sucursal", headerName: "ID", width: 200, headerClassName: "custom-header", },
-    {
-      field: "importe",
-      headerName: "Importe",
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-      width: 150,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "referencia",
-      headerName: "Referencia",
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-      width: 150,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "observaciones",
-      headerName: "Observaciones",
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-      width: 150,
-      headerClassName: "custom-header",
-    },
-    {
-      field: "fecha",
-      headerName: "Fecha de movimientos",
-      renderCell: (params) => <p>{params.row.fecha.split("T")[0]}</p>,
-      flex: 1, // Ancho flexible
-      minWidth: 150, // Ancho mínimo
-
-      headerClassName: "custom-header",
-    },
-  ];
-
-  const ComponentChiquito = ({ params }: { params: any }) => {
-    return (
-      <>
-        <Button
-          onClick={() => {
-            setFormPago({ ...formPago, anticipos: Number(formPago.anticipos) + Number(params.row.importe) });
-            setFormAnticipo({
-              ...formAnticipo,
-              id: params.row.id,
-              referencia: params.row.referencia,
-              observaciones: params.row.observaciones,
-              importe: params.row.importe,
-            });
-            // console.log(formAnticipo);
-            setModalAnticipo(false);
-            // setModalTipoVenta(false);
-            setDataArregloTemporal({
-              ...dataArregloTemporal,
-              importe: params.row.importe,
-              referencia: params.row.referencia.toString(),
-            });
-          }}
-        >
-          Seleccionar
-        </Button>
-      </>
-    );
+  const [anticipoId, setAnticipoId] = useState(0);
+  const [anticipoIdentificador, setAnticipoIdentificador] = useState(0);
+  const anticipoSelectedFunction = (params) => {
+    setFormAnticipo({
+      ...formAnticipo,
+      id: params.row.id,
+      referencia: params.row.referencia,
+      observaciones: params.row.observaciones,
+      importe: params.row.importe,
+    });
+    setDataArregloTemporal({
+      ...dataArregloTemporal,
+      importe: params.row.importe * -1,
+      referencia: params.row.referencia ? params.row.referencia.toString() : ".",
+    });
+    setAnticipoId(Number(params.row.id));
+    setAnticipoIdentificador(Number(params.row.id));
+    setModalAnticipo(false);
   };
+
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1); // Inicialmente, no hay ningún índice seleccionado
 
   // Función para eliminar un elemento del arreglo según su índice
@@ -1021,61 +862,16 @@ const Ventas = () => {
       setSelectedItemIndex(-1); // Reseteamos el índice seleccionado para que no haya elemento seleccionado
     }
   };
+
   function DataTable() {
-    const getRowId = (row: AnticipoGet) => row.id;
     return (
       <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
         <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
-          <DataGrid
-            rows={dataAnticipos}
-            columns={columns}
-            hideFooter={false}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 15 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-            getRowId={getRowId}
-          />
+          <TableAnticipos anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableAnticipos>
         </div>
       </div>
     );
   }
-
-  // const anticipoPost = (noVenta: number) => {
-  //   if (formAnticipo.importe > 0) {
-  //     jezaApi
-  //       .post("/AnticipoAplicado", null, {
-  //         params: {
-  //           cia: 26,
-  //           sucursal: dataUsuarios2[0]?.sucursal,
-  //           caja: 1,
-  //           fecha: fechaHoy,
-  //           no_venta: noVenta,
-  //           fechaMovto: 20230726,
-  //           idCliente: dataTemporal.Cve_cliente,
-  //           idUsuario: dataUsuarios2[0]?.id,
-  //           tipoMovto: 1,
-  //           referencia: formAnticipo.referencia,
-  //           importe: formAnticipo.importe,
-  //           observaciones: formAnticipo.observaciones,
-  //           idAnticipo: formAnticipo.id,
-  //         },
-  //       })
-  //       .then(() => {
-  //         setTimeout(() => {
-  //           Swal.fire({
-  //             icon: "success",
-  //             text: "Venta finalizada con éxito",
-  //             confirmButtonColor: "#3085d6",
-  //           });
-  //         }, 1500);
-  //       });
-  //   } else {
-  //     null;
-  //   }
-  // };
 
   const medioPago = (noVenta: number) => {
     arregloTemporal.forEach((elemento) => {
@@ -1089,7 +885,8 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
-          referencia: elemento.referencia ? elemento.referencia : "efectivo",
+          // Quiero que me valide si formaPago =  100 me ingrese "Anticipo"
+          referencia: Number(elemento.formaPago) === 94 ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
           importe: elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
@@ -1131,7 +928,7 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=26&Sucursal=${
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
           dataUsuarios2[0]?.sucursal
         }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
           dataVentaEdit.Cant_producto
@@ -1141,7 +938,9 @@ const Ventas = () => {
           dataVentaEdit.Costo
         }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
           dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux}&idRecepcionista=${dataUsuarios2[0]?.id}`
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
+          dataUsuarios2[0]?.id
+        }`
       )
       .then(() => {
         Swal.fire({
@@ -1187,11 +986,6 @@ const Ventas = () => {
       });
   };
 
-  const [selectedTime, setSelectedTime] = useState(null);
-
-  const handleTimeChange = (time) => {
-    setSelectedTime(time);
-  };
   const [time, setTime] = useState("12:34pm");
 
   const [datah, setData] = useState<any[]>([]); // Definir el estado datah
@@ -1206,17 +1000,64 @@ const Ventas = () => {
       setData(response.data);
       toggleModalHistorial(); // Abrir o cerrar el modal cuando los datos se hayan cargado
     });
+    historialCitaFutura(dataTemporal.Cve_cliente);
+  };
+
+  const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
+
+  const toggleModalHistorialFutura = () => {
+    setModalOpenH(!modalOpen);
+  };
+
+  // const historialCitaFutura = (dato: any) => {
+  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+  //     setData1(response.data);
+  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+  //   });
+  // };
+
+  const historialCitaFutura = (dato: any) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+      const dataConFechasFormateadas = response.data.map((item: any) => ({
+        ...item,
+        fechaCita: new Date(item.fechaCita).toLocaleDateString(),
+        fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
+      }));
+      setData1(dataConFechasFormateadas);
+      toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
   };
 
   const [historialDetalle, setHistorialDetalle] = useState<any[]>([]); // Definir historialDetalle como una variable local, no un estado del componente
 
-  const loadHistorialDetalle = (numVenta: number) => {
-    jezaApi
-      .get(`/HistorialDetalle?suc=21&cliente=${dataTemporal.Cve_cliente}&venta=${numVenta}&serv=7702`)
+  const [paramsDetalles, setParamsDetalles] = useState({
+    sucursal: 0,
+    numVenta: 0,
+    idProducto: 0,
+    clave: 0,
+    Cve_cliente: 0,
+    fecha: "",
+  });
+
+  const [totalImportes, setTotalImportes] = useState(0);
+
+  // Cuando cambia historialDetalle, recalcula el total de importes
+  useEffect(() => {
+    const total = historialDetalle.reduce((accumulator, item) => {
+      const importe = parseFloat(item.importe);
+      return accumulator + importe;
+    }, 0);
+    setTotalImportes(total);
+  }, [historialDetalle]);
+
+  const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
+    await jezaApi
+      .get(`/HistorialDetalle?suc=${idSucursal}&cliente=${cveCliente}&venta=${noVenta}&serv=${idProducto}`)
       .then((response) => {
         // Verifica los datos de respuesta en la consola para asegurarte que sean correctos
         console.log(response.data);
         // Asigna los datos de respuesta a la variable local historialDetalle
+        handleOpenModal();
         setHistorialDetalle(response.data);
       })
       .catch((error) => {
@@ -1224,162 +1065,24 @@ const Ventas = () => {
       });
   };
 
-  const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-      {
-        accessorKey: "NumVenta",
-        header: "NumVenta",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "NombreSuc",
-        header: "Sucursal",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Fecha",
-        header: "Fecha",
-        flex: 1,
-        size: 1,
-        Cell: ({ cell }) => {
-          const fecha = new Date(cell.getValue()); // Obtener la fecha como objeto Date
-          const dia = fecha.getDate().toString().padStart(2, "0"); // Obtener el día con dos dígitos
-          const mes = (fecha.getMonth() + 1).toString().padStart(2, "0"); // Obtener el mes con dos dígitos (los meses en JavaScript son base 0)
-          const anio = fecha.getFullYear().toString(); // Obtener el año con cuatro dígitos
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
-          return <span>{`${dia}/${mes}/${anio}`}</span>;
-        },
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Clave",
-        header: "Clave",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Producto_Servicio",
-        header: "Producto/Servicio",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Cantidad",
-        header: "Cantidad",
-        flex: 1,
-        size: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Precio",
-        header: "Precio",
-        flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
-        muiTableBodyCellProps: {
-          align: "right",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-        size: 1,
-      },
-      {
-        accessorKey: "Estilista",
-        header: "Estilista",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Descuento",
-        header: "Descuento",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-      {
-        accessorKey: "Forma_pago",
-        header: "Forma de pago",
-        flex: 1,
-        muiTableBodyCellProps: {
-          align: "center",
-        },
-        muiTableHeadCellProps: {
-          align: "center",
-        },
-      },
-    ],
-    []
-  );
-  const renderDetailPanel = ({ row }: { row: any }) => {
-    // Cargar los detalles del historial al expandir un row
-    useEffect(() => {
-      loadHistorialDetalle(row.original.NumVenta);
-    }, [row.original.NumVenta]); // Se ejecutará cada vez que cambie la NumVenta en el row
-
-    return (
-      <div style={{ display: "grid" }}>
-        {/* Renderizar los detalles del historial */}
-        {historialDetalle.length > 0 && (
-          <div>
-            <span>Detalles del historial:</span>
-            <span>Fecha: {historialDetalle[0].Fecha}</span>
-            <span>NumVenta: {historialDetalle[0].NumVenta}</span>
-            <span>Sucursal: {historialDetalle[0].Sucursal}</span>
-            <span>Estilista: {historialDetalle[0].Estilista}</span>
-            <span>Servicio: {historialDetalle[0].Servicio}</span>
-            <span>Insumo: {historialDetalle[0].Insumo}</span>
-            <span>Cantidad: {historialDetalle[0].Cant}</span>
-            {/* ... */}
-          </div>
-        )}
-      </div>
-    );
+  const handleOpenModal = () => {
+    setIsModalOpen(!isModalOpen);
   };
+
+  const handleCloseModal = () => {
+    setSelectedId(null);
+    setIsModalOpen(!isModalOpen);
+    // loadHistorialDetalle(  )
+  };
+  // useEffect(() => {
+
+  // }, [])
+
   const [flagEstilistas, setFlagEstilistas] = useState(false);
+
   return (
     <>
       <Row>
@@ -1394,7 +1097,7 @@ const Ventas = () => {
             <Row className="align-items-end">
               <Col md={"7"}>
                 <InputGroup>
-                  <Input disabled value={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"Cve_cliente"} />
+                  <Input disabled value={dataTemporal.cliente} onChange={cambios} name={"cliente"} />
                   <Button onClick={() => setModalCliente(true)}>
                     <MdEmojiPeople size={23} />
                     Elegir
@@ -1404,29 +1107,7 @@ const Ventas = () => {
                     <MdPendingActions size={23} />
                   </Button>
                 </InputGroup>
-
-                {/* <Label>Cliente</Label>
-                <Input
-                  disabled
-                  value={dataTemporal.cliente ? dataTemporal.cliente : ""}
-                  onChange={cambios}
-                  name={"Cve_cliente"}
-                />
-                <Button onClick={() => setModalCliente(true)}>Elegir</Button> */}
               </Col>
-
-              {/* <Col md={"10"}>
-                <Label>Cliente</Label>
-                <Input disabled value={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"Cve_cliente"} />
-              </Col>
-              <Col md={"1"}>
-                <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                  <Button onClick={() => setModalCliente(true)}>Elegir</Button>
-                  <Button disabled={!dataTemporal.cliente} color="primary" size="sm" onClick={() => historial(dataTemporal.id)}>
-                    Historial
-                  </Button>
-                </ButtonGroup>
-              </Col> */}
             </Row>
           </Col>
         </Row>
@@ -1437,9 +1118,16 @@ const Ventas = () => {
             color="secondary"
             onClick={() => {
               if (dataTemporal.cliente) {
+                if(dataVentas.length > 0){
+                  setDataTemporal
+                }
                 setModalOpen(true);
               } else {
-                alert("Ingrese un cliente");
+                Swal.fire({
+                  icon: "warning",
+                  text: "Favor de ingresar un cliente",
+                  confirmButtonColor: "#3085d6",
+                });
               }
             }}
           >
@@ -1447,7 +1135,7 @@ const Ventas = () => {
             Agregar venta o servicio
           </Button>
         </div>
-
+        <div style={{ flex: 1 }}></div>
         <br />
         <Alert style={{ width: 400, marginLeft: 20 }} color="success" isOpen={visible} toggle={onDismiss}>
           Venta registrada con éxito
@@ -1626,7 +1314,6 @@ const Ventas = () => {
           <Row>
             <Col>
               <Input disabled defaultValue={dataTemporal.estilista ? dataTemporal.estilista : ""} />
-              {/* <Label> {dataTemporal.idEstilista} </Label> */}
             </Col>
             <Col md={2}>
               <Button
@@ -1644,11 +1331,16 @@ const Ventas = () => {
             <>
               <Label>Estilista auxiliar:</Label>
               <Row>
-                <Col>
+                <Col xs={9}>
                   <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
-                  {/* <Label> {dataTemporal.idestilistaAux} </Label> */}
                 </Col>
-                <Col md={2}>
+
+                <Col xs={1}>
+                  <Button color="danger" onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                    <AiFillDelete></AiFillDelete>
+                  </Button>
+                </Col>
+                <Col md={1}>
                   <Button
                     onClick={() => {
                       setModalOpen2(true);
@@ -1681,7 +1373,7 @@ const Ventas = () => {
             </Col>
             <Col md={4}>
               <Label>Cantidad a vender:</Label>
-              <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} />
+              <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} type="number" />
               <br />
             </Col>
           </Row>
@@ -1799,6 +1491,19 @@ const Ventas = () => {
             dataTemporal={dataTemporal}
             setDataTemporal={setDataTemporal}
           ></TableProductos>
+          {/* <TableProductosv2
+            productoSelected={productoSelected}
+            sucursal={dataUsuarios2 ? dataUsuarios2[0]?.sucursal : 21}
+            data={data}
+            setModalOpen2={setModalOpen3}
+            dataVentaEdit={dataVentaEdit}
+            setDataVentaEdit={setDataVentaEdit}
+            dataTemporal={dataTemporal}
+            setDataTemporal={setDataTemporal}
+            almacen={1}
+            cia={dataUsuarios2[0]?.cia}
+            idCliente={dataTemporal.Cve_cliente}
+          ></TableProductosv2> */}
         </ModalBody>
         <ModalFooter>
           <CButton color="danger" onClick={() => setModalOpen3(false)} text="Salir" />
@@ -1918,7 +1623,13 @@ const Ventas = () => {
                   <Col xs={""}>
                     <Label>Importe</Label>
                     <Input
-                      value={"$" + Number(pago.importe).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      value={
+                        "$" +
+                        Number(pago.importe).toLocaleString("es-MX", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      }
                       disabled
                     />
                   </Col>
@@ -1932,10 +1643,10 @@ const Ventas = () => {
                     {/* Utilizamos "justify-content-end" para alinear el botón a la derecha */}
                     <Button
                       onClick={() => {
-                        if (Number(pago.formaPago) === 11) {
+                        if (Number(pago.formaPago) === 1) {
                           // efectivo
                           eliminarElemento(2, index, Number(pago.importe));
-                        } else if (Number(pago.formaPago) === 21) {
+                        } else if (Number(pago.formaPago) === 94) {
                           // anticipo
                           eliminarElemento(1, index, Number(pago.importe));
                         } else {
@@ -1955,14 +1666,6 @@ const Ventas = () => {
           ))}
 
           <hr className="my-4" />
-          {/* <Row>
-            <Col md="7">
-              <Label>Efectivo: </Label>
-            </Col>
-            <Col md="5">
-              <Input onChange={cambiosPagos} name="efectivo" value={formPago.efectivo}></Input>
-            </Col>
-          </Row> */}
           <br />
           <Row>
             <Col md="7">
@@ -2074,7 +1777,7 @@ const Ventas = () => {
                     <>
                       <td>{dato.d_insumo}</td>
                       <td align="center">{dato.cantidad}</td>
-                      <td align="center">{dato.unidadMedida}</td>
+                      <td align="left">{dato.unidadMedida}</td>
                       <td className="gap-5">
                         <AiFillEdit
                           className="mr-2"
@@ -2121,6 +1824,7 @@ const Ventas = () => {
             data={data}
             setModalOpen2={setModalOpenInsumosSelect}
             handleGetFetch={fetchInsumosProducto}
+            datoInsumosProducto={datoInsumosProducto}
           ></TableInsumosGenerales>
         </ModalBody>
         <ModalFooter>
@@ -2278,9 +1982,11 @@ const Ventas = () => {
           />
         </ModalFooter>
       </Modal>
+
       <Modal isOpen={modalAnticipo} size="xl">
         <ModalHeader>Selección de anticipo</ModalHeader>
         <ModalBody>
+          {dataAnticipos.length === 0 ? <h4> Por el momento el cliente no cuenta con anticipos </h4> : null}
           <br />
           <DataTable></DataTable>
           <br />
@@ -2288,7 +1994,6 @@ const Ventas = () => {
           <br />
           <br />
           <br />
-          {!dataAnticipos ? <h2> Por el momento el cliente no cuenta con anticipos </h2> : null}
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -2315,7 +2020,13 @@ const Ventas = () => {
           </Input>
           <br />
           <Label> Importe </Label>
-          <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.importe} name={"importe"}></Input>
+          <Input
+            type="number"
+            onChange={handleFormaPagoTemporal}
+            value={dataArregloTemporal.importe}
+            name={"importe"}
+            disabled={anticipoSelected}
+          ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
           dataArregloTemporal.formaPago == 91 ||
@@ -2334,13 +2045,14 @@ const Ventas = () => {
             color="danger"
             onClick={() => {
               setModalTipoVenta(false);
+              setAnticipoSelected(false);
             }}
             text="Salir"
           />
           <CButton
             color="success"
             onClick={() => {
-              console.log(dataArregloTemporal);
+              setAnticipoSelected(false);
               // Validación de campos
               if (!dataArregloTemporal.formaPago || dataArregloTemporal.formaPago === 0) {
                 Swal.fire({
@@ -2356,7 +2068,7 @@ const Ventas = () => {
                   text: "Por favor, ingrese un importe válido.",
                 });
                 return;
-              } else if (dataArregloTemporal.formaPago != 11 && !dataArregloTemporal.referencia) {
+              } else if (dataArregloTemporal.formaPago != 1 && !dataArregloTemporal.referencia) {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
@@ -2364,19 +2076,24 @@ const Ventas = () => {
                 });
                 return;
               } else {
-                console.log(dataArregloTemporal);
-                // AAQUI TENGO LOS INSERTS
-                if (
-                  Number(dataArregloTemporal.formaPago) === 90 ||
-                  Number(dataArregloTemporal.formaPago) === 91 ||
-                  Number(dataArregloTemporal.formaPago) === 92
-                ) {
-                  setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
-                } else if (Number(dataArregloTemporal.formaPago) === 11) {
-                  setFormPago({ ...formPago, efectivo: Number(dataArregloTemporal.importe) });
+                // Tarjetas / Movimientos bancarios
+                if (anticipoId > 0) {
+                  let anticipoTemp = (Number(formPago.anticipos) + Number(formAnticipo.importe)) * -1;
+                  setFormPago({ ...formPago, anticipos: anticipoTemp });
+                } else {
+                  if (
+                    Number(dataArregloTemporal.formaPago) === 90 ||
+                    Number(dataArregloTemporal.formaPago) === 91 ||
+                    Number(dataArregloTemporal.formaPago) === 92
+                  ) {
+                    setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
+                    // Efectivo
+                  } else if (Number(dataArregloTemporal.formaPago) === 1) {
+                    setFormPago({ ...formPago, efectivo: Number(dataArregloTemporal.importe) });
+                  }
                 }
                 setArregloTemporal([...arregloTemporal, dataArregloTemporal]);
-
+                setAnticipoId(0);
                 setModalTipoVenta(false);
                 setDataArregloTemporal({ d_formaPago: "", formaPago: 0, importe: 0, referencia: "" });
               }
@@ -2420,14 +2137,19 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-          {dataTemporal.Observacion === "SERV" ? (
+          {dataVentaEdit.Observacion === "SERV" ? (
             <>
               <Label>Estilista auxilliar:</Label>
               <Row>
-                <Col>
+                <Col xs={9}>
                   <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
                 </Col>
-                <Col md={2}>
+                <Col xs={1}>
+                  <Button color="danger" onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                    <AiFillDelete></AiFillDelete>
+                  </Button>
+                </Col>
+                <Col xs={1}>
                   <Button
                     onClick={() => {
                       setModalOpen2(true);
@@ -2440,7 +2162,6 @@ const Ventas = () => {
               </Row>
             </>
           ) : null}
-          <br />
           <Row>
             <Col>
               <Label>Cantidad en existencia: </Label>
@@ -2460,6 +2181,10 @@ const Ventas = () => {
             <Col>
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
+            </Col>
+            <Col>
+              <Label>Tiempo:</Label>
+              <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
             </Col>
           </Row>
           <br />
@@ -2540,27 +2265,119 @@ const Ventas = () => {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalOpen} toggle={toggleModalHistorial} size="lg">
-        <ModalHeader toggle={toggleModalHistorial}>Historial</ModalHeader>
+      <Modal isOpen={modalOpen} toggle={toggleModalHistorial} fullscreen>
+        <ModalHeader toggle={toggleModalHistorial}>
+          <h3>Historial del cliente</h3>{" "}
+        </ModalHeader>
         <ModalBody>
-          <MaterialReactTable
-            columns={cHistorial}
-            data={datah}
-            initialState={{
-              pagination: {
-                pageSize: 5,
-                pageIndex: 0,
-              },
-              density: "compact",
-            }}
-            // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
-          />
+          <TableHistorial
+            datah={datah}
+            loadHistorialDetalle={loadHistorialDetalle}
+            setIsModalOpen={setIsModalOpen}
+            setParamsDetalles={setParamsDetalles}
+          ></TableHistorial>
+
+          <br />
+          <div>
+            <Card style={{ width: "1650px", height: "400px" }}>
+              <CardBody>
+                <h3>Historial citas futuras</h3>
+                <br />
+                <div>
+                  <Table hover className="table-responsive">
+                    <thead>
+                      <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Sucursal</th>
+                        <th>Servicio</th>
+                        <th>Estilista</th>
+                        <th>Usuario</th>
+                        <th>Feha alta cita</th>
+                        {/* Agrega más encabezados según tus datos */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {datah1.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.fechaCita}</td>
+                          <td>{item.hora}</td>
+                          <td>{item.nombreSuc}</td>
+                          <td>{item.Servicio}</td>
+                          <td>{item.Estilista}</td>
+                          <td>{item.nombreUsrRegistra}</td>
+                          <td>{item.fechaAlta}</td>
+                          {/* Agrega más celdas según tus datos */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+          <br />
         </ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={toggleModalHistorial}>
+          <Button color="danger" onClick={toggleModalHistorial}>
             Cerrar
           </Button>
         </ModalFooter>
+      </Modal>
+
+      <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(false)} size="lg">
+        <ModalHeader toggle={handleCloseModal}>Historial detalle</ModalHeader>
+        <ModalBody>
+          <div style={{ maxHeight: "400px", overflowY: "scroll" }}>
+            <Table>
+              <thead>
+                <tr>
+                  <th>
+                    <p>
+                      <strong>Fecha:</strong> {paramsDetalles.fecha.split("T")[0]}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>No. Venta: </strong>
+                      {paramsDetalles.numVenta}
+                    </p>
+                  </th>
+                  <th>
+                    <p>
+                      <strong>Sucursal:</strong> {paramsDetalles.sucursal}
+                    </p>
+                  </th>
+                </tr>
+              </thead>
+            </Table>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historialDetalle.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.Insumo}</td>
+                    <td>{item.Cant}</td>
+                    <td>{item.precio}</td>
+                    <td>{item.importe}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <div>
+              <p style={{ textAlign: "left" }}>
+                <strong>Total: ${totalImportes.toFixed(2)}</strong>
+              </p>
+            </div>
+          </div>
+        </ModalBody>
       </Modal>
     </>
   );

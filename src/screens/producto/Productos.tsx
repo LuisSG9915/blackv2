@@ -287,12 +287,124 @@ function Productos() {
     d_Producto: "",
   });
 
-  const create = () => {
-    jezaApi.post(`ProductoSustituto?id_Producto=${form.id}&clave_real=${ProductoSustitutoForm.clave_real}`).then(() => {
-      alert("registro cargado"); //manda alerta
-      getinfo(); // refresca tabla
-    });
+  // const create = () => {
+  //   jezaApi.post(`ProductoSustituto?id_Producto=${form.id}&clave_real=${ProductoSustitutoForm.clave_real}`).then(() => {
+  //     alert("registro cargado"); //manda alerta
+  //     getinfo(); // refresca tabla
+  //   });
+  // };
+
+  // const create = async () => {
+  //   const permiso = await filtroSeguridad("CAT_EMPRE_ADD");
+  //   if (permiso === false) {
+  //     return;
+  //   }
+
+  //   if (validarCampos() === true) {
+  //     if (form.clave_prod === ProductoSustitutoForm.clave_real) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         text: "La clave real no puede ser igual a la clave del producto.",
+  //         confirmButtonColor: "#d33",
+  //       });
+  //       return;
+  //     }
+
+  //     if (form.id === parseInt(ProductoSustitutoForm.clave_real)) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         text: "El ID de la clave real no puede ser igual a la clave real.",
+  //         confirmButtonColor: "#d33",
+  //       });
+  //       return;
+  //     }
+
+  //     await jezaApi
+  //       .post("/ProductoSustituto", null, {
+  //         params: {
+  //           id_Producto: form.id,
+  //           clave_real: ProductoSustitutoForm.clave_real,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Clave real creada con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getinfo();
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // };
+
+  const validarCampos1 = () => {
+    // Aquí agregamos validaciones para los campos requeridos
+    if (!ProductoSustitutoForm.clave_real) {
+      Swal.fire({
+        icon: "error",
+        text: "El campo de clave real está vacío. Por favor, ingresa una clave.",
+        confirmButtonColor: "#3085d6",
+      });
+      return false;
+    }
+
+    // Aquí puedes agregar más validaciones para otros campos si es necesario
+
+    return true; // Todos los campos están validados correctamente
   };
+
+
+  const create = async () => {
+    const permiso = await filtroSeguridad("CAT_CLAVEREAL_ADD");
+    if (permiso === false) {
+      return;
+    }
+
+    if (validarCampos1() === true) {
+      if (dataProductos.some((elemento) => elemento.clave_prod === ProductoSustitutoForm.clave_real.trim())) {
+        // alert("CLAVE REPETIDA")
+        Swal.fire({
+          icon: "error",
+          text: "Clave real repetida, no puedes usar la misma clave de otro producto.",
+          confirmButtonColor: "#3085d6",
+        });
+        return
+
+      } else if (data.some((elemento) => elemento.clave_real === ProductoSustitutoForm.clave_real.trim())) {
+        Swal.fire({
+          icon: "error",
+          text: "Clave ya registrada.",
+          confirmButtonColor: "#3085d6",
+        });
+        return
+      }
+      await jezaApi
+        .post("/ProductoSustituto", null, {
+          params: {
+            id_Producto: form.id,
+            clave_real: ProductoSustitutoForm.clave_real,
+          },
+        })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Clave real creada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          // Limpiar el campo después del éxito
+          ProductoSustitutoForm.clave_real = '';
+
+          getinfo();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
 
   const getinfo = () => {
     jezaApi.get(`Sustituto?idProducto=${form.id}`).then((response) => {
@@ -301,14 +413,41 @@ function Productos() {
     });
   };
 
-  const eliminarSustituto = (dato: ProdSustituto) => {
-    const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento`);
-    if (opcion) {
-      jezaApi.delete(`/ProductoSustituto?id=${dato.id}`).then(() => {
-        alert("Registro Eliminado");
-        getinfo(); //refresca tabla
-      });
+  // const eliminarSustituto = (dato: ProdSustituto) => {
+  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento`);
+  //   if (opcion) {
+  //     jezaApi.delete(`/ProductoSustituto?id=${dato.id}`).then(() => {
+  //       alert("Registro Eliminado");
+  //       getinfo(); //refresca tabla
+  //     });
+  //   }
+  // };
+
+  const eliminarSustituto = async (dato: ProdSustituto) => {
+    const permiso = await filtroSeguridad("CAT_CLAVEREAL_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar la clave: ${dato.clave_real}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/ProductoSustituto?id=${dato.id}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getinfo();
+        });
+      }
+    });
   };
 
   const DataTableHeader = ["Id", "Descripcion", "Marca", "Costo", "Precio", "Inv", "Producto", "Servicio", "Acciones"];
@@ -504,8 +643,8 @@ function Productos() {
             promocion: false,
             porcentaje_promocion: Number(form.porcentaje_promocion),
             precio_promocion: Number(form.precio_promocion),
-            fecha_inicio: form.fecha_inicio,
-            fecha_final: form.fecha_final,
+            fecha_inicio: form.fecha_inicio ? form.fecha_inicio : "2023-01-01",
+            fecha_final: form.fecha_final ? form.fecha_final : "2023-01-01",
             unidad_medida: Number(form.unidad_medida),
             clave_prov: Number(form.clave_prov),
             tiempo: Number(form.tiempo),
@@ -719,7 +858,14 @@ function Productos() {
     { id: "descripcion", header: "Descripción", accessorFn: (row) => row.descripcion, size: 350 },
     { id: "marca", header: "Marca", accessorFn: (row) => row.marca, size: 50 },
     { id: "costo_unitario", header: "Costo unitario", accessorFn: (row) => row.costo_unitario, size: 5 },
-    { id: "precio", header: "Precio", accessorFn: (row) => row.precio, size: 5 },
+    // { id: "precio", header: "Precio", accessorFn: (row) => row.precio, size: 5 },
+
+    {
+      accessorKey: "precio",
+      header: "Precio",
+      Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+    },
+
     { id: "inventariable", header: "Inventariable", accessorFn: (row) => row.inventariable, size: 5 },
     { id: "es_producto", header: "Es producto", accessorFn: (row) => row.es_producto, size: 5 },
     { id: "es_servicio", header: "Es servicio", accessorFn: (row) => row.es_servicio, size: 5 },
@@ -750,29 +896,29 @@ function Productos() {
 
               <br />
               <br />
-              <Container className="d-flex ">
-                <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                  <Button
-                    style={{ marginLeft: "auto" }}
-                    color="success"
-                    onClick={() => {
-                      setModalInsertar(true);
-                      setEstado("insert");
-                      LimpiezaForm();
-                      // handleNav();
-                    }}
-                  >
-                    Crear producto
-                  </Button>
 
-                  <Button color="primary" onClick={handleRedirect}>
-                    <IoIosHome size={20}></IoIosHome>
-                  </Button>
-                  <Button onClick={handleReload}>
-                    <IoIosRefresh size={20}></IoIosRefresh>
-                  </Button>
-                </ButtonGroup>
-              </Container>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button
+
+                  color="success"
+                  onClick={() => {
+                    setModalInsertar(true);
+                    setEstado("insert");
+                    LimpiezaForm();
+                    // handleNav();
+                  }}
+                >
+                  Crear producto
+                </Button>
+
+                <Button color="primary" onClick={handleRedirect}>
+                  <IoIosHome size={20}></IoIosHome>
+                </Button>
+                <Button onClick={handleReload}>
+                  <IoIosRefresh size={20}></IoIosRefresh>
+                </Button>
+              </ButtonGroup>
+
               <br />
               <br />
             </Container>
@@ -1354,7 +1500,7 @@ function Productos() {
                       name={"clavereal"}
                       onChange={(e) => setProductoSustitutoForm({ ...ProductoSustitutoForm, clave_real: e.target.value })}
                       value={ProductoSustitutoForm.clave_real}
-                      placeholder="Ingrese clave real"
+                      placeholder="Ingrese una clave "
                     ></Input>
                     <CButton
                       text="Agregar"
@@ -1374,7 +1520,8 @@ function Productos() {
                 <Table>
                   <thead>
                     <tr>
-                      <th>Claves producto</th>
+                      <th>Clave producto</th>
+                      <th>Clave real</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -1384,7 +1531,7 @@ function Productos() {
                     {data.map((dato: ProdSustituto) => (
                       <tr key={dato.id}>
                         <td> {dato.id_Producto}</td>
-                        <td align="center">{dato.clave_real}</td>
+                        <td >{dato.clave_real}</td>
                         <td align="center">
                           <AiFillDelete color="lightred" onClick={() => eliminarSustituto(dato)} size={23}></AiFillDelete>
                         </td>

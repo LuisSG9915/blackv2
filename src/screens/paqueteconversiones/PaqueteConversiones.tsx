@@ -11,6 +11,7 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import CButton from "../../components/CButton";
 import { useNavigate } from "react-router-dom";
+import { MaterialReactTable } from "material-react-table";
 
 function PaqueteConversiones() {
   const [form, setForm] = useState<Paquete_conversion>({
@@ -166,45 +167,45 @@ function PaqueteConversiones() {
     { field: "d_pieza", headerName: "Pieza", flex: 1, headerClassName: "custom-header" },
     { field: "Cantidad", headerName: "Cantidad", flex: 1, headerClassName: "custom-header" },
   ];
-  const columnProduct: GridColDef[] = [
+
+  const columnasTablaProduct = [
     {
-      field: "Acción",
-      renderCell: (params) => <ComponentProduct params={params} />,
-      flex: 0,
-      headerClassName: "custom-header",
+      accessorKey: "acciones",
+      header: "Acción",
+      isVisible: true,
+      Cell: ({ row }) => <ComponentProduct params={row} />,
     },
-
-    { field: "descripcion", headerName: "Producto", flex: 1, headerClassName: "custom-header" },
+    {
+      accessorKey: "descripcion",
+      header: "Producto",
+      isVisible: true,
+    },
   ];
-
   const ComponentChiquito = ({ params }: { params: any }) => {
     return (
       <>
         <AiFillEdit className="mr-2" onClick={() => toggleUpdateModal(params.row)} size={23}></AiFillEdit>
         <AiFillDelete color="lightred" onClick={() => deletePaquetesConversion(params.row)} size={23}></AiFillDelete>
-        {/* <AiFillDelete color="lightred" onClick={() => console.log(params.row.id)} size={23}></AiFillDelete> */}
       </>
     );
   };
   const ComponentProduct = ({ params }: { params: any }) => {
     return (
       <>
-        {/* <AiFillEdit className="mr-2" onClick={() => toggleUpdateModal(params.row)} size={23}></AiFillEdit> */}
         <Button
           onClick={() => {
             setModalProduct(false);
-            // setForm({ ...form, idPieza: params.row.id });
             if (productType.stateCreate === true) {
               if (productType.idPaquete === true) {
-                setForm({ ...form, idPaquete: params.row.id });
+                setForm({ ...form, idPaquete: params.original.id });
               } else {
-                setForm({ ...form, idPieza: params.row.id });
+                setForm({ ...form, idPieza: params.original.id });
               }
             } else {
               if (productType.idPaquete === true) {
-                setForm({ ...form, idPaquete: params.row.id });
+                setForm({ ...form, idPaquete: params.original.id });
               } else {
-                setForm({ ...form, idPieza: params.row.id });
+                setForm({ ...form, idPieza: params.original.id });
               }
             }
           }}
@@ -285,7 +286,7 @@ function PaqueteConversiones() {
           <Row>
             <Col xs={11}>
               <Label>Paquete: </Label>
-              <Input type="select" value={form.idPaquete ? form.idPaquete : 0} disabled>
+              <Input type="select" value={form.idPaquete ? form.idPaquete : 0} disabled className="select">
                 {dataProductos.map((producto) => (
                   <>
                     <option value={0}>Seleccione</option>
@@ -309,7 +310,7 @@ function PaqueteConversiones() {
           <Row>
             <Col xs={11}>
               <Label> Pieza: </Label>
-              <Input type="select" value={form.idPieza ? form.idPieza : 0} disabled>
+              <Input type="select" value={form.idPieza ? form.idPieza : 0} disabled className="select">
                 {dataProductos.map((producto) => (
                   <>
                     <option value={0}>Seleccione</option>
@@ -358,13 +359,7 @@ function PaqueteConversiones() {
           <Row>
             <Col xs={10}>
               <Label>Paquete:</Label>
-              <Input
-                disabled
-                type="select"
-                name="idPaquete"
-                // onChange={(e) => setForm({ ...form, idPaquete: parseInt(e.target.value) })}
-                value={form.idPaquete ? form.idPaquete : 0}
-              >
+              <Input disabled type="select" name="idPaquete" className="select" value={form.idPaquete ? form.idPaquete : 0}>
                 {dataProductos.map((producto) => (
                   <option value={producto.id}>{producto.descripcion}</option>
                 ))}
@@ -385,13 +380,7 @@ function PaqueteConversiones() {
           <Row>
             <Col xs={10}>
               <Label>Pieza:</Label>
-              <Input
-                disabled
-                type="select"
-                name="idPieza"
-                // onChange={(e) => setForm({ ...form, idPieza: parseInt(e.target.value) })}
-                value={form.idPieza ? form.idPieza : 0}
-              >
+              <Input disabled type="select" name="idPieza" className="select" value={form.idPieza ? form.idPieza : 0}>
                 {dataProductos.map((producto) => (
                   <option value={producto.id}>{producto.descripcion}</option>
                 ))}
@@ -430,15 +419,15 @@ function PaqueteConversiones() {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalProduct} toggle={toggleProductModal} size="md">
+      <Modal isOpen={modalProduct} toggle={toggleProductModal} size="lg">
         <ModalHeader toggle={toggleProductModal}>Escoje producto</ModalHeader>
         <ModalBody>
-          <DataGrid columns={columnProduct} rows={dataProductos}></DataGrid>
+          {/* <DataGrid columns={columnProduct} rows={dataProductos}></DataGrid> */}
+          <MaterialReactTable columns={columnasTablaProduct} data={dataProductos} initialState={{ density: "compact" }}></MaterialReactTable>
         </ModalBody>
 
         <ModalFooter>
-          <CButton color="primary" text="Actualizar" onClick={() => updatePaqueteConversion(form)} />
-          <CButton color="danger" text="Cancelar" onClick={() => setModalUpdate(false)} />
+          <CButton color="danger" text="Salir" onClick={() => setModalUpdate(false)} />
         </ModalFooter>
       </Modal>
     </>

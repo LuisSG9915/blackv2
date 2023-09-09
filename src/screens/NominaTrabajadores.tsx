@@ -262,7 +262,7 @@ function NominaTrabajadores() {
   // };
 
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_ALMACEN_ADD");
+    const permiso = await filtroSeguridad("CAT_TRABAJADORES_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -378,7 +378,7 @@ function NominaTrabajadores() {
   // Redirige a la ruta "/app"
   const editar = async () => {
     const fechaHoy = new Date();
-    const permiso = await filtroSeguridad("CAT_ALMACEN_UPD");
+    const permiso = await filtroSeguridad("CAT_TRABAJADORES_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -446,7 +446,7 @@ function NominaTrabajadores() {
   // };
 
   const eliminar = async (dato: Trabajador) => {
-    const permiso = await filtroSeguridad("CAT_ALMACEN_DEL");
+    const permiso = await filtroSeguridad("CAT_TRABAJADORES_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }

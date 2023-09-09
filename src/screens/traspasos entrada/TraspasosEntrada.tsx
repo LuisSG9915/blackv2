@@ -367,7 +367,6 @@ function TraspasosEntrada() {
       return;
     }
 
-    console.log(form);
     jezaApi
       .put("/TraspasoRecepcion", null, {
         params: {
@@ -410,10 +409,8 @@ function TraspasosEntrada() {
 
     jezaApi
       .get(
-        `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${
-          fechaSeleccionada.suc_destino
-        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${
-          fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"
+        `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${fechaSeleccionada.suc_destino
+        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"
         }&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"}`
       )
       .then((response) => {
@@ -452,8 +449,8 @@ function TraspasosEntrada() {
           {stateRecibido === true
             ? "Traspaso recibido"
             : stateRecibido === false && dataTraspasosEntradas.length > 0
-            ? "Traspaso no recibido"
-            : ""}{" "}
+              ? "Traspaso no recibido"
+              : ""}{" "}
         </h4>
 
         <TableTraspasoEntrada />

@@ -44,15 +44,8 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 // import { GrSecures } from "react-icons/gr";
 
 function PerfilesModulos() {
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const { filtroSeguridad, session } = useSeguridad();
   const { dataModulos } = useModulos();
   const [data, setData] = useState<Perfil_Modulo[]>([]);
@@ -62,6 +55,7 @@ function PerfilesModulos() {
     modulo: 1,
     permiso: false,
     d_perfil: "",
+    descripcion: "",
   });
 
   const DataTableHeader = ["Clave Perfil", "Modulo", "Permisos", "Acciones"];
@@ -164,9 +158,7 @@ function PerfilesModulos() {
     }
 
     // Verificar si el registro ya existe en la tabla
-    const registroExistente = data.find(
-      (registro) => registro.clave_perfil === form.clave_perfil && registro.modulo === form.modulo
-    );
+    const registroExistente = data.find((registro) => registro.clave_perfil === form.clave_perfil && registro.modulo === form.modulo);
 
     if (registroExistente) {
       Swal.fire({
@@ -269,12 +261,12 @@ function PerfilesModulos() {
       .catch((e) => console.log(e));
   };
 
-  const getModulos = () => {
-    jezaApi
-      .get("PerfilModulo?id=0")
-      .then((response) => setData(response.data))
-      .catch((e) => console.log(e));
-  };
+  // const getModulos = () => {
+  //   jezaApi
+  //     .get("PerfilModulo?id=0")
+  //     .then((response) => setData(response.data))
+  //     .catch((e) => console.log(e));
+  // };
 
   useEffect(() => {
     getPerfilModulos();
@@ -309,7 +301,7 @@ function PerfilesModulos() {
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
   const LimpiezaForm = () => {
-    setForm({ id: 0, clave_perfil: 0, modulo: 0, permiso: false });
+    setForm({ id: 0, clave_perfil: 0, modulo: 0, permiso: false, descripcion: "" });
   };
 
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
@@ -323,8 +315,9 @@ function PerfilesModulos() {
 
     { field: "clave_perfil", headerName: "Clave perfil", flex: 1, headerClassName: "custom-header" },
     { field: "d_perfil", headerName: "Perfil", flex: 1, headerClassName: "custom-header" },
+    // { field: "descripcion", headerName: "Descripción", flex: 1, headerClassName: "custom-header" },
     {
-      field: "modulo",
+      field: "d_modulo",
       headerName: "Módulo",
       flex: 1,
       headerClassName: "custom-header",
@@ -434,13 +427,7 @@ function PerfilesModulos() {
             <Row>
               <Col md="6" className="mb-4">
                 <Label>Perfil:</Label>
-                <Input
-                  type="select"
-                  name="clave_perfil"
-                  id="exampleSelect"
-                  value={form.clave_perfil}
-                  onChange={handleChange}
-                >
+                <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
                   {dataPerfiles.map((perfil) => (
                     <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>
                       {perfil.descripcion_perfil}
@@ -454,7 +441,7 @@ function PerfilesModulos() {
                   <option value={0}>--Selecciona una opción--</option>
                   {data.map((perfil) => (
                     <option key={perfil.modulo} value={perfil.modulo}>
-                      {perfil.d_modulo}
+                      {perfil.descripcion}
                     </option>
                   ))}
                 </Input>
@@ -470,7 +457,7 @@ function PerfilesModulos() {
         </ModalBody>
 
         <ModalFooter>
-          <CButton color="primary" onClick={() => editar(form)} text="Actualizar" />
+          <CButton color="primary" onClick={editar} text="Actualizar" />
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
@@ -487,13 +474,7 @@ function PerfilesModulos() {
               <Row>
                 <Col md="12" className="mb-4">
                   <Label>Perfil: </Label>
-                  <Input
-                    type="select"
-                    name="clave_perfil"
-                    id="clave_perfil"
-                    value={form.clave_perfil}
-                    onChange={handleChange}
-                  >
+                  <Input type="select" name="clave_perfil" id="clave_perfil" value={form.clave_perfil} onChange={handleChange}>
                     <option value={0}>--Selecciona una opción--</option>
                     {dataPerfiles.map((perfil) => (
                       <option key={perfil.clave_perfil} value={Number(perfil.clave_perfil)}>

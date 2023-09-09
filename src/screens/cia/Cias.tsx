@@ -2,7 +2,20 @@ import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { Row, Container, Col, Card, InputGroup, Alert, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import {
+  Row,
+  Container,
+  Col,
+  Card,
+  InputGroup,
+  Alert,
+  Input,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
@@ -20,11 +33,22 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { Usuario } from "./../../models/Usuario";
+import { id } from "date-fns/locale";
 
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [data, setData] = useState<Cia[]>([]);
   const [form, setForm] = useState<Cia>({
@@ -209,7 +233,7 @@ function Cias() {
     });
   };
 
-  const getCias = () => {
+  const getCias = async () => {
     jezaApi
       .get("/Cia?id=0")
       .then((response) => setData(response.data))
@@ -217,8 +241,42 @@ function Cias() {
   };
 
   useEffect(() => {
-    getCias();
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
   }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cias_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        alert("No hay permiso papi");
+        if (response.data[0].permiso === false) {
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+          getCias();
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   getCias();
+  // }, []);
 
   const filtroEmail = (datoDescripcion: string) => {
     var resultado = data.filter((elemento: Cia) => {
@@ -275,6 +333,12 @@ function Cias() {
       headerClassName: "custom-header",
     },
     {
+      field: "cpFiscal",
+      headerName: "Código postal",
+      width: 250,
+      headerClassName: "custom-header",
+    },
+    {
       field: "regimenFiscal",
       headerName: "Régimen fiscal",
       width: 250,
@@ -316,15 +380,62 @@ function Cias() {
     );
   }
 
+  // Verificar el permiso antes de renderizar el contenido
+
   return (
     <>
       <Row>
         <SidebarHorizontal />
       </Row>
       <Container>
+        <Row>
+          <Container fluid>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1> Empresas <BsBuildingAdd size={30}></BsBuildingAdd></h1>
+            </div>
+
+            <br />
+
+            <Row>
+              <div>
+                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                  <Button
+                    style={{ marginLeft: "auto" }}
+                    color="success"
+                    onClick={() => {
+                      setModalInsertar(true);
+                      setEstado("insert");
+                      LimpiezaForm();
+                    }}
+                  >
+                    Crear empresa
+                  </Button>
+
+                  <Button color="primary" onClick={handleRedirect}>
+                    <IoIosHome size={20}></IoIosHome>
+                  </Button>
+                  <Button onClick={handleReload}>
+                    <IoIosRefresh size={20}></IoIosRefresh>
+                  </Button>
+                </ButtonGroup>
+                <br />
+                <br />
+                <DataTable></DataTable>
+              </div>
+            </Row>
+          </Container>
+          <br />
+          <br />
+        </Row>
+      </Container>
+
+      {/* <Row>
+        <SidebarHorizontal />
+      </Row>
+      <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Empresas </h1>
-          <BsBuildingAdd size={30}></BsBuildingAdd>
+          <h1> Empresas <BsBuildingAdd size={30}></BsBuildingAdd></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
@@ -342,19 +453,19 @@ function Cias() {
             Crear empresa
           </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+              <Button color="primary" onClick={handleRedirect}>
+                <IoIosHome size={20}></IoIosHome>
+              </Button>
+              <Button onClick={handleReload}>
+                <IoIosRefresh size={20}></IoIosRefresh>
+              </Button>
+            </ButtonGroup>
 
         <br />
         <br />
         <br />
         <DataTable></DataTable>
-      </Container>
+      </Container> */}
 
       {/*  AQUÍ EMPIEZA EL MODAL CREAR EMPRESA */}
       <Modal isOpen={modalInsertar} size="xl">
@@ -368,19 +479,39 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="nombre"
+                  labelName="Nombre:"
+                  value={form.nombre}
+                />
               </Col>
               <Col md="6">
                 <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="domicilio"
+                  labelName="Domicilio:"
+                  value={form.domicilio}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="regimenFiscal"
+                  labelName="Régimen fiscal:"
+                  value={form.regimenFiscal}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="cpFiscal"
+                  labelName="Código postal:"
+                  value={form.cpFiscal}
+                />
               </Col>
             </Row>
           </FormGroup>
@@ -404,19 +535,39 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="nombre"
+                  labelName="Nombre:"
+                  value={form.nombre}
+                />
               </Col>
               <Col md="6">
                 <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="domicilio"
+                  labelName="Domicilio:"
+                  value={form.domicilio}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="regimenFiscal"
+                  labelName="Régimen fiscal:"
+                  value={form.regimenFiscal}
+                />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="cpFiscal"
+                  labelName="Código postal:"
+                  value={form.cpFiscal}
+                />
               </Col>
             </Row>
           </FormGroup>
@@ -426,6 +577,9 @@ function Cias() {
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
+    </>
+  ) : null
+}
     </>
   );
 }

@@ -6,7 +6,6 @@ import "./compras.css";
 import {
   Button,
   Row,
-  Alert,
   Container,
   Input,
   Label,
@@ -30,7 +29,6 @@ import { Producto, ProductoExistencia } from "../../models/Producto";
 import { useComprasSeleccion } from "../../hooks/getsHooks/useComprasSeleccion";
 import { CompraSeleccion } from "../../models/CompraSeleccion";
 import { AiFillEdit, AiFillDelete, AiOutlineBarcode } from "react-icons/ai";
-import { Usuario } from "../../models/Usuario";
 import { useComprasV3 } from "../../hooks/getsHooks/useComprasV3";
 import CurrencyInput from "react-currency-input-field";
 import { useReactToPrint } from "react-to-print";
@@ -39,7 +37,11 @@ import { useProductosFiltradoExistenciaProducto } from "../../hooks/getsHooks/us
 import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
-import { MdAttachMoney, MdOutlineReceiptLong, MdAccessTime } from "react-icons/md";
+import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
+import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
+import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
+import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function Compras() {
   const { dataProveedores } = useProveedor();
@@ -48,6 +50,7 @@ function Compras() {
   const [isCrearOpen, setIsCrearOpen] = useState<boolean>(false);
   const [modalOpen3, setModalOpen3] = useState<boolean>(false);
   const [modalImpresion, setModalImpresion] = useState<boolean>(false);
+  const { filtroSeguridad, session } = useSeguridad();
   const TableDataHeader = ["Productos", "Existencias", "Acciones"];
   const TableDataHeaderCompras = [
     "Clave",
@@ -62,17 +65,32 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Acción"];
+  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado", "Acción"];
+
+  const [estados, setEstados] = useState(false);
 
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
+
   const toggleCrearModal = () => {
-    if (!dataCompras.folioDocumento || !dataCompras.folioDocumento) {
-      alert("Falta la fecha o documento por ingresar");
-      Swal.fire("", "Falta la fecha o documento por ingresar", "info");
+    // Define los campos requeridos
+    const camposRequeridos = ["fechaDocumento", "folioDocumento"];
+
+    // Verifica si todos los campos requeridos tienen valores
+    const camposIncompletos = camposRequeridos.filter((campo) => !dataCompras[campo]);
+
+    if (dataCompras.idProveedor || camposIncompletos.length > 0) {
+      if (Number(dataCompras.idProveedor === 0)) {
+        Swal.fire("Campos obligatorios", "El campo 'idProveedor' es obligatorio.", "error");
+      } else {
+        const camposFaltantes = camposIncompletos.join(", ");
+        Swal.fire("Campos obligatorios", `Faltan los siguientes campos por llenar: ${camposFaltantes}`, "error");
+      }
     } else {
+      // Si todos los campos requeridos están llenos, puedes continuar con el proceso
       fetchProduct4();
       setIsCrearOpen(!isCrearOpen);
     }
+    // Resto del código
     setDataCompras({
       ...dataCompras,
       costoUnitario: 0,
@@ -87,7 +105,7 @@ function Compras() {
       costoCompra: 0,
       Usuario: 0,
       finalizado: false,
-      d_proveedor: "",
+      idProveedor: 0,
       d_producto: "",
       d_unidadMedida: "",
       d_unidadTraspaso: 0,
@@ -112,6 +130,9 @@ function Compras() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name == "idProveedor" && value == "0") {
+      setDataCompras({ ...dataCompras, d_Encargado: "", idProveedor: 0 });
+    }
     setDataCompras((prevState: any) => ({ ...prevState, [name]: value }));
     console.log({ dataCompras });
   };
@@ -141,8 +162,6 @@ function Compras() {
   });
 
   /* alertas */
-  const [creado, setVisible1] = useState(false);
-  const [error, setVisible4] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
   const [idSeleccionado, setIdSeleccionado] = useState(0);
   const [filtroProductos, setFiltroProductos] = useState("");
@@ -167,11 +186,14 @@ function Compras() {
     fechaDocumento: "",
     cantidadFactura: 0,
     cantidadMalEstado: 0,
+    folioValidacion: 0,
+    d_Encargado: "",
   });
   const { dataComprasGeneral, fetchCompras, setDataComprasGeneral } = useComprasV3(
     dataCompras.idProveedor,
     idSeleccionado,
-    dataUsuarios2[0]?.sucursal
+    dataUsuarios2[0]?.sucursal,
+    dataUsuarios2[0]?.idCia
   );
   const handle = (dato: Producto) => {
     fetchProduct();
@@ -200,6 +222,7 @@ function Compras() {
       idProveedor: dato.idProveedor,
       fecha: dato.fecha !== undefined ? dato.fecha.split("T")[0] : "",
       id_compra: dato.id_compra,
+      d_Encargado: dato.nombreEncargado,
     });
 
     setIsOpen(false);
@@ -207,7 +230,6 @@ function Compras() {
   };
 
   const postCompra = () => {
-    // Validar los datos antes de hacer la solicitud
     if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
       // alert("Por favor, complete los campos obligatorios.");
       Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
@@ -217,8 +239,8 @@ function Compras() {
       .post("/Compra", null, {
         params: {
           id_compra: 0,
-          fecha: fechaHoy,
-          cia: 26,
+          fecha: new Date(),
+          cia: dataUsuarios2[0]?.idCia,
           idSucursal: dataUsuarios2[0]?.sucursal,
           idProveedor: dataCompras.idProveedor,
           clave_prod: dataCompras.clave_prod,
@@ -261,6 +283,8 @@ function Compras() {
       d_producto: "",
       d_unidadMedida: "",
       d_unidadTraspaso: 0,
+      cantidadFactura: 0,
+      cantidadMalEstado: 0,
     });
   };
 
@@ -313,6 +337,7 @@ function Compras() {
       Usuario: 0,
       finalizado: false,
       d_proveedor: "",
+      d_Encargado: "",
     });
     console.log(dataCompras);
   };
@@ -410,10 +435,14 @@ function Compras() {
     } else {
       setDisabledFecha(false);
     }
-    setDataCompras({ ...dataCompras, folioDocumento: ultimoFolio, fecha: ultiFecha.split("T")[0] });
+    setDataCompras({
+      ...dataCompras,
+      folioDocumento: ultimoFolio,
+      fecha: ultiFecha.split("T")[0],
+      folioValidacion: ultimoFolio,
+    });
     const descripciones = dataComprasGeneral.map((item) => item.claveProd);
     setProductoSelected(descripciones);
-    console.log(descripciones);
   }, [dataComprasGeneral]);
 
   const options = {
@@ -426,6 +455,7 @@ function Compras() {
     fecha1: formFechas.fecha1,
     fecha2: formFechas.fecha2,
     sucursal: dataUsuarios2[0]?.sucursal,
+    cia: dataUsuarios2[0]?.idCia,
   });
 
   interface TicketPrintProps {
@@ -535,15 +565,6 @@ function Compras() {
     );
   };
 
-  // const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
-  //   descripcion: "%",
-  //   insumo: 1,
-  //   inventariable: 1,
-  //   obsoleto: 0,
-  //   servicio: 0,
-  //   sucursal: dataUsuarios2[0]?.sucursal,
-  // });
-
   const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
     descripcion: filtroProductos,
     insumo: 0,
@@ -602,17 +623,17 @@ function Compras() {
       </Row>
       <Container>
         {/* alertas */}
-        <Alert color="success" isOpen={creado} toggle={() => setVisible1(false)}>
+        {/* <Alert color="success" isOpen={creado} toggle={() => setVisible1(false)}>
           Registro guardado con exito
         </Alert>
         <Alert color="danger" isOpen={error} toggle={() => setVisible4(false)}>
           Error: idPaquete e idPieza no pueden ser iguales
-        </Alert>
-        <br />
+        </Alert> */}
+
         <h1>Compras</h1>
         <br />
-        <div className="form-grid">
-          <div>
+        <Row>
+          <Col md="6">
             <Label>Proveedor:</Label>
             <Input
               onClick={() => {
@@ -634,9 +655,10 @@ function Compras() {
                 <option value={proveedor.id}> {proveedor.nombre} </option>
               ))}
             </Input>
-          </div>
+            <br />
+          </Col>
 
-          <div>
+          <Col md="6">
             <Label>Fecha de documento:</Label>
             <Input
               type="date"
@@ -646,8 +668,10 @@ function Compras() {
               value={dataCompras.fechaDocumento || dataCompras.fecha || ""} // Prioriza fechaDocumento si existe, si no, muestra fecha, y si no, cadena vacía
               bsSize="sm"
             />
-          </div>
-          <div>
+            <br />
+          </Col>
+
+          <Col md="6">
             <Label for="documento">Documento:</Label>
             <Input
               disabled={disabledFecha}
@@ -657,36 +681,60 @@ function Compras() {
               value={dataCompras.folioDocumento ? dataCompras.folioDocumento : ""}
               bsSize="sm"
             />
-          </div>
-          {/* <div>
-            <Label>Fecha {fechaHoy} </Label>
             <br />
-            <Label>Sucursal: {dataUsuarios2[0]?.d_sucursal.toUpperCase()}</Label>
+          </Col>
+          <Col md="6">
+            <Label for="documento">Nombre del encargado:</Label>
+            <Input
+              disabled
+              type="text"
+              onChange={handleChange}
+              name="d_Encargado"
+              value={dataCompras.d_Encargado ? dataCompras.d_Encargado : ""}
+              bsSize="sm"
+            />
             <br />
-            <Label> Usuario: {dataUsuarios2 ? dataUsuarios2[0]?.nombre.toLocaleUpperCase() : ""} </Label>
-          </div> */}
-        </div>
+          </Col>
+        </Row>
       </Container>
-      <br />
+
       {/* <Label>Usuario: {dataUsuarios[0].d_perfil ? dataUsuarios[0].d_perfil : "cbinfortmatica"}</Label> */}
       <Container>
         <div className="alineación-derecha">
-          <InputGroup className="alineación-derecha">
-            <Button
-              color="primary"
-              onClick={() => {
-                setTimeout(() => {
-                  setIdSeleccionado(0);
-                }, 1500);
-                setDisabledFecha(false);
-              }}
-            >
-              Nuevo
-            </Button>
-            <Button disabled={disabledFecha} color="success" onClick={toggleCrearModal}>
-              Agregar
-            </Button>
-          </InputGroup>
+          <Button style={{ marginRight: 5 }} disabled={Number(dataCompras?.id_compra) > 0} color="success" onClick={toggleCrearModal}>
+            <BiAddToQueue size={30} />
+            Agregar
+          </Button>
+          <Button
+            disabled={!dataComprasGeneral.length > 0}
+            color="primary"
+            onClick={() => {
+              setDataCompras({
+                bonificaciones: 0,
+                cantidad: 0,
+                cantidadFactura: 0,
+                cantidadMalEstado: 0,
+                cia: 0,
+                clave_prod: 0,
+                costoCompra: 0,
+                costounitario: 0,
+                d_proveedor: "",
+                fecha: "",
+                finalizado: false,
+                folioDocumento: "",
+                id: 0,
+                id_compra: 0,
+                idProveedor: 0,
+                idSucursal: 0,
+                Usuario: 0,
+                d_Encargado: "",
+              });
+              setDisabledFecha(false);
+            }}
+          >
+            Nuevo
+            <BiTag size={30} />
+          </Button>
         </div>
         <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
           <thead>
@@ -753,70 +801,72 @@ function Compras() {
           </tbody>
           <tfoot>
             <tr>
-              <th colSpan={10}>
-                <UncontrolledAccordion defaultOpen="2">
-                  <AccordionItem>
-                    <AccordionHeader targetId="1">
-                      <strong>Totales</strong>
-                    </AccordionHeader>
-                    <AccordionBody accordionId="1">
-                      <table style={{ width: "100%" }}>
-                        <tr>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Claves</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }} width="100"></th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad facturada</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Mal estado</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Costo en catalogo</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Costo compra</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Importe:</th>
-                          <th style={{ fontSize: "13px", textAlign: "center" }}>Bonificación</th>
-                          <th colSpan={1} width="80"></th>
-                        </tr>
-                        <tr>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.length}
-                          </td>
-                          <td style={{ fontSize: "13px" }} width="100"></td>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.cantidad, 0)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadFactura, 0)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="center">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadMalEstado, 0)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral
-                              .reduce((total, dato) => total + dato.costoUnitario, 0)
-                              .toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                                minimumFractionDigits: 2,
-                              })}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral
-                              .reduce((total, dato) => total + dato.costoCompra * dato.cantidadFactura, 0)
-                              .toLocaleString("en-US", options)}
-                          </td>
-                          <td style={{ fontSize: "13px" }} align="right">
-                            {dataComprasGeneral.reduce((total, dato) => total + dato.bonificaciones, 0)}
-                          </td>
-                          <td colSpan={1}></td>
-                        </tr>
-                      </table>
-                    </AccordionBody>
-                  </AccordionItem>
-                </UncontrolledAccordion>
-              </th>
+              <th colSpan={10}></th>
             </tr>
           </tfoot>
         </Table>
+        <div>
+          <UncontrolledAccordion defaultOpen="2">
+            <AccordionItem>
+              <AccordionHeader targetId="1">
+                <strong>Totales</strong>
+              </AccordionHeader>
+              <AccordionBody accordionId="1">
+                <table style={{ width: "100%" }}>
+                  <tr>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Claves</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }} width="100"></th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad facturada</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Mal estado</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Costo en catalogo</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Costo compra</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Importe:</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Bonificación</th>
+                    <th colSpan={1} width="80"></th>
+                  </tr>
+                  <tr>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.length}
+                    </td>
+                    <td style={{ fontSize: "13px" }} width="100"></td>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.cantidad, 0)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadFactura, 0)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="center">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.cantidadMalEstado, 0)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral
+                        .reduce((total, dato) => total + dato.costoUnitario, 0)
+                        .toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          minimumFractionDigits: 2,
+                        })}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral
+                        .reduce((total, dato) => total + dato.costoCompra * dato.cantidadFactura, 0)
+                        .toLocaleString("en-US", options)}
+                    </td>
+                    <td style={{ fontSize: "13px" }} align="right">
+                      {dataComprasGeneral.reduce((total, dato) => total + dato.bonificaciones, 0)}
+                    </td>
+                    <td colSpan={1}></td>
+                  </tr>
+                </table>
+              </AccordionBody>
+            </AccordionItem>
+          </UncontrolledAccordion>
+        </div>
+
         <div style={{ display: "flex", justifyContent: "end" }}>
           <p style={{ backgroundColor: "#dee2e6" }}>
             {" "}
@@ -829,21 +879,20 @@ function Compras() {
           <Col md={"8"} className="">
             <br />
             <div className="d-flex  justify-content-start ">
-              <InputGroup size="sm">
-                <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
-                  Consultar
-                  <MdAttachMoney size={35} />
-                </Button>
-                <Button
-                  disabled={disabledFecha || dataComprasGeneral.length === 0}
-                  style={{ marginRight: 10 }}
-                  onClick={() => putFinalizaCompra()}
-                  color="success"
-                >
-                  Finalizado
-                  <MdOutlineReceiptLong size={30} />
-                </Button>
-              </InputGroup>
+              <Button
+                disabled={disabledFecha || dataComprasGeneral.length === 0}
+                style={{ marginRight: 5 }}
+                onClick={() => putFinalizaCompra()}
+                color="success"
+              >
+                Finalizado
+                <CgPlayListCheck size={30} />
+              </Button>
+
+              <Button color="primary" onClick={toggleConsultaModal} style={{ marginRight: 0 }}>
+                <BiSearchAlt size={30} />
+                Consultar
+              </Button>
             </div>
           </Col>
         </Row>
@@ -851,29 +900,32 @@ function Compras() {
       {/* Modal */}
 
       <Modal isOpen={isCrearOpen} toggle={toggleCrearModal} centered size="lg">
-        <ModalHeader toggle={toggleCrearModal}>Registro de compras</ModalHeader>
+        <ModalHeader toggle={toggleCrearModal}>
+          <h3>Registro de compras</h3>
+        </ModalHeader>
         <ModalBody>
           <Label>Producto:</Label>
           <Row>
             <Col>
-              {/* <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} /> */}
-              <Input style={{ backgroundColor: "#fafafa" }} disabled defaultValue={dataCompras.d_producto} />
-            </Col>
-            <Col md={2}>
+              <InputGroup>
+                {/* <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} /> */}
+                <Input style={{ backgroundColor: "#fafafa" }} disabled defaultValue={dataCompras.d_producto} />
+                <Button
+                  onClick={() => {
+                    setModalOpen3(true);
+                    setDataCompras({
+                      ...dataCompras,
+                      clave_prod: 0,
+                      costounitario: 0,
+                      d_producto: "",
+                    });
+                  }}
+                >
+                  Elegir
+                </Button>
+              </InputGroup>
+
               {/* <Button onClick={() => setModalOpen3(true)}>Elegir</Button> */}
-              <Button
-                onClick={() => {
-                  setModalOpen3(true);
-                  setDataCompras({
-                    ...dataCompras,
-                    clave_prod: 0,
-                    costounitario: 0,
-                    d_producto: "",
-                  });
-                }}
-              >
-                Elegir
-              </Button>
             </Col>
           </Row>
           <br />
@@ -905,7 +957,7 @@ function Compras() {
               />
             </Col> */}
             <Col md={4} xs={4}>
-              <Label>Unidad traspaso:</Label>
+              <Label>Unidad paquete:</Label>
               <CurrencyInput
                 className="custom-currency-input"
                 name="costoUnitario"
@@ -972,6 +1024,7 @@ function Compras() {
                 onValueChange={(value) => handleValueChange("cantidadFactura", value)}
               />
             </Col>
+
             <Col>
               <Label>Cantidad en mal estado:</Label>
               <CurrencyInput
@@ -1031,6 +1084,7 @@ function Compras() {
                     <td>{"$" + dato.importe.toFixed(2)}</td>
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
+                    <td>{dato.nombreEncargado}</td>
                     <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
                   </tr>
                 ))}
@@ -1138,6 +1192,8 @@ function Compras() {
               )}
             />
           </div>
+          <br />
+          <br />
         </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={() => setModalOpen3(false)}>
@@ -1168,11 +1224,11 @@ function Compras() {
               />
             </Col>
             <Col md={4} xs={4}>
-              <Label>Unidad traspaso:</Label>
+              <Label>Unidad paquete:</Label>
               <CurrencyInput
                 className="custom-currency-input"
                 name="costoUnitario"
-                value={dataCompras.d_unidadTraspaso}
+                value={dataCompras.unidad_paq}
                 disabled
                 onValueChange={(value) => handleValueChange("costoUnitario", value)}
               />
@@ -1184,7 +1240,7 @@ function Compras() {
                 type="text"
                 className="custom-currency-input"
                 name="d_unidadMedida"
-                value={dataCompras.d_unidadMedida}
+                value={dataCompras.descUnidadMedida}
                 disabled
               />
             </Col>
@@ -1292,6 +1348,8 @@ function Compras() {
                     <td>{"$" + dato.importe.toFixed(2)}</td>
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
+                    <td>{dato.nombreEncargado}</td>
+
                     <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
                   </tr>
                 ))}

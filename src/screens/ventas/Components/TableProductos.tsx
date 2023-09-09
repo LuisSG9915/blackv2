@@ -84,12 +84,14 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
   };
 
   const [filtroProductos, setFiltroProductos] = useState("");
+
   const [productoFilter, setProductoFilter] = useState({
     insumo: 0,
     inventariable: 2,
     obsoleto: 0,
     servicio: 0,
   });
+
   const { dataProductos4, fetchProduct4, isLoading } = useProductosFiltradoExistenciaProducto({
     descripcion: filtroProductos,
     insumo: productoFilter.insumo,
@@ -157,6 +159,7 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
         <Col xs={1}>
           <Input
             checked={state}
+            disabled={isLoading}
             type="switch"
             role="switch"
             onClick={() => {
@@ -174,10 +177,13 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
       <MaterialReactTable
         columns={columns}
         data={dataProductosConAcciones}
+        state={{
+          isLoading: isLoading,
+        }}
         initialState={{
           showGlobalFilter: false,
           pagination: {
-            pageSize: 5,
+            pageSize: 8,
             pageIndex: 0,
           },
           density: "compact",

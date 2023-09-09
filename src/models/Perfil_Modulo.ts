@@ -12,4 +12,5 @@ export interface Perfil_Modulo {
   modulo: number;
   d_modulo?: string;
   permiso: boolean;
+  descripcion: "";
 }

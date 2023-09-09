@@ -1,6 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
-import { AccordionBody, AccordionHeader, AccordionItem, Button, Container, Input, Label, Row, UncontrolledAccordion } from "reactstrap";
+import {
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+  Button,
+  Container,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  UncontrolledAccordion,
+} from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
 import "../../../css/reportes.css";
 import { ExportToCsv } from "export-to-csv";
@@ -12,20 +28,96 @@ import { useClientes } from "../../hooks/getsHooks/useClientes";
 import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Box } from "@mui/material";
+import Swal from "sweetalert2";
+import { set } from "date-fns";
+import { useAreas } from "../../hooks/getsHooks/useAreas";
+import { useDeptos } from "../../hooks/getsHooks/useDeptos";
+import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
+import { Departamento } from "../../models/Departamento";
+import { Clase } from "../../models/Clase";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
   const [data, setData] = useState<ReporteTool[]>([]);
   const { dataCias, fetchCias } = useCias();
+  const { dataAreas, fetchAreas1 } = useAreas();
+  const { dataDeptos, fetchAreas } = useDeptos();
+  const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
   const { dataUsuarios, fetchUsuarios } = useUsuarios();
   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
   const { dataSucursales, fetchSucursales } = useSucursales();
+  const [modalOpenCli, setModalOpenCli] = useState(false);
+  const [selectedIdC, setSelectedIdC] = useState("");
+  const [descuento, setDescuento] = useState("");
+  const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
+  const [trabajador, setTrabajadores] = useState([]);
 
+  const [showClienteInput, setShowClienteInput] = useState(false);
+  const [showSucursalInput, setShowSucursalInput] = useState(false);
+  const [showEstilistaInput, setShowEstilistaInput] = useState(false);
+  const [showEmpresaInput, setShowEmpresaInput] = useState(false);
+  const [showSucDesInput, setShowSucDesInput] = useState(false);
+  const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
+  const [showAlmDestInput, setShowAlmDestInput] = useState(false);
+  const [showTipoMovtoInput, setShowTipoMovtoInput] = useState(false);
+  const [showProveedorInput, setShowProveedorInput] = useState(false);
+  const [showMetodoPagoInput, setShowMetodoPagoInput] = useState(false);
+  const [showClaveProdInput, setShowClaveProdInput] = useState(false);
+  const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
+  const [showAreaInput, setShowAreaInput] = useState(false);
+  const [showDeptoInput, setShowDeptoInput] = useState(false);
+  const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const [tablaData, setTablaData] = useState({
     data: [],
     columns: [],
   });
+
+  const [formClase, setClase] = useState<Clase>({
+    id: 0,
+    clase: 0,
+    area: 1,
+    d_area: "",
+    depto: 1,
+    d_depto: "",
+    descripcion: "",
+  });
+
+  useEffect(() => {
+    const quePedo = dataDeptos.filter((data) => data.area === Number(formClase.area));
+    setDataDeptosFiltrado(quePedo);
+
+    // Si el área es 0, establece el departamento como 0
+    if (formClase.area === "0") {
+      setClase((prevState) => ({ ...prevState, depto: "0" }));
+    }
+  }, [formClase.area]);
+
+  const getDescuento = () => {
+    jezaApi
+      .get("/Tipodescuento?id=0")
+      .then((response) => {
+        setDescuento(response.data);
+      })
+      .catch((e) => console.log(e));
+  };
+  useEffect(() => {
+    getDescuento();
+  }, []);
+
+  useEffect(() => {
+    // Dentro de useEffect, realizamos la solicitud a la API
+    jezaApi
+      .get("/Cliente?id=0")
+      .then((response) => {
+        // Cuando la solicitud sea exitosa, actualizamos el estado
+        setTrabajadores(response.data);
+      })
+      .catch((error) => {
+        // Manejo de errores
+        console.error("Error al cargar los trabajadores:", error);
+      });
+  }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
   const getReporte = () => {
     jezaApi
@@ -41,14 +133,30 @@ function ReporteTool() {
       .catch((e) => console.log(e));
   };
 
+  const getArea = () => {
+    jezaApi
+      .get("/Area?area=0")
+      .then((response) => setData(response.data))
+      .catch((e) => console.log(e));
+  };
+
   useEffect(() => {
     getReporte();
   }, []);
+
+  const handleChangeAreaDeptoClase = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setClase((prevState) => ({ ...prevState, [name]: value }));
+    // console.log(formClase);
+  };
 
   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
 
   const ejecutaReporte = (reporte) => {
     // Copiamos el formulario actual para no modificar el estado original
+
     const formData = { ...formulario };
 
     // Reemplazamos los campos vacíos con '%'
@@ -57,11 +165,33 @@ function ReporteTool() {
         formData[campo] = "%";
       }
     }
+    for (const campos in formClase) {
+      if (formClase[campos] == 0) {
+        formClase[campos] = "%";
+      }
+    }
 
-    // Construimos la cadena de consulta manualmente
-    const queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    if (reporte === "") {
+      Swal.fire("", "Debe seleccionar un tipo de reporte", "info");
+      return;
+    }
+
+    if (formData.fechaInicial === "%" || formData.fechaInicial === "%") {
+      Swal.fire("", "Debe seleccionar el rango de fechas", "info");
+      return;
+    }
+
+    let queryString = "";
+    if (reporte == "sp_reporte5_Ventas") {
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formData.clave_prod}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+    } else if (reporte == "sp_reporte4_Estilistas") {
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
+    } else {
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    }
 
     jezaApi
+
       .get(queryString)
       .then((response) => response.data)
       .then((responseData) => {
@@ -85,18 +215,26 @@ function ReporteTool() {
   };
 
   const handleExportData = () => {
-    const csvOptions = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalSeparator: ".",
-      showLabels: true,
-      useBom: true,
-      useKeysAsHeaders: false,
-      headers: columnas.map((col) => col.header),
-    };
+    // Verificar si reportes contiene datos
+    if (reportes.length > 0) {
+      // Obtener los nombres de las columnas de la primera fila de datos (asumiendo que todas las filas tienen las mismas columnas)
+      const columnHeaders = Object.keys(reportes[0]);
 
-    const csvExporter = new ExportToCsv(csvOptions);
-    csvExporter.generateCsv(reportes);
+      const csvOptions = {
+        fieldSeparator: ",",
+        quoteStrings: '"',
+        decimalSeparator: ".",
+        showLabels: true,
+        useBom: true,
+        useKeysAsHeaders: false,
+        headers: columnHeaders, // Utiliza los nombres de columnas obtenidos de los datos
+      };
+
+      const csvExporter = new ExportToCsv(csvOptions);
+      csvExporter.generateCsv(reportes);
+    } else {
+      Swal.fire("", "No hay datos para exportar", "info");
+    }
   };
 
   // Filtrar los datos para excluir la columna "id" y sus valores
@@ -123,7 +261,29 @@ function ReporteTool() {
     empresa: "",
     sucursalDestino: "",
     almacenDestino: "",
+    clave_prod: "",
+    tipoDescuento: "",
+    tipoPago: "",
+    area: "",
+    depto: "",
   });
+
+  function setShowAllInputsToFalse() {
+    setShowClienteInput(false);
+    setShowSucursalInput(false);
+    setShowEstilistaInput(false);
+    setShowEmpresaInput(false);
+    setShowSucDesInput(false);
+    setShowAlmOrigenInput(false);
+    setShowAlmDestInput(false);
+    setShowTipoMovtoInput(false);
+    setShowProveedorInput(false);
+    setShowMetodoPagoInput(false);
+    setShowClaveProdInput(false);
+    setShowTipoDescuentoInput(false);
+    setShowAreaInput(false);
+    setShowDeptoInput(false);
+  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -131,11 +291,127 @@ function ReporteTool() {
       ...prevFormulario,
       [name]: value,
     }));
+
+    if (name === "reporte") {
+      if (value === "RepVtaSucEstilista" || value === "RepVtaDetalle" || value === "RepVtaSucFecha") {
+        // Mostrar los campos para estos informes
+        setShowEmpresaInput(true);
+        setShowSucursalInput(true);
+        setShowClienteInput(true);
+        setShowEstilistaInput(true);
+        //------------------------------------
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+      } else if (value === "sp_reporte5_Ventas") {
+        setShowEmpresaInput(true);
+        setShowSucursalInput(true);
+        setShowClaveProdInput(true);
+        setShowTipoDescuentoInput(true);
+        setShowEstilistaInput(true);
+        setShowMetodoPagoInput(true);
+        //----------------------------------------------------------------
+        setShowClienteInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+      } else if (value === "sp_reporte4_Estilistas") {
+        setShowEstilistaInput(true);
+        setShowSucursalInput(true);
+        setShowAreaInput(true);
+        setShowDeptoInput(true);
+
+        //------------------------------------------------------
+        setShowClienteInput(false);
+        setShowEmpresaInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+      } else {
+        setShowClienteInput(false);
+        setShowSucursalInput(false);
+        setShowEstilistaInput(false);
+        setShowEmpresaInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+      }
+      // Agrega lógica similar para otros campos según sea necesario
+    }
   };
 
   const handleConsultar = (reporte) => {
     ejecutaReporte(reporte);
   };
+
+  const handleModalSelect = async (id_cliente: number, name: string) => {
+    setSelectedIdC(id_cliente);
+    setFormulario({
+      ...formulario,
+      cliente: id_cliente, // O formulario.cliente: name si deseas guardar el nombre
+    });
+    setSelectedName(name);
+    cerrarModal();
+  };
+
+  // Función para abrir el modal
+  const abrirModal = () => {
+    setModalOpenCli(true);
+  };
+
+  // Función para cerrar el modal
+  const cerrarModal = () => {
+    setModalOpenCli(false);
+  };
+  const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
+    () => [
+      {
+        accessorKey: "id_cliente",
+        header: "ID",
+        size: 100,
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 100,
+      },
+      {
+        header: "Acciones",
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
+              seleccionar
+            </Button>
+          );
+        },
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -182,121 +458,240 @@ function ReporteTool() {
                 </div>
                 <div>
                   <Label>Fecha final:</Label>
-                  <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange} disabled={!data[0]?.f2} bsSize="sm" />
-                </div>
-
-                <div>
-                  <Label>Sucursal:</Label>
-                  <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione la sucursal</option>
-
-                    {dataSucursales.map((item) => (
-                      <option value={item.sucursal}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
-
-                <div>
-                  <Label>Clientes:</Label>
-                  <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione el cliente</option>
-
-                    {dataClientes.map((item) => (
-                      <option value={item.id_cliente}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
-
-                <div>
-                  <Label>Estilista:</Label>
-                  <Input type="select" name="estilista" value={formulario.estilista} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione un Estilista</option>
-
-                    {dataUsuarios.map((item) => (
-                      <option value={item.id}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
-
-                <div>
-                  <Label>Empresa:</Label>
-                  <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange} bsSize="sm">
-                    <option value="">Seleccione la empresa</option>
-
-                    {dataCias.map((item) => (
-                      <option value={item.id}>{item.nombre}</option>
-                    ))}
-                  </Input>
-                </div>
-
-                <div>
-                  <Label>Sucursal destino:</Label>
                   <Input
-                    type="text"
-                    name="sucursalDestino"
-                    value={formulario.sucursalDestino}
+                    type="date"
+                    name="fechaFinal"
+                    value={formulario.fechaFinal}
                     onChange={handleChange}
-                    disabled={!data[0]?.sucDestino}
+                    disabled={!data[0]?.f2}
                     bsSize="sm"
                   />
                 </div>
+                {showSucursalInput ? (
+                  <div>
+                    <Label>Sucursal:</Label>
+                    <Input
+                      type="select"
+                      name="sucursal"
+                      value={formulario.sucursal}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione la sucursal</option>
 
-                <div>
-                  <Label>Almacen origen:</Label>
-                  <Input
-                    type="text"
-                    name="almacen"
-                    value={formulario.almacen}
-                    onChange={handleChange}
-                    disabled={!data[0]?.almacenOrigen}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Almacen destino:</Label>
-                  <Input
-                    type="text"
-                    name="almacendestino"
-                    value={formulario.almacenDestino}
-                    onChange={handleChange}
-                    disabled={!data[0]?.almacenDestino}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Tipo de movimiento:</Label>
-                  <Input
-                    type="text"
-                    name="tipoMovimiento"
-                    value={formulario.tipoMovimiento}
-                    onChange={handleChange}
-                    disabled={!data[0]?.tipomovto}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Proveedor:</Label>
-                  <Input
-                    type="text"
-                    name="proveedor"
-                    value={formulario.proveedor}
-                    onChange={handleChange}
-                    disabled={!data[0]?.proveedor}
-                    bsSize="sm"
-                  />
-                </div>
+                      {dataSucursales.map((item) => (
+                        <option value={item.sucursal}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
 
-                <div>
-                  <Label>Método de pago:</Label>
-                  <Input
-                    type="text"
-                    name="metodoPago"
-                    value={formulario.metodoPago}
-                    onChange={handleChange}
-                    disabled={!data[0]?.metodoPago}
-                    bsSize="sm"
-                  />
-                </div>
+                {showClienteInput ? (
+                  <div>
+                    <>
+                      <Label>Clientes:</Label>
+                      <InputGroup>
+                        {" "}
+                        <Input
+                          type="text"
+                          name="cliente"
+                          value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                          bsSize="sm"
+                          placeholder="Ingrese el cliente"
+                        />
+                        <Button size="sm" color="secondary" onClick={abrirModal}>
+                          seleccionar
+                        </Button>
+                      </InputGroup>
+                    </>
+                  </div>
+                ) : null}
+
+                {showEstilistaInput ? (
+                  <div>
+                    <Label>Estilista:</Label>
+                    <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
+
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+                {showEmpresaInput ? (
+                  <div>
+                    <Label>Empresa:</Label>
+                    <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange} bsSize="sm">
+                      <option value="">Seleccione la empresa</option>
+
+                      {dataCias.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showSucDesInput ? (
+                  <div>
+                    <Label>Sucursal destino:</Label>
+                    <Input
+                      type="text"
+                      name="sucursalDestino"
+                      value={formulario.sucursalDestino}
+                      onChange={handleChange}
+                      disabled={!data[0]?.sucDestino}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+
+                {showAlmOrigenInput ? (
+                  <div>
+                    <Label>Almacen origen:</Label>
+                    <Input
+                      type="text"
+                      name="almacen"
+                      value={formulario.almacen}
+                      onChange={handleChange}
+                      disabled={!data[0]?.almacenOrigen}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showAlmDestInput ? (
+                  <div>
+                    <Label>Almacen destino:</Label>
+                    <Input
+                      type="text"
+                      name="almacendestino"
+                      value={formulario.almacenDestino}
+                      onChange={handleChange}
+                      disabled={!data[0]?.almacenDestino}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showTipoMovtoInput ? (
+                  <div>
+                    <Label>Tipo de movimiento:</Label>
+                    <Input
+                      type="text"
+                      name="tipoMovimiento"
+                      value={formulario.tipoMovimiento}
+                      onChange={handleChange}
+                      disabled={!data[0]?.tipomovto}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+
+                {showProveedorInput ? (
+                  <div>
+                    <Label>Proveedor:</Label>
+                    <Input
+                      type="text"
+                      name="proveedor"
+                      value={formulario.proveedor}
+                      onChange={handleChange}
+                      disabled={!data[0]?.proveedor}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showMetodoPagoInput ? (
+                  <div>
+                    <Label>Método de pago:</Label>
+
+                    <Input
+                      type="select"
+                      name="tipoPago"
+                      value={formulario.tipoPago}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione el tipo de pago</option>
+
+                      {dataFormasPagos.map((item) => (
+                        <option value={item.id}>{item.descripcion}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showTipoDescuentoInput ? (
+                  <div>
+                    <Label>Tipo de descuento:</Label>
+
+                    <Input
+                      type="select"
+                      name="tipoDescuento"
+                      value={formulario.tipoDescuento}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione el tipo de descuento:</option>
+
+                      {descuento.map((item) => (
+                        <option value={item.id}>{item.descripcion}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+                {showClaveProdInput ? (
+                  <div>
+                    <Label>Clave producto</Label>
+                    <Input
+                      type="text"
+                      name="clave_prod"
+                      value={formulario.clave_prod}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showAreaInput ? (
+                  <div>
+                    <Label for="area">Área:</Label>
+                    <Input
+                      type="select"
+                      name="area"
+                      id="exampleSelect"
+                      value={formClase.area}
+                      onChange={handleChangeAreaDeptoClase}
+                      bsSize="sm"
+                    >
+                      <option value={0}>Seleccione un área</option>
+                      {dataAreas.map((area) => (
+                        <option value={area.area}>{area.descripcion}</option>
+                      ))}{" "}
+                    </Input>
+                  </div>
+                ) : null}
+                {showDeptoInput ? (
+                  <div>
+                    <Label for="departamento">Departamento:</Label>
+                    <Input
+                      bsSize="sm"
+                      type="select"
+                      name="depto"
+                      id="exampleSelect"
+                      value={formClase.depto}
+                      onChange={handleChangeAreaDeptoClase}
+                    >
+                      <option value={0}>Seleccione un departamento</option>
+                      {dataDeptosFiltrado.map((depto) => (
+                        <option value={depto.depto}>{depto.descripcion}</option>
+                      ))}{" "}
+                    </Input>
+                  </div>
+                ) : null}
               </div>
               <br />
               <div className="d-flex justify-content-end">
@@ -341,6 +736,22 @@ function ReporteTool() {
           />
         </div>
       </Container>
+      <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
+        <ModalHeader toggle={cerrarModal}>Modal Cliente</ModalHeader>
+        <ModalBody>
+          <MaterialReactTable
+            columns={columnsTrabajador}
+            data={trabajador}
+            onSelect={(id_cliente, name) => handleModalSelect(id_cliente, name)} // Pasa la función de selección
+            initialState={{ density: "compact" }}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={cerrarModal}>
+            Cerrar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 }
