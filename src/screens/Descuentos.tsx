@@ -1,45 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
-import {
-  Row,
-  Container,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  CardText,
-  Input,
-  Table,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  InputGroup,
-} from "reactstrap";
+import { Row, Container, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
-import useReadHook, { DataClinica } from "../../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
 import { jezaApi } from "../../api/jezaApi";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import TabPerfil from "../TabPerfil";
-import { Perfil } from "../../models/Perfil";
 import { Descuento } from "../../models/Descuento";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { Button, ButtonGroup } from "@mui/material";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-import axios, { Axios } from "axios";
 
 function Descuentos() {
-  const { filtroSeguridad, session } = useSeguridad();
+  const { filtroSeguridad } = useSeguridad();
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
-  const [filtroValorMedico, setFiltroValorMedico] = useState("");
-  const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [data, setData] = useState([]);
 
   const [form, setForm] = useState<Descuento>({
@@ -48,19 +26,6 @@ function Descuentos() {
     min_descto: 0.0,
     max_descto: 0.0,
   });
-  // const ejecucion = async () => {
-  //   await axios
-  //     .get("/http://cbinfo.no-ip.info:8011/api/movil/Cliente?id=00007")
-  //     .then(() => alert("a"))
-  //     .catch(() => alert("e"));
-  // };
-  // useEffect(() => {
-  //   ejecucion();
-  //   alert("a");
-  // }, []);
-
-  const DataTableHeader = ["Descripción", "Minimo descuento", "Máximo descuento", "Acciones"];
-  const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
     const camposRequeridos: (keyof Descuento)[] = ["descripcion", "min_descto", "min_descto"];
@@ -72,8 +37,6 @@ function Descuentos() {
         camposVacios.push(campo);
       }
     });
-
-    setCamposFaltantes(camposVacios);
 
     if (camposVacios.length > 0) {
       Swal.fire({

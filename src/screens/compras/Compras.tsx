@@ -6,7 +6,6 @@ import "./compras.css";
 import {
   Button,
   Row,
-  Alert,
   Container,
   Input,
   Label,
@@ -30,7 +29,6 @@ import { Producto, ProductoExistencia } from "../../models/Producto";
 import { useComprasSeleccion } from "../../hooks/getsHooks/useComprasSeleccion";
 import { CompraSeleccion } from "../../models/CompraSeleccion";
 import { AiFillEdit, AiFillDelete, AiOutlineBarcode } from "react-icons/ai";
-import { Usuario } from "../../models/Usuario";
 import { useComprasV3 } from "../../hooks/getsHooks/useComprasV3";
 import CurrencyInput from "react-currency-input-field";
 import { useReactToPrint } from "react-to-print";
@@ -39,7 +37,6 @@ import { useProductosFiltradoExistenciaProducto } from "../../hooks/getsHooks/us
 import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
-import { MdAttachMoney, MdOutlineReceiptLong, MdAccessTime } from "react-icons/md";
 import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
 import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
 import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
@@ -72,7 +69,6 @@ function Compras() {
 
   const [estados, setEstados] = useState(false);
 
-
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
 
   const toggleCrearModal = () => {
@@ -94,7 +90,6 @@ function Compras() {
       fetchProduct4();
       setIsCrearOpen(!isCrearOpen);
     }
-
     // Resto del código
     setDataCompras({
       ...dataCompras,
@@ -117,7 +112,6 @@ function Compras() {
     });
   };
 
-
   const filtroProducto = (datoMedico: string) => {
     var resultado = dataProductos.filter((elemento: Producto) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
@@ -137,8 +131,7 @@ function Compras() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name == "idProveedor" && value == "0") {
-      setDataCompras({ ...dataCompras, d_Encargado: "", idProveedor: 0 })
-
+      setDataCompras({ ...dataCompras, d_Encargado: "", idProveedor: 0 });
     }
     setDataCompras((prevState: any) => ({ ...prevState, [name]: value }));
     console.log({ dataCompras });
@@ -237,7 +230,6 @@ function Compras() {
   };
 
   const postCompra = () => {
-
     if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
       // alert("Por favor, complete los campos obligatorios.");
       Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
@@ -573,7 +565,6 @@ function Compras() {
     );
   };
 
-
   const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
     descripcion: filtroProductos,
     insumo: 0,
@@ -710,7 +701,6 @@ function Compras() {
       {/* <Label>Usuario: {dataUsuarios[0].d_perfil ? dataUsuarios[0].d_perfil : "cbinfortmatica"}</Label> */}
       <Container>
         <div className="alineación-derecha">
-
           <Button style={{ marginRight: 5 }} disabled={Number(dataCompras?.id_compra) > 0} color="success" onClick={toggleCrearModal}>
             <BiAddToQueue size={30} />
             Agregar
@@ -718,7 +708,6 @@ function Compras() {
           <Button
             disabled={!dataComprasGeneral.length > 0}
             color="primary"
-
             onClick={() => {
               setDataCompras({
                 bonificaciones: 0,
@@ -746,7 +735,6 @@ function Compras() {
             Nuevo
             <BiTag size={30} />
           </Button>
-
         </div>
         <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
           <thead>
@@ -905,7 +893,6 @@ function Compras() {
                 <BiSearchAlt size={30} />
                 Consultar
               </Button>
-
             </div>
           </Col>
         </Row>
@@ -913,7 +900,9 @@ function Compras() {
       {/* Modal */}
 
       <Modal isOpen={isCrearOpen} toggle={toggleCrearModal} centered size="lg">
-        <ModalHeader toggle={toggleCrearModal}><h3>Registro de compras</h3></ModalHeader>
+        <ModalHeader toggle={toggleCrearModal}>
+          <h3>Registro de compras</h3>
+        </ModalHeader>
         <ModalBody>
           <Label>Producto:</Label>
           <Row>
@@ -934,11 +923,9 @@ function Compras() {
                 >
                   Elegir
                 </Button>
-
               </InputGroup>
 
               {/* <Button onClick={() => setModalOpen3(true)}>Elegir</Button> */}
-
             </Col>
           </Row>
           <br />

@@ -114,35 +114,25 @@ function Metas() {
     //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     // }
 
-    if (validarCampos() === true) {
-      await jezaApi
-        .post("/sp_cat_colaboradoresMetasAdd", null, {
-          params: {
-            año: form.año,
-            mes: form.mes,
-            idcolaborador: form.idcolabolador,
-            meta1: form.meta1,
-            meta2: form.meta2,
-            meta3: form.meta3,
-            meta4: form.meta4,
-            meta5: form.meta5,
-            meta6: form.meta6,
-          },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Meta creada con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalInsertar(false);
-          getMetas();
-        })
-        .catch((error) => {
-          console.log(error);
+    // if (validarCampos() === true) {
+    await jezaApi
+      .post(
+        `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=${form.meta6}`
+      )
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          text: "Meta creada con éxito",
+          confirmButtonColor: "#3085d6",
         });
-    } else {
-    }
+        setModalInsertar(false);
+        getMetas();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // } else {
+    // }
   };
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
