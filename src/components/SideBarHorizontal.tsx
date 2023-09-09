@@ -336,6 +336,7 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem header>Administrativo</DropdownItem>
+
                     <DropdownItem
                       onClick={async () => {
                         const permiso = await filtroSeguridad("sb_cias_view");

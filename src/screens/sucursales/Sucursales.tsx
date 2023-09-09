@@ -263,11 +263,11 @@ function Sucursales() {
       // renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
 
-    { field: "nombre", headerName: "Sucursal", width: 350, headerClassName: "custom-header" },
+    { field: "nombre", headerName: "Sucursal", width: 170, headerClassName: "custom-header" },
     {
       field: "direccion",
       headerName: "Dirección",
-      width: 200,
+      width: 550,
       headerClassName: "custom-header",
     },
     {
@@ -329,33 +329,34 @@ function Sucursales() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Sucursales </h1>
-          <HiBuildingStorefront size={35}></HiBuildingStorefront>
+          <h1> Sucursales <HiBuildingStorefront size={35}></HiBuildingStorefront></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear sucursal
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear sucursal
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -383,7 +384,7 @@ function Sucursales() {
               <Col md={"6"}>
                 <Label>Empresa:</Label>
                 <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-                  <option value="">Selecciona empresa</option>
+                  <option value="">Seleccione empresa</option>
                   {dataCias.map((cia: Cia) => (
                     <option key={cia.id} value={cia.id}>
                       {cia.nombre}
@@ -439,7 +440,7 @@ function Sucursales() {
               <Col md={"6"}>
                 <Label>Empresa:</Label>
                 <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-                  <option value="">Selecciona empresa</option>
+                  <option value="">Seleccione empresa</option>
                   {dataCias.map((cia: Cia) => (
                     <option key={cia.id} value={cia.id}>
                       {cia.nombre}

@@ -44,7 +44,6 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Venta } from "../../models/Venta";
 
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import id from "date-fns/locale/id/index.js";
 
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -452,7 +451,7 @@ function Clientes() {
   const mostrarModalDetalle = (dato: Cliente) => {
     setModalDetalle(true);
     historial(dato.id_cliente);
-    historialCitaFutura(dato.id_cliente);
+    historialCitaFutura(dataTemporal.id_cliente);
     setClienteSeleccionado(dato);
 
   };
@@ -474,7 +473,7 @@ function Clientes() {
   const [datah1, setData2] = useState<any[]>([]);
 
   const historialCitaFutura = (dato: any) => {
-    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${id}`).then((response) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
       const dataConFechasFormateadas = response.data.map((item: any) => ({
         ...item,
         fechaCita: new Date(item.fechaCita).toLocaleDateString(),
@@ -929,31 +928,31 @@ function Clientes() {
             <br />
 
             <Row>
-              <div>
-                <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                  <Button
-                    style={{ marginLeft: "auto" }}
-                    color="success"
-                    onClick={() => {
-                      setModalInsertar(true);
-                      setEstado("insert");
-                      LimpiezaForm();
-                    }}
-                  >
-                    Crear cliente
-                  </Button>
 
-                  <Button color="primary" onClick={handleRedirect}>
-                    <IoIosHome size={20}></IoIosHome>
-                  </Button>
-                  <Button onClick={handleReload}>
-                    <IoIosRefresh size={20}></IoIosRefresh>
-                  </Button>
-                </ButtonGroup>
-                <br />
-                <br />
-                <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
-              </div>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button
+                  style={{ marginLeft: "auto" }}
+                  color="success"
+                  onClick={() => {
+                    setModalInsertar(true);
+                    setEstado("insert");
+                    LimpiezaForm();
+                  }}
+                >
+                  Crear cliente
+                </Button>
+
+                <Button color="primary" onClick={handleRedirect}>
+                  <IoIosHome size={20}></IoIosHome>
+                </Button>
+                <Button onClick={handleReload}>
+                  <IoIosRefresh size={20}></IoIosRefresh>
+                </Button>
+              </ButtonGroup>
+              <br />
+              <br />
+              <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
+
             </Row>
           </Container>
           <br />

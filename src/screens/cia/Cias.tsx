@@ -296,6 +296,12 @@ function Cias() {
       headerClassName: "custom-header",
     },
     {
+      field: "cpFiscal",
+      headerName: "Código postal",
+      width: 250,
+      headerClassName: "custom-header",
+    },
+    {
       field: "regimenFiscal",
       headerName: "Régimen fiscal",
       width: 250,
@@ -345,9 +351,54 @@ function Cias() {
         <SidebarHorizontal />
       </Row>
       <Container>
+        <Row>
+          <Container fluid>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1> Empresas <BsBuildingAdd size={30}></BsBuildingAdd></h1>
+            </div>
+
+            <br />
+
+            <Row>
+              <div>
+                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                  <Button
+                    style={{ marginLeft: "auto" }}
+                    color="success"
+                    onClick={() => {
+                      setModalInsertar(true);
+                      setEstado("insert");
+                      LimpiezaForm();
+                    }}
+                  >
+                    Crear empresa
+                  </Button>
+
+                  <Button color="primary" onClick={handleRedirect}>
+                    <IoIosHome size={20}></IoIosHome>
+                  </Button>
+                  <Button onClick={handleReload}>
+                    <IoIosRefresh size={20}></IoIosRefresh>
+                  </Button>
+                </ButtonGroup>
+                <br />
+                <br />
+                <DataTable></DataTable>
+              </div>
+            </Row>
+          </Container>
+          <br />
+          <br />
+        </Row>
+      </Container>
+
+      {/* <Row>
+        <SidebarHorizontal />
+      </Row>
+      <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Empresas </h1>
-          <BsBuildingAdd size={30}></BsBuildingAdd>
+          <h1> Empresas <BsBuildingAdd size={30}></BsBuildingAdd></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
@@ -377,7 +428,7 @@ function Cias() {
         <br />
         <br />
         <DataTable></DataTable>
-      </Container>
+      </Container> */}
 
       {/*  AQUÍ EMPIEZA EL MODAL CREAR EMPRESA */}
       <Modal isOpen={modalInsertar} size="xl">

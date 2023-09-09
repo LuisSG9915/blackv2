@@ -141,8 +141,8 @@ function Almacenes() {
       await jezaApi
         .post("/Almacen", null, {
           params: {
-            cia: Number(form.cia),
-            sucursal: Number(form.sucursal),
+            cia: form.cia,
+            sucursal: form.sucursal,
             almacen: form.almacen,
             descripcion: form.descripcion,
           },
@@ -150,7 +150,7 @@ function Almacenes() {
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Sucursal creada con éxito",
+            text: "Almacén creado con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalInsertar(false);
@@ -173,11 +173,11 @@ function Almacenes() {
       await jezaApi
         .put(`/Almacen`, null, {
           params: {
-            id: Number(form.id),
-            cia: Number(form.cia),
-            sucursal: Number(form.sucursal),
-            almacen: Number(form.almacen),
+            id: form.id,
+            cia: form.cia,
+            sucursal: form.sucursal,
             descripcion: form.descripcion,
+            almacen: form.almacen,
           },
         })
         .then((response) => {
@@ -296,10 +296,24 @@ function Almacenes() {
     });
     setData(resultado);
   };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: any) => ({ ...prevState, [name]: value }));
+  // };
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prevState: any) => ({ ...prevState, [name]: value }));
+
+    if (name === 'almacen') {
+      // Eliminar caracteres no numéricos usando una expresión regular
+      const numericValue = value.replace(/[^0-9]/g, '');
+      setForm({ ...form, [name]: numericValue });
+    } else {
+      // Si no es el campo 'almacen', actualizar sin validación
+      setForm({ ...form, [name]: value });
+    }
   };
+
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -331,7 +345,7 @@ function Almacenes() {
     {
       field: "descripcion",
       headerName: "Descripción",
-      width: 200,
+      width: 300,
       headerClassName: "custom-header",
     },
     {
@@ -383,28 +397,29 @@ function Almacenes() {
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear almacén
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear almacén
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -446,11 +461,12 @@ function Almacenes() {
                 </Input>
               </Col>
 
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="almacen" labelName="Número de almacén:" value={form.almacen} />
-              </Col>
+
               <Col md={"6"}>
                 <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción de almacén:" value={form.descripcion} />
+              </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="almacen" labelName="Número de almacén:" value={form.almacen} />
               </Col>
             </Row>
           </FormGroup>
@@ -476,6 +492,7 @@ function Almacenes() {
               <Col md={"6"}>
                 <Label>Empresa:</Label>
                 <Input type="select" name="cia" id="exampleSelect" value={form.cia} onChange={handleChange}>
+                  <option value="">Selecciona empresa</option>
                   {dataCias.map((cia) => (
                     <option key={cia.id} value={cia.id}>
                       {cia.nombre}
@@ -487,7 +504,9 @@ function Almacenes() {
 
               <Col md={"6"} style={{ marginBottom: 10 }}>
                 <Label>Sucursal:</Label>
+
                 <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
+                  <option value="">Selecciona sucursal</option>
                   {dataSucursales.map((sucursal) => (
                     <option key={sucursal.sucursal} value={sucursal.sucursal}>
                       {sucursal.nombre}
@@ -496,11 +515,12 @@ function Almacenes() {
                 </Input>
               </Col>
               <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="almacen" labelName="Número de almacén:" value={form.almacen} />
-              </Col>
-              <Col md={"6"}>
                 <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción de almacén:" value={form.descripcion} />
               </Col>
+              <Col md={"6"}>
+                <CFormGroupInput handleChange={handleChange} inputName="almacen" labelName="Número de almacén:" value={form.almacen} />
+              </Col>
+
             </Row>
           </FormGroup>
         </ModalBody>
