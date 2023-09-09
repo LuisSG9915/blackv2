@@ -41,12 +41,15 @@ import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
 import { BiAddToQueue } from "react-icons/bi"; //PARA BOTÓN AGREGAR
 import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
-import { CgPlayListCheck } from "react-icons/cg";  //PARA BOTÓN FINALIZAR
-import { BiTag } from "react-icons/bi";  //PARA BOTÓN NUEVO 
+import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
+import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 // VscNewFile
 
 function MovimientoDiversos() {
+  const { filtroSeguridad, session } = useSeguridad();
+
   const [dataUsuarios, setDataUsuarios] = useState<Usuario[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const { dataAlmacenes } = useAlmacen();
@@ -136,7 +139,11 @@ function MovimientoDiversos() {
     setFiltradoAlmacenFormateada(filtradoFormateada);
   }, [dataAlmacenes.length > 0]);
 
-  const postMovimiento = () => {
+  const postMovimiento = async () => {
+    const permiso = await filtroSeguridad("AJUSTE_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     jezaApi
       .post("/Ajuste", null, {
         params: {
@@ -160,7 +167,11 @@ function MovimientoDiversos() {
         fetchAjustes();
       });
   };
-  const eliminar = (dato: MovimientoResponse) => {
+  const eliminar = async (dato: MovimientoResponse) => {
+    const permiso = await filtroSeguridad("AJUSTE_DEL");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     Swal.fire({
       title: "Seguro de eliminar?",
       text: `Producto: ${dato.d_producto}`,
@@ -180,7 +191,11 @@ function MovimientoDiversos() {
       }
     });
   };
-  const putMovimiento = () => {
+  const putMovimiento = async () => {
+    const permiso = await filtroSeguridad("AJUSTE_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     jezaApi
 
       .put("/Ajuste", null, {
@@ -199,7 +214,12 @@ function MovimientoDiversos() {
       })
       .catch((e) => console.log(e));
   };
-  const putFinalizado = () => {
+  const putFinalizado = async () => {
+    const permiso = await filtroSeguridad("AJUSTE_FIN");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+
     jezaApi
       .put(`/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
@@ -687,28 +707,28 @@ function MovimientoDiversos() {
               <tbody>
                 {dataAjustesBusquedas
                   ? dataAjustesBusquedas.map((ajuste) => (
-                    <tr>
-                      <td>
-                        <AiOutlineSelect
-                          onClick={() => {
-                            setform({
-                              ...form,
-                              folio: Number(ajuste.folio),
-                              tipo_movto: ajuste.tipo_movto,
-                              fecha: ajuste.fecha.split("T")[0],
-                            });
-                            setModalBusqueda(false);
-                            console.log(ajuste);
-                          }}
-                        ></AiOutlineSelect>
-                      </td>
-                      <td>{ajuste.folio}</td>
-                      <td>{ajuste.descripcion}</td>
-                      <td>{ajuste.items}</td>
-                      <td>{ajuste.nombreUsuario}</td>
-                      <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                    </tr>
-                  ))
+                      <tr>
+                        <td>
+                          <AiOutlineSelect
+                            onClick={() => {
+                              setform({
+                                ...form,
+                                folio: Number(ajuste.folio),
+                                tipo_movto: ajuste.tipo_movto,
+                                fecha: ajuste.fecha.split("T")[0],
+                              });
+                              setModalBusqueda(false);
+                              console.log(ajuste);
+                            }}
+                          ></AiOutlineSelect>
+                        </td>
+                        <td>{ajuste.folio}</td>
+                        <td>{ajuste.descripcion}</td>
+                        <td>{ajuste.items}</td>
+                        <td>{ajuste.nombreUsuario}</td>
+                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                      </tr>
+                    ))
                   : null}
               </tbody>
             </Table>
