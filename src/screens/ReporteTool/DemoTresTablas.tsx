@@ -343,7 +343,7 @@ function DemoTresTablas() {
           />
         </div>
         <div>
-          <h2>Corte 1 </h2>
+          <h4>Corte 1 </h4>
           <PieChart
             series={[
               {
@@ -357,12 +357,12 @@ function DemoTresTablas() {
                 faded: { innerRadius: 30, additionalRadius: -30 },
               },
             ]}
-            width={350}
+            width={450}
             height={350}
           />
         </div>
         <div>
-          <h2>Corte 3 servicios</h2>
+          <h4>Corte 3 resumen de servicios</h4>
           <PieChart
             series={[
               {
@@ -379,13 +379,13 @@ function DemoTresTablas() {
                 faded: { innerRadius: 30, additionalRadius: -30 },
               },
             ]}
-            width={350}
+            width={450}
             height={350}
           />
         </div>
 
         <div>
-          <h2>Corte 3 ventas</h2>
+          <h4>Corte 3 resumen de ventas</h4>
           <PieChart
             colors={["orange", "purple", "pink"]}
             series={[
@@ -403,7 +403,7 @@ function DemoTresTablas() {
                 faded: { innerRadius: 30, additionalRadius: -30 },
               },
             ]}
-            width={350}
+            width={450}
             height={350}
           />
         </div>
