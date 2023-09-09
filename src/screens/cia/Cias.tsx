@@ -33,13 +33,10 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-import { Usuario } from "./../../models/Usuario";
-import { id } from "date-fns/locale";
 
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
-  const [showView, setShowView] = useState(true);
-  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
   const {
     modalActualizar,
     modalInsertar,
@@ -241,42 +238,8 @@ function Cias() {
   };
 
   useEffect(() => {
-    const item = localStorage.getItem("userLoggedv2");
-    if (item !== null) {
-      const parsedItem = JSON.parse(item);
-      setDataUsuarios2(parsedItem);
-      console.log({ parsedItem });
-
-      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
-      getPermisoPantalla(parsedItem);
-    }
+    getCias();
   }, []);
-
-  const getPermisoPantalla = async (userData) => {
-    try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cias_view`);
-
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        alert("No hay permiso papi");
-        if (response.data[0].permiso === false) {
-          setShowView(false);
-          handleRedirect();
-        } else {
-          setShowView(true);
-          getCias();
-        }
-      } else {
-        // No se encontraron datos válidos en la respuesta.
-        setShowView(false);
-      }
-    } catch (error) {
-      console.error("Error al obtener el permiso:", error);
-    }
-  };
-
-  // useEffect(() => {
-  //   getCias();
-  // }, []);
 
   const filtroEmail = (datoDescripcion: string) => {
     var resultado = data.filter((elemento: Cia) => {
@@ -453,13 +416,13 @@ function Cias() {
             Crear empresa
           </Button>
 
-              <Button color="primary" onClick={handleRedirect}>
-                <IoIosHome size={20}></IoIosHome>
-              </Button>
-              <Button onClick={handleReload}>
-                <IoIosRefresh size={20}></IoIosRefresh>
-              </Button>
-            </ButtonGroup>
+          <Button color="primary" onClick={handleRedirect}>
+            <IoIosHome size={20}></IoIosHome>
+          </Button>
+          <Button onClick={handleReload}>
+            <IoIosRefresh size={20}></IoIosRefresh>
+          </Button>
+        </ButtonGroup>
 
         <br />
         <br />
@@ -577,9 +540,6 @@ function Cias() {
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
-    </>
-  ) : null
-}
     </>
   );
 }
