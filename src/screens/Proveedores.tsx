@@ -94,7 +94,7 @@ function Proveedores() {
     }
     Swal.fire({
       title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar al proveedor ${dato.nombre}?`,
+      text: `¿Está seguro que desea eliminar el proveedor: ${dato.nombre}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",

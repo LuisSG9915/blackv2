@@ -305,16 +305,18 @@ function Almacenes() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // Eliminar espacios iniciales en todos los campos de entrada de texto
+    const sanitizedValue = value.trim();
+
     if (name === 'almacen') {
-      // Eliminar caracteres no numéricos usando una expresión regular
-      const numericValue = value.replace(/[^0-9]/g, '');
+      // Eliminar caracteres no numéricos
+      const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
       setForm({ ...form, [name]: numericValue });
     } else {
-      // Si no es el campo 'almacen', actualizar sin validación
-      setForm({ ...form, [name]: value });
+      // Actualizar el valor sin validación en otros campos
+      setForm({ ...form, [name]: sanitizedValue });
     }
   };
-
 
 
   // para punto y numeros 
