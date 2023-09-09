@@ -33,10 +33,13 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { Usuario } from "./../../models/Usuario";
+import { id } from "date-fns/locale";
 
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
-
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const {
     modalActualizar,
     modalInsertar,
@@ -238,8 +241,42 @@ function Cias() {
   };
 
   useEffect(() => {
-    getCias();
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
   }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cias_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        alert("No hay permiso papi");
+        if (response.data[0].permiso === false) {
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+          getCias();
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   getCias();
+  // }, []);
 
   const filtroEmail = (datoDescripcion: string) => {
     var resultado = data.filter((elemento: Cia) => {
@@ -344,151 +381,155 @@ function Cias() {
       <Row>
         <SidebarHorizontal />
       </Row>
-      <Container>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Empresas </h1>
-          <BsBuildingAdd size={30}></BsBuildingAdd>
-        </div>
-        <div className="col align-self-start d-flex justify-content-center "></div>
-        <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear empresa
-          </Button>
+      {showView ? (
+        <>
+          <Container>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1> Empresas </h1>
+              <BsBuildingAdd size={30}></BsBuildingAdd>
+            </div>
+            <div className="col align-self-start d-flex justify-content-center "></div>
+            <br />
+            <br />
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+              <Button
+                style={{ marginLeft: "auto" }}
+                color="success"
+                onClick={() => {
+                  setModalInsertar(true);
+                  setEstado("insert");
+                  LimpiezaForm();
+                }}
+              >
+                Crear empresa
+              </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+              <Button color="primary" onClick={handleRedirect}>
+                <IoIosHome size={20}></IoIosHome>
+              </Button>
+              <Button onClick={handleReload}>
+                <IoIosRefresh size={20}></IoIosRefresh>
+              </Button>
+            </ButtonGroup>
 
-        <br />
-        <br />
-        <br />
-        <DataTable></DataTable>
-      </Container>
+            <br />
+            <br />
+            <br />
+            <DataTable></DataTable>
+          </Container>
 
-      {/*  AQUÍ EMPIEZA EL MODAL CREAR EMPRESA */}
-      <Modal isOpen={modalInsertar} size="xl">
-        <ModalHeader>
-          <div>
-            <h3>Crear empresa</h3>
-          </div>
-        </ModalHeader>
+          {/*  AQUÍ EMPIEZA EL MODAL CREAR EMPRESA */}
+          <Modal isOpen={modalInsertar} size="xl">
+            <ModalHeader>
+              <div>
+                <h3>Crear empresa</h3>
+              </div>
+            </ModalHeader>
 
-        <ModalBody>
-          <FormGroup>
-            <Row>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="nombre"
-                  labelName="Nombre:"
-                  value={form.nombre}
-                />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="domicilio"
-                  labelName="Domicilio:"
-                  value={form.domicilio}
-                />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="regimenFiscal"
-                  labelName="Régimen fiscal:"
-                  value={form.regimenFiscal}
-                />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="cpFiscal"
-                  labelName="Código postal:"
-                  value={form.cpFiscal}
-                />
-              </Col>
-            </Row>
-          </FormGroup>
-        </ModalBody>
-        <ModalFooter>
-          <CButton color="success" text="Guardar empresa" onClick={insertar} />
-          <CButton color="danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
-        </ModalFooter>
-      </Modal>
+            <ModalBody>
+              <FormGroup>
+                <Row>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="nombre"
+                      labelName="Nombre:"
+                      value={form.nombre}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="domicilio"
+                      labelName="Domicilio:"
+                      value={form.domicilio}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="regimenFiscal"
+                      labelName="Régimen fiscal:"
+                      value={form.regimenFiscal}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="cpFiscal"
+                      labelName="Código postal:"
+                      value={form.cpFiscal}
+                    />
+                  </Col>
+                </Row>
+              </FormGroup>
+            </ModalBody>
+            <ModalFooter>
+              <CButton color="success" text="Guardar empresa" onClick={insertar} />
+              <CButton color="danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
+            </ModalFooter>
+          </Modal>
 
-      {/*  AQUÍ EMPIEZA EL MODAL CREAR ACTUALIZAR */}
+          {/*  AQUÍ EMPIEZA EL MODAL CREAR ACTUALIZAR */}
 
-      <Modal isOpen={modalActualizar} size="xl">
-        <ModalHeader>
-          <div>
-            <h3>Editar empresa</h3>
-          </div>
-        </ModalHeader>
+          <Modal isOpen={modalActualizar} size="xl">
+            <ModalHeader>
+              <div>
+                <h3>Editar empresa</h3>
+              </div>
+            </ModalHeader>
 
-        <ModalBody>
-          <FormGroup>
-            <Row>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="nombre"
-                  labelName="Nombre:"
-                  value={form.nombre}
-                />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="domicilio"
-                  labelName="Domicilio:"
-                  value={form.domicilio}
-                />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="regimenFiscal"
-                  labelName="Régimen fiscal:"
-                  value={form.regimenFiscal}
-                />
-              </Col>
-              <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="cpFiscal"
-                  labelName="Código postal:"
-                  value={form.cpFiscal}
-                />
-              </Col>
-            </Row>
-          </FormGroup>
-        </ModalBody>
-        <ModalFooter>
-          <CButton color="primary" onClick={editar} text="Actualizar" />
-          <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
-        </ModalFooter>
-      </Modal>
+            <ModalBody>
+              <FormGroup>
+                <Row>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="nombre"
+                      labelName="Nombre:"
+                      value={form.nombre}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="domicilio"
+                      labelName="Domicilio:"
+                      value={form.domicilio}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="regimenFiscal"
+                      labelName="Régimen fiscal:"
+                      value={form.regimenFiscal}
+                    />
+                  </Col>
+                  <Col md="6">
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="cpFiscal"
+                      labelName="Código postal:"
+                      value={form.cpFiscal}
+                    />
+                  </Col>
+                </Row>
+              </FormGroup>
+            </ModalBody>
+            <ModalFooter>
+              <CButton color="primary" onClick={editar} text="Actualizar" />
+              <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
+            </ModalFooter>
+          </Modal>
+        </>
+      ) : null}
     </>
   );
 }
