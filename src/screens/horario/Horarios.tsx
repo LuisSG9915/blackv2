@@ -25,8 +25,46 @@ import { MdEmojiPeople, MdPendingActions } from "react-icons/md";
 import "./horarios.css";
 import Swal from "sweetalert2";
 import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function Horarios() {
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_horarios_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+        if (response.data[0].permiso === false) {
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
   const [horarios, setHorarios] = useState([]);
   const [trabajador, setTrabajadores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -488,6 +526,8 @@ function Horarios() {
       <div>
         <SidebarHorizontal></SidebarHorizontal>
         {/* <p>horarios 2.0 en construccion...</p> */}
+        {showView ? (
+          <>
         <Container>
           <h1>
             Horarios <MdHistoryToggleOff size={35} />
@@ -509,7 +549,7 @@ function Horarios() {
                   </InputGroup>
                   <br />
                 </Col>
-                {/* <Input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} /> */}
+               
 
                 <Col sm="6">
                   <Label> Seleccione una fecha: </Label>
@@ -550,7 +590,7 @@ function Horarios() {
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
       </div>
-      );
+      
       {/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
@@ -743,6 +783,9 @@ function Horarios() {
           </Button>
         </ModalFooter>
       </Modal>
+      </>
+
+    ):null}
     </>
   );
 }
