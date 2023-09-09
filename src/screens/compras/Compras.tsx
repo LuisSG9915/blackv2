@@ -78,7 +78,7 @@ function Compras() {
     // Verifica si todos los campos requeridos tienen valores
     const camposIncompletos = camposRequeridos.filter((campo) => !dataCompras[campo]);
 
-    if (dataCompras.idProveedor || camposIncompletos.length > 0) {
+    if (!dataCompras.idProveedor || camposIncompletos.length > 0) {
       if (Number(dataCompras.idProveedor === 0)) {
         Swal.fire("Campos obligatorios", "El campo 'idProveedor' es obligatorio.", "error");
       } else {
@@ -90,26 +90,6 @@ function Compras() {
       fetchProduct4();
       setIsCrearOpen(!isCrearOpen);
     }
-    // Resto del código
-    setDataCompras({
-      ...dataCompras,
-      costoUnitario: 0,
-      id: 0,
-      id_compra: 0,
-      cia: 0,
-      idSucursal: 0,
-      clave_prod: 0,
-      cantidad: 0,
-      bonificaciones: 0,
-      costounitario: 0,
-      costoCompra: 0,
-      Usuario: 0,
-      finalizado: false,
-      idProveedor: 0,
-      d_producto: "",
-      d_unidadMedida: "",
-      d_unidadTraspaso: 0,
-    });
   };
 
   const filtroProducto = (datoMedico: string) => {
@@ -229,7 +209,11 @@ function Compras() {
     setIdSeleccionado(dato.id_compra);
   };
 
-  const postCompra = () => {
+  const postCompra = async () => {
+    const permiso = await filtroSeguridad("COMPRA_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
       // alert("Por favor, complete los campos obligatorios.");
       Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
@@ -288,7 +272,12 @@ function Compras() {
     });
   };
 
-  const putFinalizaCompra = () => {
+  const putFinalizaCompra = async () => {
+    const permiso = await filtroSeguridad("COMPRA_FIN");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+
     if (dataCompras.folioDocumento && dataCompras.fecha && dataComprasGeneral) {
       jezaApi
         .put("/CompraFinaliza", null, {
@@ -342,7 +331,11 @@ function Compras() {
     console.log(dataCompras);
   };
 
-  const put = () => {
+  const put = async () => {
+    const permiso = await filtroSeguridad("COMPRA_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     jezaApi
       .put("/Compra", null, {
         params: {
@@ -372,7 +365,11 @@ function Compras() {
       });
   };
 
-  const deleteCompra = (dato: CompraProveedor) => {
+  const deleteCompra = async (dato: CompraProveedor) => {
+    const permiso = await filtroSeguridad("COMPRA_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     Swal.fire({
       title: "Esta seguro?",
       text: `Estás Seguro que deseas Eliminar el elemento ${dato.descripcion}`,

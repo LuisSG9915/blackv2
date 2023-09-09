@@ -35,6 +35,7 @@ import { Usuario } from "../../models/Usuario";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import { UserResponse } from "../../models/Home";
+import Swal from "sweetalert2";
 function CancelacionVentas() {
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
@@ -65,25 +66,42 @@ function CancelacionVentas() {
 
   const deleteVenta = (dato: Cancelacion) => {
     const idsCanceladas = dataCancelaciones.filter((item: Cancelacion) => item.Estatus === "Cancelada").map((item: Cancelacion) => item.No_venta);
+
     if (idsCanceladas.includes(Number(dato.No_venta))) {
-      alert("Venta ya cancelada");
+      Swal.fire({
+        icon: "info",
+        text: "Venta ya está cancelada",
+        confirmButtonColor: "#3085d6",
+      });
     } else {
-      const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.No_venta}`);
-      if (opcion) {
-        jezaApi
-          .delete(`/VentaDia?no_venta=${dato.No_venta}&suc=21`)
-          .then((response) => {
-            setVisible3(true);
-            fetchCancelaciones();
+      Swal.fire({
+        title: "ADVERTENCIA",
+        text: `¿Está seguro que desea eliminar el registro: ${dato.nombre}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          jezaApi
+            .delete(`/VentaDia?no_venta=${dato.No_venta}&suc=${dataUsuarios2[0].sucursal}`)
+            .then((response) => {
+              setVisible3(true);
+              fetchCancelaciones();
+              setModalActualizar(false);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
 
-            setModalActualizar(false);
-          })
-
-          .catch((c) => console.log(c));
-      }
-      setTimeout(() => {
-        setVisible3(false);
-      }, 3000);
+          setTimeout(() => {
+            setVisible3(false);
+          }, 3000);
+        } else {
+          alert("a");
+        }
+      });
     }
   };
 
@@ -154,7 +172,11 @@ function CancelacionVentas() {
                 size={23}
                 color="grey"
                 onClick={() => {
-                  alert("Venta ya cancelada");
+                  Swal.fire({
+                    icon: "info",
+                    text: "Venta ya está cancelada",
+                    confirmButtonColor: "#3085d6",
+                  });
                 }}
               />
             )}
