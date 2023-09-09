@@ -64,7 +64,7 @@ function Proveedores() {
     email: "",
     observaciones: "",
     nombre_fiscal: "",
-    dias_financiamiento: 1,
+    dias_financiamiento: 0,
     fecha_alta: "",
     fecha_act: "",
   });
@@ -156,6 +156,7 @@ function Proveedores() {
   };
 
   const insertar = async () => {
+    const fechaHoy = new Date();
     const permiso = await filtroSeguridad("CAT_PROVEEDOR_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -178,9 +179,9 @@ function Proveedores() {
             email: form.email,
             observaciones: form.observaciones,
             nombrefiscal: form.nombre_fiscal,
-            dias_financiamiento: form.dias_financiamiento,
-            fecha_alta: "2023-06-01",
-            fecha_act: "2023-06-01",
+            dias_financiamiento: Number(form.dias_financiamiento),
+            fecha_alta: fechaHoy,
+            fecha_act: fechaHoy,
           },
         })
         .then((response) => {
@@ -200,6 +201,7 @@ function Proveedores() {
   };
 
   const editar = async () => {
+    const fechaHoy = new Date();
     const permiso = await filtroSeguridad("CAT_PROVEEDOR_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -223,7 +225,7 @@ function Proveedores() {
             nombrefiscal: form.nombre_fiscal,
             dias_financiamiento: form.dias_financiamiento,
             fecha_alta: form.fecha_alta,
-            fecha_act: form.fecha_act,
+            fecha_act: fechaHoy,
           },
         })
         .then((response) => {
@@ -287,11 +289,26 @@ function Proveedores() {
     setProveedores(resultado);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: any) => ({ ...prevState, [name]: value }));
+  //   console.log(form);
+  // };
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prevState: any) => ({ ...prevState, [name]: value }));
-    console.log(form);
+
+    if (name === 'dias_financiamiento') {
+      // Eliminar caracteres no numéricos usando una expresión regular
+      const numericValue = value.replace(/[^0-9]/g, '');
+      setForm({ ...form, [name]: numericValue });
+    } else {
+      // Si no es el campo 'almacen', actualizar sin validación
+      setForm({ ...form, [name]: value });
+    }
   };
+
+
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -370,7 +387,7 @@ function Proveedores() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "90%" }}>
+      <div style={{ height: 500, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={dataProveedores}
@@ -397,37 +414,38 @@ function Proveedores() {
     <>
       <Row>
         <SidebarHorizontal />
-  
+
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Proveedores </h1>
-          <AiOutlineUser size={30}></AiOutlineUser>
+          <h1> Proveedores  <AiOutlineUser size={30}></AiOutlineUser></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear proveedor
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear proveedor
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -457,28 +475,28 @@ function Proveedores() {
                 <br />
                 <Row>
                   <Col md={"6"}>
-                    <CFormGroupInput value={form ? form.nombre : ""} handleChange={handleChange} inputName="nombre" labelName="Nombre:" />
-                    <CFormGroupInput value={form ? form.telefono : ""} handleChange={handleChange} inputName="telefono" labelName="Teléfono:" />
+                    <CFormGroupInput value={form.nombre} handleChange={handleChange} inputName="nombre" labelName="Nombre:" />
+                    <CFormGroupInput value={form.telefono} handleChange={handleChange} inputName="telefono" labelName="Teléfono:" />
                     <CFormGroupInput
                       type="number"
-                      value={form ? form.dias_financiamiento : ""}
+                      value={form.dias_financiamiento}
                       handleChange={handleChange}
                       inputName="dias_financiamiento"
                       labelName="Días financiamiento :"
                     />
                     <CFormGroupInput
-                      value={form ? form.observaciones : ""}
+                      value={form.observaciones}
                       handleChange={handleChange}
                       inputName="observaciones"
                       labelName="Observaciones:"
                     />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput value={form ? form.contacto : ""} handleChange={handleChange} inputName="contacto" labelName="Contacto:" />
-                    <CFormGroupInput value={form ? form.rfc : ""} handleChange={handleChange} inputName="rfc" labelName="RFC:" />
-                    <CFormGroupInput value={form ? form.email : ""} handleChange={handleChange} inputName="email" labelName="Email:" />
+                    <CFormGroupInput value={form.contacto} handleChange={handleChange} inputName="contacto" labelName="Contacto:" />
+                    <CFormGroupInput value={form.rfc} handleChange={handleChange} inputName="rfc" labelName="RFC:" />
+                    <CFormGroupInput value={form.email} handleChange={handleChange} inputName="email" labelName="Email:" />
                     <CFormGroupInput
-                      value={form ? form.nombre_fiscal : ""}
+                      value={form.nombre_fiscal}
                       handleChange={handleChange}
                       inputName="nombre_fiscal"
                       labelName="Nombre fiscal:"
@@ -491,34 +509,37 @@ function Proveedores() {
                 <br />
                 <Row>
                   <Col md={"6"}>
-                    <CFormGroupInput value={form ? form.calle : ""} handleChange={handleChange} inputName="calle" labelName="Calle:" />
-                    <CFormGroupInput value={form ? form.estado : ""} handleChange={handleChange} inputName="estado" labelName="Estado:" />
-                    <CFormGroupInput value={form ? form.ciudad : ""} handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" />
+                    {/* <CFormGroupInput value={form ? form.calle : ""} handleChange={handleChange} inputName="calle" labelName="Calle:" /> */}
+                    <CFormGroupInput value={form.calle} handleChange={handleChange} inputName="calle" labelName="Calle:" />
+                    <CFormGroupInput value={form.estado} handleChange={handleChange} inputName="estado" labelName="Estado:" />
+                    <CFormGroupInput value={form.ciudad} handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput value={form ? form.colonia : ""} handleChange={handleChange} inputName="colonia" labelName="Colonia:" />
-                    <CFormGroupInput value={form ? form.cp : ""} handleChange={handleChange} inputName="cp" labelName="CP:" />
+                    <CFormGroupInput value={form.colonia} handleChange={handleChange} inputName="colonia" labelName="Colonia:" />
+                    <CFormGroupInput value={form.cp} handleChange={handleChange} inputName="cp" labelName="CP:" />
                   </Col>
                 </Row>
               </TabPane>
-              <br />
-              <CButton
-                onClick={() => {
-                  editar();
-                }}
-                color="primary"
-                text="Actualizar"
-              />
-
-              <CButton color="danger" onClick={() => setModalActualizar(false)} text="Cancelar" />
-              <br />
             </TabContent>
             {/* <TabPruebaProveedor form={form} actualizarModalEstado={actualizarModalEstado} estado={estado}></TabPruebaProveedor> */}
           </Card>
         </ModalBody>
+        <ModalFooter>
+          <CButton
+            onClick={() => {
+              editar();
+            }}
+            color="primary"
+            text="Actualizar"
+          />
+
+          <CButton color="danger" onClick={() => setModalActualizar(false)} text="Cancelar" />
+
+        </ModalFooter>
+
       </Modal>
 
-      <Modal isOpen={modalInsertar}>
+      <Modal isOpen={modalInsertar} size="xl">
         <ModalHeader>
           <h3>Crear proveedor</h3>
           {/* insertar */}
@@ -541,16 +562,32 @@ function Proveedores() {
               <br />
               <Row>
                 <Col md={"6"}>
-                  <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="dias_financiamiento" labelName="Días financiamiento :" />
-                  <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName="Observaciones:" />
+                  <CFormGroupInput value={form.nombre} handleChange={handleChange} inputName="nombre" labelName="Nombre:" />
+                  <CFormGroupInput value={form.telefono} handleChange={handleChange} inputName="telefono" labelName="Teléfono:" />
+                  <CFormGroupInput
+                    type="number"
+                    value={form.dias_financiamiento}
+                    handleChange={handleChange}
+                    inputName="dias_financiamiento"
+                    labelName="Días financiamiento :"
+                  />
+                  <CFormGroupInput
+                    value={form.observaciones}
+                    handleChange={handleChange}
+                    inputName="observaciones"
+                    labelName="Observaciones:"
+                  />
                 </Col>
                 <Col md={"6"}>
-                  <CFormGroupInput handleChange={handleChange} inputName="contacto" labelName="Contacto:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" />
+                  <CFormGroupInput value={form.contacto} handleChange={handleChange} inputName="contacto" labelName="Contacto:" />
+                  <CFormGroupInput value={form.rfc} handleChange={handleChange} inputName="rfc" labelName="RFC:" />
+                  <CFormGroupInput value={form.email} handleChange={handleChange} inputName="email" labelName="Email:" />
+                  <CFormGroupInput
+                    value={form.nombre_fiscal}
+                    handleChange={handleChange}
+                    inputName="nombre_fiscal"
+                    labelName="Nombre fiscal:"
+                  />
                 </Col>
               </Row>
               <br />
@@ -559,23 +596,27 @@ function Proveedores() {
               <br />
               <Row>
                 <Col md={"6"}>
-                  <CFormGroupInput handleChange={handleChange} inputName="calle" labelName="Calle:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" />
+                  {/* <CFormGroupInput value={form ? form.calle : ""} handleChange={handleChange} inputName="calle" labelName="Calle:" /> */}
+                  <CFormGroupInput value={form.calle} handleChange={handleChange} inputName="calle" labelName="Calle:" />
+                  <CFormGroupInput value={form.estado} handleChange={handleChange} inputName="estado" labelName="Estado:" />
+                  <CFormGroupInput value={form.ciudad} handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" />
                 </Col>
                 <Col md={"6"}>
-                  <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" />
-                  <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="CP:" />
+                  <CFormGroupInput value={form.colonia} handleChange={handleChange} inputName="colonia" labelName="Colonia:" />
+                  <CFormGroupInput value={form.cp} handleChange={handleChange} inputName="cp" labelName="CP:" />
                 </Col>
               </Row>
             </TabPane>
-            <br />
-            <CButton color="success" onClick={insertar} text="Guardar proveedor" />
-            <CButton color="danger" onClick={actualizarModalEstado} text="Cancelar" />
-            <br />
+
           </TabContent>
           {/* <TabPruebaProveedor actualizarModalEstado={actualizarModalEstado} estado={estado}></TabPruebaProveedor> */}
         </ModalBody>
+        <ModalFooter>
+
+          <CButton color="success" onClick={insertar} text="Guardar proveedor" />
+          <CButton color="danger" onClick={actualizarModalEstado} text="Cancelar" />
+
+        </ModalFooter>
       </Modal>
     </>
   );

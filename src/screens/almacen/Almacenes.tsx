@@ -296,6 +296,7 @@ function Almacenes() {
     });
     setData(resultado);
   };
+
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
   //   const { name, value } = e.target;
   //   setForm((prevState: any) => ({ ...prevState, [name]: value }));
@@ -313,6 +314,25 @@ function Almacenes() {
       setForm({ ...form, [name]: value });
     }
   };
+
+
+
+  // para punto y numeros 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   if (name === 'almacen') {
+  //     // Validar si el campo es numérico
+  //     if (!isNaN(value)) {
+  //       setForm({ ...form, [name]: value });
+  //     }
+  //   } else {
+  //     // Si no es el campo 'almacen', actualizar sin validación
+  //     setForm({ ...form, [name]: value });
+  //   }
+  // };
+
+
 
 
   // Redirige a la ruta "/app"
