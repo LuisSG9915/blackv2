@@ -52,7 +52,7 @@ function Perfiles() {
       getPermisoPantalla(parsedItem);
     }
   }, []);
-
+//AAA
   const getPermisoPantalla = async (userData) => {
     try {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cPerfiles_view`);
