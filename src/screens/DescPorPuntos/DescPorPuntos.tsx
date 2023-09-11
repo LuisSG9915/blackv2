@@ -46,9 +46,47 @@ import { Cia } from "../../models/Cia";
 
 
 function DescPorPuntos() {
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_DescPorPuntos_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+        if (response.data[0].permiso === false) {
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
-  const { filtroSeguridad, session } = useSeguridad();
+
   const [data, setData] = useState([]);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const { dataCias } = useCias();

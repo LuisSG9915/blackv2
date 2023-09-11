@@ -525,9 +525,8 @@ function Horarios() {
     <>
       <div>
         <SidebarHorizontal></SidebarHorizontal>
-        {/* <p>horarios 2.0 en construccion...</p> */}
-        {showView ? (
-          <>
+ 
+       
         <Container>
           <h1>
             Horarios <MdHistoryToggleOff size={35} />
@@ -783,9 +782,10 @@ function Horarios() {
           </Button>
         </ModalFooter>
       </Modal>
-      </>
+      
 
-    ):null}
+        
+
     </>
   );
 }

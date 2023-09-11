@@ -45,6 +45,43 @@ import { useAreas } from "../../hooks/getsHooks/useAreas";
 import { useDeptos } from "../../hooks/getsHooks/useDeptos";
 
 function AreaDeptoClases() {
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_area_dep_clas_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+     
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
   const { modalActualizarArea, modalInsertarArea, setModalInsertarArea, setModalActualizarArea, cerrarModalActualizarArea, cerrarModalInsertarArea } =
     useModalHook();
   const {

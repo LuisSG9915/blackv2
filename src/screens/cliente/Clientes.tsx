@@ -47,6 +47,43 @@ import { FaShoppingCart, FaUser } from "react-icons/fa";
 
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cli_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+      
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
   const {
     modalActualizar,
     modalInsertar,

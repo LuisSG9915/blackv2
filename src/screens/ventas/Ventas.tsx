@@ -61,11 +61,57 @@ import { format } from "date-fns";
 import { LuCalendarSearch } from "react-icons/lu";
 import TableHistorial from "./Components/TableHistorial";
 import TableAnticipos from "./Components/TableAnticipos";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { useNavigate } from "react-router-dom";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
 const Ventas = () => {
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_ventas_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app"); // Redirige a la ruta "/app"
+  };
+  
   const { modalActualizar, setModalActualizar, cerrarModalActualizar } = useModalHook();
 
   const [modalOpenVenta, setModalOpen] = useState<boolean>(false);

@@ -35,6 +35,8 @@ import { useDeptos } from "../../hooks/getsHooks/useDeptos";
 import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 import { Departamento } from "../../models/Departamento";
 import { Clase } from "../../models/Clase";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { useNavigate } from "react-router-dom";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -68,6 +70,51 @@ function ReporteTool() {
   const [showAreaInput, setShowAreaInput] = useState(false);
   const [showDeptoInput, setShowDeptoInput] = useState(false);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
+
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app"); // Redirige a la ruta "/app"
+  };
+
+
   const [tablaData, setTablaData] = useState({
     data: [],
     columns: [],
