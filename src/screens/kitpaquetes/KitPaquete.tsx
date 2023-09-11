@@ -24,7 +24,6 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 
 function KitPaquete() {
-
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -46,13 +45,12 @@ function KitPaquete() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_KitPaq_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -62,8 +60,15 @@ function KitPaquete() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataProductos } = useProductos();
   const [formKit, setFormKit] = useState<Kit>({
     cantidad: 0,

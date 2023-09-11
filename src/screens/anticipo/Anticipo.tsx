@@ -52,7 +52,6 @@ function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 
-
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -70,13 +69,12 @@ function Anticipo() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_Anticipos_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -86,9 +84,16 @@ function Anticipo() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-  
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
   const { dataAnticipos, fetchAnticipos } = useAnticipos();
   const [modalCliente, setModalCliente] = useState(false);
@@ -326,7 +331,9 @@ function Anticipo() {
 
     if (validarCampos() === true) {
       await jezaApi
-        .put(`/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`)
+        .put(
+          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
+        )
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -718,17 +725,35 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Fecha inicial:</Label>
-                      <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaInicial"
+                        value={formulario.fechaInicial}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </Col>
 
                     <Col sm="3">
                       <Label>Fecha final:</Label>
-                      <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaFinal"
+                        value={formulario.fechaFinal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </Col>
 
                     <Col sm="3">
                       <Label>Sucursal:</Label>
-                      <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="sucursal"
+                        value={formulario.sucursal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
@@ -739,7 +764,13 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Empresa:</Label>
-                      <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="empresa"
+                        value={formulario.empresa}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la empresa</option>
 
                         {dataCias.map((item) => (
@@ -748,12 +779,14 @@ function Anticipo() {
                       </Input>
                       <br />
                     </Col>
-
-
                   </Row>
                   <br />
                   <Col sm="6">
-                    <CButton color="primary" text="Consultar" onClick={() => ejecutaPeticion(formulario.reporte)}></CButton>
+                    <CButton
+                      color="primary"
+                      text="Consultar"
+                      onClick={() => ejecutaPeticion(formulario.reporte)}
+                    ></CButton>
                   </Col>
                 </AccordionBody>
               </AccordionItem>
@@ -807,7 +840,13 @@ function Anticipo() {
             </FormGroup> */}
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>{" "}
         </ModalBody>
@@ -847,7 +886,14 @@ function Anticipo() {
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
               <InputGroup>
-                <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
+                <Input
+                  disabled
+                  type="text"
+                  name="d_cliente"
+                  id="d_cliente"
+                  value={form.d_cliente}
+                  onChange={handleChange}
+                />
                 <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
               </InputGroup>
             </FormGroup>
@@ -875,7 +921,13 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>
         </ModalBody>
@@ -895,7 +947,12 @@ function Anticipo() {
       <Modal isOpen={modalCliente} size="lg">
         <ModalHeader> Cliente </ModalHeader>
         <ModalBody>
-          <TableClienteAnticipos form={form} setForm={setForm} data={dataClientes} setModalCliente={setModalCliente}></TableClienteAnticipos>
+          <TableClienteAnticipos
+            form={form}
+            setForm={setForm}
+            data={dataClientes}
+            setModalCliente={setModalCliente}
+          ></TableClienteAnticipos>
         </ModalBody>
         <ModalFooter>
           <CButton

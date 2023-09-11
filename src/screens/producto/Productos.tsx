@@ -76,13 +76,12 @@ function Productos() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_Productos_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -92,7 +91,14 @@ function Productos() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar } = useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+  } = useModalHook();
   const { dataProductos, fetchProduct, setDataProductos } = useProductos();
 
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
@@ -392,7 +398,6 @@ function Productos() {
     return true; // Todos los campos están validados correctamente
   };
 
-
   const create = async () => {
     const permiso = await filtroSeguridad("CAT_CLAVEREAL_ADD");
     if (permiso === false) {
@@ -407,15 +412,14 @@ function Productos() {
           text: "Clave real repetida, no puedes usar la misma clave de otro producto.",
           confirmButtonColor: "#3085d6",
         });
-        return
-
+        return;
       } else if (data.some((elemento) => elemento.clave_real === ProductoSustitutoForm.clave_real.trim())) {
         Swal.fire({
           icon: "error",
           text: "Clave ya registrada.",
           confirmButtonColor: "#3085d6",
         });
-        return
+        return;
       }
       await jezaApi
         .post("/ProductoSustituto", null, {
@@ -431,7 +435,7 @@ function Productos() {
             confirmButtonColor: "#3085d6",
           });
           // Limpiar el campo después del éxito
-          ProductoSustitutoForm.clave_real = '';
+          ProductoSustitutoForm.clave_real = "";
 
           getinfo();
         })
@@ -440,7 +444,6 @@ function Productos() {
         });
     }
   };
-
 
   const getinfo = () => {
     jezaApi.get(`Sustituto?idProducto=${form.id}`).then((response) => {
@@ -504,7 +507,15 @@ function Productos() {
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof Producto)[] = ["clave_prod", "descripcion", "descripcion_corta", "idMarca", "area", "depto", "clase"];
+    const camposRequeridos: (keyof Producto)[] = [
+      "clave_prod",
+      "descripcion",
+      "descripcion_corta",
+      "idMarca",
+      "area",
+      "depto",
+      "clase",
+    ];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Producto) => {
@@ -736,13 +747,17 @@ function Productos() {
 
   // Update ---> POS PRODUCTO SUSTITUTOS
   const createProductoSustito = () => {
-    jezaApi.post(`ProductoSustituto?id_Producto=${productoSustitutoForm.id_Producto}&clave_real=${productoSustitutoForm.clave_real}`).then(() => {
-      Swal.fire({
-        icon: "success",
-        text: "Registro realizado con éxito",
-        confirmButtonColor: "#3085d6",
+    jezaApi
+      .post(
+        `ProductoSustituto?id_Producto=${productoSustitutoForm.id_Producto}&clave_real=${productoSustitutoForm.clave_real}`
+      )
+      .then(() => {
+        Swal.fire({
+          icon: "success",
+          text: "Registro realizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
       });
-    });
   };
 
   // // Update ---> PUT PRODUCTO SUSTITUTO
@@ -899,7 +914,11 @@ function Productos() {
     {
       accessorKey: "precio",
       header: "Precio",
-      Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+      Cell: ({ cell }) => (
+        <span>
+          ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </span>
+      ),
     },
 
     { id: "inventariable", header: "Inventariable", accessorFn: (row) => row.inventariable, size: 5 },
@@ -935,7 +954,6 @@ function Productos() {
 
               <ButtonGroup variant="contained" aria-label="outlined primary button group">
                 <Button
-
                   color="success"
                   onClick={() => {
                     setModalInsertar(true);
@@ -1036,7 +1054,13 @@ function Productos() {
                       </Input>
                       <br />
                       <Label>Marca:</Label>
-                      <Input type="select" name="idMarca" id="exampleSelect" value={form.idMarca} onChange={handleChange}>
+                      <Input
+                        type="select"
+                        name="idMarca"
+                        id="exampleSelect"
+                        value={form.idMarca}
+                        onChange={handleChange}
+                      >
                         <option value={0}>-Selecciona marca-</option>
                         {dataMarcas.map((marca) => (
                           <option value={marca.id}>{marca.marca}</option>
@@ -1044,13 +1068,33 @@ function Productos() {
                       </Input>
 
                       <div style={{ paddingBottom: 25 }}></div>
-                      <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción:" value={form.descripcion} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="descripcion"
+                        labelName="Descripción:"
+                        value={form.descripcion}
+                      />
                       <div style={{ paddingBottom: 0 }}></div>
-                      <CFormGroupInput handleChange={handleChange} inputName="clave_prod" labelName="Clave producto:" value={form.clave_prod} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="clave_prod"
+                        labelName="Clave producto:"
+                        value={form.clave_prod}
+                      />
                     </Col>
                     <Col>
-                      <CFormGroupInput handleChange={handleChange} inputName="tiempo" labelName="Tiempo:" type="number" />
-                      <CFormGroupInput handleChange={handleChange} inputName="comision" labelName="Comisión:" type="number" />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="tiempo"
+                        labelName="Tiempo:"
+                        type="number"
+                      />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="comision"
+                        labelName="Comisión:"
+                        type="number"
+                      />
                       <br />
                       <Label>Proveedor:</Label>
                       <Input
@@ -1073,7 +1117,12 @@ function Productos() {
                         value={form.descripcion_corta}
                       />
 
-                      <CFormGroupInput handleChange={handleChange} inputName="observacion" labelName="Observación:" value={form.observacion} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="observacion"
+                        labelName="Observación:"
+                        value={form.observacion}
+                      />
                     </Col>
                   </Row>
                 </TabPane>
@@ -1092,56 +1141,104 @@ function Productos() {
                         ¿Inventariable?
                       </label> */}
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="inventariable" checked={form.inventariable} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="inventariable"
+                          checked={form.inventariable}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Inventariable?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.controlado} onChange={handleChange2} name="controlado" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.controlado}
+                          onChange={handleChange2}
+                          name="controlado"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         Controlado
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.es_producto} onChange={handleChange2} name="es_producto" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.es_producto}
+                          onChange={handleChange2}
+                          name="es_producto"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es producto?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.es_servicio} onChange={handleChange2} name="es_servicio" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.es_servicio}
+                          onChange={handleChange2}
+                          name="es_servicio"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es servicio?
                       </label>
                     </Col>
                     <Col sm="6">
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="es_fraccion" checked={form.es_fraccion} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="es_fraccion"
+                          checked={form.es_fraccion}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es fracción?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="obsoleto" checked={form.obsoleto} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="obsoleto"
+                          checked={form.obsoleto}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         Obsoleto
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="es_insumo" checked={form.es_insumo} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="es_insumo"
+                          checked={form.es_insumo}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es insumo?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.es_kit} onChange={handleChange2} name="es_kit" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.es_kit}
+                          onChange={handleChange2}
+                          name="es_kit"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es kit?
                       </label>
@@ -1152,11 +1249,27 @@ function Productos() {
                   <br />
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput type="number" handleChange={handleChange} inputName="tasa_iva" labelName="Tasa IVA:" />
-                      <CFormGroupInput type="number" handleChange={handleChange} inputName="costo_unitario" labelName="Costo unitario:" />
+                      <CFormGroupInput
+                        type="number"
+                        handleChange={handleChange}
+                        inputName="tasa_iva"
+                        labelName="Tasa IVA:"
+                      />
+                      <CFormGroupInput
+                        type="number"
+                        handleChange={handleChange}
+                        inputName="costo_unitario"
+                        labelName="Costo unitario:"
+                      />
 
                       <Label>Unidad de medida:</Label>
-                      <Input type="select" name="unidad_medida" id="exampleSelect" value={form.unidad_medida} onChange={handleChange}>
+                      <Input
+                        type="select"
+                        name="unidad_medida"
+                        id="exampleSelect"
+                        value={form.unidad_medida}
+                        onChange={handleChange}
+                      >
                         <option value={0}>-Selecciona unida medida-</option>
                         {dataUnidadMedida.map((medida: UnidadMedidaModel) => (
                           <option value={medida.id}>{medida.descripcion}</option>
@@ -1164,8 +1277,18 @@ function Productos() {
                       </Input>
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput type="number" handleChange={handleChange} inputName="tasa_ieps" labelName="Tasa IEPS:" />
-                      <CFormGroupInput type="number" handleChange={handleChange} inputName="precio" labelName="Precio:" />
+                      <CFormGroupInput
+                        type="number"
+                        handleChange={handleChange}
+                        inputName="tasa_ieps"
+                        labelName="Tasa IEPS:"
+                      />
+                      <CFormGroupInput
+                        type="number"
+                        handleChange={handleChange}
+                        inputName="precio"
+                        labelName="Precio:"
+                      />
                       <CFormGroupInput
                         type="number"
                         handleChange={handleChange}
@@ -1188,7 +1311,12 @@ function Productos() {
                   <Container>
                     <Row>
                       <Col sm="6">
-                        <CFormGroupInput type="number" handleChange={handleChange} inputName="precio_promocion" labelName="Precio promoción:" />
+                        <CFormGroupInput
+                          type="number"
+                          handleChange={handleChange}
+                          inputName="precio_promocion"
+                          labelName="Precio promoción:"
+                        />
                         <CFormGroupInput
                           type="number"
                           handleChange={handleChange}
@@ -1211,7 +1339,12 @@ function Productos() {
                           defaultValue={form.fecha_inicio}
                         />
                         <Label> Fecha final: </Label>
-                        <Input type="datetime-local" onChange={handleChange} name="fecha_final" defaultValue={form.fecha_final} />
+                        <Input
+                          type="datetime-local"
+                          onChange={handleChange}
+                          name="fecha_final"
+                          defaultValue={form.fecha_final}
+                        />
                         {/* <CFormGroupInput handleChange={handleChange} inputName="fecha_inicio" labelName="Fecha inicio:" value={form.fecha_inicio} />
                         <CFormGroupInput handleChange={handleChange} inputName="fecha_final" labelName="Fecha final:" value={form.fecha_final} /> */}
                       </Col>
@@ -1293,11 +1426,33 @@ function Productos() {
                         ))}
                       </Input>
                       <div style={{ paddingBottom: 25 }}></div>
-                      <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción:" value={form.descripcion} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="descripcion"
+                        labelName="Descripción:"
+                        value={form.descripcion}
+                      />
                       <div style={{ paddingBottom: 0 }}></div>
-                      <CFormGroupInput handleChange={handleChange} inputName="clave_prod" labelName="Clave Producto:" value={form.clave_prod} />
-                      <CFormGroupInput handleChange={handleChange} inputName="tiempo" labelName="Tiempo:" value={form.tiempo} type="number" />
-                      <CFormGroupInput handleChange={handleChange} inputName="comision" labelName="Comisión:" value={form.comision} type="number" />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="clave_prod"
+                        labelName="Clave Producto:"
+                        value={form.clave_prod}
+                      />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="tiempo"
+                        labelName="Tiempo:"
+                        value={form.tiempo}
+                        type="number"
+                      />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="comision"
+                        labelName="Comisión:"
+                        value={form.comision}
+                        type="number"
+                      />
                     </Col>
 
                     <Col>
@@ -1310,7 +1465,13 @@ function Productos() {
                       </Input>
                       <br />
                       <Label>Marca:</Label>
-                      <Input type="select" name="idMarca" id="exampleSelect" value={form.idMarca} onChange={handleChange}>
+                      <Input
+                        type="select"
+                        name="idMarca"
+                        id="exampleSelect"
+                        value={form.idMarca}
+                        onChange={handleChange}
+                      >
                         <option value={0}>-Selecciona Marca-</option>
                         {dataMarcas.map((marca) => (
                           <option value={marca.id}>{marca.marca}</option>
@@ -1337,9 +1498,20 @@ function Productos() {
                         labelName="Descripción corta:"
                         value={form.descripcion_corta}
                       />
-                      <CFormGroupInput handleChange={handleChange} inputName="observacion" labelName="Observación:" value={form.observacion} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="observacion"
+                        labelName="Observación:"
+                        value={form.observacion}
+                      />
                       <Label>Unidad de medida:</Label>
-                      <Input type="select" name="unidad_medida" id="exampleSelect" value={form.unidad_medida} onChange={handleChange}>
+                      <Input
+                        type="select"
+                        name="unidad_medida"
+                        id="exampleSelect"
+                        value={form.unidad_medida}
+                        onChange={handleChange}
+                      >
                         <option value={0}>-Selecciona unida medida-</option>
                         {dataUnidadMedida.map((medida: UnidadMedidaModel) => (
                           <option value={medida.id}>{medida.descripcion}</option>
@@ -1358,56 +1530,104 @@ function Productos() {
                   <Row>
                     <Col sm="6">
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="inventariable" checked={form.inventariable} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="inventariable"
+                          checked={form.inventariable}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Inventariable?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.controlado} onChange={handleChange2} name="controlado" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.controlado}
+                          onChange={handleChange2}
+                          name="controlado"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         Controlado
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.es_producto} onChange={handleChange2} name="es_producto" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.es_producto}
+                          onChange={handleChange2}
+                          name="es_producto"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es producto?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.es_servicio} onChange={handleChange2} name="es_servicio" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.es_servicio}
+                          onChange={handleChange2}
+                          name="es_servicio"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es servicio?
                       </label>
                     </Col>
                     <Col sm="6">
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="es_fraccion" checked={form.es_fraccion} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="es_fraccion"
+                          checked={form.es_fraccion}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es fracción?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="obsoleto" checked={form.obsoleto} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="obsoleto"
+                          checked={form.obsoleto}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         Obsoleto
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" onChange={handleChange2} name="es_insumo" checked={form.es_insumo} disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          onChange={handleChange2}
+                          name="es_insumo"
+                          checked={form.es_insumo}
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es insumo?
                       </label>
                       <br />
                       <br />
                       <label className="checkbox-container">
-                        <input type="checkbox" checked={form.es_kit} onChange={handleChange2} name="es_kit" disabled={isDisabled} />
+                        <input
+                          type="checkbox"
+                          checked={form.es_kit}
+                          onChange={handleChange2}
+                          name="es_kit"
+                          disabled={isDisabled}
+                        />
                         <span className="checkmark"></span>
                         ¿Es kit?
                       </label>
@@ -1419,7 +1639,13 @@ function Productos() {
                   <br />
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput type="number" handleChange={handleChange} inputName="tasa_iva" labelName="Tasa IVA:" value={form.tasa_iva} />
+                      <CFormGroupInput
+                        type="number"
+                        handleChange={handleChange}
+                        inputName="tasa_iva"
+                        labelName="Tasa IVA:"
+                        value={form.tasa_iva}
+                      />
                       <CFormGroupInput
                         type="number"
                         handleChange={handleChange}
@@ -1436,7 +1662,13 @@ function Productos() {
                         labelName="Tasa IEPS:"
                         value={form.tasa_ieps}
                       />
-                      <CFormGroupInput type="number" handleChange={handleChange} inputName="precio" labelName="Precio:" value={form.precio} />
+                      <CFormGroupInput
+                        type="number"
+                        handleChange={handleChange}
+                        inputName="precio"
+                        labelName="Precio:"
+                        value={form.precio}
+                      />
                       <CFormGroupInput
                         type="number"
                         handleChange={handleChange}
@@ -1491,7 +1723,12 @@ function Productos() {
                           value={form.fecha_inicio}
                         />
                         <Label> Fecha final: </Label>
-                        <Input type="datetime-local" onChange={handleChange} inputName="fecha_final" value={form.fecha_final} />
+                        <Input
+                          type="datetime-local"
+                          onChange={handleChange}
+                          inputName="fecha_final"
+                          value={form.fecha_final}
+                        />
                       </Col>
                     </Row>
                   </Container>
@@ -1534,7 +1771,9 @@ function Productos() {
                     <Input
                       type="text"
                       name={"clavereal"}
-                      onChange={(e) => setProductoSustitutoForm({ ...ProductoSustitutoForm, clave_real: e.target.value })}
+                      onChange={(e) =>
+                        setProductoSustitutoForm({ ...ProductoSustitutoForm, clave_real: e.target.value })
+                      }
                       value={ProductoSustitutoForm.clave_real}
                       placeholder="Ingrese una clave "
                     ></Input>
@@ -1567,9 +1806,13 @@ function Productos() {
                     {data.map((dato: ProdSustituto) => (
                       <tr key={dato.id}>
                         <td> {dato.id_Producto}</td>
-                        <td >{dato.clave_real}</td>
+                        <td>{dato.clave_real}</td>
                         <td align="center">
-                          <AiFillDelete color="lightred" onClick={() => eliminarSustituto(dato)} size={23}></AiFillDelete>
+                          <AiFillDelete
+                            color="lightred"
+                            onClick={() => eliminarSustituto(dato)}
+                            size={23}
+                          ></AiFillDelete>
                         </td>
                       </tr>
                     ))}

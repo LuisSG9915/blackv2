@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Row, Container, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Table, Alert, Card, CardHeader, CardBody } from "reactstrap";
+import {
+  Row,
+  Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Label,
+  Input,
+  Table,
+  Alert,
+  Card,
+  CardHeader,
+  CardBody,
+} from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
 import { jezaApi } from "../../api/jezaApi";
@@ -41,13 +55,12 @@ function Estatuscolaborador() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_estatusColab_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -59,8 +72,15 @@ function Estatuscolaborador() {
   };
 
   const [data, setData] = useState<ColaboradorStatus[]>([]); /* setear valores  */
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
 
   const [form, setForm] = useState<ColaboradorStatus>({
     id: 0,

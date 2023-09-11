@@ -72,8 +72,8 @@ function Metas() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_meta_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-        Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {

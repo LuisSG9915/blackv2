@@ -46,13 +46,12 @@ function TipoMovto() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_TipoMovto_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -62,8 +61,15 @@ function TipoMovto() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataTipoMovto, fetchTipoMovto } = useTipoMovto();
   const [data, setData] = useState<Sucursal[]>([]);
   const { dataCias, fetchCias } = useCias();
@@ -215,7 +221,10 @@ function TipoMovto() {
   const filtroEmail = (datoMedico: string) => {
     var resultado = data.filter((elemento: any) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
-      if ((datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.nombre.length > 2) {
+      if (
+        (datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) &&
+        elemento.nombre.length > 2
+      ) {
         return elemento;
       }
     });
@@ -370,7 +379,12 @@ function TipoMovto() {
           <FormGroup>
             <Row>
               <Col md={"12"}>
-                <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Nombre del movimiento:" value={form.descripcion} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="descripcion"
+                  labelName="Nombre del movimiento:"
+                  value={form.descripcion}
+                />
               </Col>
             </Row>
           </FormGroup>

@@ -49,8 +49,8 @@ function Horarios() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_horarios_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-        Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
@@ -525,8 +525,7 @@ function Horarios() {
     <>
       <div>
         <SidebarHorizontal></SidebarHorizontal>
- 
-       
+
         <Container>
           <h1>
             Horarios <MdHistoryToggleOff size={35} />
@@ -548,7 +547,6 @@ function Horarios() {
                   </InputGroup>
                   <br />
                 </Col>
-               
 
                 <Col sm="6">
                   <Label> Seleccione una fecha: </Label>
@@ -589,7 +587,7 @@ function Horarios() {
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
       </div>
-      
+
       {/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
@@ -782,10 +780,6 @@ function Horarios() {
           </Button>
         </ModalFooter>
       </Modal>
-      
-
-        
-
     </>
   );
 }

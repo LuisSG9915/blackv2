@@ -37,13 +37,12 @@ function PaqueteConversiones() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_PaqCon_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-       Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
         if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -398,7 +397,13 @@ function PaqueteConversiones() {
           <Row>
             <Col xs={10}>
               <Label>Paquete:</Label>
-              <Input disabled type="select" name="idPaquete" className="select" value={form.idPaquete ? form.idPaquete : 0}>
+              <Input
+                disabled
+                type="select"
+                name="idPaquete"
+                className="select"
+                value={form.idPaquete ? form.idPaquete : 0}
+              >
                 {dataProductos.map((producto) => (
                   <option value={producto.id}>{producto.descripcion}</option>
                 ))}
@@ -462,7 +467,11 @@ function PaqueteConversiones() {
         <ModalHeader toggle={toggleProductModal}>Escoje producto</ModalHeader>
         <ModalBody>
           {/* <DataGrid columns={columnProduct} rows={dataProductos}></DataGrid> */}
-          <MaterialReactTable columns={columnasTablaProduct} data={dataProductos} initialState={{ density: "compact" }}></MaterialReactTable>
+          <MaterialReactTable
+            columns={columnasTablaProduct}
+            data={dataProductos}
+            initialState={{ density: "compact" }}
+          ></MaterialReactTable>
         </ModalBody>
 
         <ModalFooter>
