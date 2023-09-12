@@ -50,8 +50,52 @@ import { useEstatus } from "../hooks/getsHooks/useEstatus";
 
 function NominaTrabajadores() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_catTrab_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [data, setData] = useState([]);
@@ -599,302 +643,349 @@ function NominaTrabajadores() {
       <Row>
         <SidebarHorizontal />
       </Row>
-      <Container>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Catálago trabajadores </h1>
-          <AiOutlineUser size={30}></AiOutlineUser>
-        </div>
-        <div className="col align-self-start d-flex justify-content-center "></div>
-        <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear trabajador
-          </Button>
-
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
-
-        <br />
-        <br />
-        <br />
-        <DataTable></DataTable>
-      </Container>
-
-      {/* CREAR TRABAJADOR  */}
-
-      <Modal isOpen={modalInsertar} size="xl" fullscreen={"md"}>
-        <ModalHeader>
-          <div>
-            <h3>Crear trabajador</h3>
-          </div>
-        </ModalHeader>
-
-        <ModalBody>
+      {showView ? (
+        <>
           <Container>
-            <Card body>
-              {/* <TabPrueba getTrab={getTrabajador} form2={form} setForm2={setForm}></TabPrueba> */}
-              <Nav tabs>
-                <NavItem>
-                  <NavLink className={activeTab1 === "1" ? "active" : ""} onClick={() => toggleTab1("1")}>
-                    Trabajador
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink className={activeTab1 === "2" ? "active" : ""} onClick={() => toggleTab1("2")}>
-                    Contacto
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink className={activeTab1 === "3" ? "active" : ""} onClick={() => toggleTab1("3")}>
-                    Adicional
-                  </NavLink>
-                </NavItem>
-                {/* <NavItem>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1> Catálago trabajadores </h1>
+              <AiOutlineUser size={30}></AiOutlineUser>
+            </div>
+            <div className="col align-self-start d-flex justify-content-center "></div>
+            <br />
+            <br />
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+              <Button
+                style={{ marginLeft: "auto" }}
+                color="success"
+                onClick={() => {
+                  setModalInsertar(true);
+                  setEstado("insert");
+                  LimpiezaForm();
+                }}
+              >
+                Crear trabajador
+              </Button>
+
+              <Button color="primary" onClick={handleRedirect}>
+                <IoIosHome size={20}></IoIosHome>
+              </Button>
+              <Button onClick={handleReload}>
+                <IoIosRefresh size={20}></IoIosRefresh>
+              </Button>
+            </ButtonGroup>
+
+            <br />
+            <br />
+            <br />
+            <DataTable></DataTable>
+          </Container>
+          {/* CREAR TRABAJADOR  */}
+          <Modal isOpen={modalInsertar} size="xl" fullscreen={"md"}>
+            <ModalHeader>
+              <div>
+                <h3>Crear trabajador</h3>
+              </div>
+            </ModalHeader>
+
+            <ModalBody>
+              <Container>
+                <Card body>
+                  {/* <TabPrueba getTrab={getTrabajador} form2={form} setForm2={setForm}></TabPrueba> */}
+                  <Nav tabs>
+                    <NavItem>
+                      <NavLink className={activeTab1 === "1" ? "active" : ""} onClick={() => toggleTab1("1")}>
+                        Trabajador
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className={activeTab1 === "2" ? "active" : ""} onClick={() => toggleTab1("2")}>
+                        Contacto
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className={activeTab1 === "3" ? "active" : ""} onClick={() => toggleTab1("3")}>
+                        Adicional
+                      </NavLink>
+                    </NavItem>
+                    {/* <NavItem>
                   <NavLink className={activeTab === "4" ? "active" : ""} onClick={() => toggleTab("4")}>
                     Bajas
                   </NavLink>
                 </NavItem> */}
-              </Nav>
-              <TabContent activeTab={activeTab1}>
-                <br />
-                <TabPane tabId="1">
-                  <Row>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" defaultValue={form ? form.nombre : ""} />
-                    </Col>
+                  </Nav>
+                  <TabContent activeTab={activeTab1}>
+                    <br />
+                    <TabPane tabId="1">
+                      <Row>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="nombre"
+                            labelName="Nombre:"
+                            defaultValue={form ? form.nombre : ""}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="domicilio"
-                        labelName="Domicilio:"
-                        defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="domicilio"
+                            labelName="Domicilio:"
+                            defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <Label>Sexo:</Label>
-                      <Input className="mb-3" type="select" onChange={handleChange} name="sexo" value={form.sexo ? form.sexo : form.sexo}>
-                        <option>--Selecciona el sexo--</option>
-                        <option value={"M"}>Masculino</option>
-                        <option value={"F"}>Femenino</option>
-                      </Input>
-                    </Col>
+                        <Col sm="6">
+                          <Label>Sexo:</Label>
+                          <Input
+                            className="mb-3"
+                            type="select"
+                            onChange={handleChange}
+                            name="sexo"
+                            value={form.sexo ? form.sexo : form.sexo}
+                          >
+                            <option>--Selecciona el sexo--</option>
+                            <option value={"M"}>Masculino</option>
+                            <option value={"F"}>Femenino</option>
+                          </Input>
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="colonia"
-                        labelName="Colonia:"
-                        defaultValue={form.colonia ? form.colonia : form.colonia}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="colonia"
+                            labelName="Colonia:"
+                            defaultValue={form.colonia ? form.colonia : form.colonia}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <Label for="exampleDate">Fecha de nacimiento:</Label>
-                      <Input
-                        id="exampleDate"
-                        name="fecha_nacimiento"
-                        placeholder="date placeholder"
-                        type="date"
-                        onChange={handleChange}
-                        defaultValue={form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <Label for="exampleDate">Fecha de nacimiento:</Label>
+                          <Input
+                            id="exampleDate"
+                            name="fecha_nacimiento"
+                            placeholder="date placeholder"
+                            type="date"
+                            onChange={handleChange}
+                            defaultValue={
+                              form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento
+                            }
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="poblacion"
-                        labelName="Población:"
-                        defaultValue={form.poblacion ? form.poblacion : form.poblacion}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="poblacion"
+                            labelName="Población:"
+                            defaultValue={form.poblacion ? form.poblacion : form.poblacion}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="lugar_nacimiento"
-                        labelName="Lugar de nacimiento:"
-                        defaultValue={form.lugar_nacimiento ? form.lugar_nacimiento : form.lugar_nacimiento}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="lugar_nacimiento"
+                            labelName="Lugar de nacimiento:"
+                            defaultValue={form.lugar_nacimiento ? form.lugar_nacimiento : form.lugar_nacimiento}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="estado"
-                        labelName="Estado:"
-                        defaultValue={form.estado ? form.estado : form.estado}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="estado"
+                            labelName="Estado:"
+                            defaultValue={form.estado ? form.estado : form.estado}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="clave_empleado"
-                        labelName="Clave empleado:"
-                        defaultValue={form.clave_empleado ? form.clave_empleado : form.clave_empleado}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="clave_empleado"
+                            labelName="Clave empleado:"
+                            defaultValue={form.clave_empleado ? form.clave_empleado : form.clave_empleado}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="codigo_postal"
-                        labelName="Código postal:"
-                        value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="codigo_postal"
+                            labelName="Código postal:"
+                            value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="clave_perfil"
-                        labelName="Clave perfil:"
-                        defaultValue={form.clave_perfil ? form.clave_perfil : form.clave_perfil}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="clave_perfil"
+                            labelName="Clave perfil:"
+                            defaultValue={form.clave_perfil ? form.clave_perfil : form.clave_perfil}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="password"
-                        labelName="Password:"
-                        defaultValue={form.password ? form.password : form.password}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="password"
+                            labelName="Password:"
+                            defaultValue={form.password ? form.password : form.password}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="nombreAgenda"
-                        labelName="Nombre de agenda:"
-                        defaultValue={form.nombreAgenda ? form.nombreAgenda : form.nombreAgenda}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="nombreAgenda"
+                            labelName="Nombre de agenda:"
+                            defaultValue={form.nombreAgenda ? form.nombreAgenda : form.nombreAgenda}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="aliasTickets"
-                        labelName="Alias en el tiket:"
-                        defaultValue={form.aliasTickets ? form.aliasTickets : form.aliasTickets}
-                      />
-                    </Col>
-                  </Row>
-                  <br />
-                </TabPane>
-                <TabPane tabId="2">
-                  <Row>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="telefono1"
-                        labelName="Teléfono:"
-                        defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
-                      />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="telefono2"
-                        labelName="Celular:"
-                        defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
-                      />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="email"
-                        labelName="Email:"
-                        defaultValue={form.email ? form.email : form.email}
-                      />
-                    </Col>
-                  </Row>
-                </TabPane>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="aliasTickets"
+                            labelName="Alias en el tiket:"
+                            defaultValue={form.aliasTickets ? form.aliasTickets : form.aliasTickets}
+                          />
+                        </Col>
+                      </Row>
+                      <br />
+                    </TabPane>
+                    <TabPane tabId="2">
+                      <Row>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="telefono1"
+                            labelName="Teléfono:"
+                            defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="telefono2"
+                            labelName="Celular:"
+                            defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="email"
+                            labelName="Email:"
+                            defaultValue={form.email ? form.email : form.email}
+                          />
+                        </Col>
+                      </Row>
+                    </TabPane>
 
-                <TabPane tabId="3">
-                  <Row>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="RFC" labelName="RFC:" defaultValue={form.RFC ? form.RFC : form.RFC} />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="CURP"
-                        labelName="CURP:"
-                        defaultValue={form.CURP ? form.CURP : form.CURP}
-                      />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} />
-                    </Col>
-                    <Col sm="6">
-                      <Label>Departamento:</Label>
-                      <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
-                        <option value={0}>--Selecciona una opción--</option>
-                        {dataNominaDepartamentos.map((depto) => (
-                          <option value={depto.id}>{depto.descripcion_departamento} </option>
-                        ))}
-                      </Input>
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="observaciones"
-                        labelName="Observaciones:"
-                        defaultValue={form ? form.observaciones : ""}
-                      />
-                    </Col>
+                    <TabPane tabId="3">
+                      <Row>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="RFC"
+                            labelName="RFC:"
+                            defaultValue={form.RFC ? form.RFC : form.RFC}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="CURP"
+                            labelName="CURP:"
+                            defaultValue={form.CURP ? form.CURP : form.CURP}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="imss"
+                            labelName="IMSS:"
+                            defaultValue={form ? form.imss : ""}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <Label>Departamento:</Label>
+                          <Input
+                            type="select"
+                            name="idDepartamento"
+                            id="exampleSelect"
+                            value={form.idDepartamento}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona una opción--</option>
+                            {dataNominaDepartamentos.map((depto) => (
+                              <option value={depto.id}>{depto.descripcion_departamento} </option>
+                            ))}
+                          </Input>
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="observaciones"
+                            labelName="Observaciones:"
+                            defaultValue={form ? form.observaciones : ""}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <Label>Nivel de escolaridad:</Label>
-                      <Input type="select" name="nivel_escolaridad" id="exampleSelect" value={form.nivel_escolaridad} onChange={handleChange}>
-                        <option value={0}>--Selecciona una opción--</option>
-                        {dataNominaNivel.map((escolaridad) => (
-                          <option value={escolaridad.id}>{escolaridad.descripcion} </option>
-                        ))}
-                      </Input>
-                    </Col>
+                        <Col sm="6">
+                          <Label>Nivel de escolaridad:</Label>
+                          <Input
+                            type="select"
+                            name="nivel_escolaridad"
+                            id="exampleSelect"
+                            value={form.nivel_escolaridad}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona una opción--</option>
+                            {dataNominaNivel.map((escolaridad) => (
+                              <option value={escolaridad.id}>{escolaridad.descripcion} </option>
+                            ))}
+                          </Input>
+                        </Col>
 
-                    <Col sm="6">
-                      <Label>Puesto:</Label>
-                      <Input type="select" name="idPuesto" id="exampleSelect" value={form.idPuesto} onChange={handleChange}>
-                        <option value={0}>--Selecciona una opción--</option>
-                        {dataNominaPuestos.map((puesto) => (
-                          <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
-                        ))}
-                      </Input>
-                    </Col>
+                        <Col sm="6">
+                          <Label>Puesto:</Label>
+                          <Input
+                            type="select"
+                            name="idPuesto"
+                            id="exampleSelect"
+                            value={form.idPuesto}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona una opción--</option>
+                            {dataNominaPuestos.map((puesto) => (
+                              <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
+                            ))}
+                          </Input>
+                        </Col>
 
-                    <Col sm="6">
-                      <Label>Estatus:</Label>
-                      <Input type="select" name="status" id="exampleSelect" value={form.status} onChange={handleChange}>
-                        <option value={0}>--Selecciona un estatus--</option>
-                        {dataEstatus.map((estatus) => (
-                          <option value={estatus.id}>{estatus.descripcion_baja} </option>
-                        ))}
-                      </Input>
-                    </Col>
-                  </Row>
-                </TabPane>
+                        <Col sm="6">
+                          <Label>Estatus:</Label>
+                          <Input
+                            type="select"
+                            name="status"
+                            id="exampleSelect"
+                            value={form.status}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona un estatus--</option>
+                            {dataEstatus.map((estatus) => (
+                              <option value={estatus.id}>{estatus.descripcion_baja} </option>
+                            ))}
+                          </Input>
+                        </Col>
+                      </Row>
+                    </TabPane>
 
-                {/* 
+                    {/* 
                 <TabPane tabId="4">
                   <Container>
                     <Row>
@@ -931,322 +1022,375 @@ function NominaTrabajadores() {
                     </Row>
                   </Container>
                 </TabPane> */}
-                <AlertComponent error={error} onDismiss={onDismiss} visible={visible} />
-              </TabContent>
-            </Card>
-          </Container>
-        </ModalBody>
-        <ModalFooter>
-          <CButton color="success" onClick={insertar} text="Guardar trabajador" />
-          <CButton color="btn btn-danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
-        </ModalFooter>
-      </Modal>
+                    <AlertComponent error={error} onDismiss={onDismiss} visible={visible} />
+                  </TabContent>
+                </Card>
+              </Container>
+            </ModalBody>
+            <ModalFooter>
+              <CButton color="success" onClick={insertar} text="Guardar trabajador" />
+              <CButton color="btn btn-danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
+            </ModalFooter>
+          </Modal>
+          {/*  ACTUALIZAR TRABAJADOR */}
+          <Modal isOpen={modalActualizar} size="xl" fullscreen={"md"}>
+            <ModalHeader>
+              <div>
+                <h3>Editar trabajador</h3>
+              </div>
+            </ModalHeader>
+            <ModalBody>
+              <Container>
+                <Card body>
+                  {/* <TabPrueba getTrab={getTrabajador} form2={form} setForm2={setForm}></TabPrueba> */}
+                  <Nav tabs>
+                    <NavItem>
+                      <NavLink className={activeTab === "1" ? "active" : ""} onClick={() => toggleTab("1")}>
+                        Trabajador
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className={activeTab === "2" ? "active" : ""} onClick={() => toggleTab("2")}>
+                        Contacto
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className={activeTab === "3" ? "active" : ""} onClick={() => toggleTab("3")}>
+                        Adicional
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className={activeTab === "4" ? "active" : ""} onClick={() => toggleTab("4")}>
+                        Bajas
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                  <TabContent activeTab={activeTab}>
+                    <br />
+                    <TabPane tabId="1">
+                      <Row>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="nombre"
+                            labelName="Nombre:"
+                            defaultValue={form ? form.nombre : ""}
+                          />
+                        </Col>
 
-      {/*  ACTUALIZAR TRABAJADOR */}
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="domicilio"
+                            labelName="Domicilio:"
+                            defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
+                          />
+                        </Col>
 
-      <Modal isOpen={modalActualizar} size="xl" fullscreen={"md"}>
-        <ModalHeader>
-          <div>
-            <h3>Editar trabajador</h3>
-          </div>
-        </ModalHeader>
-        <ModalBody>
-          <Container>
-            <Card body>
-              {/* <TabPrueba getTrab={getTrabajador} form2={form} setForm2={setForm}></TabPrueba> */}
-              <Nav tabs>
-                <NavItem>
-                  <NavLink className={activeTab === "1" ? "active" : ""} onClick={() => toggleTab("1")}>
-                    Trabajador
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink className={activeTab === "2" ? "active" : ""} onClick={() => toggleTab("2")}>
-                    Contacto
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink className={activeTab === "3" ? "active" : ""} onClick={() => toggleTab("3")}>
-                    Adicional
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink className={activeTab === "4" ? "active" : ""} onClick={() => toggleTab("4")}>
-                    Bajas
-                  </NavLink>
-                </NavItem>
-              </Nav>
-              <TabContent activeTab={activeTab}>
-                <br />
-                <TabPane tabId="1">
-                  <Row>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" defaultValue={form ? form.nombre : ""} />
-                    </Col>
+                        <Col sm="6">
+                          <Label>Sexo:</Label>
+                          <Input
+                            className="mb-3"
+                            type="select"
+                            onChange={handleChange}
+                            name="sexo"
+                            value={form.sexo ? form.sexo : form.sexo}
+                          >
+                            <option>--Selecciona una opción--</option>
+                            <option value={"M"}>Masculino</option>
+                            <option value={"F"}>Femenino</option>
+                          </Input>
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="domicilio"
-                        labelName="Domicilio:"
-                        defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="colonia"
+                            labelName="Colonia:"
+                            defaultValue={form.colonia ? form.colonia : form.colonia}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <Label>Sexo:</Label>
-                      <Input className="mb-3" type="select" onChange={handleChange} name="sexo" value={form.sexo ? form.sexo : form.sexo}>
-                        <option>--Selecciona una opción--</option>
-                        <option value={"M"}>Masculino</option>
-                        <option value={"F"}>Femenino</option>
-                      </Input>
-                    </Col>
+                        <Col sm="6">
+                          <Label for="exampleDate">Fecha de nacimiento:</Label>
+                          <Input
+                            id="exampleDate"
+                            name="fecha_nacimiento"
+                            placeholder="date placeholder"
+                            type="date"
+                            onChange={handleChange}
+                            defaultValue={
+                              form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento
+                            }
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="colonia"
-                        labelName="Colonia:"
-                        defaultValue={form.colonia ? form.colonia : form.colonia}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="poblacion"
+                            labelName="Población:"
+                            defaultValue={form.poblacion ? form.poblacion : form.poblacion}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <Label for="exampleDate">Fecha de nacimiento:</Label>
-                      <Input
-                        id="exampleDate"
-                        name="fecha_nacimiento"
-                        placeholder="date placeholder"
-                        type="date"
-                        onChange={handleChange}
-                        defaultValue={form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="lugar_nacimiento"
+                            labelName="Lugar de nacimiento:"
+                            defaultValue={form.lugar_nacimiento ? form.lugar_nacimiento : form.lugar_nacimiento}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="poblacion"
-                        labelName="Población:"
-                        defaultValue={form.poblacion ? form.poblacion : form.poblacion}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="estado"
+                            labelName="Estado:"
+                            defaultValue={form.estado ? form.estado : form.estado}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="lugar_nacimiento"
-                        labelName="Lugar de nacimiento:"
-                        defaultValue={form.lugar_nacimiento ? form.lugar_nacimiento : form.lugar_nacimiento}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="clave_empleado"
+                            labelName="Clave empleado:"
+                            defaultValue={form.clave_empleado ? form.clave_empleado : form.clave_empleado}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="estado"
-                        labelName="Estado:"
-                        defaultValue={form.estado ? form.estado : form.estado}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="codigo_postal"
+                            labelName="Código postal:"
+                            value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="clave_empleado"
-                        labelName="Clave empleado:"
-                        defaultValue={form.clave_empleado ? form.clave_empleado : form.clave_empleado}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="clave_perfil"
+                            labelName="Clave perfil:"
+                            defaultValue={form.clave_perfil ? form.clave_perfil : form.clave_perfil}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="codigo_postal"
-                        labelName="Código postal:"
-                        value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="password"
+                            labelName="Password:"
+                            defaultValue={form.password ? form.password : form.password}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="clave_perfil"
-                        labelName="Clave perfil:"
-                        defaultValue={form.clave_perfil ? form.clave_perfil : form.clave_perfil}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="nombreAgenda"
+                            labelName="Nombre de agenda:"
+                            defaultValue={form.nombreAgenda ? form.nombreAgenda : form.nombreAgenda}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="password"
-                        labelName="Password:"
-                        defaultValue={form.password ? form.password : form.password}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="aliasTickets"
+                            labelName="Alias en el tiket:"
+                            defaultValue={form.aliasTickets ? form.aliasTickets : form.aliasTickets}
+                          />
+                        </Col>
+                      </Row>
+                      <br />
+                    </TabPane>
+                    <TabPane tabId="2">
+                      <Row>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="telefono1"
+                            labelName="Teléfono:"
+                            defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="telefono2"
+                            labelName="Celular:"
+                            defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="email"
+                            labelName="Email:"
+                            defaultValue={form.email ? form.email : form.email}
+                          />
+                        </Col>
+                      </Row>
+                    </TabPane>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="nombreAgenda"
-                        labelName="Nombre de agenda:"
-                        defaultValue={form.nombreAgenda ? form.nombreAgenda : form.nombreAgenda}
-                      />
-                    </Col>
+                    <TabPane tabId="3">
+                      <Row>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="RFC"
+                            labelName="RFC:"
+                            defaultValue={form.RFC ? form.RFC : form.RFC}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="CURP"
+                            labelName="CURP:"
+                            defaultValue={form.CURP ? form.CURP : form.CURP}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="imss"
+                            labelName="IMSS:"
+                            defaultValue={form ? form.imss : ""}
+                          />
+                        </Col>
+                        <Col sm="6">
+                          <Label>Departamento:</Label>
+                          <Input
+                            type="select"
+                            name="idDepartamento"
+                            id="exampleSelect"
+                            value={form.idDepartamento}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona una opción--</option>
+                            {dataNominaDepartamentos.map((depto) => (
+                              <option value={depto.id}>{depto.descripcion_departamento} </option>
+                            ))}
+                          </Input>
+                        </Col>
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="observaciones"
+                            labelName="Observaciones:"
+                            defaultValue={form ? form.observaciones : ""}
+                          />
+                        </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="aliasTickets"
-                        labelName="Alias en el tiket:"
-                        defaultValue={form.aliasTickets ? form.aliasTickets : form.aliasTickets}
-                      />
-                    </Col>
-                  </Row>
-                  <br />
-                </TabPane>
-                <TabPane tabId="2">
-                  <Row>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="telefono1"
-                        labelName="Teléfono:"
-                        defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
-                      />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="telefono2"
-                        labelName="Celular:"
-                        defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
-                      />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="email"
-                        labelName="Email:"
-                        defaultValue={form.email ? form.email : form.email}
-                      />
-                    </Col>
-                  </Row>
-                </TabPane>
+                        <Col sm="6">
+                          <Label>Nivel de escolaridad:</Label>
+                          <Input
+                            type="select"
+                            name="nivel_escolaridad"
+                            id="exampleSelect"
+                            value={form.nivel_escolaridad}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona una opción--</option>
+                            {dataNominaNivel.map((escolaridad) => (
+                              <option value={escolaridad.id}>{escolaridad.descripcion} </option>
+                            ))}
+                          </Input>
+                        </Col>
 
-                <TabPane tabId="3">
-                  <Row>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="RFC" labelName="RFC:" defaultValue={form.RFC ? form.RFC : form.RFC} />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="CURP"
-                        labelName="CURP:"
-                        defaultValue={form.CURP ? form.CURP : form.CURP}
-                      />
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} />
-                    </Col>
-                    <Col sm="6">
-                      <Label>Departamento:</Label>
-                      <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
-                        <option value={0}>--Selecciona una opción--</option>
-                        {dataNominaDepartamentos.map((depto) => (
-                          <option value={depto.id}>{depto.descripcion_departamento} </option>
-                        ))}
-                      </Input>
-                    </Col>
-                    <Col sm="6">
-                      <CFormGroupInput
-                        handleChange={handleChange}
-                        inputName="observaciones"
-                        labelName="Observaciones:"
-                        defaultValue={form ? form.observaciones : ""}
-                      />
-                    </Col>
+                        <Col sm="6">
+                          <Label>Puesto:</Label>
+                          <Input
+                            type="select"
+                            name="idPuesto"
+                            id="exampleSelect"
+                            value={form.idPuesto}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona una opción--</option>
+                            {dataNominaPuestos.map((puesto) => (
+                              <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
+                            ))}
+                          </Input>
+                        </Col>
 
-                    <Col sm="6">
-                      <Label>Nivel de escolaridad:</Label>
-                      <Input type="select" name="nivel_escolaridad" id="exampleSelect" value={form.nivel_escolaridad} onChange={handleChange}>
-                        <option value={0}>--Selecciona una opción--</option>
-                        {dataNominaNivel.map((escolaridad) => (
-                          <option value={escolaridad.id}>{escolaridad.descripcion} </option>
-                        ))}
-                      </Input>
-                    </Col>
+                        <Col sm="6">
+                          <Label>Estatus:</Label>
+                          <Input
+                            type="select"
+                            name="status"
+                            id="exampleSelect"
+                            value={form.status}
+                            onChange={handleChange}
+                          >
+                            <option value={0}>--Selecciona un estatus--</option>
+                            {dataEstatus.map((estatus) => (
+                              <option value={estatus.id}>{estatus.descripcion_baja} </option>
+                            ))}
+                          </Input>
+                        </Col>
+                      </Row>
+                    </TabPane>
 
-                    <Col sm="6">
-                      <Label>Puesto:</Label>
-                      <Input type="select" name="idPuesto" id="exampleSelect" value={form.idPuesto} onChange={handleChange}>
-                        <option value={0}>--Selecciona una opción--</option>
-                        {dataNominaPuestos.map((puesto) => (
-                          <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
-                        ))}
-                      </Input>
-                    </Col>
+                    <TabPane tabId="4">
+                      <Container>
+                        <Row>
+                          <Col sm="6">
+                            <Label for="exampleDate">Fecha de baja:</Label>
+                            <Input
+                              id="exampleDate"
+                              name="fecha_baja"
+                              type="date"
+                              onChange={handleChange}
+                              defaultValue={form.fecha_baja ? form.fecha_baja.split("T")[0] : ""}
+                            />
+                            <br />
+                          </Col>
+                          <Col sm="6">
+                            <Label>Motivo de baja:</Label>
+                            <Input
+                              type="select"
+                              name="motivo_baja"
+                              id="exampleSelect"
+                              value={form.motivo_baja}
+                              onChange={handleChange}
+                            >
+                              <option value={0}>--Selecciona un motivo de baja--</option>
+                              {dataBajas.map((baja) => (
+                                <option value={baja.id}>{baja.descripcion_baja} </option>
+                              ))}
+                            </Input>
+                          </Col>
 
-                    <Col sm="6">
-                      <Label>Estatus:</Label>
-                      <Input type="select" name="status" id="exampleSelect" value={form.status} onChange={handleChange}>
-                        <option value={0}>--Selecciona un estatus--</option>
-                        {dataEstatus.map((estatus) => (
-                          <option value={estatus.id}>{estatus.descripcion_baja} </option>
-                        ))}
-                      </Input>
-                    </Col>
-                  </Row>
-                </TabPane>
+                          <Col sm="8">
+                            <CFormGroupInput
+                              handleChange={handleChange}
+                              inputName="motivo_baja_especificacion"
+                              labelName="Especificación de motivo de baja:"
+                              defaultValue={form.motivo_baja_especificacion}
+                            />
+                          </Col>
+                        </Row>
+                      </Container>
+                    </TabPane>
+                    <AlertComponent error={error} onDismiss={onDismiss} visible={visible} />
+                  </TabContent>
+                </Card>
+              </Container>
+            </ModalBody>
 
-                <TabPane tabId="4">
-                  <Container>
-                    <Row>
-                      <Col sm="6">
-                        <Label for="exampleDate">Fecha de baja:</Label>
-                        <Input
-                          id="exampleDate"
-                          name="fecha_baja"
-                          type="date"
-                          onChange={handleChange}
-                          defaultValue={form.fecha_baja ? form.fecha_baja.split("T")[0] : ""}
-                        />
-                        <br />
-                      </Col>
-                      <Col sm="6">
-                        <Label>Motivo de baja:</Label>
-                        <Input type="select" name="motivo_baja" id="exampleSelect" value={form.motivo_baja} onChange={handleChange}>
-                          <option value={0}>--Selecciona un motivo de baja--</option>
-                          {dataBajas.map((baja) => (
-                            <option value={baja.id}>{baja.descripcion_baja} </option>
-                          ))}
-                        </Input>
-                      </Col>
-
-                      <Col sm="8">
-                        <CFormGroupInput
-                          handleChange={handleChange}
-                          inputName="motivo_baja_especificacion"
-                          labelName="Especificación de motivo de baja:"
-                          defaultValue={form.motivo_baja_especificacion}
-                        />
-                      </Col>
-                    </Row>
-                  </Container>
-                </TabPane>
-                <AlertComponent error={error} onDismiss={onDismiss} visible={visible} />
-              </TabContent>
-            </Card>
-          </Container>
-        </ModalBody>
-
-        <ModalFooter>
-          <CButton color="primary" onClick={() => editar()} text="Actualizar" />
-          <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
-        </ModalFooter>
-      </Modal>
+            <ModalFooter>
+              <CButton color="primary" onClick={() => editar()} text="Actualizar" />
+              <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
+            </ModalFooter>
+          </Modal>
+        </>
+      ) : null}
     </>
   );
 }

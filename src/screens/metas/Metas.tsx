@@ -52,13 +52,55 @@ import { Trabajador } from "../../models/Trabajador";
 
 function Metas() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_meta_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
 
   const [data, setData] = useState<MetasCol[]>([]);
   const { dataCias, fetchCias } = useCias();
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
-
 
   const [form, setForm] = useState<MetasCol>({
     id: 0,
@@ -144,7 +186,6 @@ function Metas() {
     }
     // alert("si entra");
 
-
     if (validarCampos() === true) {
       await jezaApi
         .put(`/sp_cat_colaboradoresMetasUpd`, null, {
@@ -224,7 +265,10 @@ function Metas() {
   const filtroEmail = (datoMedico: string) => {
     var resultado = data.filter((elemento: any) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
-      if ((datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.nombre.length > 2) {
+      if (
+        (datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) &&
+        elemento.nombre.length > 2
+      ) {
         return elemento;
       }
     });
@@ -341,155 +385,233 @@ function Metas() {
       <Row>
         <SidebarHorizontal />
       </Row>
-      <Container>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Metas<HiBuildingStorefront size={35}></HiBuildingStorefront></h1>
+      {showView ? (
+        <>
+          <Container>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1>
+                {" "}
+                Metas<HiBuildingStorefront size={35}></HiBuildingStorefront>
+              </h1>
+            </div>
+            <div className="col align-self-start d-flex justify-content-center "></div>
+            <br />
 
-        </div>
-        <div className="col align-self-start d-flex justify-content-center "></div>
-        <br />
+            <div>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button
+                  style={{ marginLeft: "auto" }}
+                  color="success"
+                  onClick={() => {
+                    setModalInsertar(true);
+                    setEstado("insert");
+                    LimpiezaForm();
+                  }}
+                >
+                  Crear meta
+                </Button>
 
-        <div>
-          <ButtonGroup variant="contained" aria-label="outlined primary button group">
-            <Button
-              style={{ marginLeft: "auto" }}
-              color="success"
-              onClick={() => {
-                setModalInsertar(true);
-                setEstado("insert");
-                LimpiezaForm();
-              }}
-            >
-              Crear meta
-            </Button>
+                <Button color="primary" onClick={handleRedirect}>
+                  <IoIosHome size={20}></IoIosHome>
+                </Button>
+                <Button onClick={handleReload}>
+                  <IoIosRefresh size={20}></IoIosRefresh>
+                </Button>
+              </ButtonGroup>
+            </div>
+            <br />
+            <br />
+            <br />
+            <Container>
+              <DataTable></DataTable>
+            </Container>
+          </Container>
 
-            <Button color="primary" onClick={handleRedirect}>
-              <IoIosHome size={20}></IoIosHome>
-            </Button>
-            <Button onClick={handleReload}>
-              <IoIosRefresh size={20}></IoIosRefresh>
-            </Button>
-          </ButtonGroup>
-        </div>
-        <br />
-        <br />
-        <br />
-        <Container>
-          <DataTable></DataTable>
-        </Container>
-      </Container>
+          {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
+          <Modal isOpen={modalActualizar} size="xl">
+            <ModalHeader>
+              <div>
+                <h3>Editar meta</h3>
+              </div>
+            </ModalHeader>
 
-      {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalActualizar} size="xl">
-        <ModalHeader>
-          <div>
-            <h3>Editar meta</h3>
-          </div>
-        </ModalHeader>
+            <ModalBody>
+              <FormGroup>
+                <Row>
+                  <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
+                  </Col>
+                  <Col md={"6"}>
+                    <Label>Trabajadores:</Label>
+                    <Input
+                      type="select"
+                      name="idcolabolador"
+                      id="idcolabolador"
+                      defaultValue={form.idcolabolador}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecciona empresa</option>
+                      {dataTrabajadores.map((colaborador: Trabajador) => (
+                        <option key={colaborador.id} value={colaborador.id}>
+                          {colaborador.nombre}
+                        </option>
+                      ))}
+                    </Input>
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta1"
+                      labelName="Meta 1:"
+                      value={form.meta1}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta2"
+                      labelName="Meta 2:"
+                      value={form.meta2}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta3"
+                      labelName="Meta 3:"
+                      value={form.meta3}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta4"
+                      labelName="Meta 4:"
+                      value={form.meta4}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta5"
+                      labelName="Meta 5:"
+                      value={form.meta5}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta6"
+                      labelName="Meta 6:"
+                      value={form.meta6}
+                    />
+                  </Col>
+                </Row>
+              </FormGroup>
+            </ModalBody>
 
-        <ModalBody>
-          <FormGroup>
-            <Row>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
-              </Col>
-              <Col md={"6"}>
-                <Label>Trabajadores:</Label>
-                <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
-                  <option value="">Selecciona empresa</option>
-                  {dataTrabajadores.map((colaborador: Trabajador) => (
-                    <option key={colaborador.id} value={colaborador.id}>
-                      {colaborador.nombre}
-                    </option>
-                  ))}
-                </Input>
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta 1:" value={form.meta1} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta 2:" value={form.meta2} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta 3:" value={form.meta3} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta 4:" value={form.meta4} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta 5:" value={form.meta5} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta6" labelName="Meta 6:" value={form.meta6} />
-              </Col>
-            </Row>
-          </FormGroup>
-        </ModalBody>
+            <ModalFooter>
+              <CButton color="primary" onClick={editar} text="Actualizar" />
+              <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
+            </ModalFooter>
+          </Modal>
 
-        <ModalFooter>
-          <CButton color="primary" onClick={editar} text="Actualizar" />
-          <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
-        </ModalFooter>
-      </Modal>
+          {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
+          <Modal isOpen={modalInsertar} size="xl">
+            <ModalHeader>
+              <div>
+                <h3>Crear meta</h3>
+              </div>
+            </ModalHeader>
 
-      {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalInsertar} size="xl">
-        <ModalHeader>
-          <div>
-            <h3>Crear meta</h3>
-          </div>
-        </ModalHeader>
+            <ModalBody>
+              <FormGroup>
+                <Row>
+                  <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
+                  </Col>
+                  <Col md={"6"}>
+                    <Label>Trabajadores:</Label>
+                    <Input
+                      type="select"
+                      name="idcolabolador"
+                      id="idcolabolador"
+                      defaultValue={form.idcolabolador}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecciona empresa</option>
+                      {dataTrabajadores.map((colaborador: Trabajador) => (
+                        <option key={colaborador.id} value={colaborador.id}>
+                          {colaborador.nombre}
+                        </option>
+                      ))}
+                    </Input>
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta1"
+                      labelName="Meta 1:"
+                      value={form.meta1}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta2"
+                      labelName="Meta 2:"
+                      value={form.meta2}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta3"
+                      labelName="Meta 3:"
+                      value={form.meta3}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta4"
+                      labelName="Meta 4:"
+                      value={form.meta4}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta5"
+                      labelName="Meta 5:"
+                      value={form.meta5}
+                    />
+                  </Col>
+                  <Col md={"6"}>
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta6"
+                      labelName="Meta 6:"
+                      value={form.meta6}
+                    />
+                  </Col>
+                </Row>
+              </FormGroup>
+            </ModalBody>
 
-        <ModalBody>
-          <FormGroup>
-            <Row>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
-              </Col>
-              <Col md={"6"}>
-                <Label>Trabajadores:</Label>
-                <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
-                  <option value="">Selecciona empresa</option>
-                  {dataTrabajadores.map((colaborador: Trabajador) => (
-                    <option key={colaborador.id} value={colaborador.id}>
-                      {colaborador.nombre}
-                    </option>
-                  ))}
-                </Input>
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta 1:" value={form.meta1} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta 2:" value={form.meta2} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta 3:" value={form.meta3} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta 4:" value={form.meta4} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta 5:" value={form.meta5} />
-              </Col>
-              <Col md={"6"}>
-                <CFormGroupInput handleChange={handleChange} inputName="meta6" labelName="Meta 6:" value={form.meta6} />
-              </Col>
-            </Row>
-          </FormGroup>
-        </ModalBody>
-
-        <ModalFooter>
-          <CButton color="success" onClick={insertar} text="Guardar meta" />
-          <CButton color="danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
-        </ModalFooter>
-      </Modal>
+            <ModalFooter>
+              <CButton color="success" onClick={insertar} text="Guardar meta" />
+              <CButton color="danger" onClick={() => cerrarModalInsertar()} text="Cancelar" />
+            </ModalFooter>
+          </Modal>
+        </>
+      ) : null}
     </>
   );
 }

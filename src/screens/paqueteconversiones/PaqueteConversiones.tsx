@@ -12,8 +12,46 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import CButton from "../../components/CButton";
 import { useNavigate } from "react-router-dom";
 import { MaterialReactTable } from "material-react-table";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import Swal from "sweetalert2";
 
 function PaqueteConversiones() {
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_PaqCon_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
   const [form, setForm] = useState<Paquete_conversion>({
     id: 0,
     idPaquete: 0,
@@ -359,7 +397,13 @@ function PaqueteConversiones() {
           <Row>
             <Col xs={10}>
               <Label>Paquete:</Label>
-              <Input disabled type="select" name="idPaquete" className="select" value={form.idPaquete ? form.idPaquete : 0}>
+              <Input
+                disabled
+                type="select"
+                name="idPaquete"
+                className="select"
+                value={form.idPaquete ? form.idPaquete : 0}
+              >
                 {dataProductos.map((producto) => (
                   <option value={producto.id}>{producto.descripcion}</option>
                 ))}
@@ -423,7 +467,11 @@ function PaqueteConversiones() {
         <ModalHeader toggle={toggleProductModal}>Escoje producto</ModalHeader>
         <ModalBody>
           {/* <DataGrid columns={columnProduct} rows={dataProductos}></DataGrid> */}
-          <MaterialReactTable columns={columnasTablaProduct} data={dataProductos} initialState={{ density: "compact" }}></MaterialReactTable>
+          <MaterialReactTable
+            columns={columnasTablaProduct}
+            data={dataProductos}
+            initialState={{ density: "compact" }}
+          ></MaterialReactTable>
         </ModalBody>
 
         <ModalFooter>

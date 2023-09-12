@@ -36,8 +36,50 @@ import axios from "axios";
 
 function Descuentos() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_Descuentos_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [data, setData] = useState([]);
@@ -191,7 +233,11 @@ function Descuentos() {
       flex: 1,
       renderCell: (params) => (
         <>
-          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row as Descuento)} size={23}></AiFillEdit>
+          <AiFillEdit
+            className="mr-2"
+            onClick={() => mostrarModalActualizar(params.row as Descuento)}
+            size={23}
+          ></AiFillEdit>
           <AiFillDelete color="lightred" onClick={() => eliminar(params.row as Descuento)} size={23}></AiFillDelete>
         </>
       ),
@@ -319,9 +365,24 @@ function Descuentos() {
 
         <ModalBody>
           <Container>
-            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Descripción:" defaultValue={form.descripcion} />
-            <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Minimo de descuento:" defaultValue={form.min_descto} />
-            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo de descuento:" defaultValue={form.max_descto} />
+            <CFormGroupInput
+              handleChange={handleChange}
+              inputName="descripcion"
+              labelName="Descripción:"
+              defaultValue={form.descripcion}
+            />
+            <CFormGroupInput
+              handleChange={handleChange}
+              inputName="min_descto"
+              labelName="Minimo de descuento:"
+              defaultValue={form.min_descto}
+            />
+            <CFormGroupInput
+              handleChange={handleChange}
+              inputName="max_descto"
+              labelName="Máximo de descuento:"
+              defaultValue={form.max_descto}
+            />
           </Container>
         </ModalBody>
 

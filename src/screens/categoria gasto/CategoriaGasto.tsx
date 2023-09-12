@@ -24,6 +24,43 @@ import { useCias } from "../../hooks/getsHooks/useCias";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 function CategoriaGastos() {
   const { filtroSeguridad, session } = useSeguridad();
+
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cat_gasto_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
   /* modals */
   /* Funcion que se usa en el modal de editar o actualizar el paquete*/
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
@@ -32,9 +69,9 @@ function CategoriaGastos() {
   const { dataCias, fetchCias } = useCias();
 
   const [form, setForm] = useState<GastoCategoria>({
-    id: 1,
-    cia: 1,
-    id_gasto: 1,
+    id: 0,
+    cia: 0,
+    id_gasto: 0,
     descripcion: "",
   });
 
@@ -111,7 +148,7 @@ function CategoriaGastos() {
       await jezaApi
         .post("/Categoria", null, {
           params: {
-            cia: Number(form.cia),
+            cia: form.cia,
             id_gasto: 0,
             descripcion: form.descripcion,
           },
@@ -149,8 +186,8 @@ function CategoriaGastos() {
         .put(`/Categoria`, null, {
           params: {
             id: form.id,
-            cia: Number(form.cia),
-            id_gasto: Number(form.id_gasto),
+            cia: form.cia,
+            id_gasto: form.id_gasto,
             descripcion: form.descripcion,
           },
         })
@@ -240,9 +277,9 @@ function CategoriaGastos() {
   const toggleCreateModal = () => {
     setForm({
       // Restablecer el estado del formulario
-      id: 1,
+      id: 0,
       cia: 0,
-      id_gasto: 1,
+      id_gasto: 0,
       descripcion: "",
     });
     setModalInsertar(!modalInsertar);
@@ -265,7 +302,7 @@ function CategoriaGastos() {
 
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
   const LimpiezaForm = () => {
-    setForm({ id: 0, cia: 0, id_gasto: 1, descripcion: "" });
+    setForm({ id: 0, cia: 0, id_gasto: 0, descripcion: "" });
   };
 
   /* alertas */
@@ -285,14 +322,14 @@ function CategoriaGastos() {
     {
       field: "cia",
       headerName: "Empresa",
-      width: 500,
+      width: 300,
       headerClassName: "custom-header",
       renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
     {
       field: "descripcion",
       headerName: "Descripción",
-      width: 500,
+      width: 300,
       headerClassName: "custom-header",
     },
   ];
@@ -339,13 +376,12 @@ function CategoriaGastos() {
       <Container>
         <Row>
           <Container fluid>
-            <br />
+
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1>Categoría de gastos</h1>
-              <GiReceiveMoney size={35}></GiReceiveMoney>
+              <h1>Categoría de gastos <GiReceiveMoney size={35}></GiReceiveMoney></h1>
+
             </div>
-            <br />
-            <br />
+
             <Row>
               <div>
                 <br />
@@ -361,7 +397,7 @@ function CategoriaGastos() {
                       LimpiezaForm();
                     }}
                   >
-                    Crear categoría{" "}
+                    Crear categoría
                   </Button>
 
                   <Button color="primary" onClick={handleRedirect}>
@@ -385,11 +421,12 @@ function CategoriaGastos() {
       </Container>
 
       <Modal isOpen={modalInsertar} toggle={toggleCreateModal}>
-        <ModalHeader toggle={toggleCreateModal}>Crear categoría</ModalHeader>
+        <ModalHeader toggle={toggleCreateModal}><h3>Crear categoría</h3></ModalHeader>
         <ModalBody>
           <Label>Empresa:</Label>
           <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-            <option value={0}>--Selecciona una empresa--</option>
+            <option value="">--Selecciona una empresa--</option>
+
             {dataCias.map((cia: Cia) => (
               <option key={cia.id} value={cia.id}>
                 {cia.nombre}
@@ -420,8 +457,19 @@ function CategoriaGastos() {
 
       {/* AQUI COMIENZA EL MODAL PARA ACTUALIZAR */}
       <Modal isOpen={modalActualizar} toggle={toggleUpdateModal}>
-        <ModalHeader toggle={toggleUpdateModal}>Editar categoría</ModalHeader>
+        <ModalHeader toggle={toggleUpdateModal}><h3>Editar categoría</h3></ModalHeader>
         <ModalBody>
+          <Label>Empresa:</Label>
+          <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
+            <option value="">--Selecciona una empresa--</option>
+            {dataCias.map((cia: Cia) => (
+              <option key={cia.id} value={cia.id}>
+                {cia.nombre}
+              </option>
+            ))}
+          </Input>
+
+          <br />
           <Label>Descripción:</Label>
           <Input
             type="text"
@@ -432,20 +480,8 @@ function CategoriaGastos() {
               console.log(form);
             }}
             min="1"
-            placeholder="Ingrese la cantidad de producto por unidad"
+
           />
-
-          <br />
-          <Label>Empresa:</Label>
-          <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
-            <option value={0}>--Selecciona una empresa--</option>
-            {dataCias.map((cia: Cia) => (
-              <option key={cia.id} value={cia.id}>
-                {cia.nombre}
-              </option>
-            ))}
-          </Input>
-
 
         </ModalBody>
 

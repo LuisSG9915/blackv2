@@ -16,6 +16,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function Descuentos() {
   const { filtroSeguridad } = useSeguridad();
+  
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const [data, setData] = useState([]);

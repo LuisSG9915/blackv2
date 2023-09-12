@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Row, Container, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Table, Alert, Card, CardHeader, CardBody } from "reactstrap";
+import {
+  Row,
+  Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Label,
+  Input,
+  Table,
+  Alert,
+  Card,
+  CardHeader,
+  CardBody,
+} from "reactstrap";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
@@ -21,15 +35,58 @@ import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
 
 function PuestoRecursosHumanos() {
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_PuestoRH_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
   const [data, setData] = useState<RecursosHumanosPuesto[]>([]); /* setear valores  */
   const [form, setForm] = useState<RecursosHumanosPuesto>({
     clave_puesto: 0,
     descripcion_puesto: "",
   });
-  const { filtroSeguridad, session } = useSeguridad();
+
   /* CRUD */
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
 
   // Create ----> POST
   // const insertar = () => {
@@ -91,7 +148,6 @@ function PuestoRecursosHumanos() {
         .post("/Puesto", null, {
           params: {
             descripcion: form.descripcion_puesto,
-
           },
         })
         .then((response) => {
@@ -110,7 +166,6 @@ function PuestoRecursosHumanos() {
     }
   };
 
-
   // const editar = () => {
   //   jezaApi.put(`/Puesto?id=${form.clave_puesto}&descripcion=${form.descripcion_puesto}`).then(() => {
   //     alert("Registro Actualizado"); //manda alerta
@@ -118,7 +173,6 @@ function PuestoRecursosHumanos() {
   //     getinfo(); // refresca tabla
   //   });
   // };
-
 
   // AQUÉ COMIENZA MÉTODO PUT PARA ACTUALIZAR REGISTROS
   const editar = async () => {
@@ -149,9 +203,6 @@ function PuestoRecursosHumanos() {
     } else {
     }
   };
-
-
-
 
   // Read --->  GET
   const getinfo = () => {
@@ -371,7 +422,6 @@ function PuestoRecursosHumanos() {
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_puesto: e.target.value })}
             value={form.descripcion_puesto}
-
           ></Input>
         </ModalBody>
         <ModalFooter>
@@ -391,7 +441,6 @@ function PuestoRecursosHumanos() {
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_puesto: e.target.value })}
             value={form.descripcion_puesto}
-
           ></Input>
         </ModalBody>
         <ModalFooter>

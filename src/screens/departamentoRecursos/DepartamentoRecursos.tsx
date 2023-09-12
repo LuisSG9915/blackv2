@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Row, Container, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Table, Alert, Card, CardHeader, CardBody } from "reactstrap";
+import {
+  Row,
+  Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Label,
+  Input,
+  Table,
+  Alert,
+  Card,
+  CardHeader,
+  CardBody,
+} from "reactstrap";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
 import { jezaApi } from "../../api/jezaApi";
@@ -20,10 +34,54 @@ import { useNavigate } from "react-router-dom";
 import { Md6FtApart } from "react-icons/md";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 function DepartamentoRecursos() {
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
-  const [data, setData] = useState<RecursosDepartamento[]>([]); /* setear valores  */
   const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_DeptoRecurso_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
+  const [data, setData] = useState<RecursosDepartamento[]>([]); /* setear valores  */
+
   const { dataSucursales } = useSucursales();
   const [form, setForm] = useState<RecursosDepartamento>({
     id: 0,

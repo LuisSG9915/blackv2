@@ -1,0 +1,41 @@
+
+
+
+insert into cat_modulos (descripcion,modulo)values('PANTALLA ESTATUS COLABORADOR ','sb_estatusColab_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA NIVELES DE ESCOLARIDAD ','sb_NivelEscolar_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE TIPO DE BAJAS ','sb_TipoBaja_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DEPARTAMENTO ','sb_DeptoRecurso_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE PUESTOS RH ','sb_PuestoRH_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE TIPO DE MOVIMIENTOS ','sb_tipoMovto_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE UNIDAD DE MEDIDA ','sb_UnidadMed_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE PAQUETE CONVERSIONES ','sb_PaqCon_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA KIT PAQUETES PIEZAS ','sb_kitPac_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE PRODUCTOS ','sb_Productos_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE CONFIGURACION DE PUNTOS POR DEPARTAMENTOS ','sb_DescPorPuntos_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE TIPOS DE DESCUENTO ','sb_Descuentos_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE ANTICIPOS ','sb_Anticipos_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE SHOPIFY CLIENTES ','sb_ShopifyCli_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE VENTAS ','sb_ventas_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE CANCELACIONES ','sb_cancelacionV_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE REPORTE DE CORTES ','sb_Corte_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE COMPRAS ','sb_Compras_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE TRASPASO ENTRADA ','sb_TrasEntrada_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE TRASPASO SALIDA ','sb_trasSalida_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE AJUSTES DIVERSOS ','sb_ajustDiversos_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE REPORTES ','sb_RepTool_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE CONFIGURACION DE USUARIOS ','sb_usuarios_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE CONFIGURACION DE PERFILES ','sb_cPerfiles_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE CONFIGURACION DE SEGURIDAD ','sb_Seguridad_view');
+insert into cat_modulos (descripcion,modulo)values('PANTALLA DE SINCRONIZACIÓN SHOPIFY ','sb_shopSinc_view');
+
+
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view
+sb_ _view

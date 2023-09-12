@@ -42,6 +42,44 @@ import { GrCreditCard } from "react-icons/gr";
 
 function TipoFormasPago() {
   const { filtroSeguridad, session } = useSeguridad();
+
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_forma_p_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
@@ -239,31 +277,38 @@ function TipoFormasPago() {
     });
     setData(resultado);
   };
-  // const filtroEmail = (datoMedico: string) => {
-  //   var resultado = data.filter((elemento: FormaPago) => {
-  //     // Aplica la lógica del filtro solo si hay valores en los inputs
-  //     if (
-  //       (datoMedico === "" ||
-  //         elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase()) ||
-  //         elemento.sucursal.toString().includes(datoMedico) ||
-  //         elemento.tipo.toString().includes(datoMedico) ||
-  //         elemento.grupo_operacion.toString().includes(datoMedico)) &&
-  //       elemento.descripcion.length > 2
-  //     )
-  //       return elemento;
-  //   });
-  //   setData(resultado);
+
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+  //   const checked = (e.target as HTMLInputElement).checked;
+  //   if (name === "tarjeta") {
+  //     setForm((prevState) => ({ ...prevState, [name]: checked }));
+  //     console.log(form);
+  //   }
   // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+
+    if (name === "grupo_operacion" || name === "tipo") {
+      // Verificar si el valor es un número entero o está vacío
+      const isIntegerValue = /^[0-9]*$/.test(value) || value === "";
+
+      if (isIntegerValue) {
+        setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+      }
+    } else {
+      setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+    }
+
     const checked = (e.target as HTMLInputElement).checked;
     if (name === "tarjeta") {
       setForm((prevState) => ({ ...prevState, [name]: checked }));
-      console.log(form);
     }
   };
+
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -349,7 +394,7 @@ function TipoFormasPago() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "90%" }}>
+      <div style={{ height: 800, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={data}
@@ -378,13 +423,12 @@ function TipoFormasPago() {
           Registro modificado con éxito....
         </Alert> */}
 
-        <br />
+
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Formas de pago </h1>
-          <GrCreditCard size={30}></GrCreditCard>
+          <h1> Formas de pago  <GrCreditCard size={30}></GrCreditCard></h1>
+
         </div>
 
-        <br />
         <br />
         <br />
         <div>

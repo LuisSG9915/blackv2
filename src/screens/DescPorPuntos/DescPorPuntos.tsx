@@ -44,11 +44,54 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { ImGift } from "react-icons/im";
 import { Cia } from "../../models/Cia";
 
-
 function DescPorPuntos() {
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
   const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_DescPorPuntos_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
+
   const [data, setData] = useState([]);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const { dataCias } = useCias();
@@ -146,9 +189,6 @@ function DescPorPuntos() {
     }
   };
 
-
-
-
   const getDesucentos = () => {
     jezaApi
       .get("/DeptosPuntos?id=0")
@@ -181,8 +221,6 @@ function DescPorPuntos() {
   //   setModalInsertar(false);
   // };
 
-
-
   //VALIDACIÓN---->
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
@@ -212,7 +250,6 @@ function DescPorPuntos() {
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
-
 
   // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
   const insertar = async () => {
@@ -250,7 +287,6 @@ function DescPorPuntos() {
     }
   };
 
-
   const eliminar = async (dato: DescPorPunto) => {
     const permiso = await filtroSeguridad("CAT_PUNTOSDESC_DEL");
     if (permiso === false) {
@@ -277,7 +313,6 @@ function DescPorPuntos() {
       }
     });
   };
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -458,28 +493,29 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="Porcentaje">Porcentaje:</Label>
-            <Input type="number" name="porcentaje_puntos" id="exampleSelect" value={form.porcentaje_puntos} onChange={handleChange} />
+            <Input
+              type="number"
+              name="porcentaje_puntos"
+              id="exampleSelect"
+              value={form.porcentaje_puntos}
+              onChange={handleChange}
+            />
           </FormGroup>
         </ModalBody>
 
         <ModalFooter>
-          <CButton
-            color="primary"
-            onClick={editar}
-            text="Actualizar"
-          />
+          <CButton color="primary" onClick={editar} text="Actualizar" />
           <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalInsertar} >
+      <Modal isOpen={modalInsertar}>
         <ModalHeader>
           <div>
             <h3>Crear recompensa</h3>
           </div>
         </ModalHeader>
         <ModalBody>
-
           <FormGroup>
             <Label>Empresa:</Label>
             <Input type="select" name="cia" id="exampleSelect" value={form.cia} onChange={handleChange}>
@@ -532,7 +568,13 @@ function DescPorPuntos() {
 
           <FormGroup>
             <Label for="Porcentaje">Porcentaje:</Label>
-            <Input type="number" name="porcentaje_puntos" id="exampleSelect" value={form.porcentaje_puntos} onChange={handleChange} />
+            <Input
+              type="number"
+              name="porcentaje_puntos"
+              id="exampleSelect"
+              value={form.porcentaje_puntos}
+              onChange={handleChange}
+            />
           </FormGroup>
         </ModalBody>
         <ModalFooter>

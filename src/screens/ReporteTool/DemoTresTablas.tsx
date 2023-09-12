@@ -13,8 +13,55 @@ import { useCortesEmail } from "../../hooks/getsHooks/useCortesEmail";
 import { CorteA, CorteB, CorteC } from "../../models/CortesEmail";
 import Chart from "react-google-charts";
 import { PieChart } from "@mui/x-charts/PieChart";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { jezaApi } from "../../api/jezaApi";
 
 function DemoTresTablas() {
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_Corte_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app"); // Redirige a la ruta "/app"
+  };
+
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
 

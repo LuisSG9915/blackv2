@@ -2,7 +2,19 @@ import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit, AiFillStop, AiFillPushpin } from "react-icons/ai";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { Row, InputGroup, Container, Col, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
+import {
+  Row,
+  InputGroup,
+  Container,
+  Col,
+  Input,
+  FormGroup,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Label,
+} from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
@@ -28,8 +40,50 @@ import { TbAngle } from "react-icons/tb";
 
 function UnidadMedida() {
   const { filtroSeguridad, session } = useSeguridad();
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_UnidadMed_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataUnidadMedida, fetchUnidadMedida } = useUnidadMedida();
   const [data, setData] = useState<Sucursal[]>([]);
   const { dataCias, fetchCias } = useCias();
@@ -180,7 +234,10 @@ function UnidadMedida() {
   const filtroEmail = (datoMedico: string) => {
     var resultado = data.filter((elemento: any) => {
       // Aplica la lógica del filtro solo si hay valores en los inputs
-      if ((datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.nombre.length > 2) {
+      if (
+        (datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) &&
+        elemento.nombre.length > 2
+      ) {
         return elemento;
       }
     });

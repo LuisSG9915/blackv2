@@ -42,8 +42,51 @@ import { BiSearchAlt } from "react-icons/bi"; //PARA BOTÓN BUSQUEDA
 import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
 import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { useNavigate } from "react-router-dom";
 
 function Compras() {
+
+  const [showView, setShowView] = useState(true);
+
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_Compras_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+     
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app"); // Redirige a la ruta "/app"
+  };
   const { dataProveedores } = useProveedor();
 
   /* modal crear */

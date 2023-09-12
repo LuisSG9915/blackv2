@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
+import numeral from "numeral";
 import {
   AccordionBody,
   AccordionHeader,
@@ -35,6 +36,8 @@ import { useDeptos } from "../../hooks/getsHooks/useDeptos";
 import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 import { Departamento } from "../../models/Departamento";
 import { Clase } from "../../models/Clase";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { useNavigate } from "react-router-dom";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -68,6 +71,114 @@ function ReporteTool() {
   const [showAreaInput, setShowAreaInput] = useState(false);
   const [showDeptoInput, setShowDeptoInput] = useState(false);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
+
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  // const calcularSumatoria = (data) => {
+  //   const sumatoria = {};
+  //   if (data.length > 0) {
+  //     for (const key in data[0]) {
+  //       if (!isNaN(data[0][key])) {
+  //         sumatoria[key] = data.reduce((total, row) => total + parseFloat(row[key] || 0), 0);
+  //       }
+  //     }
+  //   }
+  //   return sumatoria;
+  // };
+
+  // useEffect(() => {
+  //   getReporte();
+  // }, []);
+
+  // const [DatosSumados, setDatosSumados] = useState("");
+  // useEffect(() => {
+  //   const sumatoria = calcularSumatoria(reportes);
+  //   console.log("Sumatoria:", sumatoria); // Muestra la sumatoria en la consola
+  //   setDatosSumados(sumatoria);
+  // }, [reportes]);
+
+  const [DatosSumados, setDatosSumados] = useState({});
+  const [totalSum, setTotalSum] = useState(0); 
+
+  const [columnaSumas, setColumnaSumas] = useState({}); // Estado para las sumas individuales de las columnas
+
+  // ...
+
+  // En el useEffect donde calculas la suma de las columnas
+  useEffect(() => {
+    const sumatoria = calcularSumatoriaDinamica(reportes);
+    console.log("Sumatoria dinámica:", sumatoria);
+    setDatosSumados(sumatoria); // Actualiza el estado DatosSumados
+
+    // Calcula y actualiza las sumas individuales de las columnas
+    const nuevasColumnaSumas = {};
+    Object.entries(sumatoria).forEach(([columna, valor]) => {
+      nuevasColumnaSumas[columna] = valor;
+    });
+    setColumnaSumas(nuevasColumnaSumas);
+  }, [reportes]);
+
+  // Función para calcular la sumatoria de manera dinámica
+  function calcularSumatoriaDinamica(data) {
+    const sumatoria = {};
+
+    // Itera sobre las filas de datos
+    data.forEach((row) => {
+      // Itera sobre las columnas de cada fila
+      for (const key in row) {
+        if (row.hasOwnProperty(key) && typeof row[key] === "number") {
+          // Verifica si la columna es numérica y suma los valores
+          if (!sumatoria[key]) {
+            sumatoria[key] = 0;
+          }
+          sumatoria[key] += row[key];
+        }
+      }
+    });
+
+    return sumatoria;
+  }
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app"); // Redirige a la ruta "/app"
+  };
+
   const [tablaData, setTablaData] = useState({
     data: [],
     columns: [],
@@ -183,7 +294,7 @@ function ReporteTool() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formData.clave_prod}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else {
@@ -214,12 +325,28 @@ function ReporteTool() {
       .catch((error) => console.error("Error al obtener los datos:", error));
   };
 
-  const handleExportData = () => {
+
+
+  const handleExportData = (descripcionReporte: string) => {
     // Verificar si reportes contiene datos
     if (reportes.length > 0) {
       // Obtener los nombres de las columnas de la primera fila de datos (asumiendo que todas las filas tienen las mismas columnas)
       const columnHeaders = Object.keys(reportes[0]);
-
+  
+      // Función para reemplazar valores nulos o vacíos con un valor predeterminado
+      const replaceNullOrEmpty = (value, defaultValue = '') => {
+        return value === null || value === undefined || value === '' ? defaultValue : value;
+      };
+  
+      // Mapear los datos y aplicar la función de reemplazo
+      const formattedData = reportes.map((row) => {
+        const formattedRow = {};
+        columnHeaders.forEach((header) => {
+          formattedRow[header] = replaceNullOrEmpty(row[header]);
+        });
+        return formattedRow;
+      });
+  
       const csvOptions = {
         fieldSeparator: ",",
         quoteStrings: '"',
@@ -227,15 +354,19 @@ function ReporteTool() {
         showLabels: true,
         useBom: true,
         useKeysAsHeaders: false,
-        headers: columnHeaders, // Utiliza los nombres de columnas obtenidos de los datos
+        headers: columnHeaders, // Utiliza los nombres de columnas originales
+        filename: `${descripcionReporte}`,
+        title: { display: true, title: descripcionReporte }, // Agrega el título del reporte
+        useTitleAsFileName: true, // Utiliza el título como nombre de archivo
       };
-
+  
       const csvExporter = new ExportToCsv(csvOptions);
-      csvExporter.generateCsv(reportes);
+      csvExporter.generateCsv(formattedData);
     } else {
       Swal.fire("", "No hay datos para exportar", "info");
     }
   };
+  
 
   // Filtrar los datos para excluir la columna "id" y sus valores
   const filteredData = reportes.map(({ id, ...rest }) => rest);
@@ -313,18 +444,20 @@ function ReporteTool() {
       } else if (value === "sp_reporte5_Ventas") {
         setShowEmpresaInput(true);
         setShowSucursalInput(true);
-        setShowClaveProdInput(true);
+
         setShowTipoDescuentoInput(true);
         setShowEstilistaInput(true);
         setShowMetodoPagoInput(true);
+        setShowAreaInput(true);
         //----------------------------------------------------------------
+        setShowClaveProdInput(false);
         setShowClienteInput(false);
         setShowSucDesInput(false);
         setShowAlmOrigenInput(false);
         setShowAlmDestInput(false);
         setShowTipoMovtoInput(false);
         setShowProveedorInput(false);
-        setShowAreaInput(false);
+
         setShowDeptoInput(false);
       } else if (value === "sp_reporte4_Estilistas") {
         setShowEstilistaInput(true);
@@ -707,7 +840,7 @@ function ReporteTool() {
       </Container>
       <Container>
         <div>
-          <MaterialReactTable
+          {/* <MaterialReactTable
             columns={tablaData.columns.map((key) => ({
               accessorKey: key,
               header: key,
@@ -718,22 +851,135 @@ function ReporteTool() {
             enableRowSelection={false}
             rowSelectionCheckboxes={false}
             initialState={{ density: "compact" }}
+            enableBottomToolbar={true}
             renderTopToolbarCustomActions={({ table }) => (
               <>
-                <h3>{descripcionReporte}</h3>
-                <Button
-                  onClick={handleExportData}
-                  variant="contained"
-                  color="withe"
-                  style={{ marginLeft: "auto" }}
-                  startIcon={<AiFillFileExcel />}
-                  aria-label="Exportar a Excel"
-                >
-                  <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
-                </Button>
+              <h3>{descripcionReporte}</h3>
+              <Button
+                onClick={handleExportData}
+                variant="contained"
+                color="white" // Cambiado de "withe" a "white"
+                style={{ marginLeft: "auto" }}
+                startIcon={<AiFillFileExcel />}
+                aria-label="Exportar a Excel"
+              >
+                <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+              </Button>
+            </>
+          )}
+          renderBottomToolbarCustomActions={() => (
+            <>
+<div style={{ textAlign: 'center' }}>
+  {Object.entries(DatosSumados).map(([columna, valor]) => (
+    <div key={columna}>
+      {columna === "Total" || columna === "Importe" ? (
+        <>
+          <Label htmlFor={columna}><strong>{`${columna}`}</strong></Label>
+          <Input type="text" id={columna} value={`$${valor.toFixed(2)}`} disabled/>
+        </>
+      ) : (
+        ''
+      )}
+    </div>
+  ))}
+</div>
+
+            </>
+            
+          )}
+        /> */}
+<MaterialReactTable
+columns={tablaData.columns.map((key) => ({
+  accessorKey: key,
+  header: key,
+  isVisible: key !== "id",
+  Cell: ({ cell }) => {
+    const valor = cell.getValue<number>();
+    
+    if (key === "Total" || key === "Importe" || key === "Precio") {
+      if (!isNaN(valor)) {
+        return <span>${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
+      } else {
+        return valor;
+      }
+    }
+
+    if (key === "Fecha"|| key === "fechaCita") {
+      const fecha = cell.getValue<string>(); // Obtén la fecha en formato ISO como cadena
+      if (fecha) {
+        const opcionesDeFormato = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', opcionesDeFormato);
+        return <span>{fechaFormateada}</span>;
+      } else {
+        return ""; // Mostrar cadena vacía para fechas vacías
+      }
+    }
+
+    return valor; // Para otras columnas, simplemente muestra el valor sin formato
+  },
+}))}
+  data={tablaData.data}
+  enableRowSelection={false}
+  rowSelectionCheckboxes={false}
+  initialState={{ density: "compact" }}
+  enableBottomToolbar={true}
+  renderTopToolbarCustomActions={({ table }) => (
+    <>
+      <h3>{descripcionReporte}</h3>
+      <Button
+        onClick={()=>handleExportData(descripcionReporte)}
+        variant="contained"
+        color="white"
+        style={{ marginLeft: "auto" }}
+        startIcon={<AiFillFileExcel />}
+        aria-label="Exportar a Excel"
+      >
+        <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+      </Button>
+    </>
+  )}
+  renderBottomToolbarCustomActions={() => (
+    <>
+      <div style={{ textAlign: "center" }}>
+        {Object.entries(DatosSumados).map(([columna, valor]) => (
+          <div key={columna}>
+            {columna === "Total" || columna === "Importe" ? (
+              <>
+                <Label htmlFor={columna}>
+                  <strong>{`${columna}`}</strong>
+                </Label>
+                {/* Aplica formato de moneda a las columnas "importe" y "Total" */}
+                <Input
+                  type="text"
+                  id={columna}
+                  value={
+                    columna === "Total" || columna === "Importe"
+                      ? numeral(valor).format("$0,0.00")
+                      : valor
+                  }
+                  disabled
+                />
               </>
+            ) : (
+              ""
             )}
-          />
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+/>
+        </div>
+        <div>
+        {/* <ul> */}
+          {/* {Object.entries(DatosSumados).map(([columna, valor]) => (
+            <li key={columna}>
+              Sumatoria de {columna}: {valor}
+            </li>
+          ))}
+        </ul> */}
+        {/* Muestra la suma total en un campo Input */}
+        {/* <Input type="text" value={totalSum} readOnly /> */}
         </div>
       </Container>
       <Modal isOpen={modalOpenCli} toggle={cerrarModal}>

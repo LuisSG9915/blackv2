@@ -46,6 +46,41 @@ import { ShopifyCliente } from "../../models/ShopifyCliente";
 
 function ClientesShopify() {
   const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_ShopifyCli_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
   const {
     modalActualizar,
     modalInsertar,
@@ -352,10 +387,12 @@ function ClientesShopify() {
           </Button>
         </ModalFooter>
       </Modal>
-      +
-      {/* modal trabajador */}
+      +{/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
-        <ModalHeader toggle={() => setModalOpen(!modalOpen)}> <h3>Seleccione cliente</h3></ModalHeader>
+        <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
+          {" "}
+          <h3>Seleccione cliente</h3>
+        </ModalHeader>
         <ModalBody>
           <Label>Id cliente shopify:</Label>
           <Input type="text" value={selectedIdShop} disabled="disabled" />
@@ -387,9 +424,8 @@ function ClientesShopify() {
         </ModalBody>
         <ModalFooter>
           <CButton text="Cancelar" color="danger" onClick={() => setModalOpen(!modalOpen)} />
-
         </ModalFooter>
-      </Modal >
+      </Modal>
     </>
   );
 }

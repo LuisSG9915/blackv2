@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
 import Swal from "sweetalert2";
 import {
@@ -44,6 +44,43 @@ import useSeguridad from "../hooks/getsHooks/useSeguridad";
 
 function Proveedores() {
   const { filtroSeguridad, session } = useSeguridad();
+
+  const [showView, setShowView] = useState(true);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  useEffect(() => {
+    const item = localStorage.getItem("userLoggedv2");
+    if (item !== null) {
+      const parsedItem = JSON.parse(item);
+      setDataUsuarios2(parsedItem);
+      console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
+    }
+  }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_prov_view`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
@@ -94,7 +131,7 @@ function Proveedores() {
     }
     Swal.fire({
       title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar al proveedor ${dato.nombre}?`,
+      text: `¿Está seguro que desea eliminar el proveedor: ${dato.nombre}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -347,10 +384,20 @@ function Proveedores() {
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
+
+
   const [activeTab, setActiveTab] = useState("1");
   const toggleTab = (tab: React.SetStateAction<string>) => {
-    if (activeTab !== tab) setActiveTab(tab);
+    if (activeTab !== tab)
+      setActiveTab(tab);
   };
+
+  const [activeTab1, setActiveTab1] = useState("1");
+  const toggleTab1 = (tab: React.SetStateAction<string>) => {
+    if (activeTab1 !== tab)
+      setActiveTab1(tab);
+  };
+
 
   const columns: GridColDef[] = [
     {
@@ -460,17 +507,17 @@ function Proveedores() {
           <Card body>
             <Nav tabs>
               <NavItem>
-                <NavLink className={activeTab === "1" ? "active" : ""} onClick={() => toggleTab("1")}>
+                <NavLink className={activeTab1 === "1" ? "active" : ""} onClick={() => toggleTab1("1")}>
                   Datos del proveedor
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className={activeTab === "2" ? "active" : ""} onClick={() => toggleTab("2")}>
+                <NavLink className={activeTab1 === "2" ? "active" : ""} onClick={() => toggleTab1("2")}>
                   Datos de localización
                 </NavLink>
               </NavItem>
             </Nav>
-            <TabContent activeTab={activeTab}>
+            <TabContent activeTab={activeTab1}>
               <TabPane tabId="1">
                 <br />
                 <Row>
