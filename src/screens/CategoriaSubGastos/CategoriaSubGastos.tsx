@@ -21,6 +21,7 @@ import AlertComponent from "../../components/AlertComponent";
 import { useCias } from "../../hooks/getsHooks/useCias";
 import { GastoCategoriaSub } from "../../models/GastoCategoriaSub";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { useCategorias } from "../../hooks/getsHooks/useCategorias";
 function CategoriaSubGastos() {
   const { filtroSeguridad, session } = useSeguridad();
 
@@ -50,7 +51,7 @@ function CategoriaSubGastos() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -68,23 +69,17 @@ function CategoriaSubGastos() {
     useModalHook();
 
   const { dataCias, fetchCias } = useCias();
+  const { dataCate, setDatacate } = useCategorias();
 
-  // AQUI COMIENZA MI MÉTODO POST PARA AGREGAR CATEGORIAS
-  const [dataG, setDataG] = useState<GastoCategoria[]>([]);
-  const [formG, setFormG] = useState<GastoCategoria>({
-    id: 1,
-    cia: 1,
-    id_gasto: 1,
-    descripcion: "",
-  });
+
 
   // AQUI COMIENZA MI MÉTODO POST PARA AGREGAR CATEGORIAS
   const [data, setData] = useState<GastoCategoriaSub[]>([]);
   const [form, setForm] = useState<GastoCategoriaSub>({
-    id: 1,
-    cia: 1,
-    id_gasto: 1,
-    id_subgasto: 1,
+    id: 0,
+    cia: 0,
+    id_gasto: 0,
+    id_subgasto: 0,
     descripcion: "",
   });
 
@@ -158,9 +153,9 @@ function CategoriaSubGastos() {
       await jezaApi
         .post("/SubCategoria", null, {
           params: {
-            cia: Number(form.cia),
-            id_gasto: Number(formG.id_gasto),
-            id_subgasto: Number(form.id_subgasto),
+            cia: form.cia,
+            id_gasto: form.id_gasto,
+            id_subgasto: form.id_subgasto,
             descripcion: form.descripcion,
           },
         })
@@ -189,9 +184,16 @@ function CategoriaSubGastos() {
   };
   const getCategoriaGasto = () => {
     jezaApi.get("/Categoria?id=0").then((response) => {
-      setDataG(response.data);
+      setDatacate(response.data);
     });
   };
+
+  useEffect(() => {
+    getCategoriaSubGastos();
+    fetchCias();
+    getCategoriaGasto();
+  }, []);
+
   // const { dataProductos } = useProductos();
 
   const editar = async () => {
@@ -203,10 +205,10 @@ function CategoriaSubGastos() {
       await jezaApi
         .put(`/SubCategoria`, null, {
           params: {
-            id: Number(form.id),
-            cia: Number(form.cia),
-            id_gasto: Number(formG.id_gasto),
-            id_subgasto: Number(form.id_subgasto),
+            id: form.id,
+            cia: form.cia,
+            id_gasto: form.id_gasto,
+            id_subgasto: form.id_subgasto,
             descripcion: form.descripcion,
           },
         })
@@ -253,21 +255,23 @@ function CategoriaSubGastos() {
     });
   };
 
-  useEffect(() => {
-    getCategoriaSubGastos();
-    fetchCias();
-    getCategoriaGasto();
-  }, []);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    if (name === "en_linea" || name === "es_bodega") {
-      setForm((prevState) => ({ ...prevState, [name]: checked }));
+
+    if (name === "id_subgasto") {
+      // Verificar si el valor es un número entero o está vacío
+      const isIntegerValue = /^[0-9]*$/.test(value) || value === "";
+
+      if (isIntegerValue) {
+        setForm((prevState: GastoCategoriaSub) => ({ ...prevState, [name]: value }));
+      }
     } else {
       setForm((prevState: GastoCategoriaSub) => ({ ...prevState, [name]: value }));
     }
   };
+
+
+
 
   const toggleCreateModal = () => {
     setForm({
@@ -323,11 +327,11 @@ function CategoriaSubGastos() {
       renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
     {
-      field: "Gas",
+      field: "id_gasto",
       headerName: "Gasto",
       width: 300,
       headerClassName: "custom-header",
-      renderCell: (params) => <span> {getGastoCategoriaForeignKey(params.row.id_gasto)} </span>,
+
     },
     {
       field: "descripcion",
@@ -351,11 +355,7 @@ function CategoriaSubGastos() {
     return cia ? cia.nombre : "Sin Compania";
   };
 
-  const getGastoCategoriaForeignKey = (idTableGasto: number) => {
-    console.log({ dataG });
-    const Gas = dataG.find((Gas: GastoCategoria) => Gas.id_gasto === idTableGasto);
-    return Gas ? Gas.descripcion : "Sin categoría";
-  };
+
 
   function DataTable() {
     return (
@@ -385,13 +385,10 @@ function CategoriaSubGastos() {
       <Container>
         <Row>
           <Container fluid>
-            <br />
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1>Subcategorías de gastos</h1>
-              <GiPayMoney size={35}></GiPayMoney>
+              <h1>Subcategorías de gastos <GiPayMoney size={35}></GiPayMoney></h1>
+
             </div>
-            <br />
-            <br />
             <Row>
               <div>
                 <br />
@@ -447,11 +444,11 @@ function CategoriaSubGastos() {
           <Input
             type="select"
             name="id_gasto"
-            onChange={(e) => setFormG({ ...formG, id_gasto: parseInt(e.target.value) })}
-            defaultValue={formG.id_gasto}
+            onChange={(e) => setForm({ ...form, id_gasto: parseInt(e.target.value) })}
+            defaultValue={form.id_gasto}
           >
             <option value="">Selecciona categoría de gasto</option>
-            {dataG.map((gasto: GastoCategoria) => (
+            {dataCate.map((gasto: GastoCategoria) => (
               <option value={gasto.id_gasto}>{gasto.descripcion}</option>
             ))}
           </Input>
@@ -462,11 +459,13 @@ function CategoriaSubGastos() {
             name="id_subgasto"
             defaultValue={form.id_subgasto}
             onChange={(e) => {
-              setForm({ ...form, id_subgasto: Number(e.target.value) });
-              console.log(form);
+              setForm({ ...form, id_subgasto: Number(e.target.value) }, () => {
+                console.log(form); // Esto se ejecutará después de la actualización del estado
+              });
             }}
             min="1"
           />
+
           <br />
           <Label>Descripción:</Label>
           <Input
@@ -506,11 +505,11 @@ function CategoriaSubGastos() {
           <Input
             type="select"
             name="id_gasto"
-            onChange={(e) => setFormG({ ...formG, id_gasto: parseInt(e.target.value) })}
-            defaultValue={formG.id_gasto}
+            onChange={(e) => setForm({ ...form, id_gasto: parseInt(e.target.value) })}
+            defaultValue={form.id_gasto}
           >
             <option value="">Selecciona categoría de gasto</option>
-            {dataG.map((gasto: GastoCategoria) => (
+            {dataCate.map((gasto: GastoCategoria) => (
               <option value={gasto.id_gasto}>{gasto.descripcion}</option>
             ))}
           </Input>
