@@ -99,11 +99,24 @@ function ReporteTool() {
   // }, [reportes]);
 
   const [DatosSumados, setDatosSumados] = useState({});
+  const [totalSum, setTotalSum] = useState(0); 
 
+  const [columnaSumas, setColumnaSumas] = useState({}); // Estado para las sumas individuales de las columnas
+
+  // ...
+
+  // En el useEffect donde calculas la suma de las columnas
   useEffect(() => {
     const sumatoria = calcularSumatoriaDinamica(reportes);
-    console.log("Sumatoria dinámica:", sumatoria); // Muestra la sumatoria en la consola
-    setDatosSumados(sumatoria);
+    console.log("Sumatoria dinámica:", sumatoria);
+    setDatosSumados(sumatoria); // Actualiza el estado DatosSumados
+
+    // Calcula y actualiza las sumas individuales de las columnas
+    const nuevasColumnaSumas = {};
+    Object.entries(sumatoria).forEach(([columna, valor]) => {
+      nuevasColumnaSumas[columna] = valor;
+    });
+    setColumnaSumas(nuevasColumnaSumas);
   }, [reportes]);
 
   // Función para calcular la sumatoria de manera dinámica
@@ -817,31 +830,54 @@ function ReporteTool() {
             enableRowSelection={false}
             rowSelectionCheckboxes={false}
             initialState={{ density: "compact" }}
+            enableBottomToolbar={true}
             renderTopToolbarCustomActions={({ table }) => (
               <>
-                <h3>{descripcionReporte}</h3>
-                <Button
-                  onClick={handleExportData}
-                  variant="contained"
-                  color="withe"
-                  style={{ marginLeft: "auto" }}
-                  startIcon={<AiFillFileExcel />}
-                  aria-label="Exportar a Excel"
-                >
-                  <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
-                </Button>
-              </>
-            )}
-          />
+              <h3>{descripcionReporte}</h3>
+              <Button
+                onClick={handleExportData}
+                variant="contained"
+                color="white" // Cambiado de "withe" a "white"
+                style={{ marginLeft: "auto" }}
+                startIcon={<AiFillFileExcel />}
+                aria-label="Exportar a Excel"
+              >
+                <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+              </Button>
+            </>
+          )}
+          renderBottomToolbarCustomActions={() => (
+            <>
+<div style={{ textAlign: 'center' }}>
+  {Object.entries(DatosSumados).map(([columna, valor]) => (
+    <div key={columna}>
+      {columna === "Total" || columna === "Importe" ? (
+        <>
+          <Label htmlFor={columna}><strong>{`${columna}`}</strong></Label>
+          <Input type="text" id={columna} value={`$${valor.toFixed(2)}`} disabled/>
+        </>
+      ) : (
+        ''
+      )}
+    </div>
+  ))}
+</div>
+
+            </>
+            
+          )}
+        />
         </div>
         <div>
-          <ul>
-            {Object.entries(DatosSumados).map(([columna, valor]) => (
-              <li key={columna}>
-                Sumatoria de {columna}: {valor}
-              </li>
-            ))}
-          </ul>
+        {/* <ul> */}
+          {/* {Object.entries(DatosSumados).map(([columna, valor]) => (
+            <li key={columna}>
+              Sumatoria de {columna}: {valor}
+            </li>
+          ))}
+        </ul> */}
+        {/* Muestra la suma total en un campo Input */}
+        {/* <Input type="text" value={totalSum} readOnly /> */}
         </div>
       </Container>
       <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
