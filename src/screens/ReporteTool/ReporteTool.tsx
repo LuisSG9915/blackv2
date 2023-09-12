@@ -75,6 +75,58 @@ function ReporteTool() {
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
+  // const calcularSumatoria = (data) => {
+  //   const sumatoria = {};
+  //   if (data.length > 0) {
+  //     for (const key in data[0]) {
+  //       if (!isNaN(data[0][key])) {
+  //         sumatoria[key] = data.reduce((total, row) => total + parseFloat(row[key] || 0), 0);
+  //       }
+  //     }
+  //   }
+  //   return sumatoria;
+  // };
+
+  // useEffect(() => {
+  //   getReporte();
+  // }, []);
+
+  // const [DatosSumados, setDatosSumados] = useState("");
+  // useEffect(() => {
+  //   const sumatoria = calcularSumatoria(reportes);
+  //   console.log("Sumatoria:", sumatoria); // Muestra la sumatoria en la consola
+  //   setDatosSumados(sumatoria);
+  // }, [reportes]);
+
+  const [DatosSumados, setDatosSumados] = useState({});
+
+  useEffect(() => {
+    const sumatoria = calcularSumatoriaDinamica(reportes);
+    console.log("Sumatoria dinámica:", sumatoria); // Muestra la sumatoria en la consola
+    setDatosSumados(sumatoria);
+  }, [reportes]);
+
+  // Función para calcular la sumatoria de manera dinámica
+  function calcularSumatoriaDinamica(data) {
+    const sumatoria = {};
+
+    // Itera sobre las filas de datos
+    data.forEach((row) => {
+      // Itera sobre las columnas de cada fila
+      for (const key in row) {
+        if (row.hasOwnProperty(key) && typeof row[key] === "number") {
+          // Verifica si la columna es numérica y suma los valores
+          if (!sumatoria[key]) {
+            sumatoria[key] = 0;
+          }
+          sumatoria[key] += row[key];
+        }
+      }
+    });
+
+    return sumatoria;
+  }
+
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -98,7 +150,6 @@ function ReporteTool() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -113,7 +164,6 @@ function ReporteTool() {
   const handleRedirect = () => {
     navigate("/app"); // Redirige a la ruta "/app"
   };
-
 
   const [tablaData, setTablaData] = useState({
     data: [],
@@ -230,7 +280,7 @@ function ReporteTool() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formData.clave_prod}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else {
@@ -360,18 +410,20 @@ function ReporteTool() {
       } else if (value === "sp_reporte5_Ventas") {
         setShowEmpresaInput(true);
         setShowSucursalInput(true);
-        setShowClaveProdInput(true);
+
         setShowTipoDescuentoInput(true);
         setShowEstilistaInput(true);
         setShowMetodoPagoInput(true);
+        setShowAreaInput(true);
         //----------------------------------------------------------------
+        setShowClaveProdInput(false);
         setShowClienteInput(false);
         setShowSucDesInput(false);
         setShowAlmOrigenInput(false);
         setShowAlmDestInput(false);
         setShowTipoMovtoInput(false);
         setShowProveedorInput(false);
-        setShowAreaInput(false);
+
         setShowDeptoInput(false);
       } else if (value === "sp_reporte4_Estilistas") {
         setShowEstilistaInput(true);
@@ -781,6 +833,15 @@ function ReporteTool() {
               </>
             )}
           />
+        </div>
+        <div>
+          <ul>
+            {Object.entries(DatosSumados).map(([columna, valor]) => (
+              <li key={columna}>
+                Sumatoria de {columna}: {valor}
+              </li>
+            ))}
+          </ul>
         </div>
       </Container>
       <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
