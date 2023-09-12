@@ -9,9 +9,21 @@ interface Props {
   insumo: number;
   obsoleto: number;
   sucursal: number;
+  almacen: number;
+  idCliente: number;
   cia: number;
 }
-export const useProductosFiltradoExistencia = ({ descripcion, insumo, inventariable, obsoleto, servicio, sucursal, cia }: Props) => {
+export const useProductosFiltradoExistenciaAlm = ({
+  descripcion,
+  insumo,
+  inventariable,
+  obsoleto,
+  servicio,
+  sucursal,
+  almacen,
+  idCliente,
+  cia,
+}: Props) => {
   const [dataProductos3, setDataProductos3] = useState<ProductoExistencia[]>([]);
 
   const fetchProduct3 = async () => {
@@ -19,7 +31,9 @@ export const useProductosFiltradoExistencia = ({ descripcion, insumo, inventaria
       const response: AxiosResponse<ProductoExistencia[]> = await jezaApi.get(
         `/ProductoExistencia?id=0&descripcion=${
           descripcion ? descripcion : "%"
-        }&verinventariable=${inventariable}&esServicio=${servicio}&esInsumo=${insumo}&obsoleto=${obsoleto}&marca=%&cia=${cia}&sucursal=${sucursal}`
+        }&verinventariable=${inventariable}&esServicio=${servicio}&esInsumo=${insumo}&obsoleto=${obsoleto}&marca=%&cia=${
+          cia ? cia : "%"
+        }&sucursal=${sucursal}&almacen=${almacen}&idCliente=${idCliente ? idCliente : "%"}`
       );
       setDataProductos3(response.data);
       console.log({ dataProductos3 });

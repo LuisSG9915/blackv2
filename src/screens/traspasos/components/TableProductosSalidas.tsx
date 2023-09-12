@@ -128,6 +128,7 @@ import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import { AiOutlineBarcode } from "react-icons/ai";
+import { useProductosFiltradoExistenciaAlm } from "../../../hooks/getsHooks/useProductosFiltradoExistenciaAlm";
 
 interface Props {
   setModalOpen2: React.Dispatch<React.SetStateAction<boolean>>;
@@ -135,18 +136,21 @@ interface Props {
   form: Traspaso;
   productoSelected: number[];
   sucursal: number;
+  cia: number;
 }
 
-const TableProductosSalidas = ({ setModalOpen2, setForm, form, productoSelected, sucursal }: Props) => {
-  const TableDataHeader: string[] = ["Productos", "Existencias", ""];
+const TableProductosSalidas = ({ setModalOpen2, setForm, form, productoSelected, sucursal, cia }: Props) => {
   const [filtroProductos, setFiltroProductos] = useState("");
-  const { dataProductos3, fetchProduct3, setDataProductos3 } = useProductosFiltradoExistencia({
+  const { dataProductos3, fetchProduct3 } = useProductosFiltradoExistenciaAlm({
     descripcion: filtroProductos,
     insumo: 0,
     inventariable: 2,
     obsoleto: 0,
     servicio: 0,
     sucursal: sucursal,
+    almacen: form.almacenOrigen,
+    idCliente: "%",
+    cia: cia,
   });
 
   const handle = (dato: any) => {
@@ -175,18 +179,6 @@ const TableProductosSalidas = ({ setModalOpen2, setForm, form, productoSelected,
       }));
       setModalOpen2(false);
     }
-  };
-
-  const filtroProducto = (datoMedico: string) => {
-    var resultado = dataProductos3.filter((elemento: any) => {
-      if (
-        (datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) &&
-        elemento.descripcion.length > 2
-      ) {
-        return elemento;
-      }
-    });
-    setDataProductos3(resultado);
   };
 
   const columns: MRT_ColumnDef<any>[] = [
