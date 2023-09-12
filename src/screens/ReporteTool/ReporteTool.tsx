@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
+import numeral from "numeral";
 import {
   AccordionBody,
   AccordionHeader,
@@ -324,12 +325,28 @@ function ReporteTool() {
       .catch((error) => console.error("Error al obtener los datos:", error));
   };
 
-  const handleExportData = () => {
+
+
+  const handleExportData = (descripcionReporte: string) => {
     // Verificar si reportes contiene datos
     if (reportes.length > 0) {
       // Obtener los nombres de las columnas de la primera fila de datos (asumiendo que todas las filas tienen las mismas columnas)
       const columnHeaders = Object.keys(reportes[0]);
-
+  
+      // Función para reemplazar valores nulos o vacíos con un valor predeterminado
+      const replaceNullOrEmpty = (value, defaultValue = '') => {
+        return value === null || value === undefined || value === '' ? defaultValue : value;
+      };
+  
+      // Mapear los datos y aplicar la función de reemplazo
+      const formattedData = reportes.map((row) => {
+        const formattedRow = {};
+        columnHeaders.forEach((header) => {
+          formattedRow[header] = replaceNullOrEmpty(row[header]);
+        });
+        return formattedRow;
+      });
+  
       const csvOptions = {
         fieldSeparator: ",",
         quoteStrings: '"',
@@ -337,15 +354,19 @@ function ReporteTool() {
         showLabels: true,
         useBom: true,
         useKeysAsHeaders: false,
-        headers: columnHeaders, // Utiliza los nombres de columnas obtenidos de los datos
+        headers: columnHeaders, // Utiliza los nombres de columnas originales
+        filename: `${descripcionReporte}`,
+        title: { display: true, title: descripcionReporte }, // Agrega el título del reporte
+        useTitleAsFileName: true, // Utiliza el título como nombre de archivo
       };
-
+  
       const csvExporter = new ExportToCsv(csvOptions);
-      csvExporter.generateCsv(reportes);
+      csvExporter.generateCsv(formattedData);
     } else {
       Swal.fire("", "No hay datos para exportar", "info");
     }
   };
+  
 
   // Filtrar los datos para excluir la columna "id" y sus valores
   const filteredData = reportes.map(({ id, ...rest }) => rest);
@@ -819,7 +840,7 @@ function ReporteTool() {
       </Container>
       <Container>
         <div>
-          <MaterialReactTable
+          {/* <MaterialReactTable
             columns={tablaData.columns.map((key) => ({
               accessorKey: key,
               header: key,
@@ -866,7 +887,88 @@ function ReporteTool() {
             </>
             
           )}
-        />
+        /> */}
+<MaterialReactTable
+columns={tablaData.columns.map((key) => ({
+  accessorKey: key,
+  header: key,
+  isVisible: key !== "id",
+  Cell: ({ cell }) => {
+    const valor = cell.getValue<number>();
+    
+    if (key === "Total" || key === "Importe" || key === "Precio") {
+      if (!isNaN(valor)) {
+        return <span>${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
+      } else {
+        return valor;
+      }
+    }
+
+    if (key === "Fecha"|| key === "fechaCita") {
+      const fecha = cell.getValue<string>(); // Obtén la fecha en formato ISO como cadena
+      if (fecha) {
+        const opcionesDeFormato = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', opcionesDeFormato);
+        return <span>{fechaFormateada}</span>;
+      } else {
+        return ""; // Mostrar cadena vacía para fechas vacías
+      }
+    }
+
+    return valor; // Para otras columnas, simplemente muestra el valor sin formato
+  },
+}))}
+  data={tablaData.data}
+  enableRowSelection={false}
+  rowSelectionCheckboxes={false}
+  initialState={{ density: "compact" }}
+  enableBottomToolbar={true}
+  renderTopToolbarCustomActions={({ table }) => (
+    <>
+      <h3>{descripcionReporte}</h3>
+      <Button
+        onClick={()=>handleExportData(descripcionReporte)}
+        variant="contained"
+        color="white"
+        style={{ marginLeft: "auto" }}
+        startIcon={<AiFillFileExcel />}
+        aria-label="Exportar a Excel"
+      >
+        <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+      </Button>
+    </>
+  )}
+  renderBottomToolbarCustomActions={() => (
+    <>
+      <div style={{ textAlign: "center" }}>
+        {Object.entries(DatosSumados).map(([columna, valor]) => (
+          <div key={columna}>
+            {columna === "Total" || columna === "Importe" ? (
+              <>
+                <Label htmlFor={columna}>
+                  <strong>{`${columna}`}</strong>
+                </Label>
+                {/* Aplica formato de moneda a las columnas "importe" y "Total" */}
+                <Input
+                  type="text"
+                  id={columna}
+                  value={
+                    columna === "Total" || columna === "Importe"
+                      ? numeral(valor).format("$0,0.00")
+                      : valor
+                  }
+                  disabled
+                />
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  )}
+/>
         </div>
         <div>
         {/* <ul> */}
