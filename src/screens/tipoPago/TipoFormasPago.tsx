@@ -69,7 +69,7 @@ function TipoFormasPago() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -277,31 +277,38 @@ function TipoFormasPago() {
     });
     setData(resultado);
   };
-  // const filtroEmail = (datoMedico: string) => {
-  //   var resultado = data.filter((elemento: FormaPago) => {
-  //     // Aplica la lógica del filtro solo si hay valores en los inputs
-  //     if (
-  //       (datoMedico === "" ||
-  //         elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase()) ||
-  //         elemento.sucursal.toString().includes(datoMedico) ||
-  //         elemento.tipo.toString().includes(datoMedico) ||
-  //         elemento.grupo_operacion.toString().includes(datoMedico)) &&
-  //       elemento.descripcion.length > 2
-  //     )
-  //       return elemento;
-  //   });
-  //   setData(resultado);
+
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+  //   const checked = (e.target as HTMLInputElement).checked;
+  //   if (name === "tarjeta") {
+  //     setForm((prevState) => ({ ...prevState, [name]: checked }));
+  //     console.log(form);
+  //   }
   // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+
+    if (name === "grupo_operacion" || name === "tipo") {
+      // Verificar si el valor es un número entero o está vacío
+      const isIntegerValue = /^[0-9]*$/.test(value) || value === "";
+
+      if (isIntegerValue) {
+        setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+      }
+    } else {
+      setForm((prevState: FormaPago) => ({ ...prevState, [name]: value }));
+    }
+
     const checked = (e.target as HTMLInputElement).checked;
     if (name === "tarjeta") {
       setForm((prevState) => ({ ...prevState, [name]: checked }));
-      console.log(form);
     }
   };
+
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -387,7 +394,7 @@ function TipoFormasPago() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "90%" }}>
+      <div style={{ height: 800, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={data}
@@ -416,13 +423,12 @@ function TipoFormasPago() {
           Registro modificado con éxito....
         </Alert> */}
 
-        <br />
+
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Formas de pago </h1>
-          <GrCreditCard size={30}></GrCreditCard>
+          <h1> Formas de pago  <GrCreditCard size={30}></GrCreditCard></h1>
+
         </div>
 
-        <br />
         <br />
         <br />
         <div>
