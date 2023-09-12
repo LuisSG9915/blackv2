@@ -71,7 +71,7 @@ function Proveedores() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -384,10 +384,20 @@ function Proveedores() {
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
+
+
   const [activeTab, setActiveTab] = useState("1");
   const toggleTab = (tab: React.SetStateAction<string>) => {
-    if (activeTab !== tab) setActiveTab(tab);
+    if (activeTab !== tab)
+      setActiveTab(tab);
   };
+
+  const [activeTab1, setActiveTab1] = useState("1");
+  const toggleTab1 = (tab: React.SetStateAction<string>) => {
+    if (activeTab1 !== tab)
+      setActiveTab1(tab);
+  };
+
 
   const columns: GridColDef[] = [
     {
@@ -497,17 +507,17 @@ function Proveedores() {
           <Card body>
             <Nav tabs>
               <NavItem>
-                <NavLink className={activeTab === "1" ? "active" : ""} onClick={() => toggleTab("1")}>
+                <NavLink className={activeTab1 === "1" ? "active" : ""} onClick={() => toggleTab1("1")}>
                   Datos del proveedor
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink className={activeTab === "2" ? "active" : ""} onClick={() => toggleTab("2")}>
+                <NavLink className={activeTab1 === "2" ? "active" : ""} onClick={() => toggleTab1("2")}>
                   Datos de localización
                 </NavLink>
               </NavItem>
             </Nav>
-            <TabContent activeTab={activeTab}>
+            <TabContent activeTab={activeTab1}>
               <TabPane tabId="1">
                 <br />
                 <Row>
