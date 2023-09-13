@@ -649,7 +649,6 @@ function TraspasoSalida() {
             color="success"
             disabled={Number(form.folio) > 0 ? true : false}
             onClick={() => {
-              console.log(form);
               if (form.suc_destino === "0" || form.almacenDestino.toString() === "0" || form.almacenOrigen.toString() === "0") {
                 Swal.fire({
                   icon: "info",
@@ -831,6 +830,7 @@ function TraspasoSalida() {
             form={form}
             setModalOpen2={setModalOpen3}
             sucursal={dataUsuarios2[0]?.sucursal}
+            cia={dataUsuarios2[0]?.idCia}
           />
         </ModalBody>
         <ModalFooter>
