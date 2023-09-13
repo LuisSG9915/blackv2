@@ -254,32 +254,29 @@ function CategoriaSubGastos() {
       }
     });
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     if (name === "id_subgasto") {
-      // Verificar si el valor es un número entero o está vacío
-      const isIntegerValue = /^[0-9]*$/.test(value) || value === "";
+      // Eliminar caracteres que no sean números usando una expresión regular
+      const numericValue = value.replace(/[^0-9]/g, "");
 
-      if (isIntegerValue) {
-        setForm((prevState: GastoCategoriaSub) => ({ ...prevState, [name]: value }));
-      }
+      // Actualizar el valor solo si es un número o está vacío
+      setForm((prevState: GastoCategoriaSub) => ({ ...prevState, [name]: numericValue }));
     } else {
+      // Actualizar el valor sin validación en otros campos
       setForm((prevState: GastoCategoriaSub) => ({ ...prevState, [name]: value }));
     }
   };
 
 
-
-
   const toggleCreateModal = () => {
     setForm({
       // Restablecer el estado del formulario
-      id: 1,
-      cia: 1,
-      id_gasto: 1,
-      id_subgasto: 1,
+      id: 0,
+      cia: 0,
+      id_gasto: 0,
+      id_subgasto: 0,
       descripcion: "",
     });
     setModalInsertar(!modalInsertar);
@@ -302,7 +299,7 @@ function CategoriaSubGastos() {
 
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
   const LimpiezaForm = () => {
-    setForm({ id: 0, cia: 0, id_gasto: 1, id_subgasto: 0, descripcion: "" });
+    setForm({ id: 0, cia: 0, id_gasto: 0, id_subgasto: 0, descripcion: "" });
   };
 
   /* alertas */
@@ -322,21 +319,21 @@ function CategoriaSubGastos() {
     {
       field: "cia",
       headerName: "Empresa",
-      width: 300,
+      width: 200,
       headerClassName: "custom-header",
       renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
     {
-      field: "id_gasto",
+      field: "d_gasto",
       headerName: "Gasto",
-      width: 300,
+      width: 200,
       headerClassName: "custom-header",
 
     },
     {
       field: "descripcion",
       headerName: "Descripción",
-      width: 400,
+      width: 200,
       headerClassName: "custom-header",
     },
   ];
@@ -359,7 +356,7 @@ function CategoriaSubGastos() {
 
   function DataTable() {
     return (
-      <div style={{ height: 400, width: "90%" }}>
+      <div style={{ height: 800, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={data}
@@ -428,7 +425,7 @@ function CategoriaSubGastos() {
       </Container>
 
       <Modal isOpen={modalInsertar} toggle={toggleCreateModal}>
-        <ModalHeader toggle={toggleCreateModal}>Crear categoría</ModalHeader>
+        <ModalHeader toggle={toggleCreateModal}><h3>Crear categoría</h3></ModalHeader>
         <ModalBody>
           <Label>Empresa:</Label>
           <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
@@ -457,14 +454,22 @@ function CategoriaSubGastos() {
           <Input
             type="number"
             name="id_subgasto"
-            defaultValue={form.id_subgasto}
+            value={form.id_subgasto}
             onChange={(e) => {
-              setForm({ ...form, id_subgasto: Number(e.target.value) }, () => {
-                console.log(form); // Esto se ejecutará después de la actualización del estado
-              });
+              setForm((prevState) => ({
+                ...prevState,
+                id_subgasto: Number(e.target.value),
+              }));
             }}
             min="1"
+            onKeyDown={(e) => {
+              // Evitar la entrada del punto (keyCode 190)
+              if (e.keyCode === 190) {
+                e.preventDefault();
+              }
+            }}
           />
+
 
           <br />
           <Label>Descripción:</Label>
@@ -489,7 +494,7 @@ function CategoriaSubGastos() {
 
       {/* AQUI COMIENZA EL MODAL PARA ACTUALIZAR */}
       <Modal isOpen={modalActualizar} toggle={toggleUpdateModal}>
-        <ModalHeader toggle={toggleUpdateModal}>Editar categoría</ModalHeader>
+        <ModalHeader toggle={toggleUpdateModal}><h3>Editar categoría</h3></ModalHeader>
         <ModalBody>
           <Label>Empresa:</Label>
           <Input type="select" name="cia" id="cia" defaultValue={form.cia} onChange={handleChange}>
@@ -518,13 +523,22 @@ function CategoriaSubGastos() {
           <Input
             type="number"
             name="id_subgasto"
-            defaultValue={form.id_subgasto}
+            value={form.id_subgasto}
             onChange={(e) => {
-              setForm({ ...form, id_subgasto: Number(e.target.value) });
-              console.log(form);
+              setForm((prevState) => ({
+                ...prevState,
+                id_subgasto: Number(e.target.value),
+              }));
             }}
             min="1"
+            onKeyDown={(e) => {
+              // Evitar la entrada del punto (keyCode 190)
+              if (e.keyCode === 190) {
+                e.preventDefault();
+              }
+            }}
           />
+
           <br />
           <Label>Descripción:</Label>
           <Input

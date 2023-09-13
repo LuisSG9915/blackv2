@@ -65,14 +65,14 @@ function AreaDeptoClases() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_area_dep_clas_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-     
+
         if (response.data[0].permiso === false) {
           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -804,12 +804,12 @@ function AreaDeptoClases() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Áreas, Departamentos y Clases </h1>
-                <VscTypeHierarchy size={30}></VscTypeHierarchy>
+                <h1> Áreas, Departamentos y Clases <VscTypeHierarchy size={30}></VscTypeHierarchy></h1>
+
               </div>
             </Container>
-            <br />
-            <br />
+
+
             <br />
             <Nav tabs>
               <NavItem>
