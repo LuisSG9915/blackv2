@@ -43,11 +43,11 @@ import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
 import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
+import { ALMACEN_DB } from "../../utilities/constsAlmacenes";
 
 function Compras() {
-
   const [showView, setShowView] = useState(true);
-
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -72,7 +72,6 @@ function Compras() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -605,13 +604,16 @@ function Compras() {
     );
   };
 
-  const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProducto({
+  const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProductoAlm({
     descripcion: filtroProductos,
     insumo: 0,
     inventariable: 2,
     obsoleto: 0,
     servicio: 2,
     sucursal: dataUsuarios2[0]?.sucursal,
+    almacen: ALMACEN_DB[1],
+    cia: dataUsuarios2[0]?.cia,
+    idCliente: 0,
   });
 
   const dataProductosConAcciones = dataProductos4.map((dato: ProductoExistencia) => ({
@@ -953,6 +955,7 @@ function Compras() {
                 <Button
                   onClick={() => {
                     setModalOpen3(true);
+                    fetchProduct4();
                     setDataCompras({
                       ...dataCompras,
                       clave_prod: 0,
@@ -1079,11 +1082,11 @@ function Compras() {
           <br />
         </ModalBody>
         <ModalFooter>
-          <Button color="success" onClick={() => postCompra()}>
-            Guardar
-          </Button>
           <Button color="danger" onClick={() => setIsCrearOpen(!isCrearOpen)}>
             Cancelar
+          </Button>
+          <Button color="success" onClick={() => postCompra()}>
+            Guardar
           </Button>
         </ModalFooter>
       </Modal>

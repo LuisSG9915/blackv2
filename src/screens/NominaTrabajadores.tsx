@@ -87,22 +87,15 @@ function NominaTrabajadores() {
     }
   };
 
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [data, setData] = useState([]);
   const fechaHoy = new Date();
 
   const { dataNominaPuestos } = useNominaPuestos();
-  const { dataNominaDepartamentos } = useNominaDepartamentos();
+  const { dataNominaDepartamentos } = useNominaDepartamentos({ cia: dataUsuarios2[0]?.cia });
   const { dataNominaNivel } = useNominaEscolaridad();
   const { dataBajas } = useBajas();
   const { dataEstatus } = useEstatus();
@@ -737,13 +730,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Sexo:</Label>
-                          <Input
-                            className="mb-3"
-                            type="select"
-                            onChange={handleChange}
-                            name="sexo"
-                            value={form.sexo ? form.sexo : form.sexo}
-                          >
+                          <Input className="mb-3" type="select" onChange={handleChange} name="sexo" value={form.sexo ? form.sexo : form.sexo}>
                             <option>--Selecciona el sexo--</option>
                             <option value={"M"}>Masculino</option>
                             <option value={"F"}>Femenino</option>
@@ -767,9 +754,7 @@ function NominaTrabajadores() {
                             placeholder="date placeholder"
                             type="date"
                             onChange={handleChange}
-                            defaultValue={
-                              form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento
-                            }
+                            defaultValue={form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento}
                           />
                         </Col>
 
@@ -904,22 +889,11 @@ function NominaTrabajadores() {
                           />
                         </Col>
                         <Col sm="6">
-                          <CFormGroupInput
-                            handleChange={handleChange}
-                            inputName="imss"
-                            labelName="IMSS:"
-                            defaultValue={form ? form.imss : ""}
-                          />
+                          <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} />
                         </Col>
                         <Col sm="6">
                           <Label>Departamento:</Label>
-                          <Input
-                            type="select"
-                            name="idDepartamento"
-                            id="exampleSelect"
-                            value={form.idDepartamento}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
                             {dataNominaDepartamentos.map((depto) => (
                               <option value={depto.id}>{depto.descripcion_departamento} </option>
@@ -937,13 +911,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Nivel de escolaridad:</Label>
-                          <Input
-                            type="select"
-                            name="nivel_escolaridad"
-                            id="exampleSelect"
-                            value={form.nivel_escolaridad}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="nivel_escolaridad" id="exampleSelect" value={form.nivel_escolaridad} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
                             {dataNominaNivel.map((escolaridad) => (
                               <option value={escolaridad.id}>{escolaridad.descripcion} </option>
@@ -953,13 +921,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Puesto:</Label>
-                          <Input
-                            type="select"
-                            name="idPuesto"
-                            id="exampleSelect"
-                            value={form.idPuesto}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="idPuesto" id="exampleSelect" value={form.idPuesto} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
                             {dataNominaPuestos.map((puesto) => (
                               <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
@@ -969,13 +931,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Estatus:</Label>
-                          <Input
-                            type="select"
-                            name="status"
-                            id="exampleSelect"
-                            value={form.status}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="status" id="exampleSelect" value={form.status} onChange={handleChange}>
                             <option value={0}>--Selecciona un estatus--</option>
                             {dataEstatus.map((estatus) => (
                               <option value={estatus.id}>{estatus.descripcion_baja} </option>
@@ -1089,13 +1045,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Sexo:</Label>
-                          <Input
-                            className="mb-3"
-                            type="select"
-                            onChange={handleChange}
-                            name="sexo"
-                            value={form.sexo ? form.sexo : form.sexo}
-                          >
+                          <Input className="mb-3" type="select" onChange={handleChange} name="sexo" value={form.sexo ? form.sexo : form.sexo}>
                             <option>--Selecciona una opción--</option>
                             <option value={"M"}>Masculino</option>
                             <option value={"F"}>Femenino</option>
@@ -1119,9 +1069,7 @@ function NominaTrabajadores() {
                             placeholder="date placeholder"
                             type="date"
                             onChange={handleChange}
-                            defaultValue={
-                              form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento
-                            }
+                            defaultValue={form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : form.fecha_nacimiento}
                           />
                         </Col>
 
@@ -1256,22 +1204,11 @@ function NominaTrabajadores() {
                           />
                         </Col>
                         <Col sm="6">
-                          <CFormGroupInput
-                            handleChange={handleChange}
-                            inputName="imss"
-                            labelName="IMSS:"
-                            defaultValue={form ? form.imss : ""}
-                          />
+                          <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} />
                         </Col>
                         <Col sm="6">
                           <Label>Departamento:</Label>
-                          <Input
-                            type="select"
-                            name="idDepartamento"
-                            id="exampleSelect"
-                            value={form.idDepartamento}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
                             {dataNominaDepartamentos.map((depto) => (
                               <option value={depto.id}>{depto.descripcion_departamento} </option>
@@ -1289,13 +1226,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Nivel de escolaridad:</Label>
-                          <Input
-                            type="select"
-                            name="nivel_escolaridad"
-                            id="exampleSelect"
-                            value={form.nivel_escolaridad}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="nivel_escolaridad" id="exampleSelect" value={form.nivel_escolaridad} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
                             {dataNominaNivel.map((escolaridad) => (
                               <option value={escolaridad.id}>{escolaridad.descripcion} </option>
@@ -1305,13 +1236,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Puesto:</Label>
-                          <Input
-                            type="select"
-                            name="idPuesto"
-                            id="exampleSelect"
-                            value={form.idPuesto}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="idPuesto" id="exampleSelect" value={form.idPuesto} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
                             {dataNominaPuestos.map((puesto) => (
                               <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
@@ -1321,13 +1246,7 @@ function NominaTrabajadores() {
 
                         <Col sm="6">
                           <Label>Estatus:</Label>
-                          <Input
-                            type="select"
-                            name="status"
-                            id="exampleSelect"
-                            value={form.status}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" name="status" id="exampleSelect" value={form.status} onChange={handleChange}>
                             <option value={0}>--Selecciona un estatus--</option>
                             {dataEstatus.map((estatus) => (
                               <option value={estatus.id}>{estatus.descripcion_baja} </option>
@@ -1353,13 +1272,7 @@ function NominaTrabajadores() {
                           </Col>
                           <Col sm="6">
                             <Label>Motivo de baja:</Label>
-                            <Input
-                              type="select"
-                              name="motivo_baja"
-                              id="exampleSelect"
-                              value={form.motivo_baja}
-                              onChange={handleChange}
-                            >
+                            <Input type="select" name="motivo_baja" id="exampleSelect" value={form.motivo_baja} onChange={handleChange}>
                               <option value={0}>--Selecciona un motivo de baja--</option>
                               {dataBajas.map((baja) => (
                                 <option value={baja.id}>{baja.descripcion_baja} </option>

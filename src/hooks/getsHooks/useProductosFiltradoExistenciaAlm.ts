@@ -29,11 +29,11 @@ export const useProductosFiltradoExistenciaAlm = ({
   const fetchProduct3 = async () => {
     try {
       const response: AxiosResponse<ProductoExistencia[]> = await jezaApi.get(
-        `/ProductoExistencia?id=0&descripcion=${
+        `/sp_cPSEAC?id=0&descripcion=${
           descripcion ? descripcion : "%"
         }&verinventariable=${inventariable}&esServicio=${servicio}&esInsumo=${insumo}&obsoleto=${obsoleto}&marca=%&cia=${
           cia ? cia : "%"
-        }&sucursal=${sucursal}&almacen=${almacen}&idCliente=${idCliente ? idCliente : "%"}`
+        }&sucursal=${sucursal}&almacen=${almacen}&idCliente=${idCliente ? idCliente : 29003}`
       );
       setDataProductos3(response.data);
       console.log({ dataProductos3 });

@@ -74,7 +74,7 @@ function CorteCaja() {
     }
   }, []);
 
-  const { dataCorteDia, fetchCorteDia } = useCorteDia({ sucursal: dataUsuarios2[0]?.sucursal, corte: 1 });
+  const { dataCorteDia, fetchCorteDia } = useCorteDia({ sucursal: dataUsuarios2[0]?.sucursal, corte: 1, cia: dataUsuarios2[0]?.idCia });
 
   const [sumaImportes, setSumaImportes] = useState(0);
 

@@ -149,7 +149,7 @@ const TableProductosSalidas = ({ setModalOpen2, setForm, form, productoSelected,
     servicio: 0,
     sucursal: sucursal,
     almacen: form.almacenOrigen,
-    idCliente: "%",
+    idCliente: 29003,
     cia: cia,
   });
 

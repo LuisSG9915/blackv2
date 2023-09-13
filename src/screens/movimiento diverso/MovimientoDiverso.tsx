@@ -24,17 +24,14 @@ import {
   AccordionHeader,
   AccordionItem,
 } from "reactstrap";
-import { ImMoveDown } from "react-icons/im";
 import { AiOutlineUser, AiFillEdit, AiFillDelete, AiOutlineSelect } from "react-icons/ai";
 import { BsScrewdriver } from "react-icons/bs";
 import TableProductosMovimientos from "./components/TableProductosMovimientos";
-import { useGentlemanContext } from "../ventas/context/VentasContext";
 import { MovimientoResponse } from "../../models/MovimientoDiversoModel";
 import { useAlmacen } from "../../hooks/getsHooks/useAlmacen";
 import { useMovimientos } from "../../hooks/getsHooks/useMovimientos";
 import { Movimiento } from "../../models/Movimiento";
 import { useAjuste } from "../../hooks/getsHooks/useAjuste";
-import { MdProductionQuantityLimits } from "react-icons/md";
 import { jezaApi } from "../../api/jezaApi";
 import { useAjusteBusqueda } from "../../hooks/getsHooks/useAjusteBusqueda";
 import { UserResponse } from "../../models/Home";
@@ -52,7 +49,6 @@ function MovimientoDiversos() {
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);
-
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -77,7 +73,6 @@ function MovimientoDiversos() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -93,7 +88,6 @@ function MovimientoDiversos() {
     navigate("/app"); // Redirige a la ruta "/app"
   };
 
-  const [dataUsuarios, setDataUsuarios] = useState<Usuario[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const { dataAlmacenes } = useAlmacen();
   const { dataMovimientos } = useMovimientos();
@@ -135,15 +129,11 @@ function MovimientoDiversos() {
     }
   }, []);
 
-  const [fechaHoy, setFechaHoy] = useState("");
-
   useEffect(() => {
     const obtenerFechaHoy = () => {
       const fecha = new Date();
       const opcionesFecha = { year: "numeric", month: "numeric", day: "numeric" };
       const fechaFormateada = fecha.toLocaleDateString(undefined, opcionesFecha);
-      setFechaHoy(fechaFormateada);
-      console.log({ fechaFormateada });
     };
 
     obtenerFechaHoy();
@@ -787,16 +777,18 @@ function MovimientoDiversos() {
       </Modal>
 
       <Modal isOpen={modalProductos} size="lg" toggle={() => setModalProductos(false)}>
-        <ModalHeader>
+        <ModalHeader></ModalHeader>
+        <ModalBody>
           <TableProductosMovimientos
             sucursal={dataUsuarios2[0]?.sucursal}
             productoSelected={productoSelected}
             form={form}
             setform={setform}
             setModalOpen2={setModalProductos}
+            almacenId={form.almacen}
+            cia={dataUsuarios2[0]?.cia}
           ></TableProductosMovimientos>
-        </ModalHeader>
-        <ModalBody></ModalBody>
+        </ModalBody>
         <ModalFooter>
           <Button color="danger" onClick={() => setModalProductos(false)}>
             Cancelar

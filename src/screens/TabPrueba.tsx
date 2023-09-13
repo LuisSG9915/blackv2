@@ -23,7 +23,7 @@ function TabPrueba({ form2, getTrabajador }: props) {
   const onDismiss = () => setVisible(false);
 
   const { dataNominaPuestos } = useNominaPuestos();
-  const { dataNominaDepartamentos } = useNominaDepartamentos();
+  const { dataNominaDepartamentos } = useNominaDepartamentos({ cia: 0 });
   const { dataNominaNivel } = useNominaEscolaridad();
   const [form, setForm] = useState<Trabajador>({
     clave_empleado: "",
@@ -210,7 +210,12 @@ function TabPrueba({ form2, getTrabajador }: props) {
           <Row>
             <Col sm="4">
               <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" defaultValue={form ? form.nombre : ""} />
-              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" defaultValue={form?.domicilio ? form.domicilio : form.domicilio} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="domicilio"
+                labelName="Domicilio:"
+                defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
+              />
               <Label>Sexo</Label>
               <Input className="mb-3" type="select" onChange={handleChange} name="sexo" value={form.sexo ? form.sexo : form.sexo}>
                 <option value={"M"}>Masculino</option>
@@ -219,8 +224,18 @@ function TabPrueba({ form2, getTrabajador }: props) {
               {/* <CFormGroupInput handleChange={handleChange} inputName="sexo" labelName="sexo:" defaultValue={form ? form.sexo : form.sexo} /> */}
             </Col>
             <Col sm="4">
-              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" defaultValue={form.colonia ? form.colonia : form.colonia} />
-              <CFormGroupInput handleChange={handleChange} inputName="poblacion" labelName="Población:" defaultValue={form.poblacion ? form.poblacion : form.poblacion} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="colonia"
+                labelName="Colonia:"
+                defaultValue={form.colonia ? form.colonia : form.colonia}
+              />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="poblacion"
+                labelName="Población:"
+                defaultValue={form.poblacion ? form.poblacion : form.poblacion}
+              />
 
               <FormGroup>
                 <Label for="exampleDate">Fecha de nacimiento</Label>
@@ -235,7 +250,12 @@ function TabPrueba({ form2, getTrabajador }: props) {
               </FormGroup>
             </Col>
             <Col sm="4">
-              <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" defaultValue={form.estado ? form.estado : form.estado} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="estado"
+                labelName="Estado:"
+                defaultValue={form.estado ? form.estado : form.estado}
+              />
               <CFormGroupInput
                 handleChange={handleChange}
                 inputName="lugar_nacimiento"
@@ -244,7 +264,12 @@ function TabPrueba({ form2, getTrabajador }: props) {
               />
 
               <div className="mb-3"></div>
-              <CFormGroupInput handleChange={handleChange} inputName="codigo_postal" labelName="Código Postal:" value={form.codigo_postal ? form.codigo_postal : form.codigo_postal} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="codigo_postal"
+                labelName="Código Postal:"
+                value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+              />
             </Col>
           </Row>
           <br />
@@ -254,8 +279,18 @@ function TabPrueba({ form2, getTrabajador }: props) {
           <br />
           <Row>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="telefono1" labelName="Telefono1:" defaultValue={form.telefono1 ? form.telefono1 : form.telefono1} />
-              <CFormGroupInput handleChange={handleChange} inputName="telefono2" labelName="Telefono2:" defaultValue={form.telefono2 ? form.telefono2 : form.telefono2} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="telefono1"
+                labelName="Telefono1:"
+                defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
+              />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="telefono2"
+                labelName="Telefono2:"
+                defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" defaultValue={form.email ? form.email : form.email} />
@@ -280,7 +315,12 @@ function TabPrueba({ form2, getTrabajador }: props) {
               </Input>
             </Col>
             <Col>
-              <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName="Observaciones:" defaultValue={form ? form.observaciones : ""} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="observaciones"
+                labelName="Observaciones:"
+                defaultValue={form ? form.observaciones : ""}
+              />
               <div style={{ marginBottom: 20 }}></div>
               <Label>Nivel de escolaridad</Label>
               <Input type="select" name="nivel_escolaridad" id="nivel_escolaridad" value={form.nivel_escolaridad} onChange={handleChange}>
@@ -309,10 +349,22 @@ function TabPrueba({ form2, getTrabajador }: props) {
             <Row>
               <Col sm="4">
                 <Label for="exampleDate">Fecha de baja</Label>
-                <Input id="exampleDate" name="fecha_baja" placeholder="date placeholder" type="date" onChange={handleChange} defaultValue={form ? form.fecha_baja : ""} />
+                <Input
+                  id="exampleDate"
+                  name="fecha_baja"
+                  placeholder="date placeholder"
+                  type="date"
+                  onChange={handleChange}
+                  defaultValue={form ? form.fecha_baja : ""}
+                />
               </Col>
               <Col sm="4">
-                <CFormGroupInput handleChange={handleChange} inputName="motivo_baja" labelName="Motivo de baja:" defaultValue={form ? form.motivo_baja : ""} />
+                <CFormGroupInput
+                  handleChange={handleChange}
+                  inputName="motivo_baja"
+                  labelName="Motivo de baja:"
+                  defaultValue={form ? form.motivo_baja : ""}
+                />
               </Col>
 
               <Col sm="4">

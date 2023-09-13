@@ -7,6 +7,7 @@ import { Venta } from "../../../models/Venta";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import { AiOutlineBarcode } from "react-icons/ai";
+import { useProductosFiltradoExistenciaProductoAlm } from "../../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 
 interface Props {
   setModalOpen2: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,10 +27,20 @@ export interface ProductoExistencia {
   precio: number;
   es_servicio: boolean;
   tiempo?: string;
+  cia: number;
   // ... otros campos según tu modelo actual
 }
 
-const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEdit, setDataVentaEdit, dataTemporal, setDataTemporal }: Props) => {
+const TableProductos = ({
+  setModalOpen2,
+  sucursal,
+  productoSelected,
+  dataVentaEdit,
+  setDataVentaEdit,
+  dataTemporal,
+  setDataTemporal,
+  cia
+}: Props) => {
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
 
   const handle = (dato: ProductoExistencia) => {
@@ -92,13 +103,16 @@ const TableProductos = ({ setModalOpen2, sucursal, productoSelected, dataVentaEd
     servicio: 0,
   });
 
-  const { dataProductos4, fetchProduct4, isLoading } = useProductosFiltradoExistenciaProducto({
+  const { dataProductos4, fetchProduct4, isLoading } = useProductosFiltradoExistenciaProductoAlm({
     descripcion: filtroProductos,
     insumo: productoFilter.insumo,
     inventariable: productoFilter.inventariable,
     obsoleto: productoFilter.obsoleto,
     servicio: productoFilter.servicio,
     sucursal: sucursal,
+    almacen: 2,
+    cia: cia,
+    idCliente: dataTemporal.Cve_cliente,
   });
 
   const dataProductosConAcciones = dataProductos4.map((dato: ProductoExistencia) => ({

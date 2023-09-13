@@ -95,7 +95,6 @@ const Ventas = () => {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -106,12 +105,11 @@ const Ventas = () => {
     }
   };
 
-
   const navigate = useNavigate();
   const handleRedirect = () => {
     navigate("/app"); // Redirige a la ruta "/app"
   };
-  
+
   const { modalActualizar, setModalActualizar, cerrarModalActualizar } = useModalHook();
 
   const [modalOpenVenta, setModalOpen] = useState<boolean>(false);
@@ -1164,8 +1162,8 @@ const Ventas = () => {
             color="secondary"
             onClick={() => {
               if (dataTemporal.cliente) {
-                if(dataVentas.length > 0){
-                  setDataTemporal
+                if (dataVentas.length > 0) {
+                  setDataTemporal;
                 }
                 setModalOpen(true);
               } else {
@@ -1536,20 +1534,8 @@ const Ventas = () => {
             setDataVentaEdit={setDataVentaEdit}
             dataTemporal={dataTemporal}
             setDataTemporal={setDataTemporal}
+            cia={dataUsuarios2[0]?.idCia}
           ></TableProductos>
-          {/* <TableProductosv2
-            productoSelected={productoSelected}
-            sucursal={dataUsuarios2 ? dataUsuarios2[0]?.sucursal : 21}
-            data={data}
-            setModalOpen2={setModalOpen3}
-            dataVentaEdit={dataVentaEdit}
-            setDataVentaEdit={setDataVentaEdit}
-            dataTemporal={dataTemporal}
-            setDataTemporal={setDataTemporal}
-            almacen={1}
-            cia={dataUsuarios2[0]?.cia}
-            idCliente={dataTemporal.Cve_cliente}
-          ></TableProductosv2> */}
         </ModalBody>
         <ModalFooter>
           <CButton color="danger" onClick={() => setModalOpen3(false)} text="Salir" />

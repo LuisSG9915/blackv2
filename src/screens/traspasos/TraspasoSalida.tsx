@@ -43,7 +43,6 @@ function TraspasoSalida() {
 
   const [showView, setShowView] = useState(true);
 
-
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -67,7 +66,6 @@ function TraspasoSalida() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -416,7 +414,7 @@ function TraspasoSalida() {
             >
               <option value={0}> Escoja una almacén</option>
               {filtradoAlmacen.map((option: Almacen) => (
-                <option key={option.almacen} value={option.almacen}>
+                <option key={option.almacen} value={option.id}>
                   {option.descripcion}
                 </option>
               ))}
@@ -434,7 +432,7 @@ function TraspasoSalida() {
             >
               <option value="0"> Escoja una almacen</option>
               {filtradoAlmacenFormateada.map((option: Almacen) => (
-                <option key={option.almacen} value={option.almacen}>
+                <option key={option.almacen} value={option.id}>
                   {option.descripcion}
                 </option>
               ))}

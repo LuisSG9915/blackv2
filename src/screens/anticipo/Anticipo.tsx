@@ -85,19 +85,12 @@ function Anticipo() {
     }
   };
 
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
-  const { dataAnticipos, fetchAnticipos } = useAnticipos();
-  const [modalCliente, setModalCliente] = useState(false);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const { dataAnticipos, fetchAnticipos } = useAnticipos({ cia: dataUsuarios2[0]?.cia });
+  const [modalCliente, setModalCliente] = useState(false);
   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
   const [trabajador, setTrabajadores] = useState([]);
   const [modalOpenCli, setModalOpenCli] = useState(false);
@@ -331,9 +324,7 @@ function Anticipo() {
 
     if (validarCampos() === true) {
       await jezaApi
-        .put(
-          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
-        )
+        .put(`/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`)
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -620,9 +611,9 @@ function Anticipo() {
     const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
-    const queryString = `/Anticipo?id=%&idcia=${formData.empresa}&idsuc=${formData.sucursal}&idnoVenta=%&idCliente=${formData.cliente}&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
-
-    console.log(queryString);
+    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${
+      formData.sucursal
+    }&idnoVenta=%&idCliente=${formData.cliente}&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
 
     jezaApi
       .get(queryString)
@@ -725,35 +716,17 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Fecha inicial:</Label>
-                      <Input
-                        type="date"
-                        name="fechaInicial"
-                        value={formulario.fechaInicial}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      />
+                      <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
                     </Col>
 
                     <Col sm="3">
                       <Label>Fecha final:</Label>
-                      <Input
-                        type="date"
-                        name="fechaFinal"
-                        value={formulario.fechaFinal}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      />
+                      <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange3} bsSize="sm" />
                     </Col>
 
                     <Col sm="3">
                       <Label>Sucursal:</Label>
-                      <Input
-                        type="select"
-                        name="sucursal"
-                        value={formulario.sucursal}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      >
+                      <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange3} bsSize="sm">
                         <option value="">Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
@@ -764,13 +737,7 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Empresa:</Label>
-                      <Input
-                        type="select"
-                        name="empresa"
-                        value={formulario.empresa}
-                        onChange={handleChange3}
-                        bsSize="sm"
-                      >
+                      <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange3} bsSize="sm">
                         <option value="">Seleccione la empresa</option>
 
                         {dataCias.map((item) => (
@@ -782,11 +749,7 @@ function Anticipo() {
                   </Row>
                   <br />
                   <Col sm="6">
-                    <CButton
-                      color="primary"
-                      text="Consultar"
-                      onClick={() => ejecutaPeticion(formulario.reporte)}
-                    ></CButton>
+                    <CButton color="primary" text="Consultar" onClick={() => ejecutaPeticion(formulario.reporte)}></CButton>
                   </Col>
                 </AccordionBody>
               </AccordionItem>
@@ -813,40 +776,14 @@ function Anticipo() {
 
         <ModalBody>
           <Form>
-            {/* <FormGroup>
-              <Label for="fechaMovto">Fecha del anticipo</Label>
-              <Input type="date" name="fechaMovto" id="fechaMovto" value={form.fechaMovto} onChange={handleChange} />
-            </FormGroup> */}
-            {/* <FormGroup>
-              
-              <Label for="idCliente">Cliente</Label>
-              <Input
-                disabled
-                type="text"
-                name="d_cliente"
-                id="d_cliente"
-                value={form.d_cliente}
-                onChange={handleChange}
-              />
-              <Button onClick={mostrarModalClienteActualizar}>Seleccionar</Button>
-            </FormGroup> */}
             <FormGroup>
               <Label for="referencia">Referencia</Label>
               <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
             </FormGroup>
-            {/* <FormGroup>
-              <Label for="importe">Importe</Label>
-              <Input type="number" name="importe" id="importe" value={form.importe} onChange={handleChange} />
-            </FormGroup> */}
+
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input
-                type="text"
-                name="observaciones"
-                id="observaciones"
-                value={form.observaciones}
-                onChange={handleChange}
-              />
+              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
             </FormGroup>
           </Form>{" "}
         </ModalBody>
@@ -886,14 +823,7 @@ function Anticipo() {
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
               <InputGroup>
-                <Input
-                  disabled
-                  type="text"
-                  name="d_cliente"
-                  id="d_cliente"
-                  value={form.d_cliente}
-                  onChange={handleChange}
-                />
+                <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
                 <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
               </InputGroup>
             </FormGroup>
@@ -921,13 +851,7 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input
-                type="text"
-                name="observaciones"
-                id="observaciones"
-                value={form.observaciones}
-                onChange={handleChange}
-              />
+              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
             </FormGroup>
           </Form>
         </ModalBody>
@@ -947,12 +871,7 @@ function Anticipo() {
       <Modal isOpen={modalCliente} size="lg">
         <ModalHeader> Cliente </ModalHeader>
         <ModalBody>
-          <TableClienteAnticipos
-            form={form}
-            setForm={setForm}
-            data={dataClientes}
-            setModalCliente={setModalCliente}
-          ></TableClienteAnticipos>
+          <TableClienteAnticipos form={form} setForm={setForm} data={dataClientes} setModalCliente={setModalCliente}></TableClienteAnticipos>
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -986,579 +905,3 @@ function Anticipo() {
 }
 
 export default Anticipo;
-
-// import React, { useState, useEffect } from "react";
-// import SidebarHorizontal from "../../components/SideBarHorizontal";
-// import {
-//   AccordionBody,
-//   AccordionHeader,
-//   AccordionItem,
-//   Button,
-//   Container,
-//   FormGroup,
-//   Input,
-//   Label,
-//   Modal,
-//   ModalBody,
-//   ModalFooter,
-//   ModalHeader,
-//   Row,
-//   UncontrolledAccordion,
-// } from "reactstrap";
-// import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
-// import "../../../css/reportes.css";
-// import { ExportToCsv } from "export-to-csv";
-// import { MaterialReactTable, MRT_ColumnDef, MRT_Row } from "material-react-table";
-// import { Padding } from "@mui/icons-material";
-// import { jezaApi } from "../../api/jezaApi";
-// import { useCias } from "../../hooks/getsHooks/useCias";
-// import { useClientes } from "../../hooks/getsHooks/useClientes";
-// import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
-// import { useSucursales } from "../../hooks/getsHooks/useSucursales";
-// import { Box } from "@mui/material";
-// import ButtonGroup from "@mui/material/ButtonGroup";
-// import { useNavigate } from "react-router-dom";
-// import { IoIosHome, IoIosRefresh } from "react-icons/io";
-// import useModalHook from "../../hooks/useModalHook";
-// import CButton from "../../components/CButton";
-// import { FormaPago } from "../../models/FormaPago";
-// import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-
-// const {
-//   modalActualizar,
-//   modalInsertar,
-//   setModalInsertar,
-//   setModalActualizar,
-//   cerrarModalActualizar,
-//   cerrarModalInsertar,
-//   mostrarModalInsertar,
-// } = useModalHook();
-
-// function Anticipo() {
-//   const [reportes, setReportes] = useState([]);
-//   const { filtroSeguridad, session } = useSeguridad();
-
-//   const columnasTabla = [
-//     {
-//       accessorKey: "acciones",
-//       header: "Acción",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "id",
-//       header: "ID",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "nombreCia",
-//       header: "Empresa",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "nombreSuc",
-//       header: "Sucursal",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "caja",
-//       header: "Caja",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "fecha",
-//       header: "Fecha",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "no_venta",
-//       header: "No.Venta",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "fechaMovto",
-//       header: "Fecha de movimiento",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "nombreCliente",
-//       header: "Cliente",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "nombreUsr",
-//       header: "Usuario",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "descMovto",
-//       header: "Motivo",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "referencia",
-//       header: "Referencia",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "descFormaPago",
-//       header: "Forma de pago",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "importe",
-//       header: "Importe",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     {
-//       accessorKey: "observaciones",
-//       header: "Observaciones",
-//       isVisible: true,
-//       // Puedes agregar más propiedades de configuración aquí si es necesario
-//     },
-//     // Agrega más objetos para cada columna que desees mostrar
-//   ];
-
-//   const [data, setData] = useState<ReporteTool[]>([]);
-//   const { dataCias, fetchCias } = useCias();
-//   const { dataUsuarios, fetchUsuarios } = useUsuarios();
-//   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
-//   const { dataSucursales, fetchSucursales } = useSucursales();
-
-//   const [tablaData, setTablaData] = useState({
-//     data: [],
-//     columns: [],
-//   });
-
-//   const getReporte = () => {
-//     jezaApi
-//       .get("/Reporte")
-//       .then((response) => setData(response.data))
-//       .catch((e) => console.log(e));
-//   };
-
-//   const getCias = () => {
-//     jezaApi
-//       .get("/Cia?=0")
-//       .then((response) => setData(response.data))
-//       .catch((e) => console.log(e));
-//   };
-
-//   useEffect(() => {
-//     getReporte();
-//   }, []);
-
-//   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
-
-//   const ejecutaPeticion = (reporte) => {
-//     // Copiamos el formulario actual para no modificar el estado original
-//     const formData = { ...formulario };
-
-//     // Reemplazamos los campos vacíos con '%'
-//     for (const campo in formData) {
-//       if (formData[campo] === "") {
-//         formData[campo] = "%";
-//       }
-//     }
-
-//     const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
-//     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
-
-//     const queryString = `/Anticipo?id=%&idcia=${formData.empresa}&idsuc=${formData.sucursal}&idnoVenta=%&idCliente=${formData.cliente}&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
-//     // http://cbinfo.no-ip.info:9089/Anticipo?id=%&idcia=%&idsuc=21&idnoVenta=%&idCliente=11&idtipoMovto=%&idformaPago=%&f1=20230101&f2=20230731
-
-//     console.log(queryString);
-
-//     jezaApi
-//       .get(queryString)
-//       .then((response) => response.data)
-//       .then((responseData) => {
-//         // Buscar el objeto que corresponde al valor seleccionado en el input select
-//         const selectedReporte = data.find((item) => item.metodoApi === reporte);
-
-//         if (selectedReporte) {
-//           // Si se encuentra el objeto, actualizar la descripción en el estado
-//           setDescripcionReporte(selectedReporte.descripcion);
-//         } else {
-//           // Si no se encuentra el objeto, mostrar el mensaje predeterminado
-//           setDescripcionReporte("Seleccione un reporte");
-//         }
-//         setReportes(responseData);
-//         setTablaData({
-//           data: responseData,
-//           columns: responseData.length > 0 ? Object.keys(responseData[0]) : [],
-//         });
-//       })
-//       .catch((error) => console.error("Error al obtener los datos:", error));
-//   };
-
-//   // Filtrar los datos para excluir la columna "id" y sus valores
-//   const filteredData = reportes.map(({ id, ...rest }) => rest);
-
-//   // toma de los datos que usaremos para imprimir cadena:
-//   const [formulario, setFormulario] = useState({
-//     reporte: "",
-//     fechaInicial: "",
-//     fechaFinal: "",
-//     sucursal: "",
-//     compania: "",
-//     cliente: "",
-//     almacen: "",
-//     tipoMovimiento: "",
-//     proveedor: "",
-//     estilista: "",
-//     metodoPago: "",
-//     empresa: "",
-//     sucursalDestino: "",
-//     almacenDestino: "",
-//   });
-
-//   const handleChange = (event) => {
-//     const { name, value } = event.target;
-//     setFormulario((prevFormulario) => ({
-//       ...prevFormulario,
-//       [name]: value,
-//     }));
-//   };
-
-//   const handleConsultar = (reporte) => {
-//     ejecutaPeticion(reporte);
-//   };
-
-//   const obtenerFechaSinGuiones = (fechaISO8601) => {
-//     // La fechaISO8601 viene en formato "yyyy-mm-dd"
-//     // Utilizamos slice para obtener partes de la cadena y luego las concatenamos
-//     return fechaISO8601.slice(0, 4) + fechaISO8601.slice(5, 7) + fechaISO8601.slice(8, 10);
-//   };
-
-//   // Redirige a la ruta "/app"
-//   const navigate = useNavigate();
-//   const handleRedirect = () => {
-//     navigate("/app");
-//   };
-//   // Recargar la página actual
-//   const handleReload = () => {
-//     window.location.reload();
-//   };
-//   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
-
-//   const LimpiezaForm = () => {
-//     setForm({ ...form, id: 0 });
-//   };
-
-//   const [dataPago, setDataPago] = useState<FormaPago[]>([]);
-
-//   const insertar = async () => {
-//     const permiso = await filtroSeguridad("CAT_SUC_ADD");
-//     if (permiso === false) {
-//       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-//     }
-//     if (validarCampos() === true) {
-//       await jezaApi
-//         .post("/Anticipo", null, {
-//           params: {
-//             cia: 26,
-//             sucursal: dataUsuarios2[0]?.sucursal,
-//             caja: 1,
-//             fecha: form.fechaMovto.replace(/-/g, ""),
-//             fechaMovto: formattedDate,
-//             idCliente: form.idCliente,
-//             idUsuario: dataUsuarios2[0]?.id,
-//             referencia: form.referencia,
-//             importe: form.importe,
-//             observaciones: form.observaciones,
-//           },
-//         })
-//         .then((response) => {
-//           Swal.fire({
-//             icon: "success",
-//             text: "Anticipo creada con éxito",
-//             confirmButtonColor: "#3085d6",
-//           });
-//           setModalInsertar(false);
-//           fetchAnticipos();
-//         })
-//         .catch((error) => {
-//           console.log(error);
-//         });
-//     } else {
-//     }
-//   };
-//   return (
-//     <>
-//       <Row>
-//         <SidebarHorizontal></SidebarHorizontal>
-//       </Row>
-//       <Container>
-//         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-//           <h1> Reportes </h1>
-//           <AiOutlineFileText size={30}></AiOutlineFileText>
-//         </div>
-//         <br />
-//         <ButtonGroup variant="contained" aria-label="outlined primary button group">
-//           <Button
-//             style={{ marginLeft: "auto" }}
-//             color="success"
-//             onClick={() => {
-//               setModalInsertar(true);
-//               setEstado("insert");
-//               LimpiezaForm();
-//             }}
-//           >
-//             Crear anticipos
-//           </Button>
-
-//           <Button color="primary" onClick={handleRedirect}>
-//             <IoIosHome size={20}></IoIosHome>
-//           </Button>
-//           <Button onClick={handleReload}>
-//             <IoIosRefresh size={20}></IoIosRefresh>
-//           </Button>
-//         </ButtonGroup>
-
-//         <UncontrolledAccordion defaultOpen="1">
-//           <AccordionItem>
-//             <AccordionHeader targetId="1">Consulta de anticipos</AccordionHeader>
-//             <AccordionBody accordionId="1">
-//               <div style={{ display: "flex", alignItems: "center", gap: 10 }}></div>
-//               <br />
-//               <div className="formulario">
-//                 <div>
-//                   <Label>Fecha inicial:</Label>
-//                   <Input
-//                     type="date"
-//                     name="fechaInicial"
-//                     value={formulario.fechaInicial}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.f1}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-//                 <div>
-//                   <Label>Fecha final:</Label>
-//                   <Input
-//                     type="date"
-//                     name="fechaFinal"
-//                     value={formulario.fechaFinal}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.f2}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <Label>Sucursal:</Label>
-//                   <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange} bsSize="sm">
-//                     <option value="">Seleccione la sucursal</option>
-
-//                     {dataSucursales.map((item) => (
-//                       <option value={item.sucursal}>{item.nombre}</option>
-//                     ))}
-//                   </Input>
-//                 </div>
-
-//                 <div>
-//                   <Label>Clientes:</Label>
-//                   <Input type="select" name="cliente" value={formulario.cliente} onChange={handleChange} bsSize="sm">
-//                     <option value="">Seleccione el cliente</option>
-
-//                     {dataClientes.map((item) => (
-//                       <option value={item.id_cliente}>{item.nombre}</option>
-//                     ))}
-//                   </Input>
-//                 </div>
-
-//                 <div>
-//                   <Label>Empresa:</Label>
-//                   <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange} bsSize="sm">
-//                     <option value="">Seleccione la empresa</option>
-
-//                     {dataCias.map((item) => (
-//                       <option value={item.id}>{item.nombre}</option>
-//                     ))}
-//                   </Input>
-//                 </div>
-
-//                 {/* <div>
-//                   <Label>Sucursal destino:</Label>
-//                   <Input
-//                     type="text"
-//                     name="sucursalDestino"
-//                     value={formulario.sucursalDestino}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.sucDestino}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <Label>Almacen origen:</Label>
-//                   <Input
-//                     type="text"
-//                     name="almacen"
-//                     value={formulario.almacen}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.almacenOrigen}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-//                 <div>
-//                   <Label>Almacen destino:</Label>
-//                   <Input
-//                     type="text"
-//                     name="almacendestino"
-//                     value={formulario.almacenDestino}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.almacenDestino}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-//                 <div>
-//                   <Label>Tipo de movimiento:</Label>
-//                   <Input
-//                     type="text"
-//                     name="tipoMovimiento"
-//                     value={formulario.tipoMovimiento}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.tipomovto}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-//                 <div>
-//                   <Label>Proveedor:</Label>
-//                   <Input
-//                     type="text"
-//                     name="proveedor"
-//                     value={formulario.proveedor}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.proveedor}
-//                     bsSize="sm"
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <Label>Método de pago:</Label>
-//                   <Input
-//                     type="text"
-//                     name="metodoPago"
-//                     value={formulario.metodoPago}
-//                     onChange={handleChange}
-//                     disabled={!data[0]?.metodoPago}
-//                     bsSize="sm"
-//                   />
-//                 </div> */}
-//               </div>
-//               <br />
-//               <div className="d-flex justify-content-end">
-//                 <Button className="ml-auto" onClick={() => ejecutaPeticion(formulario.reporte)}>
-//                   Consultar
-//                 </Button>
-//               </div>
-//             </AccordionBody>
-//           </AccordionItem>
-//         </UncontrolledAccordion>
-
-//         <hr />
-//       </Container>
-//       <Container>
-//         <div>
-//           <MaterialReactTable
-//             columns={columnasTabla}
-//             data={tablaData.data}
-//             enableRowSelection={false}
-//             rowSelectionCheckboxes={false}
-//             initialState={{ density: "compact" }}
-//           />
-//         </div>
-//       </Container>
-
-//       {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-//       <Modal isOpen={modalInsertar} size="xl">
-//         <ModalHeader>
-//           <div>
-//             <h3>Crear anticipo</h3>
-//           </div>
-//         </ModalHeader>
-
-//         <ModalBody>
-//           <Form>
-//             <FormGroup>
-//               <Label for="fechaMovto">Fecha del anticipo</Label>
-//               <Input type="date" name="fechaMovto" id="fechaMovto" value={form.fechaMovto} onChange={handleChange} />
-//             </FormGroup>
-//             <FormGroup>
-//               {/* SELECT */}
-//               <Label for="idCliente">Cliente</Label>
-//               <Input
-//                 disabled
-//                 type="text"
-//                 name="d_cliente"
-//                 id="d_cliente"
-//                 value={form.d_cliente}
-//                 onChange={handleChange}
-//               />
-//               <Button onClick={mostrarModalClienteActualizar}>Seleccionar</Button>
-//             </FormGroup>
-
-//             <FormGroup>
-//               <Label>Forma de pago:</Label>
-//               <Input type="select" name="id" id="id" defaultValue={formPago.id} onChange={handleChange1}>
-//                 <option value="">Selecciona forma de pago</option>
-//                 {dataPago.map((formapago: FormaPago) => (
-//                   <option key={formapago.id} value={formapago.id}>
-//                     {formapago.descripcion}
-//                   </option>
-//                 ))}
-//               </Input>
-//             </FormGroup>
-
-//             <FormGroup>
-//               <Label for="referencia">Referencia</Label>
-//               <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
-//             </FormGroup>
-//             <FormGroup>
-//               <Label for="importe">Importe</Label>
-//               <Input type="number" name="importe" id="importe" value={form.importe} onChange={handleChange} />
-//             </FormGroup>
-//             <FormGroup>
-//               <Label for="observaciones">Observaciones</Label>
-//               <Input
-//                 type="text"
-//                 name="observaciones"
-//                 id="observaciones"
-//                 value={form.observaciones}
-//                 onChange={handleChange}
-//               />
-//             </FormGroup>
-//           </Form>
-//         </ModalBody>
-//         <ModalFooter>
-//           <CButton color="success" onClick={insertar} text="Guardar anticipo" />
-//           <CButton
-//             color="danger"
-//             onClick={() => {
-//               setModalCliente(false);
-//               console.log(modalCliente);
-//             }}
-//             text="Cancelar"
-//           />
-//         </ModalFooter>
-//       </Modal>
-//     </>
-//   );
-// }
-
-// export default Anticipo;
