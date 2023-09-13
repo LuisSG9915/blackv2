@@ -64,7 +64,7 @@ function Marcas() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -266,7 +266,7 @@ function Marcas() {
     {
       field: "Acción",
       renderCell: (params) => <ComponentChiquito params={params} />,
-      width: 120,
+      width: 100,
       headerClassName: "custom-header",
     },
     // { field: "sucursal", headerName: "ID", width: 200, headerClassName: "custom-header", },
@@ -286,7 +286,7 @@ function Marcas() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "90%" }}>
+      <div style={{ height: 600, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={data}
@@ -313,8 +313,8 @@ function Marcas() {
         <Row>
           <Container fluid>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Marcas </h1>
-              <AiFillTags size={35}></AiFillTags>
+              <h1> Marcas  <AiFillTags size={35}></AiFillTags></h1>
+
             </div>
 
             <br />
