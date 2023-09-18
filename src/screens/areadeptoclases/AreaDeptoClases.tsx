@@ -115,7 +115,7 @@ function AreaDeptoClases() {
 
   const [formArea, setArea] = useState<Area>({
     id: 0,
-    area: 1,
+    area: 0,
     descripcion: "",
   });
 
@@ -130,9 +130,9 @@ function AreaDeptoClases() {
   const [formClase, setClase] = useState<Clase>({
     id: 0,
     clase: 0,
-    area: 1,
+    area: 0,
     d_area: "",
-    depto: 1,
+    depto: 0,
     d_depto: "",
     descripcion: "",
   });
@@ -158,22 +158,63 @@ function AreaDeptoClases() {
     setModalActualizarDepto(true);
   };
 
+  // const handleChangeArea = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setArea((prevState) => ({ ...prevState, [name]: value }));
+  //   console.log(formArea);
+  // };
+
+  // const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setClase((prevState) => ({ ...prevState, [name]: value }));
+  //   console.log(formClase);
+  // };
+
+  // const handleChangeAreaDepto = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setDepto((prevState) => ({ ...prevState, [name]: value }));
+  //   console.log(formDepto);
+  // };
+
+  ///handle con espacio
   const handleChangeArea = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setArea((prevState) => ({ ...prevState, [name]: value }));
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, '');
+    setArea((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(formArea);
   };
+
+
   const handleChangeAreaDepto = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setDepto((prevState) => ({ ...prevState, [name]: value }));
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, '');
+    setDepto((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(formDepto);
   };
 
-  const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  // const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   // Eliminar espacios en blanco al principio de la cadena
+  //   const trimmedValue = value.replace(/^\s+/g, '');
+  //   setClase((prevState) => ({ ...prevState, [name]: trimmedValue }));
+  //   console.log(formClase);
+  // };
+  const handleChangeAreaDeptoClase = (e) => {
     const { name, value } = e.target;
-    setClase((prevState) => ({ ...prevState, [name]: value }));
-    console.log(formClase);
+
+    // Si el campo que cambió es "area" y su valor es vacío, reinicia el valor de "depto" a vacío
+    if (name === "area" && value === "") {
+      setClase({ ...formClase, area: "", depto: "" });
+    } else {
+      // Si no, actualiza el estado formClase con el nuevo valor del campo
+      setClase({ ...formClase, [name]: value });
+    }
   };
+
+
+
 
   //VALIDACIÓN AREA ---->
   const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
@@ -381,6 +422,7 @@ function AreaDeptoClases() {
   };
 
   const editArea = async () => {
+    const fechaHoy = new Date();
     const permiso = await filtroSeguridad("CAT_AREA_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -391,8 +433,8 @@ function AreaDeptoClases() {
           params: {
             area: formArea.area,
             descripcion: formArea.descripcion,
-            fecha_alta: "2023-06-06",
-            fecha_act: "2023-06-06",
+            fecha_alta: fechaHoy,
+            fecha_act: fechaHoy,
           },
         })
         .then((response) => {
@@ -418,7 +460,7 @@ function AreaDeptoClases() {
     }
     if (validarCampos2() === true) {
       await jezaApi
-        .put(`/Depto?id=${formDepto.depto}&area=${Number(formDepto.area)}&descripcion=${formDepto.descripcion}`)
+        .put(`/Depto?id=${formDepto.depto}&area=${formDepto.area}&descripcion=${formDepto.descripcion}`)
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -590,12 +632,21 @@ function AreaDeptoClases() {
 
   useEffect(() => {
     const quePedo = dataDeptos.filter((data) => data.area === Number(formClase.area));
-    setDataDeptosFiltrado(quePedo);
-    console.log({ dataDeptosFiltrado });
-  }, [formClase.area]);
+    setDeptoGet(quePedo);
+    console.log({ deptoGet });
+  }, [formClase.area, formDepto.area, formArea.area]);
 
+  useEffect(() => {
+    if (deptoGet.length > 0) {
+      // Verifica si el departamento seleccionado en formClase.depto existe en deptoGet
+      const departamentoExistente = deptoGet.find((depto) => depto.depto === formClase.depto);
 
-
+      // Si no existe, establece el primer departamento de deptoGet como seleccionado
+      if (!departamentoExistente) {
+        setClase({ ...formClase, depto: deptoGet[0].depto });
+      }
+    }
+  }, [deptoGet]);
 
 
 
@@ -640,6 +691,9 @@ function AreaDeptoClases() {
   const [activeTab, setActiveTab] = useState("1");
   const toggleTab = (tab: React.SetStateAction<string>) => {
     if (activeTab !== tab) setActiveTab(tab);
+    getAreas();
+    getClases();
+
   };
 
   // Redirige a la ruta "/app"
@@ -1015,7 +1069,7 @@ function AreaDeptoClases() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <CFormGroupInput handleChange={handleChangeArea} inputName="descripcion" labelName="descripción de Area:" value={formArea.descripcion} />
+          <CFormGroupInput handleChange={handleChangeArea} inputName="descripcion" labelName="descripción de área:" value={formArea.descripcion} />
         </ModalBody>
         <ModalFooter>
           <CButton color="primary" onClick={editArea} text="Actualizar" />
@@ -1031,16 +1085,27 @@ function AreaDeptoClases() {
         </ModalHeader>
         <ModalBody>
           <Label>Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formArea.area}>
-            <option value={0}>--Selecciona una opción--</option>
-            {areasGet.map((option: Area) => (
-              <option key={Number(option.area)} value={Number(option.area)}>
+          <Input
+            type="select"
+            name="area"
+            id="area"
+            onChange={handleChangeAreaDepto}
+            value={formDepto.area}
+          >
+            <option value="">--Seleccione área--</option>
+            {areasGet.map((option) => (
+              <option key={option.area} value={option.area}>
                 {option.descripcion}
               </option>
             ))}
           </Input>
           <br />
-          <CFormGroupInput handleChange={handleChangeAreaDepto} inputName="descripcion" labelName="Descripción:" value={formDepto.descripcion} />
+          <CFormGroupInput
+            handleChange={(e) => handleChangeAreaDepto(e)} // Puedes usar handleChangeAreaDepto directamente
+            inputName="descripcion"
+            labelName="Descripción:"
+            value={formDepto.descripcion}
+          />
           <br />
         </ModalBody>
         <ModalFooter>
@@ -1058,23 +1123,25 @@ function AreaDeptoClases() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <Label>Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase} value={formClase.area}>
-            <option value={0}>--Selecciona una opción--</option>
-            {areasGet.map((option: Area) => (
-              <option key={option.area} value={Number(option.area)}>
-                {option.descripcion}
-              </option>
-            ))}
-          </Input>
+          <FormGroup>
+            <Label for="area">Área:</Label>
+            <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase}>
+              <option value="">--Seleccione área--</option>
+              {areasGet.map((area) => (
+                <option value={area.area}>{area.descripcion}</option>
+              ))}{" "}
+            </Input>
+          </FormGroup>
           <br />
-          <Label>Departamento:</Label>
-          <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase} value={formClase.depto}>
-            <option value={0}>--Selecciona una opción--</option>
-            {deptoGet.map((depto) => (
-              <option value={depto.depto}> {depto.descripcion} </option>
-            ))}
-          </Input>
+          <FormGroup>
+            <Label for="departamento">Departamento:</Label>
+            <Input type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
+              <option value="">--Seleccione un departamento--</option>
+              {deptoGet.map((depto) => (
+                <option value={depto.depto}>{depto.descripcion}</option>
+              ))}{" "}
+            </Input>
+          </FormGroup>
           <br />
           <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} />
         </ModalBody>
@@ -1110,8 +1177,7 @@ function AreaDeptoClases() {
         <ModalBody>
           <Label>Área:</Label>
           <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formDepto.area}>
-            <option value="">Seleccione área</option>
-            <option value={0}>--Selecciona una opción--</option>
+            <option value="">--Seleccione área--</option>
             {areasGet.map((option: Area) => (
               <option key={Number(option.area)} value={Number(option.area)}>
                 {option.descripcion}
@@ -1140,8 +1206,8 @@ function AreaDeptoClases() {
           <FormGroup>
             <Label for="area">Área:</Label>
             <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase}>
-              <option value={0}>Seleccione un área</option>
-              {dataAreas.map((area) => (
+              <option value="">--Seleccione área--</option>
+              {areasGet.map((area) => (
                 <option value={area.area}>{area.descripcion}</option>
               ))}{" "}
             </Input>
@@ -1150,35 +1216,12 @@ function AreaDeptoClases() {
           <FormGroup>
             <Label for="departamento">Departamento:</Label>
             <Input type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
-              <option value={0}>Seleccione un departamento</option>
-              {dataDeptosFiltrado.map((depto) => (
+              <option value="">--Seleccione un departamento--</option>
+              {deptoGet.map((depto) => (
                 <option value={depto.depto}>{depto.descripcion}</option>
               ))}{" "}
             </Input>
           </FormGroup>
-
-
-
-
-
-          {/* 
-          <Label>Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChangeAreaDeptoClase}>
-            <option value={0}>--Selecciona una opción--</option>
-            {areasGet.map((option: Area) => (
-              <option key={option.area} value={Number(option.area)}>
-                {option.descripcion}
-              </option>
-            ))}
-          </Input>
-          <br />
-          <Label>Departamento:</Label>
-          <Input type="select" name="depto" id="depto" onChange={handleChangeAreaDeptoClase}>
-            <option value={0}>--Selecciona una opción--</option>
-            {deptoGet.map((depto) => (
-              <option value={depto.depto}> {depto.descripcion} </option>
-            ))}
-          </Input> */}
           <br />
           <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} />
         </ModalBody>

@@ -67,14 +67,14 @@ function Clientes() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cli_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-      
+
         if (response.data[0].permiso === false) {
           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -577,6 +577,24 @@ function Clientes() {
     }
   };
 
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   const checked = (e.target as HTMLInputElement).checked;
+
+  //   // Eliminar espacios en blanco al principio de la cadena
+
+
+  //   if (name === "plastico_activo" || name === "suspendido") {
+  //     setForm((prevState) => ({ ...prevState, [name]: checked }));
+  //   } else {
+  //     const trimmedValue = typeof value === 'string' ? value.replace(/^\s+/g, '') : value;
+  //     setForm((prevState: Cliente) => ({ ...prevState, [name]: trimmedValue }));
+  //   }
+  // };
+
+
+
+
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
 
@@ -961,31 +979,31 @@ function Clientes() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
             </div>
-
             <br />
-
+            <br />
             <Row>
+              <div>
+                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                  <Button
+                    style={{ marginLeft: "auto" }}
+                    color="success"
+                    onClick={() => {
+                      setModalInsertar(true);
+                      setEstado("insert");
+                      LimpiezaForm();
+                    }}
+                  >
+                    Crear cliente
+                  </Button>
 
-              <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                <Button
-                  style={{ marginLeft: "auto" }}
-                  color="success"
-                  onClick={() => {
-                    setModalInsertar(true);
-                    setEstado("insert");
-                    LimpiezaForm();
-                  }}
-                >
-                  Crear cliente
-                </Button>
-
-                <Button color="primary" onClick={handleRedirect}>
-                  <IoIosHome size={20}></IoIosHome>
-                </Button>
-                <Button onClick={handleReload}>
-                  <IoIosRefresh size={20}></IoIosRefresh>
-                </Button>
-              </ButtonGroup>
+                  <Button color="primary" onClick={handleRedirect}>
+                    <IoIosHome size={20}></IoIosHome>
+                  </Button>
+                  <Button onClick={handleReload}>
+                    <IoIosRefresh size={20}></IoIosRefresh>
+                  </Button>
+                </ButtonGroup>
+              </div>
               <br />
               <br />
               <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
