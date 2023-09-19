@@ -211,11 +211,11 @@ function ClientesShopify() {
     () => [
       {
         accessorKey: "acciones",
-        header: "Acciones",
+        header: "",
         size: 5,
         Cell: ({ row }) => (
-          <CButton
-            color="secondary"
+          <AiFillEdit
+            className="mr-2"
             onClick={() => {
               if (!row.original.idCliente) {
                 setIdShopify(row.original.id, row.original.nombreShopify);
@@ -230,9 +230,27 @@ function ClientesShopify() {
                 // alert("Este usuario ya tiene vinculado un cliente");
               }
             }}
-            text="  Elegir"
-            disabled={!!row.original.idCliente}
-          ></CButton>
+            size={23}
+          ></AiFillEdit>
+          // <CButton
+          //   color="secondary"
+          //   onClick={() => {
+          //     if (!row.original.idCliente) {
+          //       setIdShopify(row.original.id, row.original.nombreShopify);
+          //     } else {
+          //       Swal.fire({
+          //         icon: "error",
+          //         title: "Cliente vinculado",
+          //         text: `Este usuario ya tiene vinculado un cliente `,
+          //         confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+          //       });
+
+          //       // alert("Este usuario ya tiene vinculado un cliente");
+          //     }
+          //   }}
+          //   text="  Elegir"
+          //   disabled={!!row.original.idCliente}
+          // ></CButton>
         ),
       },
       {
@@ -271,6 +289,7 @@ function ClientesShopify() {
       .get("/Cliente?id=0")
       .then((response) => {
         // Cuando la solicitud sea exitosa, actualizamos el estado
+
         setTrabajadores(response.data);
       })
       .catch((error) => {
