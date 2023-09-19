@@ -20,10 +20,11 @@ import {
   Col,
   Card,
   CardBody
+
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
-
+import CFormGroupInput from "../../components/CFormGroupInput";
 import { Cliente } from "../../models/Cliente";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
@@ -567,15 +568,38 @@ function Clientes() {
     });
   };
 
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   const checked = (e.target as HTMLInputElement).checked;
+  //   if (name === "plastico_activo" || name === "suspendido") {
+  //     setForm((prevState) => ({ ...prevState, [name]: checked }));
+  //   } else {
+  //     setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
+  //   }
+  // };
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
+  // };
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+
+  //   // Elimina espacios en blanco al comienzo de la cadena
+  //   const trimmedValue = value.trim();
+
+  //   setForm((prevState: Cliente) => ({ ...prevState, [name]: trimmedValue }));
+  // };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    if (name === "plastico_activo" || name === "suspendido") {
-      setForm((prevState) => ({ ...prevState, [name]: checked }));
-    } else {
-      setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
-    }
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, '');
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
   };
+
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
   //   const { name, value } = e.target;
@@ -1081,13 +1105,16 @@ function Clientes() {
             </Col>
 
             <Col sm="6">
-              <Label>Domicilio:</Label>
+
+              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+
+              {/* <Label>Domicilio:</Label>
               <Input
                 type="text"
                 name={"domicilio"}
                 onChange={(e) => setForm({ ...form, domicilio: String(e.target.value) })}
                 defaultValue={form.domicilio}
-              />
+              /> */}
               <br />
             </Col>
             <Col sm="6">
