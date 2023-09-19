@@ -589,7 +589,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta5"
-                      labelName="Meta servicios:"
+                      labelName="Meta Servicios:"
                       value={form.meta5}
                     />
                   </Col>
