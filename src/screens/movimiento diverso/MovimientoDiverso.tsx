@@ -177,6 +177,7 @@ function MovimientoDiversos() {
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    console.log(form);
     jezaApi
       .post("/Ajuste", null, {
         params: {

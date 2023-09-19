@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, Input, Container } from "reactstrap";
 import { ProductoExistencia } from "../../../models/Producto";
 import { Movimiento } from "../../../models/Movimiento";
@@ -24,7 +24,7 @@ export interface Estilistas {
 
 const TableProductosMovimientos = ({ setModalOpen2, form, setform, productoSelected, sucursal, almacenId, cia }: Props) => {
   const [filtroProductos, setFiltroProductos] = useState("");
-  const { dataProductos4, fetchProduct4, setDataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
+  const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProductoAlm({
     descripcion: filtroProductos,
     insumo: 2,
     inventariable: 2,
@@ -33,8 +33,11 @@ const TableProductosMovimientos = ({ setModalOpen2, form, setform, productoSelec
     sucursal: sucursal,
     almacen: almacenId,
     cia: cia,
-    idCliente: 0,
+    idCliente: 26289,
   });
+  useEffect(() => {
+    fetchProduct4();
+  }, []);
 
   // Se agrego estos nuevos parametros a nuestro context para pdoder ser usado en otras screens
   // Se creo un nuevo folder para agregar el componente de la tabla y se consumido por la screen de MovimientoDiversos
