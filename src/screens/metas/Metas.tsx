@@ -332,13 +332,13 @@ function Metas() {
     },
     {
       field: "meta1",
-      headerName: "Meta",
+      headerName: "Cuota color",
       width: 150,
       headerClassName: "custom-header",
     },
     {
       field: "meta2",
-      headerName: "Meta 2",
+      headerName: "Meta color",
       width: 150,
       headerClassName: "custom-header",
     },
@@ -391,7 +391,7 @@ function Metas() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <h1>
                 {" "}
-                Metas<HiBuildingStorefront size={35}></HiBuildingStorefront>
+                Metas
               </h1>
             </div>
             <div className="col align-self-start d-flex justify-content-center "></div>
@@ -465,7 +465,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta1"
-                      labelName="Meta 1:"
+                      labelName="Cuota color:"
                       value={form.meta1}
                     />
                   </Col>
@@ -473,7 +473,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta2"
-                      labelName="Meta 2:"
+                      labelName="Cuota servicios:"
                       value={form.meta2}
                     />
                   </Col>
@@ -481,7 +481,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta3"
-                      labelName="Meta 3:"
+                      labelName="Cuota reventa:"
                       value={form.meta3}
                     />
                   </Col>
@@ -489,7 +489,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta4"
-                      labelName="Meta 4:"
+                      labelName="Meta color:"
                       value={form.meta4}
                     />
                   </Col>
@@ -497,7 +497,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta5"
-                      labelName="Meta 5:"
+                      labelName="Meta servicios:"
                       value={form.meta5}
                     />
                   </Col>
@@ -505,7 +505,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta6"
-                      labelName="Meta 6:"
+                      labelName="Meta reventa:"
                       value={form.meta6}
                     />
                   </Col>
@@ -557,7 +557,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta1"
-                      labelName="Meta 1:"
+                      labelName="Cuota color:"
                       value={form.meta1}
                     />
                   </Col>
@@ -565,7 +565,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta2"
-                      labelName="Meta 2:"
+                      labelName="Cuota servicios:"
                       value={form.meta2}
                     />
                   </Col>
@@ -573,7 +573,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta3"
-                      labelName="Meta 3:"
+                      labelName="Cuota reventa:"
                       value={form.meta3}
                     />
                   </Col>
@@ -581,7 +581,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta4"
-                      labelName="Meta 4:"
+                      labelName="Meta color:"
                       value={form.meta4}
                     />
                   </Col>
@@ -589,7 +589,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta5"
-                      labelName="Meta 5:"
+                      labelName="Meta servicios:"
                       value={form.meta5}
                     />
                   </Col>
@@ -597,7 +597,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta6"
-                      labelName="Meta 6:"
+                      labelName="Meta reventa:"
                       value={form.meta6}
                     />
                   </Col>
