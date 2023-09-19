@@ -39,7 +39,7 @@ const TableProductos = ({
   setDataVentaEdit,
   dataTemporal,
   setDataTemporal,
-  cia
+  cia,
 }: Props) => {
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
 
@@ -110,7 +110,7 @@ const TableProductos = ({
     obsoleto: productoFilter.obsoleto,
     servicio: productoFilter.servicio,
     sucursal: sucursal,
-    almacen: 2,
+    almacen: 1,
     cia: cia,
     idCliente: dataTemporal.Cve_cliente,
   });

@@ -396,7 +396,7 @@ function TraspasoSalida() {
             >
               <option value={0}> Escoja una sucursal</option>
               {dataSucursales.map((option: Sucursal) => (
-                <option key={option.sucursal} value={Number(option.sucursal)}>
+                <option key={option.id} value={Number(option.sucursal)}>
                   {option.nombre}
                 </option>
               ))}
@@ -414,7 +414,7 @@ function TraspasoSalida() {
             >
               <option value={0}> Escoja una almacén</option>
               {filtradoAlmacen.map((option: Almacen) => (
-                <option key={option.almacen} value={option.id}>
+                <option key={option.id} value={option.id}>
                   {option.descripcion}
                 </option>
               ))}
