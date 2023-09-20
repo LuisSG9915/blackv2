@@ -81,8 +81,15 @@ function Clientes() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -195,7 +202,17 @@ function Clientes() {
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac"];
+    const camposRequeridos: (keyof Cliente)[] = [
+      "nombre",
+      "domicilio",
+      "ciudad",
+      "estado",
+      "colonia",
+      "cp",
+      "telefono",
+      "email",
+      "fecha_nac",
+    ];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -385,7 +402,7 @@ function Clientes() {
     }
   };
 
-  const eliminar = async (dato: Cliente) => {
+  const eliminar = async (dato: any) => {
     const permiso = await filtroSeguridad("CAT_CLIENT_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -573,13 +590,15 @@ function Clientes() {
       field: "fecha_alta",
       headerName: "Fecha alta",
       flex: 1,
-      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) => new Date(params.row.fecha_alta).toLocaleDateString(),
+      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) =>
+        new Date(params.row.fecha_alta).toLocaleDateString(),
     },
     {
       field: "plastico_activo",
       headerName: "Cuenta activa",
       flex: 1,
-      renderCell: (params: { row: { plastico_activo: any } }) => (params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>),
+      renderCell: (params: { row: { plastico_activo: any } }) =>
+        params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>,
     },
   ];
 
@@ -729,7 +748,12 @@ function Clientes() {
               <button
                 disabled={isDisabled} // Establecer la propiedad disabled según isDisabled
                 onClick={() => {
-                  loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+                  loadHistorialDetalle(
+                    row.original.Cve_cliente,
+                    row.original.NumVenta,
+                    row.original.idProducto,
+                    row.original.sucursal
+                  );
                   setParamsDetalles({
                     Cve_cliente: row.original.Cve_cliente,
                     idProducto: row.original.idProducto,
@@ -849,7 +873,11 @@ function Clientes() {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -903,7 +931,11 @@ function Clientes() {
         Cell: ({ cell }) => (
           <>
             <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} />
-            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
+            <AiFillEdit
+              className="mr-2"
+              onClick={() => mostrarModalActualizar(cell.row.original)}
+              size={23}
+            ></AiFillEdit>
             <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} />
           </>
         ),
@@ -1010,7 +1042,12 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="domicilio"
+                labelName="Domicilio:"
+                value={form.domicilio}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
@@ -1019,13 +1056,23 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="colonia"
+                labelName="Colonia:"
+                value={form.colonia}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="telefono"
+                labelName="Teléfono:"
+                value={form.telefono}
+              />
             </Col>
 
             <Col sm="6">
@@ -1043,7 +1090,12 @@ function Clientes() {
             </Col>
 
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="redsocial1"
+                labelName="Instagram:"
+                value={form.redsocial1}
+              />
             </Col>
             {/* <Col sm="6">
               <Label>Red social 2:</Label>
@@ -1105,7 +1157,12 @@ function Clientes() {
                 <TabPane tabId="1">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="nombre"
+                        labelName="Nombre:"
+                        value={form.nombre}
+                      />
                     </Col>
                     <Col sm="6">
                       <CFormGroupInput
@@ -1118,23 +1175,48 @@ function Clientes() {
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="domicilio"
+                        labelName="Domicilio:"
+                        value={form.domicilio}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="ciudad"
+                        labelName="Ciudad:"
+                        value={form.ciudad}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="estado"
+                        labelName="Estado:"
+                        value={form.estado}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="colonia"
+                        labelName="Colonia:"
+                        value={form.colonia}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="cp"
+                        labelName="Código postal:"
+                        value={form.cp}
+                      />
                     </Col>
 
                     <Col sm="6">
@@ -1147,15 +1229,30 @@ function Clientes() {
                 <TabPane tabId="2">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="telefono"
+                        labelName="Teléfono:"
+                        value={form.telefono}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="email"
+                        labelName="Email:"
+                        value={form.email}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="redSocial1" labelName="Instagram:" value={form.redSocial1} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="redSocial1"
+                        labelName="Instagram:"
+                        value={form.redSocial1}
+                      />
                     </Col>
 
                     <Col sm="6">
@@ -1167,10 +1264,20 @@ function Clientes() {
                       />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Regimen fiscal:" value={form.regimenFiscal} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="regimenFiscal"
+                        labelName="Regimen fiscal:"
+                        value={form.regimenFiscal}
+                      />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="nombre_fiscal"
+                        labelName="Nombre fiscal:"
+                        value={form.nombre_fiscal}
+                      />
                     </Col>
 
                     {/* <Col sm="6">
@@ -1388,7 +1495,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />

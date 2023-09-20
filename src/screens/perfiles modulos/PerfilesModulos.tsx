@@ -510,7 +510,18 @@ function PerfilesModulos() {
                 </Input>
               </Col>
               <Col md="6">
-                <Label>Módulo:</Label>
+                <Select
+                  options={dataModulos.map((modulo) => ({
+                    value: modulo.id,
+                    label: modulo.descripcion,
+                  }))}
+                  value={form.modulo ? { value: form.modulo.id, label: form.modulo.descripcion } : null}
+                  onChange={(selectedOption) => setValue(selectedOption ? selectedOption.value : null)}
+                  isClearable={true}
+                  placeholder="--Selecciona una opción--"
+                />
+
+                {/* <Label>Módulo:</Label>
 
                 <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
                   <option value={0}>--Selecciona una opción--</option>
@@ -519,7 +530,7 @@ function PerfilesModulos() {
                       {modulo.descripcion}
                     </option>
                   ))}
-                </Input>
+                </Input> */}
                 {/* <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
                   <option value={0}>--Selecciona una opción--</option>
                   {data.map((perfil) => (
