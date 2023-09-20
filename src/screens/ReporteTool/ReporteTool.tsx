@@ -457,31 +457,35 @@ function ReporteTool() {
       const totalSum = sumTotalColumn();
 
       // Mapear los datos y aplicar la función de reemplazo
+      // const formattedData = reportes.map((row) => {
+      //   const formattedRow = {};
+      //   columnHeaders.forEach((header) => {
+      //     formattedRow[header] = replaceNullOrEmpty(row[header], "");
+      //   });
+      //   return formattedRow;
+      // });
+
+      // Mapear los datos y aplicar la función de reemplazo y formato de fecha
       const formattedData = reportes.map((row) => {
         const formattedRow = {};
         columnHeaders.forEach((header) => {
-          formattedRow[header] = replaceNullOrEmpty(row[header], "");
+          if (header === "Fecha" || header === "fechaCita") {
+            // Formatear la fecha en formato DD/MM/AAAA si es una columna de fecha
+            formattedRow[header] = row[header] ? formatDate(new Date(row[header])) : "";
+          } else {
+            formattedRow[header] = replaceNullOrEmpty(row[header], "");
+          }
         });
         return formattedRow;
       });
 
-      // Agregar una línea divisoria completamente en blanco
-      // formattedData.push(
-      //   columnHeaders.reduce((acc, header) => {
-      //     acc[header] = "aa";
-      //     return acc;
-      //   }, {})
-      // );
-
-      // Si la suma de la columna "Total" es mayor que cero, agregarla a los datos formateados con una línea divisoria
-      //     if (totalSum > 0) {
-      //       const totalRow = {};
-      //       columnHeaders.forEach((header) => {
-      //         totalRow[header] = "----"; // Dejar todos los valores en blanco
-      //       });
-      //       formattedData.push(totalRow);
-      //       formattedData.push({ Total: totalSum.toString() }); // Agregar la suma de la columna "Total"
-      //     }
+      // Función para formatear la fecha como DD/MM/AAAA
+      function formatDate(date) {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
 
       if (totalSum > 0) {
         const totalRow = {};
