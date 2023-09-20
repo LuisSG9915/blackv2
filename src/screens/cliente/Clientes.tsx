@@ -489,7 +489,7 @@ function Clientes() {
   const mostrarModalDetalle = (dato: Cliente) => {
     setModalDetalle(true);
     historial(dato.id_cliente);
-    historialCitaFutura(dataTemporal.id_cliente);
+    historialcitaFutura(dato.id_cliente);
     setClienteSeleccionado(dato);
 
   };
@@ -508,19 +508,21 @@ function Clientes() {
   //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
   //   });
   // };
-  const [datah1, setData2] = useState<any[]>([]);
 
-  const historialCitaFutura = (dato: any) => {
-    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
-      const dataConFechasFormateadas = response.data.map((item: any) => ({
-        ...item,
-        fechaCita: new Date(item.fechaCita).toLocaleDateString(),
-        fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
-      }));
-      setData2(dataConFechasFormateadas);
-      toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
-    });
-  };
+  //yyyyyyyyy
+  // const [datah1, setData2] = useState<any[]>([]);
+
+  // const historialCitaFutura = (dato: any) => {
+  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${data.id}}`).then((response) => {
+  //     const dataConFechasFormateadas = response.data.map((item: any) => ({
+  //       ...item,
+  //       fechaCita: new Date(item.fechaCita).toLocaleDateString(),
+  //       fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
+  //     }));
+  //     setData2(dataConFechasFormateadas);
+  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+  //   });
+  // };
 
 
   // const mostrarModalDetalle = async (dato: Cliente) => {
@@ -690,6 +692,15 @@ function Clientes() {
   // Recargar la página actual
   const handleReload = () => {
     window.location.reload();
+  };
+
+  const [datah3, setData3] = useState<any[]>([]); // Definir el estado datah
+  const historialcitaFutura = (id) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${id}}`).then((response) => {
+      console.log(response.data);
+      setData3(response.data);
+      // Abrir o cerrar el modal cuando los datos se hayan cargado
+    });
   };
 
 
@@ -1039,51 +1050,6 @@ function Clientes() {
         </Row>
       </Container>
 
-      {/* <Row>
-        <SidebarHorizontal />
-      </Row>
-      <Container>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
-
-        </div>
-        <div className="col align-self-start d-flex justify-content-center "></div>
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear cliente
-          </Button>
-
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
-
-        <br />
-        <br />
-        <div>
-
-          <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
-        </div>
-
-
-        <br /> */}
-      {/* <DataTable></DataTable> */}
-
-      {/* 
-      </Container> */}
-
       {/* Modals */}
       {/* create */}
       <Modal isOpen={modalInsertar} size="lg">
@@ -1094,109 +1060,38 @@ function Clientes() {
           {/* parte */}
           <Row>
             <Col sm="6">
-              <Label>Nombre:</Label>
-              <Input
-                type="text"
-                name={"nombre"}
-                onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })}
-                defaultValue={form.nombre}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
             </Col>
-
             <Col sm="6">
-
               <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
-
-              {/* <Label>Domicilio:</Label>
-              <Input
-                type="text"
-                name={"domicilio"}
-                onChange={(e) => setForm({ ...form, domicilio: String(e.target.value) })}
-                defaultValue={form.domicilio}
-              /> */}
-              <br />
             </Col>
             <Col sm="6">
-              <Label>Ciudad:</Label>
-              <Input
-                type="text"
-                name={"ciudad"}
-                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
-                defaultValue={form.ciudad}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
             </Col>
             <Col sm="6">
-              <Label>Estado:</Label>
-              <Input
-                type="text"
-                name={"Estado"}
-                onChange={(e) => setForm({ ...form, estado: String(e.target.value) })}
-                defaultValue={form.estado}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
             </Col>
             <Col sm="6">
-              <Label>Colonia:</Label>
-              <Input
-                type="text"
-                name={"colonia"}
-                onChange={(e) => setForm({ ...form, colonia: String(e.target.value) })}
-                defaultValue={form.colonia}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
             </Col>
             <Col sm="6">
-              <Label>Código postal:</Label>
-              <Input
-                type="text"
-                name={"cp"}
-                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                defaultValue={form.cp}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
             </Col>
             <Col sm="6">
-              <Label>Teléfono:</Label>
-              <Input
-                type="text"
-                name={"telefono"}
-                onChange={(e) => setForm({ ...form, telefono: String(e.target.value) })}
-                defaultValue={form.telefono}
-              />
-              <br />
-            </Col>
-            <Col sm="6">
-              <Label>E-mail:</Label>
-              <Input
-                type="email"
-                name={"email"}
-                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
-                defaultValue={form.email}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
             </Col>
 
             <Col sm="6">
-              <Label>Fecha de nacimiento:</Label>
-              <Input
-                type="date"
-                name={"fecha_nac"}
-                onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
-                defaultValue={form.fecha_nac}
-              />
-              <br />
+              <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} />
             </Col>
+
             <Col sm="6">
-              <Label>Instagram:</Label>
-              <Input
-                type="email"
-                name={"redsocial1"}
-                onChange={(e) => setForm({ ...form, redsocial1: String(e.target.value) })}
-                defaultValue={form.redsocial1}
-              />
-              <br />
+              <CFormGroupInput type="date" handleChange={handleChange} inputName="fecha_nac" labelName="Fecha de nacimiento:" value={form.fecha_nac} />
+            </Col>
+
+            <Col sm="6">
+              <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} />
+
             </Col>
             {/* <Col sm="6">
               <Label>Red social 2:</Label>
@@ -1261,89 +1156,41 @@ function Clientes() {
                 <TabPane tabId="1">
                   <Row>
                     <Col sm="6">
-                      <Label>Nombre:</Label>
-                      <Input
-                        type="text"
-                        name={"nombre"}
-                        onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })}
-                        defaultValue={form.nombre}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
                     </Col>
                     <Col sm="6">
-                      <Label for="exampleDate">Fecha de nacimiento:</Label>
+
+                      <Label>Fecha de nacimiento:</Label>
                       <Input
-                        id="exampleDate"
-                        name="fecha_nac"
                         type="date"
-                        onChange={handleChange}
-                        defaultValue={form.fecha_nac ? form.fecha_nac.split("T")[0] : form.fecha_nac}
+                        name="fecha_nac"
+                        onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
+                        defaultValue={form.fecha_nac}
                       />
                     </Col>
 
                     <Col sm="6">
-                      <Label>Domicilio:</Label>
-                      <Input
-                        type="text"
-                        name={"domicilio"}
-                        onChange={(e) => setForm({ ...form, domicilio: String(e.target.value) })}
-                        defaultValue={form.domicilio}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
                     </Col>
 
                     <Col sm="6">
-                      <Label>Ciudad:</Label>
-                      <Input
-                        type="text"
-                        name={"ciudad"}
-                        onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
-                        defaultValue={form.ciudad}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
                     </Col>
 
                     <Col sm="6">
-                      <Label>Estado:</Label>
-                      <Input
-                        type="text"
-                        name={"Estado"}
-                        onChange={(e) => setForm({ ...form, estado: String(e.target.value) })}
-                        defaultValue={form.estado}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
                     </Col>
 
                     <Col sm="6">
-                      <Label>Colonia:</Label>
-                      <Input
-                        type="text"
-                        name={"colonia"}
-                        onChange={(e) => setForm({ ...form, colonia: String(e.target.value) })}
-                        defaultValue={form.colonia}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
                     </Col>
 
                     <Col sm="6">
-                      <Label>Código postal:</Label>
-                      <Input
-                        type="text"
-                        name={"cp"}
-                        onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                        defaultValue={form.cp}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
                     </Col>
+
                     <Col sm="6">
-                      <Label>RFC:</Label>
-                      <Input
-                        type="text"
-                        name="rfc"
-                        onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })}
-                        defaultValue={form.rfc}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
                     </Col>
                   </Row>
                   <br />
@@ -1352,65 +1199,25 @@ function Clientes() {
                 <TabPane tabId="2">
                   <Row>
                     <Col sm="6">
-                      <Label>Teléfono:</Label>
-                      <Input
-                        type="text"
-                        name={"telefono"}
-                        onChange={(e) => setForm({ ...form, telefono: String(e.target.value) })}
-                        defaultValue={form.telefono}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
                     </Col>
 
                     <Col sm="6">
-                      <Label>E-mail:</Label>
-                      <Input
-                        type="email"
-                        name={"email"}
-                        onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
-                        defaultValue={form.email}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} />
+                    </Col>
+
+                    <Col sm="6">
+                      <CFormGroupInput handleChange={handleChange} inputName="redSocial1" labelName="Instagram:" value={form.redSocial1} />
+                    </Col>
+
+                    <Col sm="6">
+                      <CFormGroupInput handleChange={handleChange} inputName="correo_factura" labelName="Correo de facturación:" value={form.correo_factura} />
                     </Col>
                     <Col sm="6">
-                      <Label>Instagram:</Label>
-                      <Input
-                        type="email"
-                        name={"redSocial1"}
-                        onChange={(e) => setForm({ ...form, redSocial1: String(e.target.value) })}
-                        defaultValue={form.redSocial1}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Regimen fiscal:" value={form.regimenFiscal} />
                     </Col>
                     <Col sm="6">
-                      <Label>Correo de facturación:</Label>
-                      <Input
-                        type="text"
-                        name="correo_factura"
-                        onChange={(e) => setForm({ ...form, correo_factura: String(e.target.value) })}
-                        defaultValue={form.correo_factura}
-                      />
-                      <br />
-                    </Col>
-                    <Col sm="6">
-                      <Label>Regimen fiscal:</Label>
-                      <Input
-                        type="text"
-                        name="regimenFiscal"
-                        onChange={(e) => setForm({ ...form, regimenFiscal: String(e.target.value) })}
-                        defaultValue={form.regimenFiscal}
-                      />
-                      <br />
-                    </Col>
-                    <Col sm="6">
-                      <Label>Nombre fiscal:</Label>
-                      <Input
-                        type="text"
-                        name="nombre_fiscal"
-                        onChange={(e) => setForm({ ...form, nombre_fiscal: String(e.target.value) })}
-                        defaultValue={form.nombre_fiscal}
-                      />
-                      <br />
+                      <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} />
                     </Col>
 
                     {/* <Col sm="6">
@@ -1632,7 +1439,7 @@ function Clientes() {
                     </Row>
                     <br />
                     <div>
-                      <Card style={{ width: "700px", height: "400px" }}>
+                      <Card style={{ width: "400px", height: "400px" }}>
                         <CardBody>
                           <h3>Historial citas futuras</h3>
                           <br />
@@ -1651,15 +1458,15 @@ function Clientes() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {datah1.map((item, index) => (
-                                  <tr key={index}>
-                                    <td>{item.Fecha}</td>
-                                    <td>{item.hora}</td>
-                                    <td>{item.NombreSuc}</td>
-                                    <td>{item.Producto_Servicio}</td>
-                                    <td>{item.Estilista}</td>
-                                    <td>{item.nombreUsrRegistra}</td>
-                                    <td>{item.Fecha}</td>
+                                {datah3.map((itemf, indexf) => (
+                                  <tr key={indexf}>
+                                    <td>{itemf.Fecha}</td>
+                                    <td>{itemf.hora}</td>
+                                    <td>{itemf.NombreSuc}</td>
+                                    <td>{itemf.Producto_Servicio}</td>
+                                    <td>{itemf.Estilischacota}</td>
+                                    <td>{itemf.nombreUsrRegistra}</td>
+                                    <td>{itemf.Fecha}</td>
                                     {/* Agrega más celdas según tus datos */}
                                   </tr>
                                 ))}
