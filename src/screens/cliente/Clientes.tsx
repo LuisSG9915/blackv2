@@ -279,7 +279,7 @@ function Clientes() {
             telefono: form.telefono,
             email: form.email,
             fecha_nac: form.fecha_nac,
-            redsocial1: form.redsocial1,
+            redsocial1: form.redsocial1 ? form.redsocial1 : "...",
             redsocial2: "...",
             redsocial3: "...",
           },
@@ -364,7 +364,7 @@ function Clientes() {
             claveRegistroMovil: form.claveRegistroMovil ? form.claveRegistroMovil : "...",
             fecha_alta: fechaHoy,
             fecha_act: fechaHoy,
-            rs1: form.redSocial1,
+            rs1: form.redSocial1 ? form.redSocial1 : "...",
             rs2: "...",
             rs3: "...",
           },
@@ -425,7 +425,7 @@ function Clientes() {
   }, []);
 
   const mostrarModalActualizar = (dato: Cliente) => {
-    setForm({ ...dato, fecha_nac: dato.fecha_nac.split("T")[0] });
+    setForm({ ...dato, fecha_nac: dato.fecha_nac ? dato.fecha_nac.split("T")[0] : "" });
     setModalActualizar(true);
   };
 
@@ -914,8 +914,18 @@ function Clientes() {
         size: 100,
       },
       {
+        accessorKey: "domicilio",
+        header: "Domicilio",
+        size: 100,
+      },
+      {
         accessorKey: "telefono",
         header: "Teléfono",
+        size: 100,
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
         size: 100,
       },
       {
@@ -1378,7 +1388,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />
