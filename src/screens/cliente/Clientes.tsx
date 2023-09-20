@@ -1507,12 +1507,12 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />
                     <div>
-                      <Card style={{ width: "400px", height: "400px" }}>
+                      <Card style={{ width: "700px", height: "500px" }}>
                         <CardBody>
                           <h3>Historial citas futuras</h3>
                           <br />
