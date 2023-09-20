@@ -489,36 +489,6 @@ function Clientes() {
     setModalOpenH(!modalOpen);
   };
 
-  // const historialCitaFutura = (dato: any) => {
-  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
-  //     setData1(response.data);
-  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
-  //   });
-  // };
-
-  //yyyyyyyyy
-  // const [datah1, setData2] = useState<any[]>([]);
-
-  // const historialCitaFutura = (dato: any) => {
-  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${data.id}}`).then((response) => {
-  //     const dataConFechasFormateadas = response.data.map((item: any) => ({
-  //       ...item,
-  //       fechaCita: new Date(item.fechaCita).toLocaleDateString(),
-  //       fechaAlta: new Date(item.fechaAlta).toLocaleDateString(),
-  //     }));
-  //     setData2(dataConFechasFormateadas);
-  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
-  //   });
-  // };
-
-  // const mostrarModalDetalle = async (dato: Cliente) => {
-  //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
-  //   if (permiso === false) {
-  //     return; // Si el permiso es falso, se sale de la función
-  //   }
-  //   setClienteSeleccionado(dato);
-  //   setModalDetalle(true);
-  // };
 
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
 
@@ -674,6 +644,15 @@ function Clientes() {
   const handleReload = () => {
     window.location.reload();
   };
+
+
+  // Función para formatear la fecha
+  function formatDate(dateString: string) {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const formattedDate = new Date(dateString).toLocaleDateString('es-ES', options);
+    return formattedDate;
+  }
+
 
   const [datah3, setData3] = useState<any[]>([]); // Definir el estado datah
   const historialcitaFutura = (id) => {
@@ -1178,12 +1157,12 @@ function Clientes() {
                       />
                     </Col>
                     <Col sm="6">
-                      <Label>Fecha de nacimiento:</Label>
-                      <Input
+                      <CFormGroupInput
                         type="date"
-                        name="fecha_nac"
-                        onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
-                        defaultValue={form.fecha_nac}
+                        handleChange={handleChange}
+                        inputName="fecha_nac"
+                        labelName="Fecha de nacimiento:"
+                        value={form.fecha_nac}
                       />
                     </Col>
 
@@ -1448,7 +1427,10 @@ function Clientes() {
                           <strong>Domicilio:</strong> {clienteSeleccionado.domicilio}
                         </p>
                         <p>
-                          <strong>Fecha de nacimiento:</strong> {clienteSeleccionado.fecha_nac}
+                          <strong>Fecha de nacimiento:</strong> {formatDate(clienteSeleccionado.fecha_nac)}
+
+
+                          {/* <strong>Fecha de nacimiento:</strong> {clienteSeleccionado.fecha_nac} */}
                         </p>
                         <p>
                           <strong>Ciudad:</strong> {clienteSeleccionado.ciudad}
@@ -1512,7 +1494,7 @@ function Clientes() {
                     </Row>
                     <br />
                     <div>
-                      <Card style={{ width: "700px", height: "500px" }}>
+                      <Card style={{ maxWidth: "100%", height: "auto" }}>
                         <CardBody>
                           <h3>Historial citas futuras</h3>
                           <br />
@@ -1533,13 +1515,13 @@ function Clientes() {
                               <tbody>
                                 {datah3.map((itemf, indexf) => (
                                   <tr key={indexf}>
-                                    <td>{itemf.Fecha}</td>
+                                    <td>{itemf.fechaCita.split("T")[0]}</td>
                                     <td>{itemf.hora}</td>
-                                    <td>{itemf.NombreSuc}</td>
-                                    <td>{itemf.Producto_Servicio}</td>
-                                    <td>{itemf.Estilischacota}</td>
+                                    <td>{itemf.nombreSuc}</td>
+                                    <td>{itemf.Servicio}</td>
+                                    <td>{itemf.Estilista}</td>
                                     <td>{itemf.nombreUsrRegistra}</td>
-                                    <td>{itemf.Fecha}</td>
+                                    <td>{itemf.fechaAlta.split("T")[0]}</td>
                                     {/* Agrega más celdas según tus datos */}
                                   </tr>
                                 ))}
