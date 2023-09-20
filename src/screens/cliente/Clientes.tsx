@@ -19,8 +19,7 @@ import {
   TabPane,
   Col,
   Card,
-  CardBody
-
+  CardBody,
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -50,7 +49,6 @@ function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 
-
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -68,14 +66,12 @@ function Clientes() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cli_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-
         if (response.data[0].permiso === false) {
           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -138,7 +134,6 @@ function Clientes() {
     redsocial3: "",
   });
 
-
   const [dataTemporal, setDataTemporal] = useState<Venta>({
     id: 0,
     Sucursal: 0,
@@ -178,7 +173,6 @@ function Clientes() {
     idestilistaAux: 0,
     idRecepcionista: 0,
   });
-
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
@@ -282,7 +276,6 @@ function Clientes() {
     return camposVacios.length === 0;
   };
 
-
   const insertar = async () => {
     const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
     if (permiso === false) {
@@ -306,7 +299,6 @@ function Clientes() {
             redsocial1: form.redsocial1,
             redsocial2: "...",
             redsocial3: "...",
-
           },
         })
         .then((response) => {
@@ -325,8 +317,6 @@ function Clientes() {
     }
   };
 
-
-
   const insertar1 = async () => {
     /* CREATE */
     const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
@@ -340,7 +330,6 @@ function Clientes() {
         .post(
           // `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
           `/ Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${form.redsocial1}&redsocial2="..."&redsocial3="..."`
-
         )
         .then((response) => {
           Swal.fire({
@@ -491,9 +480,7 @@ function Clientes() {
     historial(dato.id_cliente);
     historialcitaFutura(dato.id_cliente);
     setClienteSeleccionado(dato);
-
   };
-
 
   // const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
   const [modalOpen, setModalOpenH] = useState(false);
@@ -523,7 +510,6 @@ function Clientes() {
   //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
   //   });
   // };
-
 
   // const mostrarModalDetalle = async (dato: Cliente) => {
   //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
@@ -597,18 +583,16 @@ function Clientes() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
-    const trimmedValue = value.replace(/^\s+/g, '');
+    const trimmedValue = value.replace(/^\s+/g, "");
     setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(form);
   };
-
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
   //   const { name, value } = e.target;
   //   const checked = (e.target as HTMLInputElement).checked;
 
   //   // Eliminar espacios en blanco al principio de la cadena
-
 
   //   if (name === "plastico_activo" || name === "suspendido") {
   //     setForm((prevState) => ({ ...prevState, [name]: checked }));
@@ -617,9 +601,6 @@ function Clientes() {
   //     setForm((prevState: Cliente) => ({ ...prevState, [name]: trimmedValue }));
   //   }
   // };
-
-
-
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
@@ -696,13 +677,12 @@ function Clientes() {
 
   const [datah3, setData3] = useState<any[]>([]); // Definir el estado datah
   const historialcitaFutura = (id) => {
-    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${id}}`).then((response) => {
+    jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${id}`).then((response) => {
       console.log(response.data);
       setData3(response.data);
       // Abrir o cerrar el modal cuando los datos se hayan cargado
     });
   };
-
 
   const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
   const historial = (id) => {
@@ -733,7 +713,6 @@ function Clientes() {
     }, 0);
     setTotalImportes(total);
   }, [historialDetalle]);
-
 
   const loadHistorialDetalle = async (cveCliente: number, noVenta: number, idProducto: number, idSucursal: number) => {
     await jezaApi
@@ -792,7 +771,12 @@ function Clientes() {
               <button
                 disabled={isDisabled} // Establecer la propiedad disabled según isDisabled
                 onClick={() => {
-                  loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
+                  loadHistorialDetalle(
+                    row.original.Cve_cliente,
+                    row.original.NumVenta,
+                    row.original.idProducto,
+                    row.original.sucursal
+                  );
                   setParamsDetalles({
                     Cve_cliente: row.original.Cve_cliente,
                     idProducto: row.original.idProducto,
@@ -912,7 +896,11 @@ function Clientes() {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
+        Cell: ({ cell }) => (
+          <span>
+            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        ),
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -966,7 +954,11 @@ function Clientes() {
         Cell: ({ cell }) => (
           <>
             <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} />
-            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
+            <AiFillEdit
+              className="mr-2"
+              onClick={() => mostrarModalActualizar(cell.row.original)}
+              size={23}
+            ></AiFillEdit>
             <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} />
           </>
         ),
@@ -997,11 +989,9 @@ function Clientes() {
           return <span>{fecha}</span>;
         },
       },
-
     ],
     []
   );
-
 
   return (
     <>
@@ -1012,7 +1002,10 @@ function Clientes() {
         <Row>
           <Container fluid>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Clientes <BsPersonBoundingBox size={35} /></h1>
+              <h1>
+                {" "}
+                Clientes <BsPersonBoundingBox size={35} />
+              </h1>
             </div>
             <br />
             <br />
@@ -1042,7 +1035,6 @@ function Clientes() {
               <br />
               <br />
               <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} />
-
             </Row>
           </Container>
           <br />
@@ -1063,7 +1055,12 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="domicilio"
+                labelName="Domicilio:"
+                value={form.domicilio}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
@@ -1072,13 +1069,23 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="colonia"
+                labelName="Colonia:"
+                value={form.colonia}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="telefono"
+                labelName="Teléfono:"
+                value={form.telefono}
+              />
             </Col>
 
             <Col sm="6">
@@ -1086,12 +1093,22 @@ function Clientes() {
             </Col>
 
             <Col sm="6">
-              <CFormGroupInput type="date" handleChange={handleChange} inputName="fecha_nac" labelName="Fecha de nacimiento:" value={form.fecha_nac} />
+              <CFormGroupInput
+                type="date"
+                handleChange={handleChange}
+                inputName="fecha_nac"
+                labelName="Fecha de nacimiento:"
+                value={form.fecha_nac}
+              />
             </Col>
 
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} />
-
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="redsocial1"
+                labelName="Instagram:"
+                value={form.redsocial1}
+              />
             </Col>
             {/* <Col sm="6">
               <Label>Red social 2:</Label>
@@ -1113,9 +1130,6 @@ function Clientes() {
               />
               <br />
             </Col> */}
-
-
-
           </Row>
         </ModalBody>
         <ModalFooter>
@@ -1156,10 +1170,14 @@ function Clientes() {
                 <TabPane tabId="1">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="nombre"
+                        labelName="Nombre:"
+                        value={form.nombre}
+                      />
                     </Col>
                     <Col sm="6">
-
                       <Label>Fecha de nacimiento:</Label>
                       <Input
                         type="date"
@@ -1170,23 +1188,48 @@ function Clientes() {
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="domicilio"
+                        labelName="Domicilio:"
+                        value={form.domicilio}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="ciudad"
+                        labelName="Ciudad:"
+                        value={form.ciudad}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="estado"
+                        labelName="Estado:"
+                        value={form.estado}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="colonia"
+                        labelName="Colonia:"
+                        value={form.colonia}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="cp"
+                        labelName="Código postal:"
+                        value={form.cp}
+                      />
                     </Col>
 
                     <Col sm="6">
@@ -1199,25 +1242,55 @@ function Clientes() {
                 <TabPane tabId="2">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="telefono"
+                        labelName="Teléfono:"
+                        value={form.telefono}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="email"
+                        labelName="Email:"
+                        value={form.email}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="redSocial1" labelName="Instagram:" value={form.redSocial1} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="redSocial1"
+                        labelName="Instagram:"
+                        value={form.redSocial1}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="correo_factura" labelName="Correo de facturación:" value={form.correo_factura} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="correo_factura"
+                        labelName="Correo de facturación:"
+                        value={form.correo_factura}
+                      />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Regimen fiscal:" value={form.regimenFiscal} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="regimenFiscal"
+                        labelName="Regimen fiscal:"
+                        value={form.regimenFiscal}
+                      />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="nombre_fiscal"
+                        labelName="Nombre fiscal:"
+                        value={form.nombre_fiscal}
+                      />
                     </Col>
 
                     {/* <Col sm="6">
@@ -1434,7 +1507,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />
@@ -1480,9 +1553,7 @@ function Clientes() {
                     <br />
                   </TabPane>
                 </TabContent>
-
               </Card>
-
             </Container>
           )}
 
@@ -1502,7 +1573,6 @@ function Clientes() {
         
             </div>
           )} */}
-
         </ModalBody>
         <ModalFooter>
           <CButton text="Cerrar" color="danger" onClick={() => setModalDetalle(false)} />
@@ -1563,7 +1633,6 @@ function Clientes() {
           </div>
         </ModalBody>
       </Modal>
-
 
       {/* Modal for showing client details */}
       {/* <Modal isOpen={modalDetalle} toggle={toggleModalDetalle} size="lg">
