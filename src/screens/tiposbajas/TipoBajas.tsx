@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
 import CButton from "../../components/CButton";
 import { RiUserUnfollowLine } from "react-icons/ri";
+import CFormGroupInput from "../../components/CFormGroupInput";
 
 function TipoBajas() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -292,36 +293,36 @@ function TipoBajas() {
         <SidebarHorizontal />
       </Row>
       <Container>
-        <br />
+
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1>Tipos de baja</h1>
-          <RiUserUnfollowLine size={30} />
+          <h1>Tipos de baja  <RiUserUnfollowLine size={30} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear tipo de baja
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear tipo de baja
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
