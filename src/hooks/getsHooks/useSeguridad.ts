@@ -43,6 +43,12 @@ const useSeguridad = () => {
         console.log(response.data[0].permiso);
         return false; // No se otorga el permiso
       }
+    }else{
+       Swal.fire({
+          icon: "error",
+          title: "",
+          text: `Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
+        });
     }
 
     return true; // Se otorga el permiso

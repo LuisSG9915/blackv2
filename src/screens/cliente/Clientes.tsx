@@ -402,11 +402,16 @@ function Clientes() {
     }
   };
 
-  const eliminar = async (dato: any) => {
+  const permiso_elimina = async (dato: any) => {
     const permiso = await filtroSeguridad("CAT_CLIENT_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    } else {
+      eliminar();
     }
+  };
+
+  const eliminar = () => {
     /* DELETE */
     Swal.fire({
       title: "ADVERTENCIA",
@@ -445,27 +450,6 @@ function Clientes() {
     setForm({ ...dato, fecha_nac: dato.fecha_nac ? dato.fecha_nac.split("T")[0] : "" });
     setModalActualizar(true);
   };
-
-  // const mostrarModalDetalle = (dato: Cliente) => {
-  //   setForm(dato);
-  //   setModalDetalle(true);
-  // };
-
-  // /* DETALLE */
-  // const [modalDetalle, setModalDetalle] = useState(false);
-
-  // const toggleDetalleModal = async (idCliente: number) => {
-  //   const permiso = await filtroSeguridad("CAT_CLIENTE_VIEW");
-  //   if (permiso === false) {
-  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-  //   }
-  //   // Buscar los datos correspondientes al idCliente en tu fuente de datos
-  //   const rowData = data.find((dato) => dato.id_cliente === idCliente);
-
-  //   // Actualizar el estado del modal y los datos del "row" seleccionado
-  //   setModalDetalle(!modalDetalle);
-  //   setDetalleRowData(data);
-  // };
 
   // State for the modal visibility
   const [modalDetalle, setModalDetalle] = useState(false);
@@ -525,30 +509,6 @@ function Clientes() {
     });
   };
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   const checked = (e.target as HTMLInputElement).checked;
-  //   if (name === "plastico_activo" || name === "suspendido") {
-  //     setForm((prevState) => ({ ...prevState, [name]: checked }));
-  //   } else {
-  //     setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
-  //   }
-  // };
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
-  // };
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-
-  //   // Elimina espacios en blanco al comienzo de la cadena
-  //   const trimmedValue = value.trim();
-
-  //   setForm((prevState: Cliente) => ({ ...prevState, [name]: trimmedValue }));
-  // };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
@@ -557,20 +517,6 @@ function Clientes() {
     console.log(form.fecha_nac);
     console.log(form);
   };
-
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   const checked = (e.target as HTMLInputElement).checked;
-
-  //   // Eliminar espacios en blanco al principio de la cadena
-
-  //   if (name === "plastico_activo" || name === "suspendido") {
-  //     setForm((prevState) => ({ ...prevState, [name]: checked }));
-  //   } else {
-  //     const trimmedValue = typeof value === 'string' ? value.replace(/^\s+/g, '') : value;
-  //     setForm((prevState: Cliente) => ({ ...prevState, [name]: trimmedValue }));
-  //   }
-  // };
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
@@ -608,8 +554,8 @@ function Clientes() {
         <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(params.row)} size={23} />
         {/* <AiFillEye className="mr-2" onClick={() => toggleModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
-        <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete>
-        {/* <AiFillDelete color="lightred" onClick={() => console.log(params.row.id)} size={23}></AiFillDelete> */}
+        {/* <AiFillDelete color="lightred" onClick={() => permiso_elimina(params.row)} size={23}></AiFillDelete> */}
+        <AiFillDelete color="lightred" onClick={() => alert(params.row.id)} size={23}></AiFillDelete>
       </>
     );
   };
@@ -936,7 +882,12 @@ function Clientes() {
               onClick={() => mostrarModalActualizar(cell.row.original)}
               size={23}
             ></AiFillEdit>
-            <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} />
+            {/* <AiFillDelete color="lightred" onClick={() => eliminar()} size={23} /> */}
+            <AiFillDelete
+              color="lightred"
+              onClick={() => alert(cell.row.original.id_cliente + "---" + cell.row.original.nombre)}
+              size={23}
+            ></AiFillDelete>
           </>
         ),
       },
