@@ -83,7 +83,7 @@ function TipoBajas() {
   } = useModalHook();
   const [data, setData] = useState<TiposdeBajas[]>([]); /* setear valores  */
   const [form, setForm] = useState<TiposdeBajas>({
-    id: 1,
+    id: 0,
     descripcion_baja: "",
   });
 
@@ -137,7 +137,7 @@ function TipoBajas() {
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Baja creada con éxito",
+            text: "Tipo de baja creada con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalInsertar(false);
@@ -240,6 +240,14 @@ function TipoBajas() {
     window.location.reload();
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+  };
+
   const LimpiezaForm = () => {
     setForm({ id: 0, descripcion_baja: "" });
   };
@@ -268,7 +276,7 @@ function TipoBajas() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 600, width: "100%" }}>
         <div style={{ height: "100%", width: "100%" }}>
           <DataGrid
             rows={data}
@@ -335,12 +343,13 @@ function TipoBajas() {
           <h3>Crear tipo de baja</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
-            type="text"
-            name={"descripcion"}
-            onChange={(e) => setForm({ ...form, descripcion_baja: e.target.value })}
+
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_baja"
+            labelName="Descripción de la baja:"
             value={form.descripcion_baja}
-          ></Input>
+          />
         </ModalBody>
         <ModalFooter>
           <CButton text="Guardar tipo de baja" color="success" onClick={insertar} />
@@ -354,12 +363,20 @@ function TipoBajas() {
           <h3> Editar tipo de baja</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
+          {/* <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_baja: e.target.value })}
             value={form.descripcion_baja}
-          ></Input>
+          ></Input> */}
+
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_baja"
+            labelName="Descripción de la baja:"
+            value={form.descripcion_baja}
+          />
+
         </ModalBody>
         <ModalFooter>
           <CButton text="Actualizar" color="primary" onClick={editar} />
