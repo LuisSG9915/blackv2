@@ -33,6 +33,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { GiHumanPyramid } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
+import CFormGroupInput from "../../components/CFormGroupInput";
 
 function PuestoRecursosHumanos() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -101,6 +102,16 @@ function PuestoRecursosHumanos() {
 
   // Update ---> PUT
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+  };
+
+
+
   //VALIDACIÓN---->
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
@@ -127,6 +138,7 @@ function PuestoRecursosHumanos() {
     }
     return camposVacios.length === 0;
   };
+
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
@@ -212,7 +224,7 @@ function PuestoRecursosHumanos() {
   };
 
   const eliminar = async (dato: RecursosHumanosPuesto) => {
-    const permiso = await filtroSeguridad("CAT_PUESTO_DELS");
+    const permiso = await filtroSeguridad("CAT_PUESTO_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -287,7 +299,7 @@ function PuestoRecursosHumanos() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 500, width: "100%" }}>
         <div style={{ height: "100%", width: "100%" }}>
           <DataGrid
             rows={data}
@@ -377,34 +389,33 @@ function PuestoRecursosHumanos() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1>Puestos recursos humanos</h1>
-          <GiHumanPyramid size={30} />
+          <h1>Puestos recursos humanos <GiHumanPyramid size={30} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear puesto
-          </Button>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear puesto
+            </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
-
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -417,12 +428,12 @@ function PuestoRecursosHumanos() {
           <h3> Crear puesto</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
-            type="text"
-            name={"descripcion"}
-            onChange={(e) => setForm({ ...form, descripcion_puesto: e.target.value })}
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_puesto"
+            labelName="Descripción de puesto:"
             value={form.descripcion_puesto}
-          ></Input>
+          />
         </ModalBody>
         <ModalFooter>
           <CButton color="success" text="Guardar puesto" onClick={insertar} />
@@ -436,12 +447,12 @@ function PuestoRecursosHumanos() {
           <h3> Editar puesto</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
-            type="text"
-            name={"descripcion"}
-            onChange={(e) => setForm({ ...form, descripcion_puesto: e.target.value })}
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_puesto"
+            labelName="Descripción de puesto:"
             value={form.descripcion_puesto}
-          ></Input>
+          />
         </ModalBody>
         <ModalFooter>
           <CButton color="primary" text="Actualizar" onClick={editar} />

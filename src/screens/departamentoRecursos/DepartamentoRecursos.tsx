@@ -33,6 +33,8 @@ import CButton from "../../components/CButton";
 import { useNavigate } from "react-router-dom";
 import { Md6FtApart } from "react-icons/md";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import CFormGroupInput from "../../components/CFormGroupInput";
+
 function DepartamentoRecursos() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -129,7 +131,7 @@ function DepartamentoRecursos() {
 
   //AQUI COMIENZA MÉTODO AGREGAR TIPO BAJA
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_DEPARTAMENTOS_ADD");
+    const permiso = await filtroSeguridad("CAT_DEPTORH_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -140,7 +142,7 @@ function DepartamentoRecursos() {
         .post("/NominaDepartamento", null, {
           params: {
             descripcion_departamento: form.descripcion_departamento,
-            idSucursal: 21,
+            idSucursal: dataUsuarios2[0]?.sucursal,
           },
         })
         .then((response) => {
@@ -171,7 +173,7 @@ function DepartamentoRecursos() {
   // };
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_DEPARTAMENTOS_UPD");
+    const permiso = await filtroSeguridad("CAT_DEPTORH_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -181,7 +183,7 @@ function DepartamentoRecursos() {
           params: {
             id: form.id,
             descripcion_departamento: form.descripcion_departamento,
-            idSucursal: form.idSucursal,
+            idsuc: form.idSucursal,
           },
         })
         .then((response) => {
@@ -212,7 +214,7 @@ function DepartamentoRecursos() {
   // };
 
   const eliminar = async (dato: RecursosDepartamento) => {
-    const permiso = await filtroSeguridad("CAT_DEPARTAMENTOS_DEL");
+    const permiso = await filtroSeguridad("CAT_DEPTORH_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -267,6 +269,16 @@ function DepartamentoRecursos() {
     window.location.reload();
   };
 
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+  };
+
+
   const LimpiezaForm = () => {
     setForm({ id: 0, descripcion_departamento: "", idSucursal: 0 });
   };
@@ -298,7 +310,7 @@ function DepartamentoRecursos() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 600, width: "100%" }}>
         <div style={{ height: "100%", width: "100%" }}>
           <DataGrid
             rows={data}
@@ -324,33 +336,34 @@ function DepartamentoRecursos() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1>Tipos de departamentos</h1>
-          <Md6FtApart size={30} />
+          <h1>Tipos de departamentos <Md6FtApart size={30} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear departamento
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear departamento
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -363,12 +376,19 @@ function DepartamentoRecursos() {
           <h3> Editar tipo departamento</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_departamento"
+            labelName="Descripción del departamento:"
+            value={form.descripcion_departamento}
+          />
+
+          {/* <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_departamento: e.target.value })}
             value={form.descripcion_departamento}
-          ></Input>
+          ></Input> */}
         </ModalBody>
         <ModalFooter>
           <CButton text="Actualizar" color="primary" onClick={editar} />
@@ -382,12 +402,18 @@ function DepartamentoRecursos() {
           <h3>Crear tipo departamento</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_departamento"
+            labelName="Descripción del departamento:"
+            value={form.descripcion_departamento}
+          />
+          {/* <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_departamento: e.target.value })}
             value={form.descripcion_departamento}
-          ></Input>
+          ></Input> */}
         </ModalBody>
         <ModalFooter>
           <CButton text="Guardar departamento" color="success" onClick={insertar} />
