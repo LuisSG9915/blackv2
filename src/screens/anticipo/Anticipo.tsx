@@ -44,10 +44,11 @@ import TableCliente from "../ventas/Components/TableCliente";
 import { useClientes } from "../../hooks/getsHooks/useClientes";
 import TableClienteAnticipos from "../ventas/Components/TableClienteAnticipos";
 import { FormaPago } from "../../models/FormaPago";
-import MaterialReactTable from "material-react-table";
+import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
-
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -648,14 +649,14 @@ function Anticipo() {
     const formasPagosFiltradas = dataPago.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
     setFormasPagosFiltradas(formasPagosFiltradas);
   }, [dataPago]);
+
   return (
     <>
       <Row>
         <SidebarHorizontal />
       </Row>
       <Container>
-        {" "}
-        {/* <button onClick={handleOpenNewWindow}>Open New Window</button> */}
+       
         <Row>
           <Col>
             <Container fluid>
