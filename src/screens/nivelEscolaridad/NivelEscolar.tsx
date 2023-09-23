@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
 import CButton from "../../components/CButton";
 import { TbSchool } from "react-icons/tb";
+import CFormGroupInput from "../../components/CFormGroupInput";
 
 function NivelEscolar() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -262,6 +263,15 @@ function NivelEscolar() {
     window.location.reload();
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+  };
+
+
   const LimpiezaForm = () => {
     setForm({ id: 0, descripcion: "" });
   };
@@ -290,7 +300,7 @@ function NivelEscolar() {
 
   function DataTable() {
     return (
-      <div style={{ height: 300, width: "100%" }}>
+      <div style={{ height: 600, width: "100%" }}>
         <div style={{ height: "100%", width: "100%" }}>
           <DataGrid
             rows={data}
@@ -316,33 +326,33 @@ function NivelEscolar() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1>Nivel de escolaridad</h1>
-          <TbSchool size={40} />
+          <h1>Nivel de escolaridad <TbSchool size={40} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear nivel de escolaridad
-          </Button>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear escolaridad
+            </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
-
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -355,12 +365,20 @@ function NivelEscolar() {
           <h3>Crear nivel de escolaridad</h3>
         </ModalHeader>
         <ModalBody>
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion"
+            labelName="Nivel de escolaridad:"
+            value={form.descripcion}
+          />
+
+          {/* 
           <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
             value={form.descripcion}
-          ></Input>
+          ></Input> */}
         </ModalBody>
         <ModalFooter>
           <CButton text="Guardar nivel de escolaridad" color="success" onClick={insertar} />
@@ -374,12 +392,19 @@ function NivelEscolar() {
           <h3>Editar nivel de escolaridad</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion"
+            labelName="Nivel de escolaridad:"
+            value={form.descripcion}
+          />
+
+          {/* <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
             value={form.descripcion}
-          ></Input>
+          ></Input> */}
         </ModalBody>
         <ModalFooter>
           <CButton text="Actualizar" color="primary" onClick={editar} />

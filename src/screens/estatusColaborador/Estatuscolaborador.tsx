@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
 import CButton from "../../components/CButton";
 import { GrStatusUnknown } from "react-icons/gr";
+import CFormGroupInput from "../../components/CFormGroupInput";
 
 function Estatuscolaborador() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -265,6 +266,15 @@ function Estatuscolaborador() {
   const handleReload = () => {
     window.location.reload();
   };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+  };
+
+
 
   const LimpiezaForm = () => {
     setForm({ id: 0, descripcion_baja: "" });
@@ -320,33 +330,34 @@ function Estatuscolaborador() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Estatus de colaboradores</h1>
-          <GrStatusUnknown size={30} />
+          <h1> Estatus de colaboradores <GrStatusUnknown size={30} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear estatus
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear estatus
+            </Button>
 
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
@@ -359,12 +370,18 @@ function Estatuscolaborador() {
           <h3>Crear estatus</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
+          {/* <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_baja: e.target.value })}
             value={form.descripcion_baja}
-          ></Input>
+          ></Input> */}
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_baja"
+            labelName="Descripción del estatus:"
+            value={form.descripcion_baja}
+          />
         </ModalBody>
         <ModalFooter>
           <CButton text="Guardar estatus" color="success" onClick={insertar} />
@@ -378,12 +395,19 @@ function Estatuscolaborador() {
           <h3>Editar estatus</h3>
         </ModalHeader>
         <ModalBody>
-          <Input
+          <CFormGroupInput
+            handleChange={handleChange}
+            inputName="descripcion_baja"
+            labelName="Descripción del estatus:"
+            value={form.descripcion_baja}
+          />
+
+          {/* <Input
             type="text"
             name={"descripcion"}
             onChange={(e) => setForm({ ...form, descripcion_baja: e.target.value })}
             value={form.descripcion_baja}
-          ></Input>
+          ></Input> */}
         </ModalBody>
         <ModalFooter>
           <CButton text="Actualizar" color="primary" onClick={editar} />
