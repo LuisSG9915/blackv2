@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
-import { AccordionBody, AccordionHeader, AccordionItem, Button, Col, Container, Input, Label, Row, UncontrolledAccordion } from "reactstrap";
+import {
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+  Button,
+  Col,
+  Container,
+  Input,
+  Label,
+  Row,
+  UncontrolledAccordion,
+} from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
 import "../../../css/reportes.css";
 import { ExportToCsv } from "export-to-csv";
@@ -46,7 +57,6 @@ function DemoTresTablas() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -139,7 +149,7 @@ function DemoTresTablas() {
       .catch((error) => console.error("Error al obtener los datos:", error));
   }, []);
 
-  const handleExportData = () => {
+  const handleExportDataCorte1 = () => {
     const csvOptions = {
       fieldSeparator: ",",
       quoteStrings: '"',
@@ -147,12 +157,42 @@ function DemoTresTablas() {
       showLabels: true,
       useBom: true,
       useKeysAsHeaders: false,
-      headers: columnas.map((col) => col.header),
+      headers: columnsA.map((col) => col.header),
     };
 
     const csvExporter = new ExportToCsv(csvOptions);
-    csvExporter.generateCsv(reportes);
+    csvExporter.generateCsv(dataCorteEmailA);
   };
+  const handleExportDataCorte2 = () => {
+    const csvOptions = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      useBom: true,
+      useKeysAsHeaders: false,
+      headers: columnsB.map((col) => col.header),
+    };
+
+    const csvExporter = new ExportToCsv(csvOptions);
+    csvExporter.generateCsv(dataCorteEmailB);
+  };
+
+  const handleExportDataCorte3 = () => {
+    const csvOptions = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      useBom: true,
+      useKeysAsHeaders: false,
+      headers: columnsC.map((col) => col.header),
+    };
+
+    const csvExporter = new ExportToCsv(csvOptions);
+    csvExporter.generateCsv(dataCorteEmailC);
+  };
+
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -326,7 +366,7 @@ function DemoTresTablas() {
               <>
                 <h4>Corte 1</h4>
                 <Button
-                  onClick={handleExportData}
+                  onClick={handleExportDataCorte1}
                   variant="contained"
                   color="withe"
                   style={{ marginLeft: "auto" }}
@@ -351,7 +391,7 @@ function DemoTresTablas() {
               <>
                 <h4>Corte 2</h4>
                 <Button
-                  onClick={handleExportData}
+                  onClick={handleExportDataCorte2}
                   variant="contained"
                   color="withe"
                   style={{ marginLeft: "auto" }}
@@ -376,7 +416,7 @@ function DemoTresTablas() {
               <>
                 <h4>Corte 3</h4>
                 <Button
-                  onClick={handleExportData}
+                  onClick={handleExportDataCorte3}
                   variant="contained"
                   color="withe"
                   style={{ marginLeft: "auto" }}
