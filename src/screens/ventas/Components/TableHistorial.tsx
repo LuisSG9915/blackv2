@@ -25,32 +25,7 @@ interface Props {
 function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsModalOpen }: Props) {
   const cHistorial = useMemo<MRT_ColumnDef<any>[]>(
     () => [
-      // {
-      //   header: "Acciones",
-      //   Cell: ({ row }) => (
-      //     <LuCalendarSearch
-      //       size={23}
-      //       onClick={() => {
-      //         loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
-      //         setParamsDetalles({
-      //           Cve_cliente: row.original.Cve_cliente,
-      //           idProducto: row.original.idProducto,
-      //           numVenta: row.original.NumVenta,
-      //           sucursal: row.original.NombreSuc,
-      //           clave: row.original.id,
-      //           fecha: row.original.Fecha,
-      //         });
-      //         setIsModalOpen(true);
-      //       }}
-      //     />
-      //   ),
-      //   muiTableBodyCellProps: {
-      //     align: "center",
-      //   },
-      //   muiTableHeadCellProps: {
-      //     align: "center",
-      //   },
-      // },
+
       {
         header: "Acciones",
         Cell: ({ row }) => {

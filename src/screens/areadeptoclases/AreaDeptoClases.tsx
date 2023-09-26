@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
+import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import {
   Row,
   Container,
-  Card,
   Input,
-  Table,
   Modal,
   ModalBody,
   TabPane,
@@ -18,31 +16,26 @@ import {
   ModalHeader,
   Label,
   Col,
-  FormGroup
+  FormGroup,
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
-import useReadHook from "../../hooks/useReadHook";
-import TabPerfil from "../TabPerfil";
 import { Area } from "../../models/Area";
 import { Clase } from "../../models/Clase";
 import { Departamento } from "../../models/Departamento";
-//NUEVAS IMPOTACIONES
 import Swal from "sweetalert2";
-import { BsBuildingAdd } from "react-icons/bs";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import "../../../css/tablaestilos.css";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { HiBuildingStorefront } from "react-icons/hi2";
-import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { VscTypeHierarchy } from "react-icons/vsc";
 import { useAreas } from "../../hooks/getsHooks/useAreas";
 import { useDeptos } from "../../hooks/getsHooks/useDeptos";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 function AreaDeptoClases() {
   const [showView, setShowView] = useState(true);
@@ -65,14 +58,12 @@ function AreaDeptoClases() {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_area_dep_clas_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
-
         if (response.data[0].permiso === false) {
           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
           setShowView(false);
           handleRedirect();
         } else {
           setShowView(true);
-
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -101,17 +92,13 @@ function AreaDeptoClases() {
     cerrarModalInsertarClase,
   } = useModalHook();
 
-
-  const { dataAreas } = useAreas();
   const { dataDeptos } = useDeptos();
 
   const [deptoGet, setDeptoGet] = useState<Departamento[]>([]);
-  const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
   const [areasGet, setAreaGet] = useState<Area[]>([]);
   const [claseGet, setclaseGet] = useState<Clase[]>([]);
 
   const { filtroSeguridad, session } = useSeguridad();
-
 
   const [formArea, setArea] = useState<Area>({
     id: 0,
@@ -137,12 +124,6 @@ function AreaDeptoClases() {
     descripcion: "",
   });
 
-  const DataTableHeaderArea = ["Área", "Descripción", "Acciones"];
-  const DataTableHeaderClase = ["Área", "Departamento", "Clase", "Descripción", "Acciones"];
-  const DataTableHeaderDepto = ["Área", "Departamento", "Descripción", "Acciones"];
-
-  const [formValues, setFormValues] = useState({ area: 1, clase: 1, departamento: 1 });
-
   const mostrarModalActualizarArea = (dato: Area) => {
     setArea(dato);
     setModalActualizarArea(true);
@@ -158,49 +139,21 @@ function AreaDeptoClases() {
     setModalActualizarDepto(true);
   };
 
-  // const handleChangeArea = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   setArea((prevState) => ({ ...prevState, [name]: value }));
-  //   console.log(formArea);
-  // };
-
-  // const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   setClase((prevState) => ({ ...prevState, [name]: value }));
-  //   console.log(formClase);
-  // };
-
-  // const handleChangeAreaDepto = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   setDepto((prevState) => ({ ...prevState, [name]: value }));
-  //   console.log(formDepto);
-  // };
-
   ///handle con espacio
   const handleChangeArea = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
-    const trimmedValue = value.replace(/^\s+/g, '');
+    const trimmedValue = value.replace(/^\s+/g, "");
     setArea((prevState) => ({ ...prevState, [name]: trimmedValue }));
-    console.log(formArea);
   };
-
 
   const handleChangeAreaDepto = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
-    const trimmedValue = value.replace(/^\s+/g, '');
+    const trimmedValue = value.replace(/^\s+/g, "");
     setDepto((prevState) => ({ ...prevState, [name]: trimmedValue }));
-    console.log(formDepto);
   };
 
-  // const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-  //   const { name, value } = e.target;
-  //   // Eliminar espacios en blanco al principio de la cadena
-  //   const trimmedValue = value.replace(/^\s+/g, '');
-  //   setClase((prevState) => ({ ...prevState, [name]: trimmedValue }));
-  //   console.log(formClase);
-  // };
   const handleChangeAreaDeptoClase = (e) => {
     const { name, value } = e.target;
 
@@ -212,9 +165,6 @@ function AreaDeptoClases() {
       setClase({ ...formClase, [name]: value });
     }
   };
-
-
-
 
   //VALIDACIÓN AREA ---->
   const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
@@ -251,8 +201,6 @@ function AreaDeptoClases() {
     setArea({ id: 0, area: 0, descripcion: "" });
   };
 
-
-
   //VALIDACIÓN DEPTO---->
   const [camposFaltantes2, setCamposFaltantes2] = useState<string[]>([]);
 
@@ -284,8 +232,6 @@ function AreaDeptoClases() {
   const LimpiezaFormDepto = () => {
     setDepto({ id: 0, area: 0, d_area: "", depto: 0, descripcion: "" });
   };
-
-
 
   //VALIDACIÓN CLASE---->
   const [camposFaltantes3, setCamposFaltantes3] = useState<string[]>([]);
@@ -322,15 +268,12 @@ function AreaDeptoClases() {
     setClase({ id: 0, clase: 0, d_area: "", area: 0, depto: 0, d_depto: "", descripcion: "" });
   };
 
-
   //AQUI COMIENZA MÉTODO AGREGAR AREA
   const insertar1 = async () => {
     const permiso = await filtroSeguridad("CAT_AREA-ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos1());
-    console.log({ formArea });
     if (validarCampos1() === true) {
       await jezaApi
         .post("/Area", null, {
@@ -355,14 +298,11 @@ function AreaDeptoClases() {
   };
 
   //AQUI COMIENZA MÉTODO AGREGAR DEPTO
-  const [estado2, setEstado2] = useState("");
   const insertar2 = async () => {
     const permiso = await filtroSeguridad("CAT_DEPTOS_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos2());
-    console.log({ formDepto });
     if (validarCampos2() === true) {
       await jezaApi
         .post("/Depto", null, {
@@ -387,15 +327,12 @@ function AreaDeptoClases() {
     }
   };
 
-
   //AQUI COMIENZA MÉTODO AGREGAR CLASE
   const insertar3 = async () => {
     const permiso = await filtroSeguridad("CAT_CLASES_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos3());
-    console.log({ formClase });
     if (validarCampos3() === true) {
       await jezaApi
         .post("/Clase", null, {
@@ -477,8 +414,6 @@ function AreaDeptoClases() {
     }
   };
 
-
-
   const editClase = async () => {
     const permiso = await filtroSeguridad("CAT_CLASES_UPD");
     if (permiso === false) {
@@ -538,18 +473,6 @@ function AreaDeptoClases() {
     });
   };
 
-
-  // const eliminar2 = (dato: Clase) => {
-
-  //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.clase}`);
-  //   if (opcion) {
-  //     jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
-  //       setModalActualizarClase(false);
-  //       getClases();
-  //     });
-  //   }
-  // };
-
   const eliminar2 = async (dato: Clase) => {
     const permiso = await filtroSeguridad("CAT_CLASES_DEL");
     if (permiso === false) {
@@ -576,12 +499,6 @@ function AreaDeptoClases() {
       }
     });
   };
-
-
-
-
-
-
 
   // ELIMINAR DEPARTAMENTO
   const eliminar3 = async (dato: Departamento) => {
@@ -611,7 +528,6 @@ function AreaDeptoClases() {
     });
   };
 
-
   const getAreas = () => {
     jezaApi.get("/Area?area=0").then((response) => {
       setAreaGet(response.data);
@@ -629,71 +545,17 @@ function AreaDeptoClases() {
     });
   };
 
-
-  useEffect(() => {
-    const quePedo = dataDeptos.filter((data) => data.area === Number(formClase.area));
-    setDeptoGet(quePedo);
-    console.log({ deptoGet });
-  }, [formClase.area, formDepto.area, formArea.area]);
-
-  useEffect(() => {
-    if (deptoGet.length > 0) {
-      // Verifica si el departamento seleccionado en formClase.depto existe en deptoGet
-      const departamentoExistente = deptoGet.find((depto) => depto.depto === formClase.depto);
-
-      // Si no existe, establece el primer departamento de deptoGet como seleccionado
-      if (!departamentoExistente) {
-        setClase({ ...formClase, depto: deptoGet[0].depto });
-      }
-    }
-  }, [deptoGet]);
-
-
-
   useEffect(() => {
     getAreas();
     getClases();
     getDepartamentos();
-
-    const departamentosFiltrados = deptoGet.filter((departamento) => {
-      return departamento.area === 1;
-    });
-
-    console.log(departamentosFiltrados);
   }, []);
-
-  // const insertar = () => {
-  //   jezaApi
-  //     .post("/Area", null, {
-  //       params: {
-  //         description: "",
-  //       },
-  //     })
-  //     .catch((e) => console.log(e));
-  //   setModalInsertar(false);
-  // };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormValues((prevState: any) => ({ ...prevState, [name]: Number(value) }));
-    console.log(formValues);
-  };
-  const handleNav = () => {
-    navigate("/AreaDeptoClasesCrear");
-  };
-
-  const [isSidebarVisible, setSidebarVisible] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarVisible(!isSidebarVisible);
-  };
 
   const [activeTab, setActiveTab] = useState("1");
   const toggleTab = (tab: React.SetStateAction<string>) => {
     if (activeTab !== tab) setActiveTab(tab);
     getAreas();
     getClases();
-
   };
 
   // Redirige a la ruta "/app"
@@ -729,7 +591,6 @@ function AreaDeptoClases() {
     );
   };
 
-
   function DataTable() {
     return (
       <div style={{ height: 600, width: "100%" }}>
@@ -751,8 +612,6 @@ function AreaDeptoClases() {
     );
   }
 
-
-
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE DEPARTAMENTOS
   const columns2: GridColDef[] = [
     {
@@ -761,10 +620,7 @@ function AreaDeptoClases() {
       flex: 0,
       headerClassName: "custom-header",
     },
-
-    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
     { field: "d_area", headerName: "Áreas descripción", flex: 1, headerClassName: "custom-header" },
-    // { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
     { field: "descripcion", headerName: "Departamentos", flex: 1, headerClassName: "custom-header" },
   ];
 
@@ -798,7 +654,6 @@ function AreaDeptoClases() {
     );
   }
 
-
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE DEPART
   const columns3: GridColDef[] = [
     {
@@ -807,12 +662,8 @@ function AreaDeptoClases() {
       flex: 0,
       headerClassName: "custom-header",
     },
-
-    // { field: "area", headerName: "Área", flex: 1, headerClassName: "custom-header" },
     { field: "d_area", headerName: "Áreas descripción", flex: 1, headerClassName: "custom-header" },
-    // { field: "depto", headerName: "Departamento", flex: 1, headerClassName: "custom-header" },
     { field: "d_depto", headerName: "Departamentos descripción", flex: 1, headerClassName: "custom-header" },
-    // { field: "clase", headerName: "Clase", flex: 1, headerClassName: "custom-header" },
     { field: "descripcion", headerName: "Clases", flex: 1, headerClassName: "custom-header" },
   ];
 
@@ -846,8 +697,6 @@ function AreaDeptoClases() {
     );
   }
 
-
-
   return (
     <>
       <Row>
@@ -858,11 +707,12 @@ function AreaDeptoClases() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Áreas, Departamentos y Clases <VscTypeHierarchy size={30}></VscTypeHierarchy></h1>
-
+                <h1>
+                  {" "}
+                  Áreas, Departamentos y Clases <VscTypeHierarchy size={30}></VscTypeHierarchy>
+                </h1>
               </div>
             </Container>
-
 
             <br />
             <Nav tabs>
@@ -913,32 +763,8 @@ function AreaDeptoClases() {
                 <br />
 
                 <Row>
-
                   <br />
                   <DataTable></DataTable>
-                  {/* <Table size="sm" striped={true} responsive={true}>
-                    <thead>
-                      <tr>
-                        {DataTableHeaderArea.map((valor) => (
-                          <th className="" key={valor}>
-                            {valor}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {areasGet.map((dato: Area) => (
-                        <tr key={dato.area}>
-                          <td>{dato.area}</td>
-                          <td>{dato.descripcion}</td>
-                          <td style={{ width: 20 }}>
-                            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizarArea(dato)} size={23}></AiFillEdit>
-                            <AiFillDelete color="lightred" onClick={() => eliminar1(dato)} size={23}></AiFillDelete>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table> */}
                 </Row>
                 <br />
               </TabPane>
@@ -953,7 +779,6 @@ function AreaDeptoClases() {
                       color="success"
                       onClick={() => {
                         setModalInsertarDepto(true);
-                        setEstado2("insert");
                         LimpiezaFormDepto();
                       }}
                     >
@@ -970,33 +795,6 @@ function AreaDeptoClases() {
                 <br />
                 <DataTableDepto></DataTableDepto>
                 <br />
-
-                {/* <Row>
-                  <Table size="sm" striped={true} responsive={true}>
-                    <thead>
-                      <tr>
-                        {DataTableHeaderDepto.map((valor) => (
-                          <th className="" key={valor}>
-                            {valor}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {deptoGet.map((dato: any) => (
-                        <tr key={dato.id}>
-                          <td>{dato.area}</td>
-                          <td>{dato.depto}</td>
-                          <td>{dato.descripcion}</td>
-                          <td style={{ width: 20 }}>
-                            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizarDepto(dato)} size={23}></AiFillEdit>
-                            <AiFillDelete color="lightred" onClick={() => eliminar3(dato)} size={23}></AiFillDelete>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </Row> */}
               </TabPane>
 
               <TabPane tabId="3">
@@ -1026,37 +824,8 @@ function AreaDeptoClases() {
                 <br />
                 <DataTableClase></DataTableClase>
                 <br />
-                {/* <Row>
-                  <Table size="sm" striped={true} responsive={true}>
-                    <thead>
-                      <tr>
-                        {DataTableHeaderClase.map((valor) => (
-                          <th className="" key={valor}>
-                            {valor}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {claseGet.map((dato: Clase) => (
-                        <tr key={dato.area}>
-                          <td>{dato.area}</td>
-                          <td>{dato.depto}</td>
-                          <td>{dato.clase}</td>
-                          <td>{dato.descripcion}</td>
-                          <td style={{ width: 20 }}>
-                            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizarClase(dato)} size={23}></AiFillEdit>
-                            <AiFillDelete color="lightred" onClick={() => eliminar2(dato)} size={23}></AiFillDelete>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </Row> */}
               </TabPane>
             </TabContent>
-            {/* <TableSucursal dataCia={dataCias} DataTableHeader={DataTableHeader} data={data} eliminar={eliminar} mostrarModalActualizar={mostrarModalActualizar} /> */}
-            {/* <DataTable></DataTable> */}
           </Col>
         </Row>
       </Container>
@@ -1085,13 +854,7 @@ function AreaDeptoClases() {
         </ModalHeader>
         <ModalBody>
           <Label>Área:</Label>
-          <Input
-            type="select"
-            name="area"
-            id="area"
-            onChange={handleChangeAreaDepto}
-            value={formDepto.area}
-          >
+          <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formDepto.area}>
             <option value="">--Seleccione área--</option>
             {areasGet.map((option) => (
               <option key={option.area} value={option.area}>
@@ -1114,7 +877,6 @@ function AreaDeptoClases() {
         </ModalFooter>
       </Modal>
 
-
       {/* ACTUALIZAR CLASE */}
       <Modal isOpen={modalActualizarClase} size="xl">
         <ModalHeader>
@@ -1127,9 +889,11 @@ function AreaDeptoClases() {
             <Label for="area">Área:</Label>
             <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase}>
               <option value="">--Seleccione área--</option>
-              {areasGet.map((area) => (
-                <option value={area.area}>{area.descripcion}</option>
-              ))}{" "}
+              {areasGet.map((area: Area) => (
+                <option key={Number(area.area)} value={Number(area.area)}>
+                  {area.descripcion}
+                </option>
+              ))}
             </Input>
           </FormGroup>
           <br />
@@ -1137,9 +901,13 @@ function AreaDeptoClases() {
             <Label for="departamento">Departamento:</Label>
             <Input type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
               <option value="">--Seleccione un departamento--</option>
-              {deptoGet.map((depto) => (
-                <option value={depto.depto}>{depto.descripcion}</option>
-              ))}{" "}
+              {deptoGet
+                .filter((depto: Departamento) => Number(depto.area) === Number(formClase.area))
+                .map((depto: Departamento) => (
+                  <option key={Number(depto.depto)} value={Number(depto.depto)}>
+                    {depto.descripcion}
+                  </option>
+                ))}
             </Input>
           </FormGroup>
           <br />
@@ -1202,7 +970,6 @@ function AreaDeptoClases() {
           </div>
         </ModalHeader>
         <ModalBody>
-
           <FormGroup>
             <Label for="area">Área:</Label>
             <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase}>
@@ -1217,9 +984,11 @@ function AreaDeptoClases() {
             <Label for="departamento">Departamento:</Label>
             <Input type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
               <option value="">--Seleccione un departamento--</option>
-              {deptoGet.map((depto) => (
-                <option value={depto.depto}>{depto.descripcion}</option>
-              ))}{" "}
+              {deptoGet
+                .filter((depto: Departamento) => Number(depto.area) === Number(formClase.area))
+                .map((depto) => (
+                  <option value={depto.depto}>{depto.descripcion}</option>
+                ))}{" "}
             </Input>
           </FormGroup>
           <br />

@@ -664,13 +664,7 @@ function Compras() {
         <SidebarHorizontal />
       </Row>
       <Container>
-        {/* alertas */}
-        {/* <Alert color="success" isOpen={creado} toggle={() => setVisible1(false)}>
-          Registro guardado con exito
-        </Alert>
-        <Alert color="danger" isOpen={error} toggle={() => setVisible4(false)}>
-          Error: idPaquete e idPieza no pueden ser iguales
-        </Alert> */}
+
 
         <h1>Compras</h1>
         <br />
