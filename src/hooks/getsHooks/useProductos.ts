@@ -7,7 +7,7 @@ export const useProductos = () => {
   const [dataProductos, setDataProductos] = useState<Producto[]>([]);
 
   const fetchProduct = async () => {
-    try {
+    try { 
       const response: AxiosResponse<Producto[]> = await jezaApi.get(
         "/producto?id=0&descripcion=%&verinventariable=0&esServicio=2&esInsumo=2&obsoleto=2&marca=%&cia=21&sucursal=26"
       );
@@ -24,3 +24,4 @@ export const useProductos = () => {
 
   return { dataProductos, fetchProduct, setDataProductos };
 };
+// "/producto?id=0&descripcion=%&verinventariable=0&esServicio=2&esInsumo=2&obsoleto=2&marca=%&cia=21&sucursal=26"
