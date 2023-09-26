@@ -334,6 +334,22 @@ function PerfilesModulos() {
     console.log(form);
   };
 
+  //   const handleChange = (selectedOption: any) => {
+  //   if (selectedOption) {
+  //     const { name, value } = selectedOption;
+  //     setForm((prevState: Perfil_Modulo) => ({ ...prevState, [name]: value }));
+  //   } else {
+  //     // Manejar eventos de elementos input aquí
+  //     const { name, value, type, checked } = e.target;
+  //     if (type === "checkbox" && name === "permiso") {
+  //       setForm((prevState) => ({ ...prevState, [name]: checked }));
+  //     } else {
+  //       setForm((prevState: Perfil_Modulo) => ({ ...prevState, [name]: value }));
+  //     }
+  //   }
+  //   console.log(form);
+  // };
+
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   const toggleSidebar = () => {
@@ -442,6 +458,28 @@ function PerfilesModulos() {
     );
   }
 
+  const optionsPermiso = [
+    { value: 0, label: "--Selecciona una opción--" },
+    ...dataModulos.map((modulo: Modulo) => ({
+      value: Number(modulo.id),
+      label: modulo.descripcion,
+    })),
+  ];
+
+  //  <Select
+  //                   name="modulo"
+  //                   options={optionsPermiso}
+  //                   value={optionsPermiso.find((option) => option.value === form.modulo)}
+  //                   onChange={(selectedOption) => {
+  //                     // Aquí actualizas el valor en el estado form
+  //                     setForm((prevState) => ({
+  //                       ...prevState,
+  //                       modulo: selectedOption ? selectedOption.value : 0, // 0 u otro valor predeterminado
+  //                     }));
+  //                   }}
+  //                   placeholder="--Selecciona una opción--"
+  //                 />
+
   return (
     <>
       <Row>
@@ -510,17 +548,26 @@ function PerfilesModulos() {
                 </Input>
               </Col>
               <Col md="6">
-                <Select
+                <Label>Módulo:</Label>
+
+                {/* <Select
+                  name="modulo"
+                  options={optionsPermiso}
+                  value={optionsPermiso.find((option) => option.value === form.modulo)}
+                  onChange={handleChange}
+                  placeholder="--Selecciona una opción--"
+                /> */}
+                {/* <Select
                   options={dataModulos.map((modulo) => ({
                     value: modulo.id,
                     label: modulo.descripcion,
                   }))}
-                  value={form.modulo ? { value: form.modulo.id, label: form.modulo.descripcion } : null}
+                  value={form.modulo}
                   onChange={(selectedOption) => setValue(selectedOption ? selectedOption.value : null)}
                   isClearable={true}
                   placeholder="--Selecciona una opción--"
-                />
-
+                /> */}
+                {/* si funciona*/}
                 {/* <Label>Módulo:</Label>
 
                 <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
@@ -531,6 +578,20 @@ function PerfilesModulos() {
                     </option>
                   ))}
                 </Input> */}
+                <Select
+                  name="modulo"
+                  options={optionsPermiso}
+                  value={optionsPermiso.find((option) => option.value === form.modulo)}
+                  onChange={(selectedOption) => {
+                    // Aquí actualizas el valor en el estado form
+                    setForm((prevState) => ({
+                      ...prevState,
+                      modulo: selectedOption ? selectedOption.value : 0, // 0 u otro valor predeterminado
+                    }));
+                  }}
+                  placeholder="--Selecciona una opción--"
+                />
+
                 {/* <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
                   <option value={0}>--Selecciona una opción--</option>
                   {data.map((perfil) => (
@@ -585,14 +646,28 @@ function PerfilesModulos() {
                 </Col>
                 <Col md="12">
                   <Label>Módulo:</Label>
-                  <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
+                  <Select
+                    name="modulo"
+                    options={optionsPermiso}
+                    value={optionsPermiso.find((option) => option.value === form.modulo)}
+                    onChange={(selectedOption) => {
+                      // Aquí actualizas el valor en el estado form
+                      setForm((prevState) => ({
+                        ...prevState,
+                        modulo: selectedOption ? selectedOption.value : 0, // 0 u otro valor predeterminado
+                      }));
+                    }}
+                    placeholder="--Selecciona una opción--"
+                  />
+
+                  {/* <Input type="select" name="modulo" id="exampleSelect" value={form.modulo} onChange={handleChange}>
                     <option value={0}>--Selecciona una opción--</option>
                     {dataModulos.map((modulo: Modulo) => (
                       <option key={modulo.id} value={Number(modulo.id)}>
                         {modulo.descripcion}
                       </option>
                     ))}
-                  </Input>
+                  </Input> */}
                   <br />
                 </Col>
                 <Col md="12">
