@@ -466,6 +466,20 @@ function PerfilesModulos() {
     })),
   ];
 
+  //  <Select
+  //                   name="modulo"
+  //                   options={optionsPermiso}
+  //                   value={optionsPermiso.find((option) => option.value === form.modulo)}
+  //                   onChange={(selectedOption) => {
+  //                     // Aquí actualizas el valor en el estado form
+  //                     setForm((prevState) => ({
+  //                       ...prevState,
+  //                       modulo: selectedOption ? selectedOption.value : 0, // 0 u otro valor predeterminado
+  //                     }));
+  //                   }}
+  //                   placeholder="--Selecciona una opción--"
+  //                 />
+
   return (
     <>
       <Row>

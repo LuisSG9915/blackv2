@@ -908,7 +908,23 @@ function Productos() {
     { id: "id", header: "ID", accessorFn: (row) => row.id, size: 5 },
     { id: "descripcion", header: "Descripción", accessorFn: (row) => row.descripcion, size: 350 },
     { id: "marca", header: "Marca", accessorFn: (row) => row.marca, size: 50 },
-    { id: "costo_unitario", header: "Costo unitario", accessorFn: (row) => row.costo_unitario, size: 5 },
+    {
+      id: "costo_unitario",
+      header: "Costo unitario",
+      Cell: ({ cell }) => (
+        <span>
+          ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        </span>
+      ),
+      accessorFn: (row) => row.costo_unitario,
+      size: 5,
+      muiTableHeadCellProps: {
+        align: "center",
+      },
+      muiTableBodyCellProps: {
+        align: "center",
+      },
+    },
     // { id: "precio", header: "Precio", accessorFn: (row) => row.precio, size: 5 },
 
     {
@@ -921,9 +937,45 @@ function Productos() {
       ),
     },
 
-    { id: "inventariable", header: "Inventariable", accessorFn: (row) => row.inventariable, size: 5 },
-    { id: "es_producto", header: "Es producto", accessorFn: (row) => row.es_producto, size: 5 },
-    { id: "es_servicio", header: "Es servicio", accessorFn: (row) => row.es_servicio, size: 5 },
+    {
+      id: "inventariable",
+      header: "Inventariable",
+      Cell: ({ row }) => {
+        if (row.original.inventariable === true) {
+          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+        } else {
+          return <Input type="checkbox" disabled="disabled" />;
+        }
+      },
+      accessorFn: (row) => row.inventariable,
+      size: 5,
+    },
+    {
+      id: "es_producto",
+      header: "Es producto",
+      Cell: ({ row }) => {
+        if (row.original.es_producto === true) {
+          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+        } else {
+          return <Input type="checkbox" disabled="disabled" />;
+        }
+      },
+      accessorFn: (row) => row.es_producto,
+      size: 5,
+    },
+    {
+      id: "es_servicio",
+      header: "Es servicio",
+      Cell: ({ row }) => {
+        if (row.original.es_servicio === true) {
+          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+        } else {
+          return <Input type="checkbox" disabled="disabled" />;
+        }
+      },
+      accessorFn: (row) => row.es_servicio,
+      size: 5,
+    },
   ];
 
   const handleRedirect = () => {
