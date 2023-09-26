@@ -42,7 +42,7 @@ function KitPaquete() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_KitPaq_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_kitPac_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -465,21 +465,22 @@ function KitPaquete() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Paquetes y kit de descarga</h1>
-          <ImGift size={30}></ImGift>
+          <h1> Paquetes y kit de descarga  <ImGift size={30}></ImGift></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
         <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button color="primary" onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
-
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button color="primary" onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <br />
         <br />
