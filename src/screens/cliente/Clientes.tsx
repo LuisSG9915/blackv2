@@ -402,20 +402,20 @@ function Clientes() {
     }
   };
 
-  const permiso_elimina = async (dato: any) => {
-    const permiso = await filtroSeguridad("CAT_CLIENT_DEL");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    } else {
-      eliminar();
-    }
-  };
+  // const permiso_elimina = async (dato: any) => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENT_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   } else {
+  //     eliminar();
+  //   }
+  // };
 
-  const eliminar = () => {
+  const eliminar = (id, nombre) => {
     /* DELETE */
     Swal.fire({
       title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar el registro de : ${dato.nombre}?`,
+      text: `¿Está seguro que desea eliminar el registro de : ${nombre}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -423,7 +423,7 @@ function Clientes() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/Cliente?id=${dato.id_cliente}`).then(() => {
+        jezaApi.delete(`/Cliente?id=${id}`).then(() => {
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
@@ -885,7 +885,15 @@ function Clientes() {
             {/* <AiFillDelete color="lightred" onClick={() => eliminar()} size={23} /> */}
             <AiFillDelete
               color="lightred"
-              onClick={() => alert(cell.row.original.id_cliente + "---" + cell.row.original.nombre)}
+              // onClick={() => alert(cell.row.original.id_cliente + "---" + cell.row.original.nombre)}
+              onClick={async () => {
+                const permiso = await filtroSeguridad("cat_cli_del ");
+                if (permiso === false) {
+                  return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                } else {
+                  eliminar(cell.row.original.id_cliente, cell.row.original.nombre);
+                }
+              }}
               size={23}
             ></AiFillDelete>
           </>
@@ -1446,7 +1454,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />
