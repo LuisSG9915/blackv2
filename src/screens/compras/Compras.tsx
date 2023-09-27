@@ -45,6 +45,8 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { ALMACEN_DB } from "../../utilities/constsAlmacenes";
+import { BsCartPlus } from "react-icons/bs";
+
 
 function Compras() {
   const [showView, setShowView] = useState(true);
@@ -383,7 +385,7 @@ function Compras() {
         params: {
           id: dataCompras.id,
           id_compra: dataCompras.id_compra,
-          fecha: fechaHoy,
+          fecha: new Date(),
           cia: dataCompras.cia,
           idSucursal: dataCompras.idSucursal,
           idProveedor: dataCompras.idProveedor,
@@ -522,7 +524,8 @@ function Compras() {
         {/* alertas */}
         <Container>
           <br />
-          <h1>Compras</h1>
+          <h1>Compras </h1>
+
           <br />
           <div className="form-grid">
             <div>
@@ -666,7 +669,7 @@ function Compras() {
       <Container>
 
 
-        <h1>Compras</h1>
+        <h1>Compras <BsCartPlus size={35} /> </h1>
         <br />
         <Row>
           <Col md="6">
