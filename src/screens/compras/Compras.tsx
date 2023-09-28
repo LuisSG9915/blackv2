@@ -47,7 +47,6 @@ import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks
 import { ALMACEN_DB } from "../../utilities/constsAlmacenes";
 import { BsCartPlus } from "react-icons/bs";
 
-
 function Compras() {
   const [showView, setShowView] = useState(true);
 
@@ -666,9 +665,9 @@ function Compras() {
         <SidebarHorizontal />
       </Row>
       <Container>
-
-
-        <h1>Compras <BsCartPlus size={35} /></h1>
+        <h1>
+          Compras <BsCartPlus size={35} />
+        </h1>
         <br />
         <Row>
           <Col md="6">
@@ -826,7 +825,8 @@ function Compras() {
                         className="mr-2"
                         onClick={() => {
                           setModalEdit(true);
-                          setDataCompras(dato);
+                          console.log({ dato });
+                          setDataCompras({ ...dato, fechaDocumento: dataCompras.fecha, d_Encargado: dataCompras.d_Encargado });
                         }}
                         size={23}
                       ></AiFillEdit>
