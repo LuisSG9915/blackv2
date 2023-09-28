@@ -70,11 +70,11 @@ const useSeguridad = () => {
   const filtroSeguridad = async (modulo: string): Promise<boolean> => {
   if (session.length === 0) {
     // Manejar el caso cuando session está vacío
-    Swal.fire({
-      icon: "error",
-      title: "",
-      text: `Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
-    });
+    // Swal.fire({
+    //   icon: "error",
+    //   title: "",
+    //   text: `[session length=0]Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
+    // });
     return false; // No se otorga el permiso
   }
 
@@ -87,7 +87,7 @@ const useSeguridad = () => {
     Swal.fire({
       icon: "error",
       title: `${response.data[0].mensaje}`,
-      text: `Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
+      text: `[PERMISO DENEGADO]Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
     });
     console.log(response.data[0].permiso);
     return false; // No se otorga el permiso
