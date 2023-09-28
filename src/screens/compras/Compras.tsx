@@ -115,6 +115,28 @@ function Compras() {
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
 
   const toggleCrearModal = () => {
+    setDataCompras({
+      ...dataCompras,
+      bonificaciones: 0,
+      cantidad: 0,
+      cantidadFactura: 0,
+      cantidadMalEstado: 0,
+      cia: 0,
+      clave_prod: 0,
+      costoCompra: 0,
+      costoUnitario: 0,
+      costounitario: 0,
+      d_producto: "",
+      d_unidadMedida: "",
+      d_unidadTraspaso: 0,
+      descripcion: "",
+      finalizado: false,
+      folioValidacion: 0,
+      id: 0,
+      id_compra: 0,
+      idSucursal: 0,
+      Usuario: 0,
+    });
     // Define los campos requeridos
     const camposRequeridos = ["fechaDocumento", "folioDocumento"];
 
@@ -469,6 +491,7 @@ function Compras() {
     setSetsumaTotalCompras(dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16);
     const ultimoFolio = dataComprasGeneral && dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento : "";
     const ultiFecha = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fecha : "";
+    const ultiFechaDocumento = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fechaDocumento : "";
     const ultiCompra = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].id_compra : 0;
     if (ultiCompra > 0) {
       setDisabledFecha(true);
@@ -479,6 +502,7 @@ function Compras() {
       ...dataCompras,
       folioDocumento: ultimoFolio,
       fecha: ultiFecha.split("T")[0],
+      fechaDocumento: ultiFechaDocumento.split("T")[0],
       folioValidacion: ultimoFolio,
     });
     const descripciones = dataComprasGeneral.map((item) => item.claveProd);
