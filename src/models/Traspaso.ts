@@ -78,4 +78,6 @@ export interface TraspasoBusqueda {
   usuarioCancelacion: null;
   d_almacenOrigen?: string;
   d_almacenDestino?: string;
+  almacenOrigen:number;
+  almacenDestino:number;
 }
