@@ -28,7 +28,7 @@ import { useProductos } from "../../hooks/getsHooks/useProductos";
 import { Producto, ProductoExistencia } from "../../models/Producto";
 import { useComprasSeleccion } from "../../hooks/getsHooks/useComprasSeleccion";
 import { CompraSeleccion } from "../../models/CompraSeleccion";
-import { AiFillEdit, AiFillDelete, AiOutlineBarcode } from "react-icons/ai";
+import { AiFillEdit, AiFillDelete, AiOutlineBarcode, AiOutlineSelect } from "react-icons/ai";
 import { useComprasV3 } from "../../hooks/getsHooks/useComprasV3";
 import CurrencyInput from "react-currency-input-field";
 import { useReactToPrint } from "react-to-print";
@@ -46,10 +46,13 @@ import { useNavigate } from "react-router-dom";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { ALMACEN_DB } from "../../utilities/constsAlmacenes";
 import { BsCartPlus } from "react-icons/bs";
+import { Trabajador } from "../../models/Trabajador";
+import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 
 function Compras() {
   const [showView, setShowView] = useState(true);
 
+  const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -96,6 +99,7 @@ function Compras() {
   const { filtroSeguridad, session } = useSeguridad();
   const TableDataHeader = ["Productos", "Existencias", "Acciones"];
   const TableDataHeaderCompras = [
+    "Responsable",
     "Clave",
     "Descripción",
     "Cantidad",
@@ -108,7 +112,7 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado", "Acción"];
+  const TableDataHeaderComprasSeleccion = ["Acción", "Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado"];
 
   const [estados, setEstados] = useState(false);
 
@@ -239,6 +243,7 @@ function Compras() {
     idSeleccionado,
     dataUsuarios2[0]?.sucursal,
     dataUsuarios2[0]?.idCia
+
   );
   const handle = (dato: Producto) => {
     fetchProduct();
@@ -641,6 +646,13 @@ function Compras() {
     idCliente: 0,
   });
 
+  const getUsuarioForeignKey = (responsable: number) => {
+
+    const usuario = dataTrabajadores.find((usuario: Trabajador) => usuario.id === responsable);
+
+    return usuario ? usuario.nombre : "Sin usuario";
+  };
+
   const dataProductosConAcciones = dataProductos4.map((dato: ProductoExistencia) => ({
     ...dato,
     acciones: (
@@ -797,76 +809,79 @@ function Compras() {
             <BiTag size={30} />
           </Button>
         </div>
-        <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
-          <thead>
-            <tr>
-              {TableDataHeaderCompras.map((valor: any) => (
-                <th key={valor} style={{ fontSize: "13px", textAlign: "center" }}>
-                  {valor}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {dataComprasGeneral.map((dato: CompraProveedor, index) => (
-              <tr key={dato.id + index}>
-                <td style={{ fontSize: "13px" }}>{dato.claveProd}</td>
-                <td style={{ fontSize: "13px" }}>{dato.descripcion}</td>
-                <td style={{ fontSize: "13px" }} align="center">
-                  {dato.cantidad}
-                </td>
-                <td style={{ fontSize: "13px" }} align="center">
-                  {dato.cantidadFactura}
-                </td>
-                <td style={{ fontSize: "13px" }} align="center">
-                  {dato.cantidadMalEstado}
-                </td>
-                <td style={{ fontSize: "13px" }} align="right">
-                  {dato.costoUnitario.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    minimumFractionDigits: 2,
-                  })}
-                </td>
-                <td style={{ fontSize: "13px" }} align="right" width="120">
-                  {dato.costoCompra.toLocaleString("en-US", options)}
-                </td>
-                <td style={{ fontSize: "13px" }} align="right" width="120">
-                  {(dato.costoCompra * dato.cantidad).toLocaleString("en-US", options)}
-                </td>
-                <td style={{ fontSize: "13px" }} align="right">
-                  {dato.bonificaciones.toFixed(2)}
-                </td>
-                <td style={{ fontSize: "13px" }} className="gap-1">
-                  {dato.finalizado === true ? (
-                    <>
-                      <AiFillEdit color={"grey"} className="mr-2" onClick={() => null} size={23}></AiFillEdit>
-                      <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
-                    </>
-                  ) : (
-                    <>
-                      <AiFillEdit
-                        className="mr-2"
-                        onClick={() => {
-                          setModalEdit(true);
-                          console.log({ dato });
-                          setDataCompras({ ...dato, fechaDocumento: dataCompras.fecha, d_Encargado: dataCompras.d_Encargado });
-                        }}
-                        size={23}
-                      ></AiFillEdit>
-                      <AiFillDelete color="lightred" onClick={() => deleteCompra(dato)} size={23}></AiFillDelete>
-                    </>
-                  )}
-                </td>
+        <div className="table-responsive">
+          <Table responsive={"sm"} bordered={true} striped={true} >
+            <thead>
+              <tr>
+                {TableDataHeaderCompras.map((valor: any) => (
+                  <th key={valor} style={{ fontSize: "13px", textAlign: "center" }}>
+                    {valor}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th colSpan={10}></th>
-            </tr>
-          </tfoot>
-        </Table>
+            </thead>
+            <tbody>
+              {dataComprasGeneral.map((dato: CompraProveedor, index) => (
+                <tr key={dato.id + index}>
+                  <td style={{ fontSize: "13px" }}>{getUsuarioForeignKey(Number(dato.usuario))}</td>
+                  <td style={{ fontSize: "13px" }}>{dato.claveProd}</td>
+                  <td style={{ fontSize: "13px" }}>{dato.descripcion}</td>
+                  <td style={{ fontSize: "13px" }} align="center">
+                    {dato.cantidad}
+                  </td>
+                  <td style={{ fontSize: "13px" }} align="center">
+                    {dato.cantidadFactura}
+                  </td>
+                  <td style={{ fontSize: "13px" }} align="center">
+                    {dato.cantidadMalEstado}
+                  </td>
+                  <td style={{ fontSize: "13px" }} align="right">
+                    {dato.costoUnitario.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      minimumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontSize: "13px" }} align="right" width="120">
+                    {dato.costoCompra.toLocaleString("en-US", options)}
+                  </td>
+                  <td style={{ fontSize: "13px" }} align="right" width="120">
+                    {(dato.costoCompra * dato.cantidad).toLocaleString("en-US", options)}
+                  </td>
+                  <td style={{ fontSize: "13px" }} align="right">
+                    {dato.bonificaciones.toFixed(2)}
+                  </td>
+                  <td style={{ fontSize: "13px" }} className="gap-1">
+                    {dato.finalizado === true ? (
+                      <>
+                        <AiFillEdit color={"grey"} className="mr-2" onClick={() => null} size={23}></AiFillEdit>
+                        <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
+                      </>
+                    ) : (
+                      <>
+                        <AiFillEdit
+                          className="mr-2"
+                          onClick={() => {
+                            setModalEdit(true);
+                            console.log({ dato });
+                            setDataCompras({ ...dato, fechaDocumento: dataCompras.fecha, d_Encargado: dataCompras.d_Encargado });
+                          }}
+                          size={23}
+                        ></AiFillEdit>
+                        <AiFillDelete color="lightred" onClick={() => deleteCompra(dato)} size={23}></AiFillDelete>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colSpan={10}></th>
+              </tr>
+            </tfoot>
+          </Table>
+        </div>
         <div>
           <UncontrolledAccordion defaultOpen="2">
             <AccordionItem>
@@ -1017,7 +1032,7 @@ function Compras() {
                 decimalsLimit={2}
                 decimalScale={2}
                 onValueChange={(value) => handleValueChange("costoUnitario", value)}
-              />
+              />AiOutlineSelect
             </Col> */}
             <Col md={4} xs={4}>
               <Label>Unidad paquete:</Label>
@@ -1112,7 +1127,7 @@ function Compras() {
       </Modal>
 
       <Modal isOpen={isOpen} size="xl">
-        <ModalHeader>Busqueda</ModalHeader>
+        <ModalHeader><h3>Búsqueda</h3></ModalHeader>
         <ModalBody>
           <Row>
             <Col md={2}>
@@ -1148,7 +1163,7 @@ function Compras() {
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
                     <td>{dato.nombreEncargado}</td>
-                    <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
+                    <td> {<AiOutlineSelect onClick={() => handleBusqueda(dato)} />} </td>
                   </tr>
                 ))}
               </tbody>
@@ -1376,7 +1391,7 @@ function Compras() {
       </Modal>
 
       <Modal isOpen={isOpen} size="xl">
-        <ModalHeader>Busqueda</ModalHeader>
+        <ModalHeader><h3>Búsqueda</h3></ModalHeader>
         <ModalBody>
           <Row>
             <Col md={2}>
@@ -1405,6 +1420,7 @@ function Compras() {
               <tbody>
                 {dataComprasSeleccion.map((dato: CompraSeleccion, index) => (
                   <tr key={index}>
+                    <td> {<AiOutlineSelect onClick={() => handleBusqueda(dato)} />} </td>
                     <td>{dato.id_compra}</td>
                     <td>{dato.nombre}</td>
                     <td>{dato.items}</td>
@@ -1413,7 +1429,7 @@ function Compras() {
                     <td>{dato.fecha.split("T")[0]}</td>
                     <td>{dato.nombreEncargado}</td>
 
-                    <td> {<Button onClick={() => handleBusqueda(dato)}>Seleccionar</Button>} </td>
+
                   </tr>
                 ))}
               </tbody>

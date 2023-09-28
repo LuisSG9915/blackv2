@@ -165,7 +165,7 @@ function MovimientoDiversos() {
   const [modalResumenEditar, setModalResumenEditar] = useState<boolean>(false);
   const [modalProductos, setModalProductos] = useState<boolean>(false);
   const [modalBusqueda, setModalBusqueda] = useState<boolean>(false);
-  const DataTableHeader = ["Acción", "Folio", "Tipo de movimiento", "Numero de items", "Responsable de ajuste", "Estado"];
+  const DataTableHeader = ["Acción", "Folio", "Tipo de movimiento", "Número de items", "Responsable de ajuste", "Estado"];
   const [filtradoAlmacenFormateada, setFiltradoAlmacenFormateada] = useState([]);
 
   useEffect(() => {
@@ -499,52 +499,53 @@ function MovimientoDiversos() {
                 <Container>
                   <Row>
                     <div className="col align-self-start d-flex justify-content-end ">
-                      <InputGroup className="col align-self-start d-flex justify-content-end ">
-                        <Button
-                          color="success"
-                          disabled={estados}
-                          onClick={() => {
-                            if (form.tipo_movto.toString() === "0" || form.almacen.toString() === "0" || form.observacion === "") {
-                              Swal.fire({
-                                icon: "info",
-                                title: "Atención",
-                                text: "Debe completar el formulario para realizar la función o no ingresar valores en 0",
-                              });
-                            } else {
-                              setModalResumen(true);
-                            }
-                          }}
-                          style={{ marginRight: 0 }}
-                        >
-                          <BiAddToQueue size={30} />
-                          Agregar
-                        </Button>
 
-                        <Button
-                          color="primary"
-                          disabled={!estados}
-                          onClick={() => {
-                            setform({
-                              cia: dataUsuarios2[0]?.idCia,
-                              sucursal: dataUsuarios2[0]?.sucursal,
-                              folio: 0,
-                              fecha: "",
-                              clave_prod: 0,
-                              tipo_movto: 0,
-                              cantidad_entrada: 0,
-                              cantidad_salida: 0,
-                              costo: 0,
-                              precio: 0,
-                              usuario: 0,
-                              almacen: 0,
-                              observacion: "",
+                      <Button
+
+                        color="success"
+                        disabled={estados}
+                        onClick={() => {
+                          if (form.tipo_movto.toString() === "0" || form.almacen.toString() === "0" || form.observacion === "") {
+                            Swal.fire({
+                              icon: "info",
+                              title: "Atención",
+                              text: "Debe completar el formulario para realizar la función o no ingresar valores en 0",
                             });
-                          }}
-                        >
-                          Nuevo
-                          <BiTag size={30} />
-                        </Button>
-                      </InputGroup>
+                          } else {
+                            setModalResumen(true);
+                          }
+                        }}
+                        style={{ marginRight: 5 }}
+                      >
+                        <BiAddToQueue size={30} />
+                        Agregar
+                      </Button>
+
+                      <Button
+                        color="primary"
+                        disabled={!estados}
+                        onClick={() => {
+                          setform({
+                            cia: dataUsuarios2[0]?.idCia,
+                            sucursal: dataUsuarios2[0]?.sucursal,
+                            folio: 0,
+                            fecha: "",
+                            clave_prod: 0,
+                            tipo_movto: 0,
+                            cantidad_entrada: 0,
+                            cantidad_salida: 0,
+                            costo: 0,
+                            precio: 0,
+                            usuario: 0,
+                            almacen: 0,
+                            observacion: "",
+                          });
+                        }}
+                      >
+                        Nuevo
+                        <BiTag size={30} />
+                      </Button>
+
                     </div>
                     <div className="table-responsive">
                       <br />
@@ -626,21 +627,22 @@ function MovimientoDiversos() {
               <br />
               <br />
             </Container><Container>
-                <InputGroup>
-                  <Button onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
-                    <CgPlayListCheck size={30} />
-                    Finalizar
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      handleOpenModal();
-                      fetchAjustesBusquedas();
-                    }}
-                  >
-                    <BiSearchAlt size={30} />
-                    Busqueda
-                  </Button>
-                </InputGroup>
+
+                <Button style={{ marginRight: 5 }} onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
+                  <CgPlayListCheck size={30} />
+                  Finalizar
+                </Button>
+                <Button
+                  color="primary"
+                  onClick={() => {
+                    handleOpenModal();
+                    fetchAjustesBusquedas();
+                  }}
+                >
+                  <BiSearchAlt size={30} />
+                  Busqueda
+                </Button>
+
               </Container><div style={{ position: "fixed", bottom: 20, width: "100%" }}>
               </div></>
           )
@@ -757,44 +759,46 @@ function MovimientoDiversos() {
               </Col>
             </Row>
             <hr />
-            <Table>
-              <thead>
-                <tr>
-                  {DataTableHeader.map((valor) => (
-                    <th className="" key={valor}>
-                      {valor}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataAjustesBusquedas
-                  ? dataAjustesBusquedas.map((ajuste) => (
-                    <tr>
-                      <td>
-                        <AiOutlineSelect
-                          onClick={() => {
-                            setform({
-                              ...form,
-                              folio: Number(ajuste.folio),
-                              tipo_movto: ajuste.tipo_movto,
-                              fecha: ajuste.fecha.split("T")[0],
-                            });
-                            setModalBusqueda(false);
-                            console.log(ajuste);
-                          }}
-                        ></AiOutlineSelect>
-                      </td>
-                      <td>{ajuste.folio}</td>
-                      <td>{ajuste.descripcion}</td>
-                      <td>{ajuste.items}</td>
-                      <td>{ajuste.nombreUsuario}</td>
-                      <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                    </tr>
-                  ))
-                  : null}
-              </tbody>
-            </Table>
+            <div className="table-responsive">
+              <Table>
+                <thead>
+                  <tr>
+                    {DataTableHeader.map((valor) => (
+                      <th className="" key={valor}>
+                        {valor}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataAjustesBusquedas
+                    ? dataAjustesBusquedas.map((ajuste) => (
+                      <tr>
+                        <td>
+                          <AiOutlineSelect
+                            onClick={() => {
+                              setform({
+                                ...form,
+                                folio: Number(ajuste.folio),
+                                tipo_movto: ajuste.tipo_movto,
+                                fecha: ajuste.fecha.split("T")[0],
+                              });
+                              setModalBusqueda(false);
+                              console.log(ajuste);
+                            }}
+                          ></AiOutlineSelect>
+                        </td>
+                        <td>{ajuste.folio}</td>
+                        <td>{ajuste.descripcion}</td>
+                        <td>{ajuste.items}</td>
+                        <td>{ajuste.nombreUsuario}</td>
+                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                      </tr>
+                    ))
+                    : null}
+                </tbody>
+              </Table>
+            </div>
           </Container>
         </ModalBody>
 
