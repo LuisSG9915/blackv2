@@ -109,7 +109,6 @@ import React, { useState, useMemo } from "react";
 import { Button, Card, CardBody, CardText, CardTitle, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { GrAdd } from "react-icons/gr";
 import { MaterialReactTable, MRT_ColumnDef, MRT_FullScreenToggleButton, MRT_ToggleDensePaddingButton } from "material-react-table";
-import { useGentlemanContext } from "../context/VentasContext";
 import { Cliente } from "../../../models/Cliente";
 import { useClientes } from "../../../hooks/getsHooks/useClientes";
 import { Box } from "@mui/material";
@@ -385,7 +384,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           </Box>
         )}
 
-        //customize built-in buttons in the top-right of top toolbar
+      //customize built-in buttons in the top-right of top toolbar
       >
         <thead>
           <tr>
@@ -472,7 +471,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           </Button>
         </ModalFooter>
       </Modal>
-      
+
     </>
   );
 };

@@ -1,15 +1,7 @@
 import React, { useEffect } from "react";
-import { AiFillEdit, AiFillDelete } from "react-icons/ai";
-import { useDispatch } from "react-redux";
-import { Button, Col, Input, Label, Row, Table } from "reactstrap";
-import { addEstilistas } from "../../../redux/states/estilistas";
-import { addVentas } from "../../../redux/states/ventas";
-import { useGentlemanContext } from "../context/VentasContext";
-import { useClientesProceso } from "../../../hooks/getsHooks/useClientesProceso";
-import { useVentas } from "../../../hooks/getsHooks/useVentas";
-import { jezaApi } from "../../../api/jezaApi";
-import { useNavigate } from "react-router-dom";
-import { useVentasProceso } from "../../../hooks/getsHooks/useVentasProceso";
+
+import { Button, Table } from "reactstrap";
+
 interface Venta {
   id?: number;
   estilista: string;

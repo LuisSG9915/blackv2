@@ -27,7 +27,6 @@ import MarcasCrear from "./screens/marcas/MarcasCrear";
 import TipoFormasPago from "./screens/tipoPago/TipoFormasPago";
 import Home from "./screens/home/Home";
 import Ventas from "./screens/ventas/Ventas";
-import { VentasProvider } from "./screens/ventas/context/VentasContext";
 import App from "./App";
 import FormasPago from "./screens/FormasPagos";
 import ClienteCrear from "./screens/clientes/ClienteCrear";
@@ -340,9 +339,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.render(
-  <VentasProvider>
+  <>
     <RouterProvider router={router} />
-  </VentasProvider>,
+  </>,
   document.getElementById("root")
 
   // const allowedRoutes = [

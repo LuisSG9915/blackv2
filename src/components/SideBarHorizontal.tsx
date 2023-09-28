@@ -296,6 +296,17 @@ const SidebarHorizontal = () => {
     }
   }, [sucData.dSuc]);
 
+  // const [loadingController, setLoadingController] = useState(true)
+  // useEffect(() => {
+  //   setTimeout(() => {
+
+
+  //     setLoadingController(false)
+  //   }, 900);
+
+  // }, []);
+
+
   return (
     <>
       {/* {isDataLoaded && ( */}
