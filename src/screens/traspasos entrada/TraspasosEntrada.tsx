@@ -22,6 +22,7 @@ import {
   AccordionHeader,
   AccordionItem,
   UncontrolledAccordion,
+  ButtonGroup,
 } from "reactstrap";
 import { ImMoveDown } from "react-icons/im";
 import { useTraspasoEntrada } from "../../hooks/getsHooks/useTraspasoEntrada";
@@ -233,7 +234,13 @@ function TraspasosEntrada() {
   const InfoRow = () => {
     return (
       <>
-        <Container></Container>
+        <Container>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <h1> Traspasos de entrada  <ImMoveDown size={40}></ImMoveDown></h1>
+
+          </div>
+
+        </Container>
         <Container>
           <Row>
             <Col md="3" style={{ marginBottom: 25 }}>
@@ -339,7 +346,7 @@ function TraspasosEntrada() {
     return (
       <>
         <Container>
-          <InputGroup>
+          <ButtonGroup>
             <Button
               disabled={!recibido && dataTraspasosEntradas.length > 0 ? false : true}
               onClick={() => {
@@ -349,7 +356,7 @@ function TraspasosEntrada() {
             >
               Recibir
             </Button>
-            <TicketPrint>
+            {/* <TicketPrint>
               <>
                 <br />
                 <InfoRow></InfoRow>
@@ -357,7 +364,7 @@ function TraspasosEntrada() {
                 <TableTraspasoEntrada></TableTraspasoEntrada>
                 <br />
               </>
-            </TicketPrint>
+            </TicketPrint> */}
             <Button
               onClick={() => {
                 setModalBusqueda(true);
@@ -366,43 +373,43 @@ function TraspasosEntrada() {
             >
               Búsqueda
             </Button>
-          </InputGroup>
+          </ButtonGroup>
         </Container>
       </>
     );
   };
-  const Title = () => {
-    return (
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <h1> Traspasos de entrada</h1>
-        <ImMoveDown size={40}></ImMoveDown>
-      </div>
-    );
-  };
+  // const Title = () => {
+  //   return (
+  //     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+  //       <h1> Traspasos de entrada  <ImMoveDown size={40}></ImMoveDown></h1>
 
-  interface TicketPrintProps {
-    children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-  }
-  const TicketPrint: React.FC<TicketPrintProps> = ({ children }) => {
-    const componentRef = useRef<HTMLDivElement>(null);
+  //     </div>
+  //   );
+  // };
 
-    const handlePrint = useReactToPrint({
-      content: () => componentRef.current,
-    });
+  // interface TicketPrintProps {
+  //   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  // }
+  // const TicketPrint: React.FC<TicketPrintProps> = ({ children }) => {
+  //   const componentRef = useRef<HTMLDivElement>(null);
 
-    return (
-      <div>
-        <div style={{ display: "none" }}>
-          <div ref={componentRef}>{children}</div>
-        </div>
-        {children && (
-          <Button color="primary" onClick={handlePrint}>
-            Imprimir
-          </Button>
-        )}
-      </div>
-    );
-  };
+  //   const handlePrint = useReactToPrint({
+  //     content: () => componentRef.current,
+  //   });
+
+  //   return (
+  //     <div>
+  //       <div style={{ display: "none" }}>
+  //         <div ref={componentRef}>{children}</div>
+  //       </div>
+  //       {children && (
+  //         <Button color="primary" onClick={handlePrint}>
+  //           Imprimir
+  //         </Button>
+  //       )}
+  //     </div>
+  //   );
+  // };
 
   const FinalizaRecepcion = async () => {
     const permiso = await filtroSeguridad("TRASP_ENTRA_REC");
@@ -485,7 +492,7 @@ function TraspasosEntrada() {
       </Row>
       <br />
       <Container className="px-2">
-        <Title />
+        {/* <Title /> */}
         <br />
         <InfoRow />
         <h4>
