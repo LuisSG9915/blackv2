@@ -246,10 +246,8 @@ function TraspasoSalida() {
     }
     jezaApi
       .get(
-        `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&sucursal_destino=${fechaSeleccionada.suc_destino === 0 ? "%" : fechaSeleccionada.suc_destino}&f1=${
-          fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230701"
+        `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${dataUsuarios2[0]?.sucursal
+        }&sucursal_destino=${fechaSeleccionada.suc_destino === 0 ? "%" : fechaSeleccionada.suc_destino}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230701"
         }&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"}`
       )
       .then((response) => setDataTraspasoBusqueda2(response.data));
@@ -449,8 +447,8 @@ function TraspasoSalida() {
           {Number(form.folio) > 0
             ? "Traspaso finalizado"
             : Number(form.folio) === 0 && dataTraspasos && dataTraspasos.length > 0
-            ? "Traspaso en proceso"
-            : ""}
+              ? "Traspaso en proceso"
+              : ""}
         </h4>
 
         <br />
@@ -467,27 +465,27 @@ function TraspasoSalida() {
           <tbody>
             {dataTraspasos && dataTraspasos.length > 0
               ? dataTraspasos.map((dato: TraspasoGet, index) => (
-                  <tr key={dato.id + index}>
-                    <td>{dato.clave_prod}</td>
-                    <td>{dato.d_producto}</td>
-                    <td align="center">{dato.cantidad}</td>
-                    <td align="center">{dato.d_unidadmedida}</td>
-                    <td>{dato.usuarioTraspaso}</td>
-                    <td style={{ width: 20 }} align="center">
-                      {dato.folio > 0 ? (
-                        <>
-                          <AiFillEdit color="grey" className="mr-2" onClick={() => null} size={23}></AiFillEdit>
-                          <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
-                        </>
-                      ) : (
-                        <>
-                          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(dato)} size={23}></AiFillEdit>
-                          <AiFillDelete color="lightred" onClick={() => eliminar(dato.id, dato.d_producto)} size={23}></AiFillDelete>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                <tr key={dato.id + index}>
+                  <td>{dato.clave_prod}</td>
+                  <td>{dato.d_producto}</td>
+                  <td align="center">{dato.cantidad}</td>
+                  <td align="center">{dato.d_unidadmedida}</td>
+                  <td>{dato.usuarioTraspaso}</td>
+                  <td style={{ width: 20 }} align="center">
+                    {dato.folio > 0 ? (
+                      <>
+                        <AiFillEdit color="grey" className="mr-2" onClick={() => null} size={23}></AiFillEdit>
+                        <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
+                      </>
+                    ) : (
+                      <>
+                        <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(dato)} size={23}></AiFillEdit>
+                        <AiFillDelete color="lightred" onClick={() => eliminar(dato.id, dato.d_producto)} size={23}></AiFillDelete>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
               : null}
           </tbody>
         </Table>

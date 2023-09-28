@@ -525,7 +525,6 @@ function Compras() {
         <Container>
           <br />
           <h1>Compras </h1>
-
           <br />
           <div className="form-grid">
             <div>
@@ -669,7 +668,7 @@ function Compras() {
       <Container>
 
 
-        <h1>Compras <BsCartPlus size={35} /> </h1>
+        <h1>Compras <BsCartPlus size={35} /></h1>
         <br />
         <Row>
           <Col md="6">
