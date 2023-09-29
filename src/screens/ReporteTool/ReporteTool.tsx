@@ -38,6 +38,7 @@ import { Departamento } from "../../models/Departamento";
 import { Clase } from "../../models/Clase";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -272,7 +273,7 @@ function ReporteTool() {
 
     // Reemplazamos los campos vacíos con '%'
     for (const campo in formData) {
-      if (formData[campo] === "") {
+      if (formData[campo] === "" || formData[campo] === 0) {
         formData[campo] = "%";
       }
     }
@@ -706,6 +707,35 @@ function ReporteTool() {
   //     label: modulo.descripcion,
   //   })),
   // ];
+  // const optionsEstilista = [
+  //   { value: 0, label: "--Selecciona una opción--" },
+  //   ...dataUsuarios.map((item) => ({
+  //     value: Number(item.id),
+  //     label: item.nombre,
+  //   })),
+  // ];
+
+  // <Select
+  //   name="estilista"
+  //   options={optionsEstilista}
+  //   value={optionsEstilista.find((option) => option.value === formulario.estilista)}
+  //   onChange={(selectedOption) => {
+  //     // Aquí actualizas el valor en el estado form
+  //     setFormulario((prevState) => ({
+  //       ...prevState,
+  //       estilista: selectedOption ? selectedOption.value : 0, // 0 u otro valor predeterminado
+  //     }));
+  //   }}
+  //   placeholder="--Selecciona una opción--"
+  // />;
+
+  // <Input type="select" name="estilista" value={formulario.estilista} onChange={handleChange} bsSize="sm">
+  //   <option value="">Seleccione un Estilista</option>
+
+  //   {dataUsuarios.map((item) => (
+  //     <option value={item.id}>{item.nombre}</option>
+  //   ))}
+  // </Input>;
 
   // <Select
   //   name="modulo"
@@ -720,6 +750,14 @@ function ReporteTool() {
   //   }}
   //   placeholder="--Selecciona una opción--"
   // />;
+
+  const optionsEstilista = [
+    { value: "", label: "--Selecciona una opción--" },
+    ...dataUsuarios.map((item) => ({
+      value: Number(item.id),
+      label: item.nombre,
+    })),
+  ];
 
   return (
     <>
@@ -818,7 +856,7 @@ function ReporteTool() {
                 {showEstilistaInput ? (
                   <div>
                     <Label>Estilista:</Label>
-                    <Input
+                    {/* <Input
                       type="select"
                       name="estilista"
                       value={formulario.estilista}
@@ -830,7 +868,21 @@ function ReporteTool() {
                       {dataUsuarios.map((item) => (
                         <option value={item.id}>{item.nombre}</option>
                       ))}
-                    </Input>
+                    </Input> */}
+                    <Select
+                      menuPlacement="top"
+                      name="estilista"
+                      options={optionsEstilista}
+                      value={optionsEstilista.find((option) => option.value === formulario.estilista)}
+                      onChange={(selectedOption) => {
+                        // Aquí actualizas el valor en el estado form
+                        setFormulario((prevState) => ({
+                          ...prevState,
+                          estilista: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                        }));
+                      }}
+                      placeholder="--Selecciona una opción--"
+                    />
                   </div>
                 ) : null}
                 {showEmpresaInput ? (

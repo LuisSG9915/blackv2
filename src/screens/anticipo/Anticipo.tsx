@@ -86,8 +86,15 @@ function Anticipo() {
     }
   };
 
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  const {
+    modalActualizar,
+    modalInsertar,
+    setModalInsertar,
+    setModalActualizar,
+    cerrarModalActualizar,
+    cerrarModalInsertar,
+    mostrarModalInsertar,
+  } = useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const { dataAnticipos, fetchAnticipos } = useAnticipos({ cia: dataUsuarios2[0]?.cia });
@@ -325,7 +332,9 @@ function Anticipo() {
 
     if (validarCampos() === true) {
       await jezaApi
-        .put(`/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`)
+        .put(
+          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
+        )
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -614,7 +623,9 @@ function Anticipo() {
 
     const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${
       formData.sucursal
-    }&idnoVenta=%&idCliente=${formData.cliente}&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
+    }&idnoVenta=%&idCliente=${
+      formData.cliente
+    }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
 
     jezaApi
       .get(queryString)
@@ -656,7 +667,6 @@ function Anticipo() {
         <SidebarHorizontal />
       </Row>
       <Container>
-       
         <Row>
           <Col>
             <Container fluid>
@@ -717,17 +727,35 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Fecha inicial:</Label>
-                      <Input type="date" name="fechaInicial" value={formulario.fechaInicial} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaInicial"
+                        value={formulario.fechaInicial}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </Col>
 
                     <Col sm="3">
                       <Label>Fecha final:</Label>
-                      <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange3} bsSize="sm" />
+                      <Input
+                        type="date"
+                        name="fechaFinal"
+                        value={formulario.fechaFinal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      />
                     </Col>
 
                     <Col sm="3">
                       <Label>Sucursal:</Label>
-                      <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="sucursal"
+                        value={formulario.sucursal}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
@@ -738,7 +766,13 @@ function Anticipo() {
 
                     <Col sm="3">
                       <Label>Empresa:</Label>
-                      <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange3} bsSize="sm">
+                      <Input
+                        type="select"
+                        name="empresa"
+                        value={formulario.empresa}
+                        onChange={handleChange3}
+                        bsSize="sm"
+                      >
                         <option value="">Seleccione la empresa</option>
 
                         {dataCias.map((item) => (
@@ -750,7 +784,11 @@ function Anticipo() {
                   </Row>
                   <br />
                   <Col sm="6">
-                    <CButton color="primary" text="Consultar" onClick={() => ejecutaPeticion(formulario.reporte)}></CButton>
+                    <CButton
+                      color="primary"
+                      text="Consultar"
+                      onClick={() => ejecutaPeticion(formulario.reporte)}
+                    ></CButton>
                   </Col>
                 </AccordionBody>
               </AccordionItem>
@@ -784,7 +822,13 @@ function Anticipo() {
 
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>{" "}
         </ModalBody>
@@ -824,7 +868,14 @@ function Anticipo() {
               {/* SELECT */}
               <Label for="idCliente">Cliente</Label>
               <InputGroup>
-                <Input disabled type="text" name="d_cliente" id="d_cliente" value={form.d_cliente} onChange={handleChange} />
+                <Input
+                  disabled
+                  type="text"
+                  name="d_cliente"
+                  id="d_cliente"
+                  value={form.d_cliente}
+                  onChange={handleChange}
+                />
                 <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
               </InputGroup>
             </FormGroup>
@@ -852,7 +903,13 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               <Label for="observaciones">Observaciones</Label>
-              <Input type="text" name="observaciones" id="observaciones" value={form.observaciones} onChange={handleChange} />
+              <Input
+                type="text"
+                name="observaciones"
+                id="observaciones"
+                value={form.observaciones}
+                onChange={handleChange}
+              />
             </FormGroup>
           </Form>
         </ModalBody>
@@ -872,7 +929,12 @@ function Anticipo() {
       <Modal isOpen={modalCliente} size="lg">
         <ModalHeader> Cliente </ModalHeader>
         <ModalBody>
-          <TableClienteAnticipos form={form} setForm={setForm} data={dataClientes} setModalCliente={setModalCliente}></TableClienteAnticipos>
+          <TableClienteAnticipos
+            form={form}
+            setForm={setForm}
+            data={dataClientes}
+            setModalCliente={setModalCliente}
+          ></TableClienteAnticipos>
         </ModalBody>
         <ModalFooter>
           <CButton

@@ -91,7 +91,7 @@
 import React from "react";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Button, Col, Input, Label, Row } from "reactstrap";
-import { useGentlemanContext } from "../context/VentasContext"; // Asegúrate de importar useGentlemanContext aquí
+// import { useGentlemanContext } from "../context/VentasContext"; // Asegúrate de importar useGentlemanContext aquí
 import { useClientes } from "../../../hooks/getsHooks/useClientes";
 import { AnticipoGet } from "../../../models/Anticipo";
 import { useState } from "react";
@@ -106,7 +106,7 @@ interface Props {
 
 const TableClienteAnticipos = ({ data, setModalCliente, form, setForm }: Props) => {
   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
-  const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext(); // Asegúrate de estar usando useGentlemanContext aquí
+  // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext(); // Asegúrate de estar usando useGentlemanContext aquí
   const [filtroCliente, setFiltroCliente] = useState("");
 
   const handle = (dato: Cliente) => {
