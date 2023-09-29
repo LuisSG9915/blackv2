@@ -20,6 +20,7 @@ import {
   ListGroupItem,
   Input,
   Button,
+  Spinner,
 } from "reactstrap";
 import { Usuario } from "../models/Usuario";
 import Usuarios from "../screens/Usuarios";
@@ -300,12 +301,22 @@ const SidebarHorizontal = () => {
   // useEffect(() => {
   //   setTimeout(() => {
 
-
   //     setLoadingController(false)
   //   }, 900);
 
   // }, []);
 
+  const [loadingController, setLoadingController] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      // cleanData();
+      setLoadingController(false);
+    }, 1100);
+    // console.log('Este código se ejecutará una vez al montar el componente.');
+
+    // Puedes realizar cualquier tarea que necesites aquí
+    // Por ejemplo, hacer una llamada a una API o inicializar algún estado
+  }, []); // El array de dependencias está vacío
 
   return (
     <>
@@ -593,6 +604,23 @@ const SidebarHorizontal = () => {
             </Collapse>
           </Navbar>
         </div>
+        <div>
+          {loadingController ? (
+            <div className="fondoLoader">
+              <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" />
+              <Spinner
+                style={{
+                  height: "5rem",
+                  width: "5rem",
+                }}
+                type="grow"
+              >
+                Loading...
+              </Spinner>
+            </div>
+          ) : null}
+        </div>
+
         <div className="">
           {isTimerExpired() ? (
             <Timer limitInMinutes={60} onExpiration={handleLogout} redirectPath={undefined} onUpdate={undefined} />
