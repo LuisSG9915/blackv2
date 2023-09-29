@@ -300,7 +300,7 @@ function MovimientoDiversos() {
     }
   }, [form.cantidad_entrada || form.cantidad_salida]);
 
-
+  const [validaciónAlmacen, setValidaciónAlmacen] = useState(false)
   useEffect(() => {
     const ultimoAlmacen = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].almacen : 0;
     const ultimoObservación = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
@@ -310,6 +310,9 @@ function MovimientoDiversos() {
     const ultimoResponsable = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].nombreUsuario : "";
     setUsuarioResponsable(ultimoResponsable);
     setEstados(ultimoEstado);
+    // if (dataAjustes.length > 0) {
+    //   setValidaciónAlmacen(true)
+    // }
     setform({
       ...form,
       almacen: ultimoAlmacen,
@@ -446,7 +449,7 @@ function MovimientoDiversos() {
 
                     <Col md="3" style={{ marginBottom: 0 }}>
                       <Label>Almacén:</Label>
-                      <Input disabled={estados} type="select" name="almacen" id="almacen" value={form.almacen} onChange={handleChange} bsSize="sm">
+                      <Input disabled={validaciónAlmacen} type="select" name="almacen" id="almacen" value={form.almacen} onChange={handleChange} bsSize="sm">
                         <option value="">Selecciona el almacén</option>
                         {filtradoAlmacenFormateada.map((sucursal: any) => (
                           <option key={sucursal.id} value={sucursal.id}>
@@ -523,7 +526,7 @@ function MovimientoDiversos() {
 
                       <Button
                         color="primary"
-                        disabled={!estados}
+                        // disabled={!estados}
                         onClick={() => {
                           setform({
                             cia: dataUsuarios2[0]?.idCia,

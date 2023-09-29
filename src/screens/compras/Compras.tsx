@@ -112,7 +112,7 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Acción", "Clave compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado"];
+  const TableDataHeaderComprasSeleccion = ["Acción", "Folio compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado"];
 
   const [estados, setEstados] = useState(false);
 
