@@ -27,5 +27,5 @@ export const useAjuste = ({ folio = "0", sucursal }: Props) => {
     fetchAjustes();
   }, [folio, sucursal]);
 
-  return { dataAjustes, fetchAjustes };
+  return { dataAjustes, fetchAjustes, setAjustes };
 };
