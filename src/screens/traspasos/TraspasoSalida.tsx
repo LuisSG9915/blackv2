@@ -37,6 +37,11 @@ import { useProductos } from "../../hooks/getsHooks/useProductos";
 import { UserResponse } from "../../models/Home";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
+import { BiAddToQueue } from "react-icons/bi";
+import { CgPlayListCheck } from "react-icons/cg";
+import { BiSearchAlt } from "react-icons/bi";
+import { BiExit } from "react-icons/bi";
 
 function TraspasoSalida() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -261,10 +266,8 @@ function TraspasoSalida() {
     }
     jezaApi
       .get(
-        `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&sucursal_destino=${fechaSeleccionada.suc_destino === 0 ? "%" : fechaSeleccionada.suc_destino}&f1=${
-          fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230701"
+        `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${dataUsuarios2[0]?.sucursal
+        }&sucursal_destino=${fechaSeleccionada.suc_destino === 0 ? "%" : fechaSeleccionada.suc_destino}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230701"
         }&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"}`
       )
       .then((response) => setDataTraspasoBusqueda2(response.data));
@@ -396,11 +399,11 @@ function TraspasoSalida() {
       <Row>
         {/* <Col md={9}> */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Traspaso de salida </h1>
+          <h1> Traspaso de salida <BiExit size={35} /></h1>
         </div>
         <br />
-        <Row className="">
-          <Col lg={5} md={4}>
+        <Row>
+          <Col md="6">
             <Label>Sucursal destino:</Label>
             <Input
               disabled={Number(form.folio) !== 0 ? true : false}
@@ -418,7 +421,7 @@ function TraspasoSalida() {
             </Input>
           </Col>
 
-          <Col lg={5} md={4}>
+          <Col md="6">
             <Label>Almacén destino:</Label>
             <Input
               disabled={Number(form.folio) !== 0 ? true : false}
@@ -436,7 +439,7 @@ function TraspasoSalida() {
             </Input>
           </Col>
 
-          <Col lg={5} md={4}>
+          <Col md="6">
             <Label>Almacén origen:</Label>
             <Input
               disabled={Number(form.folio) !== 0 ? true : false}
@@ -464,8 +467,8 @@ function TraspasoSalida() {
           {Number(form.folio) > 0
             ? "Traspaso finalizado"
             : Number(form.folio) === 0 && dataTraspasos && dataTraspasos.length > 0
-            ? "Traspaso en proceso"
-            : ""}
+              ? "Traspaso en proceso"
+              : ""}
         </h4>
 
         <br />
@@ -482,35 +485,35 @@ function TraspasoSalida() {
           <tbody>
             {dataTraspasos && dataTraspasos.length > 0
               ? dataTraspasos.map((dato: TraspasoGet, index) => (
-                  <tr key={dato.id + index}>
-                    <td>{dato.clave_prod}</td>
-                    <td>{dato.d_producto}</td>
-                    <td align="center">{dato.cantidad}</td>
-                    <td align="center">{dato.d_unidadmedida}</td>
-                    <td>{dato.usuarioTraspaso}</td>
-                    <td style={{ width: 20 }} align="center">
-                      {dato.folio > 0 ? (
-                        <>
-                          <AiFillEdit color="grey" className="mr-2" onClick={() => null} size={23}></AiFillEdit>
-                          <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
-                        </>
-                      ) : (
-                        <>
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => mostrarModalActualizar(dato)}
-                            size={23}
-                          ></AiFillEdit>
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={() => eliminar(dato.id, dato.d_producto)}
-                            size={23}
-                          ></AiFillDelete>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                <tr key={dato.id + index}>
+                  <td>{dato.clave_prod}</td>
+                  <td>{dato.d_producto}</td>
+                  <td align="center">{dato.cantidad}</td>
+                  <td align="center">{dato.d_unidadmedida}</td>
+                  <td>{dato.usuarioTraspaso}</td>
+                  <td style={{ width: 20 }} align="center">
+                    {dato.folio > 0 ? (
+                      <>
+                        <AiFillEdit color="grey" className="mr-2" onClick={() => null} size={23}></AiFillEdit>
+                        <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
+                      </>
+                    ) : (
+                      <>
+                        <AiFillEdit
+                          className="mr-2"
+                          onClick={() => mostrarModalActualizar(dato)}
+                          size={23}
+                        ></AiFillEdit>
+                        <AiFillDelete
+                          color="lightred"
+                          onClick={() => eliminar(dato.id, dato.d_producto)}
+                          size={23}
+                        ></AiFillDelete>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
               : null}
           </tbody>
         </Table>
@@ -583,14 +586,16 @@ function TraspasoSalida() {
     return (
       // <div style={{ position: "fixed", bottom: 10, width: "100%", zIndex: 9999 }}>
       <Container>
-        <InputGroup>
+        <div>
           <Button
+            style={{ marginRight: 5 }}
             disabled={Number(form.folio) > 0 || !dataTraspasos || dataTraspasos.length === 0}
             onClick={() => {
               putFinalizaTraspasoSalida();
             }}
             color="success"
           >
+            <CgPlayListCheck size={30} />
             Finalizar
           </Button>
 
@@ -605,14 +610,16 @@ function TraspasoSalida() {
           </TicketPrint>
 
           <Button
+            color="primary"
             onClick={() => {
               setModalBusqueda(true);
               getTraspasoBusqueda();
             }}
           >
+            <BiSearchAlt size={30} />
             Búsqueda
           </Button>
-        </InputGroup>
+        </div>
       </Container>
     );
   };
@@ -626,18 +633,18 @@ function TraspasoSalida() {
       content: () => componentRef.current,
     });
 
-    return (
-      <div>
-        <div style={{ display: "none" }}>
-          <div ref={componentRef}>{children}</div>
-        </div>
-        {children && (
-          <Button color="primary" onClick={handlePrint}>
-            Imprimir
-          </Button>
-        )}
-      </div>
-    );
+    // return (
+    //   <div>
+    //     <div style={{ display: "none" }}>
+    //       <div ref={componentRef}>{children}</div>
+    //     </div>
+    //     {children && (
+    //       <Button color="primary" onClick={handlePrint}>
+    //         Imprimir
+    //       </Button>
+    //     )}
+    //   </div>
+    // );
   };
   const [dataTraspasoBusqueda2, setDataTraspasoBusqueda2] = useState<TraspasoBusqueda[]>([]);
 
@@ -646,27 +653,14 @@ function TraspasoSalida() {
       <Row>
         <SidebarHorizontal />
       </Row>
-      <Container style={{ marginBottom: 85 }}>
+      <Container >
         <br />
         <InfoRow></InfoRow>
         <br />
         <div className="col align-self-start d-flex justify-content-end ">
+
           <Button
-            color="primary"
-            disabled={Number(form.folio) === 0 ? true : false}
-            onClick={() => {
-              setForm({
-                ...form,
-                folio: 0,
-                suc_destino: 0,
-                suc_origen: 0,
-                almacenOrigen: 0,
-              });
-            }}
-          >
-            Nuevo
-          </Button>
-          <Button
+            style={{ marginRight: 5 }}
             color="success"
             disabled={Number(form.folio) > 0 ? true : false}
             onClick={() => {
@@ -686,7 +680,25 @@ function TraspasoSalida() {
               }
             }}
           >
+            <BiAddToQueue size={30} />
             Agregar
+          </Button>
+          <Button
+
+            color="primary"
+            disabled={Number(form.folio) === 0 ? true : false}
+            onClick={() => {
+              setForm({
+                ...form,
+                folio: 0,
+                suc_destino: 0,
+                suc_origen: 0,
+                almacenOrigen: 0,
+              });
+            }}
+          >
+            Nuevo
+            <BiTag size={30} />
           </Button>
         </div>
         <TableSalidas></TableSalidas>
@@ -800,10 +812,12 @@ function TraspasoSalida() {
               <Col md={3}>
                 <Label>Fecha inicio: </Label>
                 <Input type="date" onChange={handleChangeFechas} name="f1" value={fechaSeleccionada.f1}></Input>
+                <br />
               </Col>
               <Col md={3}>
                 <Label>Fecha final: </Label>
                 <Input type="date" onChange={handleChangeFechas} name="f2" value={fechaSeleccionada.f2}></Input>
+                <br />
               </Col>
               <Col md={3}>
                 <Label>Folio: </Label>
@@ -813,51 +827,57 @@ function TraspasoSalida() {
                   name="folio"
                   defaultValue={fechaSeleccionada.folio}
                 ></Input>
+                <br />
+              </Col>
+              <Col md={3}>
+                <Button className="align-self-end" onClick={() => getTraspasoBusqueda()} color="primary">
+                  Buscar
+                </Button>
               </Col>
             </Row>
-            <Button className="align-self-end" onClick={() => getTraspasoBusqueda()} color="primary">
-              Buscar
-            </Button>
-            <hr />
-            <Table>
-              <thead>
-                <tr>
-                  {DataTableHeader.map((valor) => (
-                    <th className="" key={valor}>
-                      {valor}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataTraspasoBusqueda2.map((traspaso) => (
-                  <tr>
-                    <td>
-                      <AiOutlineSelect
-                        onClick={() => {
-                          setForm({
-                            ...form,
-                            folio: traspaso.folio,
-                            suc_destino: traspaso.suc_destino,
-                            suc_origen: traspaso.suc_origen,
-                            almacenDestino: traspaso.almacenDestino,
-                            almacenOrigen: traspaso.almacenOrigen,
-                          });
-                          setModalBusqueda(false);
-                        }}
-                      ></AiOutlineSelect>
-                    </td>
 
-                    <td>{traspaso.folio}</td>
-                    <td>{traspaso.d_sucDestino}</td>
-                    <td>{traspaso.fecha.split("T")[0]}</td>
-                    <td>{traspaso.usuarioTraspaso}</td>
-                    <td>{traspaso.d_almacenDestino}</td>
-                    <td>{traspaso.d_almacenOrigen}</td>
+            <hr />
+            <div className="table-responsive">
+              <Table>
+                <thead>
+                  <tr>
+                    {DataTableHeader.map((valor) => (
+                      <th className="" key={valor}>
+                        {valor}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {dataTraspasoBusqueda2.map((traspaso) => (
+                    <tr>
+                      <td>
+                        <AiOutlineSelect
+                          onClick={() => {
+                            setForm({
+                              ...form,
+                              folio: traspaso.folio,
+                              suc_destino: traspaso.suc_destino,
+                              suc_origen: traspaso.suc_origen,
+                              almacenDestino: traspaso.almacenDestino,
+                              almacenOrigen: traspaso.almacenOrigen,
+                            });
+                            setModalBusqueda(false);
+                          }}
+                        ></AiOutlineSelect>
+                      </td>
+
+                      <td>{traspaso.folio}</td>
+                      <td>{traspaso.d_sucDestino}</td>
+                      <td>{traspaso.fecha.split("T")[0]}</td>
+                      <td>{traspaso.usuarioTraspaso}</td>
+                      <td>{traspaso.d_almacenDestino}</td>
+                      <td>{traspaso.d_almacenOrigen}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </Container>
         </ModalBody>
 

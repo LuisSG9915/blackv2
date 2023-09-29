@@ -728,7 +728,7 @@ function Compras() {
               disabled={disabledFecha}
               bsSize="sm"
             >
-              <option value={0}>Selecciona el proveedor</option>
+              <option value={""}>Selecciona el proveedor</option>
               {dataProveedores.map((proveedor: Proveedor) => (
                 <option value={proveedor.id}> {proveedor.nombre} </option>
               ))}

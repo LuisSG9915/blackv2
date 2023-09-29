@@ -39,6 +39,10 @@ import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 
+import { BsDownload } from "react-icons/bs";
+import { BiSearchAlt } from "react-icons/bi";
+
+
 function TraspasosEntrada() {
   const { filtroSeguridad, session } = useSeguridad();
 
@@ -161,7 +165,8 @@ function TraspasosEntrada() {
   });
 
   useEffect(() => {
-    const filtradoSucursal = dataSucursales.filter((data: Sucursal) => data.sucursal !== dataUsuarios2[0].sucursal);
+    // const filtradoSucursal = dataSucursales.filter((data: Sucursal) => data.sucursal !== dataUsuarios2[0].sucursal);
+    const filtradoSucursal = dataSucursales.filter((data: Sucursal) => data.sucursal);
     setFiltradoSucursales(filtradoSucursal);
   }, [dataSucursales.length > 0]);
   const [stateRecibido, setSetstateRecibido] = useState(false);
@@ -346,15 +351,19 @@ function TraspasosEntrada() {
     return (
       <>
         <Container>
-          <ButtonGroup>
+          <div>
+
             <Button
+              style={{ marginRight: 5 }}
               disabled={!recibido && dataTraspasosEntradas.length > 0 ? false : true}
               onClick={() => {
                 FinalizaRecepcion();
               }}
               color="success"
             >
+
               Recibir
+              <BsDownload size={30} />
             </Button>
             {/* <TicketPrint>
               <>
@@ -366,14 +375,18 @@ function TraspasosEntrada() {
               </>
             </TicketPrint> */}
             <Button
+
+              color="primary"
               onClick={() => {
                 setModalBusqueda(true);
                 getTraspasoBusqueda();
               }}
             >
+              <BiSearchAlt size={30} />
               Búsqueda
             </Button>
-          </ButtonGroup>
+
+          </div>
         </Container>
       </>
     );
@@ -521,10 +534,12 @@ function TraspasosEntrada() {
               <Col md={3}>
                 <Label>Fecha inicio: </Label>
                 <Input type="date" onChange={handleChangeFechas} name="f1" value={fechaSeleccionada.f1}></Input>
+                <br />
               </Col>
               <Col md={3}>
                 <Label>Fecha final: </Label>
                 <Input type="date" onChange={handleChangeFechas} name="f2" value={fechaSeleccionada.f2}></Input>
+                <br />
               </Col>
               <Col md={3}>
                 <Label>Sucursal origen:</Label>
@@ -535,70 +550,75 @@ function TraspasosEntrada() {
                   onChange={handleChangeFechas}
                 >
                   <option value={0}>Selecciona sucursal</option>
+                  <option value={"%"}>Todas las sucursales</option>
                   {filtradoSucursales.map((option: Sucursal) => (
                     <option key={option.sucursal} value={Number(option.sucursal)}>
                       {option.nombre}
                     </option>
                   ))}
                 </Input>
+                <br />
               </Col>
               <Col md={3}>
                 <Label>Folio: </Label>
                 <Input type="text" onChange={handleChangeFechas} name="folio" value={fechaSeleccionada.folio}></Input>
+                <br />
               </Col>
             </Row>
-            <Button onClick={() => getTraspasoBusqueda()}> Buscar </Button>
+            <Button color="primary" onClick={() => getTraspasoBusqueda()}> Buscar </Button>
             <hr />
-            <Table>
-              <thead>
-                <tr>
-                  {DataTableHeaderBusqueda.map((valor) => (
-                    <th className="" key={valor}>
-                      {valor}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataTraspasoBusqueda2.map((traspaso) => (
+            <div className="table-responsive">
+              <Table>
+                <thead>
                   <tr>
-                    <td>
-                      <AiOutlineSelect
-                        onClick={() => {
-                          console.log(traspaso);
-                          setForm({
-                            ...form,
-                            folio: traspaso.folio.toString(),
-                            suc_destino: traspaso.suc_destino.toString(),
-                          });
-                          setModalBusqueda(false);
-                          fetchTraspasosEntradas({
-                            folio: traspaso.folio,
-                            sucursal_destino: dataUsuarios2[0].sucursal,
-                            sucursal: fechaSeleccionada.suc_destino,
-                            f1: fechaSeleccionada.f1,
-                            f2: fechaSeleccionada.f2,
-                          });
-                          setInformative({
-                            ...informative,
-                            d_almacenDestino: traspaso.d_almacenDestino,
-                            d_almacenOrigen: traspaso.d_almacenOrigen,
-                          });
-                        }}
-                      ></AiOutlineSelect>
-                    </td>
-
-                    <td>{traspaso.folio}</td>
-                    <td>{traspaso.usuarioTraspaso}</td>
-                    <td>{traspaso.fecha.split("T")[0]}</td>
-                    <td>{traspaso.d_sucOrigen}</td>
-                    <td>{traspaso.d_almacenDestino}</td>
-                    <td>{traspaso.d_almacenOrigen}</td>
-                    <td>{traspaso.recibido ? "Recibido" : "No recibido"}</td>
+                    {DataTableHeaderBusqueda.map((valor) => (
+                      <th className="" key={valor}>
+                        {valor}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {dataTraspasoBusqueda2.map((traspaso) => (
+                    <tr>
+                      <td>
+                        <AiOutlineSelect
+                          onClick={() => {
+                            console.log(traspaso);
+                            setForm({
+                              ...form,
+                              folio: traspaso.folio.toString(),
+                              suc_destino: traspaso.suc_destino.toString(),
+                            });
+                            setModalBusqueda(false);
+                            fetchTraspasosEntradas({
+                              folio: traspaso.folio,
+                              sucursal_destino: dataUsuarios2[0].sucursal,
+                              sucursal: fechaSeleccionada.suc_destino,
+                              f1: fechaSeleccionada.f1,
+                              f2: fechaSeleccionada.f2,
+                            });
+                            setInformative({
+                              ...informative,
+                              d_almacenDestino: traspaso.d_almacenDestino,
+                              d_almacenOrigen: traspaso.d_almacenOrigen,
+                            });
+                          }}
+                        ></AiOutlineSelect>
+                      </td>
+
+                      <td>{traspaso.folio}</td>
+                      <td>{traspaso.usuarioTraspaso}</td>
+                      <td>{traspaso.fecha.split("T")[0]}</td>
+                      <td>{traspaso.d_sucOrigen}</td>
+                      <td>{traspaso.d_almacenDestino}</td>
+                      <td>{traspaso.d_almacenOrigen}</td>
+                      <td>{traspaso.recibido ? "Recibido" : "No recibido"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </Container>
         </ModalBody>
 
