@@ -273,7 +273,9 @@ function Compras() {
       fecha: dato.fecha !== undefined ? dato.fecha.split("T")[0] : "",
       id_compra: dato.id_compra,
       d_Encargado: dato.nombreEncargado,
+
     });
+
 
     setIsOpen(false);
     setIdSeleccionado(dato.id_compra);
@@ -498,6 +500,8 @@ function Compras() {
     const ultiFecha = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fecha : "";
     const ultiFechaDocumento = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fechaDocumento : "";
     const ultiCompra = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].id_compra : 0;
+    const ultiResposable = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].usuario : 0;
+
     if (ultiCompra > 0) {
       setDisabledFecha(true);
     } else {
@@ -509,6 +513,7 @@ function Compras() {
       fecha: ultiFecha.split("T")[0],
       fechaDocumento: ultiFechaDocumento.split("T")[0],
       folioValidacion: ultimoFolio,
+      d_Encargado: getUsuarioForeignKey(ultiResposable),
     });
     const descripciones = dataComprasGeneral.map((item) => item.claveProd);
     setProductoSelected(descripciones);
@@ -744,7 +749,7 @@ function Compras() {
             <br />
           </Col>
 
-          <Col md="6">
+          <Col md="4">
             <Label for="documento">Documento:</Label>
             <Input
               disabled={disabledFecha}
@@ -756,7 +761,7 @@ function Compras() {
             />
             <br />
           </Col>
-          <Col md="6">
+          <Col md="4">
             <Label for="documento">Nombre del encargado:</Label>
             <Input
               disabled
@@ -764,6 +769,18 @@ function Compras() {
               onChange={handleChange}
               name="d_Encargado"
               value={dataCompras.d_Encargado ? dataCompras.d_Encargado : ""}
+              bsSize="sm"
+            />
+            <br />
+          </Col>
+          <Col md="4">
+            <Label for="documento">Folio:</Label>
+            <Input
+              disabled
+              type="text"
+              onChange={handleChange}
+              name="id_compra"
+              value={dataCompras.id_compra ? dataCompras.id_compra : "0"}
               bsSize="sm"
             />
             <br />
@@ -823,6 +840,7 @@ function Compras() {
             <tbody>
               {dataComprasGeneral.map((dato: CompraProveedor, index) => (
                 <tr key={dato.id + index}>
+                  {/* <td style={{ fontSize: "13px" }}>{dato.id_compra}</td> */}
                   <td style={{ fontSize: "13px" }}>{getUsuarioForeignKey(Number(dato.usuario))}</td>
                   <td style={{ fontSize: "13px" }}>{dato.claveProd}</td>
                   <td style={{ fontSize: "13px" }}>{dato.descripcion}</td>
