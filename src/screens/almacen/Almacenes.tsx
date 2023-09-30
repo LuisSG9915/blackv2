@@ -351,7 +351,9 @@ function Almacenes() {
       setForm({ ...form, [name]: numericValue });
     } else {
       // Actualizar el valor sin validación en otros campos
-      setForm({ ...form, [name]: sanitizedValue });
+      const trimmedValue = value.replace(/^\s+/g, "");
+      setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+      console.log(form);
     }
   };
 
@@ -451,8 +453,8 @@ function Almacenes() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Almacenes </h1>
-          <MdInventory size={30}></MdInventory>
+          <h1> Almacenes  <MdInventory size={30} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
