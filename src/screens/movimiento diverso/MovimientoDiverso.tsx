@@ -312,8 +312,7 @@ function MovimientoDiversos() {
       setDeshabiliteadoExistencia(false);
     }
   }, [form.cantidad_entrada || form.cantidad_salida]);
-
-
+  const [validaciónAlmacen, setValidaciónAlmacen] = useState(false);
   useEffect(() => {
     const ultimoAlmacen = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].almacen : 0;
     const ultimoObservación = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
@@ -463,18 +462,26 @@ function MovimientoDiversos() {
                     <br />
                   </Col>
 
-                    <Col md="3" style={{ marginBottom: 0 }}>
-                      <Label>Almacén:</Label>
-                      <Input disabled={estados} type="select" name="almacen" id="almacen" value={form.almacen} onChange={handleChange} bsSize="sm">
-                        <option value="">Selecciona el almacén</option>
-                        {filtradoAlmacenFormateada.map((sucursal: any) => (
-                          <option key={sucursal.id} value={sucursal.id}>
-                            {sucursal.descripcion}
-                          </option>
-                        ))}
-                      </Input>
-                      <br />
-                    </Col>
+                  <Col md="3" style={{ marginBottom: 0 }}>
+                    <Label>Almacén:</Label>
+                    <Input
+                      disabled={validaciónAlmacen}
+                      type="select"
+                      name="almacen"
+                      id="almacen"
+                      value={form.almacen}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Selecciona el almacén</option>
+                      {filtradoAlmacenFormateada.map((sucursal: any) => (
+                        <option key={sucursal.id} value={sucursal.id}>
+                          {sucursal.descripcion}
+                        </option>
+                      ))}
+                    </Input>
+                    <br />
+                  </Col>
 
                   <Col md="3">
                     <Label>Fecha:</Label>
@@ -538,133 +545,130 @@ function MovimientoDiversos() {
                       Agregar
                     </Button>
 
-                      <Button
-                        color="primary"
-                        disabled={!estados}
-                        onClick={() => {
-                          setform({
-                            cia: dataUsuarios2[0]?.idCia,
-                            sucursal: dataUsuarios2[0]?.sucursal,
-                            folio: 0,
-                            fecha: "",
-                            clave_prod: 0,
-                            tipo_movto: 0,
-                            cantidad_entrada: 0,
-                            cantidad_salida: 0,
-                            costo: 0,
-                            precio: 0,
-                            usuario: 0,
-                            almacen: 0,
-                            observacion: "",
-                          });
-                        }}
-                      >
-                        Nuevo
-                        <BiTag size={30} />
-                      </Button>
-
-                    </div>
-                    <div className="table-responsive">
-                      <br />
-                      <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
-                        <thead>
+                    <Button
+                      color="primary"
+                      disabled={dataAjustes.length == 0}
+                      onClick={() => {
+                        setform({
+                          cia: dataUsuarios2[0]?.idCia,
+                          sucursal: dataUsuarios2[0]?.sucursal,
+                          folio: "",
+                          fecha: "",
+                          clave_prod: 0,
+                          tipo_movto: 0,
+                          cantidad_entrada: 0,
+                          cantidad_salida: 0,
+                          costo: 0,
+                          precio: 0,
+                          usuario: 0,
+                          almacen: 0,
+                          observacion: "",
+                        });
+                      }}
+                    >
+                      Nuevo
+                      <BiTag size={30} />
+                    </Button>
+                  </div>
+                  <div className="table-responsive">
+                    <br />
+                    <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
+                      <thead>
+                        <tr>
+                          <th>Clave</th>
+                          <th>Descripción</th>
+                          <th style={{ textAlign: "center" }}>Cantidad</th>
+                          {/* <th style={{ textAlign: "center" }}> Unidad de medida</th> */}
+                          <th> Acciones</th>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                          <th style={{ marginBottom: "10px" }}>
+                            <div className="row">
+                              <div className="col-6" style={{ textAlign: "center" }}>
+                                E
+                              </div>
+                              <div className="col-6" style={{ textAlign: "center" }}>
+                                S
+                              </div>
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dataAjustes.map((ajuste) => (
                           <tr>
-                            <th>Clave</th>
-                            <th>Descripción</th>
-                            <th style={{ textAlign: "center" }}>Cantidad</th>
-                            {/* <th style={{ textAlign: "center" }}> Unidad de medida</th> */}
-                            <th> Acciones</th>
-                          </tr>
-                          <tr>
-                            <th></th>
-                            <th></th>
-                            <th style={{ marginBottom: "10px" }}>
+                            <td>{ajuste.clave_prod} </td>
+                            <td>{ajuste.d_producto} </td>
+                            <td style={{ marginBottom: "10px" }}>
                               <div className="row">
                                 <div className="col-6" style={{ textAlign: "center" }}>
-                                  E
+                                  {ajuste.cantidad_entrada}
                                 </div>
                                 <div className="col-6" style={{ textAlign: "center" }}>
-                                  S
+                                  {ajuste.cantidad_salida}
                                 </div>
                               </div>
-                            </th>
+                            </td>
+                            <td className="gap-5">
+                              <AiFillEdit
+                                color={ajuste.finalizado ? "grey" : "black"}
+                                className="mr-2"
+                                onClick={() => {
+                                  if (ajuste.finalizado) {
+                                    null;
+                                  } else {
+                                    setModalResumenEditar(true);
+                                    setform({ ...ajuste, d_existencia: ajuste.existencia });
+                                  }
+                                }}
+                                size={23}
+                              ></AiFillEdit>
+                              <AiFillDelete
+                                color={ajuste.finalizado ? "grey" : "black"}
+                                onClick={() => {
+                                  if (ajuste.finalizado) {
+                                    null;
+                                  } else {
+                                    eliminar(ajuste);
+                                  }
+                                }}
+                                size={23}
+                              ></AiFillDelete>
+                            </td>{" "}
+                            <td> </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {dataAjustes.map((ajuste) => (
-                            <tr>
-                              <td>{ajuste.clave_prod} </td>
-                              <td>{ajuste.d_producto} </td>
-                              <td style={{ marginBottom: "10px" }}>
-                                <div className="row">
-                                  <div className="col-6" style={{ textAlign: "center" }}>
-                                    {ajuste.cantidad_entrada}
-                                  </div>
-                                  <div className="col-6" style={{ textAlign: "center" }}>
-                                    {ajuste.cantidad_salida}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="gap-5">
-                                <AiFillEdit
-                                  color={ajuste.finalizado ? "grey" : "black"}
-                                  className="mr-2"
-                                  onClick={() => {
-                                    if (ajuste.finalizado) {
-                                      null;
-                                    } else {
-                                      setModalResumenEditar(true);
-                                      setform({ ...ajuste, d_existencia: ajuste.existencia });
-                                    }
-                                  }}
-                                  size={23}
-                                ></AiFillEdit>
-                                <AiFillDelete
-                                  color={ajuste.finalizado ? "grey" : "black"}
-                                  onClick={() => {
-                                    if (ajuste.finalizado) {
-                                      null;
-                                    } else {
-                                      eliminar(ajuste);
-                                    }
-                                  }}
-                                  size={23}
-                                ></AiFillDelete>
-                              </td>{" "}
-                              <td> </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </Table>
-                    </div>
-                  </Row>
-                </Container>
-              </FormGroup>
-              <InformativeInformation></InformativeInformation>
-              <br />
-              <br />
-            </Container><Container>
-
-                <Button style={{ marginRight: 5 }} onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
-                  <CgPlayListCheck size={30} />
-                  Finalizar
-                </Button>
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    handleOpenModal();
-                    fetchAjustesBusquedas();
-                  }}
-                >
-                  <BiSearchAlt size={30} />
-                  Busqueda
-                </Button>
-
-              </Container><div style={{ position: "fixed", bottom: 20, width: "100%" }}>
-              </div></>
-          )
-      }
-
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                </Row>
+              </Container>
+            </FormGroup>
+            <InformativeInformation></InformativeInformation>
+            <br />
+            <br />
+          </Container>
+          <Container>
+            <Button style={{ marginRight: 5 }} onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
+              <CgPlayListCheck size={30} />
+              Finalizar
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                handleOpenModal();
+                fetchAjustesBusquedas();
+              }}
+            >
+              <BiSearchAlt size={30} />
+              Busqueda
+            </Button>
+          </Container>
+          <div style={{ position: "fixed", bottom: 20, width: "100%" }}></div>
+        </>
+      )}
 
       <Modal isOpen={modalResumen} size="xl">
         <ModalHeader>
