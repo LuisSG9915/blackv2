@@ -120,7 +120,7 @@ function MovimientoDiversos() {
     d_existencia: 0,
   });
 
-  const { dataAjustes, fetchAjustes } = useAjuste({ folio: form.folio, sucursal: dataUsuarios2[0]?.sucursal });
+  const { dataAjustes, fetchAjustes, setAjustes } = useAjuste({ folio: form.folio, sucursal: dataUsuarios2[0]?.sucursal });
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -271,22 +271,37 @@ function MovimientoDiversos() {
     setform({ ...form, d_producto: "", cantidad_entrada: 0, cantidad_salida: 0, d_existencia: 0 });
   };
   const cleanData = () => {
-    setform({ ...form, almacen: 0, cantidad_entrada: 0, cantidad_salida: 0, cia: 0, clave_prod: 0, costo: 0, d_existencia: 0, d_producto: "", fecha: "", folio: "", id: 0, observacion: "", precio: 0, sucursal: 0, tipo_movto: 0, usuario: 0 });
+    setform({
+      ...form,
+      almacen: 0,
+      cantidad_entrada: 0,
+      cantidad_salida: 0,
+      cia: 0,
+      clave_prod: 0,
+      costo: 0,
+      d_existencia: 0,
+      d_producto: "",
+      fecha: "",
+      folio: "",
+      id: 0,
+      observacion: "",
+      precio: 0,
+      sucursal: 0,
+      tipo_movto: 0,
+      usuario: 0,
+    });
   };
-  const [loadingController, setLoadingController] = useState(true)
+  const [loadingController, setLoadingController] = useState(true);
   useEffect(() => {
     setTimeout(() => {
-
       cleanData();
-      setLoadingController(false)
+      setLoadingController(false);
     }, 900);
     // console.log('Este código se ejecutará una vez al montar el componente.');
 
     // Puedes realizar cualquier tarea que necesites aquí
     // Por ejemplo, hacer una llamada a una API o inicializar algún estado
   }, []); // El array de dependencias está vacío
-
-
 
   useEffect(() => {
     // if (Number(form.cantidad_salida) > 0) {
@@ -300,7 +315,7 @@ function MovimientoDiversos() {
     }
   }, [form.cantidad_entrada || form.cantidad_salida]);
 
-  const [validaciónAlmacen, setValidaciónAlmacen] = useState(false)
+  const [validaciónAlmacen, setValidaciónAlmacen] = useState(false);
   useEffect(() => {
     const ultimoAlmacen = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].almacen : 0;
     const ultimoObservación = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
@@ -310,9 +325,11 @@ function MovimientoDiversos() {
     const ultimoResponsable = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].nombreUsuario : "";
     setUsuarioResponsable(ultimoResponsable);
     setEstados(ultimoEstado);
-    // if (dataAjustes.length > 0) {
-    //   setValidaciónAlmacen(true)
-    // }
+    if (dataAjustes.length > 0) {
+      setValidaciónAlmacen(true);
+    } else {
+      setValidaciónAlmacen(false);
+    }
     setform({
       ...form,
       almacen: ultimoAlmacen,
@@ -387,8 +404,6 @@ function MovimientoDiversos() {
     );
   };
 
-
-
   const handleOpenModal = () => {
     // Limpia las fechas y los datos de la consulta anterior al abrir el modal
     setFormFechas({ f1: "", f2: "" });
@@ -408,249 +423,256 @@ function MovimientoDiversos() {
       <Row>
         <SidebarHorizontal />
       </Row>
-      {
+      {loadingController ? (
+        <div className="text-center">
+          <Spinner>Loading...</Spinner>
+        </div>
+      ) : (
+        // loadingController ? <h1>LOADING</h1> :
+        <>
+          <br />
+          <Container className="px-2">
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h1>
+                {" "}
+                Ajustes diversos <BsScrewdriver size={30}></BsScrewdriver>
+              </h1>
+              {/* <BsScrewdriver size={30}></BsScrewdriver> */}
+            </div>
+            <FormGroup>
+              <Container></Container>
+              <br />
+              <Container>
+                <Row>
+                  <Col md="3" style={{ marginBottom: 0 }}>
+                    <Label>Tipo de movimiento:</Label>
+                    <Input
+                      disabled={estados}
+                      type="select"
+                      name="tipo_movto"
+                      id="tipo_movto"
+                      value={form.tipo_movto}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Selecciona tipo de movimiento</option>
+                      {dataMovimientos.map((mov) => (
+                        <option key={mov.tipo_movto} value={mov.tipo_movto}>
+                          {mov.descripcion}
+                        </option>
+                      ))}
+                    </Input>
+                    <br />
+                  </Col>
 
-        loadingController ? (
-          <div className="text-center">
-            <Spinner>
-              Loading...
-            </Spinner>
-          </div>
-        ) :
+                  <Col md="3" style={{ marginBottom: 0 }}>
+                    <Label>Almacén:</Label>
+                    <Input
+                      disabled={validaciónAlmacen}
+                      type="select"
+                      name="almacen"
+                      id="almacen"
+                      value={form.almacen}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Selecciona el almacén</option>
+                      {filtradoAlmacenFormateada.map((sucursal: any) => (
+                        <option key={sucursal.id} value={sucursal.id}>
+                          {sucursal.descripcion}
+                        </option>
+                      ))}
+                    </Input>
+                    <br />
+                  </Col>
 
-
-          // loadingController ? <h1>LOADING</h1> :
-          (
-            <><br /><Container className="px-2">
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1>
-                  {" "}
-                  Ajustes diversos <BsScrewdriver size={30}></BsScrewdriver>
-                </h1>
-                {/* <BsScrewdriver size={30}></BsScrewdriver> */}
-              </div>
-              <FormGroup>
-                <Container></Container>
-                <br />
-                <Container>
-                  <Row>
-                    <Col md="3" style={{ marginBottom: 0 }}>
-                      <Label>Tipo de movimiento:</Label>
-                      <Input disabled={estados} type="select" name="tipo_movto" id="tipo_movto" value={form.tipo_movto} onChange={handleChange} bsSize="sm">
-                        <option value="">Selecciona tipo de movimiento</option>
-                        {dataMovimientos.map((mov) => (
-                          <option key={mov.tipo_movto} value={mov.tipo_movto}>
-                            {mov.descripcion}
-                          </option>
-                        ))}
-                      </Input>
-                      <br />
-                    </Col>
-
-                    <Col md="3" style={{ marginBottom: 0 }}>
-                      <Label>Almacén:</Label>
-                      <Input disabled={validaciónAlmacen} type="select" name="almacen" id="almacen" value={form.almacen} onChange={handleChange} bsSize="sm">
-                        <option value="">Selecciona el almacén</option>
-                        {filtradoAlmacenFormateada.map((sucursal: any) => (
-                          <option key={sucursal.id} value={sucursal.id}>
-                            {sucursal.descripcion}
-                          </option>
-                        ))}
-                      </Input>
-                      <br />
-                    </Col>
-
-                    <Col md="3">
-                      <Label>Fecha:</Label>
-                      <Input disabled={true} type="date" onChange={handleChange} name="fecha" value={form.fecha} bsSize="sm" />
-                      <br />
-                    </Col>
-                    <Col md="3">
-                      <Label>Folio:</Label>
-                      <Input disabled type="text" name="folio" id="folio" value={form.folio} onChange={handleChange} bsSize="sm"></Input>
-                      <br />
-                    </Col>
-                    <Col md="6">
-                      <Label>Observaciones:</Label>
-                      <Input
-                        disabled={estados}
-                        type="text"
-                        name="observacion"
-                        id="observacion"
-                        value={form.observacion}
-                        onChange={handleChange}
-                        bsSize="sm"
-                      ></Input>
-                      <br />
-                    </Col>
-                    <Col md="6">
-                      <Label>Responsable:</Label>
-                      <Input
-                        disabled
-                        type="text"
-                        name="usuarioResponsable"
-                        id="usuarioResponsable"
-                        value={usuarioResponsable}
-                        onChange={handleChange}
-                        bsSize="sm"
-                      ></Input>
-                      <br />
-                    </Col>
-                  </Row>
-                </Container>
-                <br />
-                <Container>
-                  <Row>
-                    <div className="col align-self-start d-flex justify-content-end ">
-
-                      <Button
-
-                        color="success"
-                        disabled={estados}
-                        onClick={() => {
-                          if (form.tipo_movto.toString() === "0" || form.almacen.toString() === "0" || form.observacion === "") {
-                            Swal.fire({
-                              icon: "info",
-                              title: "Atención",
-                              text: "Debe completar el formulario para realizar la función o no ingresar valores en 0",
-                            });
-                          } else {
-                            setModalResumen(true);
-                          }
-                        }}
-                        style={{ marginRight: 5 }}
-                      >
-                        <BiAddToQueue size={30} />
-                        Agregar
-                      </Button>
-
-                      <Button
-                        color="primary"
-                        // disabled={!estados}
-                        onClick={() => {
-                          setform({
-                            cia: dataUsuarios2[0]?.idCia,
-                            sucursal: dataUsuarios2[0]?.sucursal,
-                            folio: 0,
-                            fecha: "",
-                            clave_prod: 0,
-                            tipo_movto: 0,
-                            cantidad_entrada: 0,
-                            cantidad_salida: 0,
-                            costo: 0,
-                            precio: 0,
-                            usuario: 0,
-                            almacen: 0,
-                            observacion: "",
+                  <Col md="3">
+                    <Label>Fecha:</Label>
+                    <Input disabled={true} type="date" onChange={handleChange} name="fecha" value={form.fecha} bsSize="sm" />
+                    <br />
+                  </Col>
+                  <Col md="3">
+                    <Label>Folio:</Label>
+                    <Input disabled type="text" name="folio" id="folio" value={form.folio} onChange={handleChange} bsSize="sm"></Input>
+                    <br />
+                  </Col>
+                  <Col md="6">
+                    <Label>Observaciones:</Label>
+                    <Input
+                      disabled={estados}
+                      type="text"
+                      name="observacion"
+                      id="observacion"
+                      value={form.observacion}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    ></Input>
+                    <br />
+                  </Col>
+                  <Col md="6">
+                    <Label>Responsable:</Label>
+                    <Input
+                      disabled
+                      type="text"
+                      name="usuarioResponsable"
+                      id="usuarioResponsable"
+                      value={usuarioResponsable}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    ></Input>
+                    <br />
+                  </Col>
+                </Row>
+              </Container>
+              <br />
+              <Container>
+                <Row>
+                  <div className="col align-self-start d-flex justify-content-end ">
+                    <Button
+                      color="success"
+                      disabled={estados}
+                      onClick={() => {
+                        if (form.tipo_movto.toString() === "0" || form.almacen.toString() === "0" || form.observacion === "") {
+                          Swal.fire({
+                            icon: "info",
+                            title: "Atención",
+                            text: "Debe completar el formulario para realizar la función o no ingresar valores en 0",
                           });
-                        }}
-                      >
-                        Nuevo
-                        <BiTag size={30} />
-                      </Button>
+                        } else {
+                          setModalResumen(true);
+                        }
+                      }}
+                      style={{ marginRight: 5 }}
+                    >
+                      <BiAddToQueue size={30} />
+                      Agregar
+                    </Button>
 
-                    </div>
-                    <div className="table-responsive">
-                      <br />
-                      <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
-                        <thead>
+                    <Button
+                      color="primary"
+                      disabled={dataAjustes.length === 0}
+                      onClick={() => {
+                        setform({
+                          cia: dataUsuarios2[0]?.idCia,
+                          sucursal: dataUsuarios2[0]?.sucursal,
+                          folio: "",
+                          fecha: "",
+                          clave_prod: 0,
+                          tipo_movto: 0,
+                          cantidad_entrada: 0,
+                          cantidad_salida: 0,
+                          costo: 0,
+                          precio: 0,
+                          usuario: 0,
+                          almacen: 0,
+                          observacion: "",
+                        });
+                        setAjustes([]);
+                      }}
+                    >
+                      Nuevo
+                      <BiTag size={30} />
+                    </Button>
+                  </div>
+                  <div className="table-responsive">
+                    <br />
+                    <Table size="sm" bordered={true} striped={true} responsive={"sm"}>
+                      <thead>
+                        <tr>
+                          <th>Clave</th>
+                          <th>Descripción</th>
+                          <th style={{ textAlign: "center" }}>Cantidad</th>
+                          {/* <th style={{ textAlign: "center" }}> Unidad de medida</th> */}
+                          <th> Acciones</th>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                          <th style={{ marginBottom: "10px" }}>
+                            <div className="row">
+                              <div className="col-6" style={{ textAlign: "center" }}>
+                                E
+                              </div>
+                              <div className="col-6" style={{ textAlign: "center" }}>
+                                S
+                              </div>
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dataAjustes.map((ajuste) => (
                           <tr>
-                            <th>Clave</th>
-                            <th>Descripción</th>
-                            <th style={{ textAlign: "center" }}>Cantidad</th>
-                            {/* <th style={{ textAlign: "center" }}> Unidad de medida</th> */}
-                            <th> Acciones</th>
-                          </tr>
-                          <tr>
-                            <th></th>
-                            <th></th>
-                            <th style={{ marginBottom: "10px" }}>
+                            <td>{ajuste.clave_prod} </td>
+                            <td>{ajuste.d_producto} </td>
+                            <td style={{ marginBottom: "10px" }}>
                               <div className="row">
                                 <div className="col-6" style={{ textAlign: "center" }}>
-                                  E
+                                  {ajuste.cantidad_entrada}
                                 </div>
                                 <div className="col-6" style={{ textAlign: "center" }}>
-                                  S
+                                  {ajuste.cantidad_salida}
                                 </div>
                               </div>
-                            </th>
+                            </td>
+                            <td className="gap-5">
+                              <AiFillEdit
+                                color={ajuste.finalizado ? "grey" : "black"}
+                                className="mr-2"
+                                onClick={() => {
+                                  if (ajuste.finalizado) {
+                                    null;
+                                  } else {
+                                    setModalResumenEditar(true);
+                                    setform({ ...ajuste, d_existencia: ajuste.existencia });
+                                  }
+                                }}
+                                size={23}
+                              ></AiFillEdit>
+                              <AiFillDelete
+                                color={ajuste.finalizado ? "grey" : "black"}
+                                onClick={() => {
+                                  if (ajuste.finalizado) {
+                                    null;
+                                  } else {
+                                    eliminar(ajuste);
+                                  }
+                                }}
+                                size={23}
+                              ></AiFillDelete>
+                            </td>{" "}
+                            <td> </td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {dataAjustes.map((ajuste) => (
-                            <tr>
-                              <td>{ajuste.clave_prod} </td>
-                              <td>{ajuste.d_producto} </td>
-                              <td style={{ marginBottom: "10px" }}>
-                                <div className="row">
-                                  <div className="col-6" style={{ textAlign: "center" }}>
-                                    {ajuste.cantidad_entrada}
-                                  </div>
-                                  <div className="col-6" style={{ textAlign: "center" }}>
-                                    {ajuste.cantidad_salida}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="gap-5">
-                                <AiFillEdit
-                                  color={ajuste.finalizado ? "grey" : "black"}
-                                  className="mr-2"
-                                  onClick={() => {
-                                    if (ajuste.finalizado) {
-                                      null;
-                                    } else {
-                                      setModalResumenEditar(true);
-                                      setform({ ...ajuste, d_existencia: ajuste.existencia });
-                                    }
-                                  }}
-                                  size={23}
-                                ></AiFillEdit>
-                                <AiFillDelete
-                                  color={ajuste.finalizado ? "grey" : "black"}
-                                  onClick={() => {
-                                    if (ajuste.finalizado) {
-                                      null;
-                                    } else {
-                                      eliminar(ajuste);
-                                    }
-                                  }}
-                                  size={23}
-                                ></AiFillDelete>
-                              </td>{" "}
-                              <td> </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </Table>
-                    </div>
-                  </Row>
-                </Container>
-              </FormGroup>
-              <InformativeInformation></InformativeInformation>
-              <br />
-              <br />
-            </Container><Container>
-
-                <Button style={{ marginRight: 5 }} onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
-                  <CgPlayListCheck size={30} />
-                  Finalizar
-                </Button>
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    handleOpenModal();
-                    fetchAjustesBusquedas();
-                  }}
-                >
-                  <BiSearchAlt size={30} />
-                  Busqueda
-                </Button>
-
-              </Container><div style={{ position: "fixed", bottom: 20, width: "100%" }}>
-              </div></>
-          )
-      }
-
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                </Row>
+              </Container>
+            </FormGroup>
+            <InformativeInformation></InformativeInformation>
+            <br />
+            <br />
+          </Container>
+          <Container>
+            <Button style={{ marginRight: 5 }} onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
+              <CgPlayListCheck size={30} />
+              Finalizar
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                handleOpenModal();
+                fetchAjustesBusquedas();
+              }}
+            >
+              <BiSearchAlt size={30} />
+              Busqueda
+            </Button>
+          </Container>
+          <div style={{ position: "fixed", bottom: 20, width: "100%" }}></div>
+        </>
+      )}
 
       <Modal isOpen={modalResumen} size="xl">
         <ModalHeader>
@@ -776,28 +798,28 @@ function MovimientoDiversos() {
                 <tbody>
                   {dataAjustesBusquedas
                     ? dataAjustesBusquedas.map((ajuste) => (
-                      <tr>
-                        <td>
-                          <AiOutlineSelect
-                            onClick={() => {
-                              setform({
-                                ...form,
-                                folio: Number(ajuste.folio),
-                                tipo_movto: ajuste.tipo_movto,
-                                fecha: ajuste.fecha.split("T")[0],
-                              });
-                              setModalBusqueda(false);
-                              console.log(ajuste);
-                            }}
-                          ></AiOutlineSelect>
-                        </td>
-                        <td>{ajuste.folio}</td>
-                        <td>{ajuste.descripcion}</td>
-                        <td>{ajuste.items}</td>
-                        <td>{ajuste.nombreUsuario}</td>
-                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                      </tr>
-                    ))
+                        <tr>
+                          <td>
+                            <AiOutlineSelect
+                              onClick={() => {
+                                setform({
+                                  ...form,
+                                  folio: Number(ajuste.folio),
+                                  tipo_movto: ajuste.tipo_movto,
+                                  fecha: ajuste.fecha.split("T")[0],
+                                });
+                                setModalBusqueda(false);
+                                console.log(ajuste);
+                              }}
+                            ></AiOutlineSelect>
+                          </td>
+                          <td>{ajuste.folio}</td>
+                          <td>{ajuste.descripcion}</td>
+                          <td>{ajuste.items}</td>
+                          <td>{ajuste.nombreUsuario}</td>
+                          <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                        </tr>
+                      ))
                     : null}
                 </tbody>
               </Table>
