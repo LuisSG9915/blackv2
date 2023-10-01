@@ -95,6 +95,7 @@ function TipoFormasPago() {
     tarjeta: false,
     tipo: 0,
   });
+
   const getFormaPago = () => {
     /* <--------------------------------------------------GET */
     jezaApi.get("/FormaPago?id=%").then((response) => {
