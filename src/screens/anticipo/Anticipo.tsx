@@ -225,7 +225,7 @@ function Anticipo() {
     sucursal: 0,
     tipoMovto: 0,
     d_cliente: "",
-    id_formaPago: 0,
+    idformaPago: 0,
   });
 
   const mostrarModalActualizar = (dato: any) => {
@@ -242,7 +242,7 @@ function Anticipo() {
   const formattedDate = format(currentDate, "yyyyMMdd");
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "importe", "observaciones", "id_formaPago", "fechaMovto"];
+    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "importe", "observaciones", "fechaMovto"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof AnticipoGet) => {
@@ -265,7 +265,7 @@ function Anticipo() {
     return camposVacios.length === 0;
   };
 
-  //LIMPIEZA const queryString DE CAMPOS
+  //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
   const limpiezaFormAnticipos = () => {
     setForm({
@@ -297,7 +297,7 @@ function Anticipo() {
             idUsuario: dataUsuarios2[0]?.id,
             tipoMovto: 2,
             referencia: form.referencia,
-            id_formaPago: form.id_formaPago,
+            id_formaPago: formPago.id,
             importe: form.importe * -1,
             observaciones: form.observaciones,
           },
@@ -395,27 +395,53 @@ function Anticipo() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    if (name === "en_linea" || name === "es_bodega") {
-      setForm((prevState) => ({ ...prevState, [name]: checked }));
-    } else {
-      setForm((prevState: AnticipoGet) => ({ ...prevState, [name]: value }));
-    }
+
+    setForm((prevState: AnticipoGet) => ({ ...prevState, [name]: value }));
+
     console.log(form);
   };
+
+
   const [disabledReferencia, setdisabledReferencia] = useState(false);
+  // const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const selectedId = parseInt(event.target.value);
+  //   const selectedFormaPago = dataPago.find((formapago) => formapago.id === selectedId);
+  //   if (selectedFormaPago) {
+  //     setFormPago(selectedFormaPago);
+  //   }
+  //   if (selectedFormaPago?.tipo == 1) {
+  //     setdisabledReferencia(true);
+  //   } else {
+  //     setdisabledReferencia(false);
+  //   }
+  // };
   const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedId = parseInt(event.target.value);
-    const selectedFormaPago = dataPago.find((formapago) => formapago.id === selectedId);
-    if (selectedFormaPago) {
-      setFormPago(selectedFormaPago);
-    }
-    if (selectedFormaPago?.tipo == 1) {
-      setdisabledReferencia(true);
+    const selectedId = event.target.value;
+
+    if (selectedId === "") {
+      // Mostrar una alerta de SweetAlert2 indicando que debe seleccionar una forma de pago válida
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, selecciona una forma de pago válida.',
+      });
     } else {
-      setdisabledReferencia(false);
+      const selectedFormaPago = dataPago.find((formapago) => formapago.id === parseInt(selectedId, 10));
+      if (selectedFormaPago) {
+        setFormPago(selectedFormaPago);
+      }
+      if (selectedFormaPago?.tipo === 1) {
+        setdisabledReferencia(true);
+        // Si la forma de pago tiene tipo 1, también podrías limpiar el campo de referencia
+        setForm({ ...form, referencia: '' });
+      } else {
+        setdisabledReferencia(false);
+      }
     }
   };
+
+
+
 
   const handleChange3 = (event) => {
     const { name, value } = event.target;
@@ -437,7 +463,7 @@ function Anticipo() {
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
   const LimpiezaForm = () => {
-    setForm({ ...form, id: 0 });
+    setForm({ ...form, id: 0, idCliente: 0, referencia: "", importe: 0, observaciones: "", fechaMovto: "" });
   };
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -670,7 +696,7 @@ function Anticipo() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Anticipos <HiBuildingStorefront size={35} /></h1>
+                <h1> Anticipos <HiBuildingStorefront size={35}></HiBuildingStorefront> </h1>
 
               </div>
               <br />
@@ -815,12 +841,12 @@ function Anticipo() {
         <ModalBody>
           <Form>
             <FormGroup>
-              <Label for="referencia">Referencia</Label>
+              <Label for="referencia">Referencia:</Label>
               <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
             </FormGroup>
 
             <FormGroup>
-              <Label for="observaciones">Observaciones</Label>
+              <Label for="observaciones">Observaciones:</Label>
               <Input
                 type="text"
                 name="observaciones"
@@ -860,7 +886,7 @@ function Anticipo() {
         <ModalBody>
           <Form>
             <FormGroup>
-              <Label for="fechaMovto">Fecha del anticipo</Label>
+              <Label for="fechaMovto">Fecha del anticipo:</Label>
               <Input type="date" name="fechaMovto" id="fechaMovto" value={form.fechaMovto} onChange={handleChange} />
             </FormGroup>
             <FormGroup>
@@ -881,8 +907,8 @@ function Anticipo() {
 
             <FormGroup>
               <Label>Forma de pago:</Label>
-              <Input type="select" name="id_formaPago" id="id_formaPago" value={form.id_formaPago} onChange={handleChange}>
-                <option value={0}>Selecciona forma de pago</option>
+              <Input type="select" name="id" id="id" value={formPago.id} onChange={handleChange1}>
+                <option value={""}>Selecciona forma de pago</option>
                 {formasPagosFiltradas.map((formapago: FormaPago) => (
                   <option key={formapago.id} value={formapago.id}>
                     {formapago.descripcion}
@@ -967,3 +993,5 @@ function Anticipo() {
 }
 
 export default Anticipo;
+
+
