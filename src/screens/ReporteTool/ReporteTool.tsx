@@ -766,8 +766,10 @@ function ReporteTool() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Reportes </h1>
-          <AiOutlineFileText size={30}></AiOutlineFileText>
+          <h1>
+            {" "}
+            Reportes <AiOutlineFileText size={30}></AiOutlineFileText>
+          </h1>
         </div>
         <br />
 
