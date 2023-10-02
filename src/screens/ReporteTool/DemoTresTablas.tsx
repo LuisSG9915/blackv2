@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
-import {
-  AccordionBody,
-  AccordionHeader,
-  AccordionItem,
-  Button,
-  Col,
-  Container,
-  Input,
-  Label,
-  Row,
-  UncontrolledAccordion,
-} from "reactstrap";
+import { AccordionBody, AccordionHeader, AccordionItem, Button, Col, Container, Input, Label, Row, UncontrolledAccordion } from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
 import "../../../css/reportes.css";
 import { ExportToCsv } from "export-to-csv";
@@ -28,6 +17,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { jezaApi } from "../../api/jezaApi";
+import { format } from "date-fns";
 
 function DemoTresTablas() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -204,16 +194,21 @@ function DemoTresTablas() {
   }, []);
   const [fechaPost, setFechaPost] = useState<Date>();
   const sendEmail = () => {
+    const fechaSelected = fechaPost ? fechaPost : new Date();
+    const fechaTemporal = format(fechaSelected, "yyyy-MM-dd");
     axios
-      .post("http://localhost:3001/send-email", {
+      .post("http://cbinfo.no-ip.info:9086/send-email", {
         to: "luis.sg9915@gmail.com, desarrollo01@cbinformatica.net",
         subject: "HOLA MUNDO",
         text: "HLOI",
         sucursal: dataUsuarios2[0]?.sucursal,
-        fecha: new Date(),
+        fecha: fechaTemporal,
       })
       .then(() => alert("Correo enviado correctamente"))
-      .catch((error) => alert(error));
+      .catch((error) => {
+        alert(error);
+        console.log(error);
+      });
   };
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
   const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({

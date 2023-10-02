@@ -242,13 +242,13 @@ function DepartamentoRecursos() {
 
   // Read --->  GET
   const getinfo = () => {
-    jezaApi.get("/NominaDepartamentos?id=%&idcia=%&idsuc=%").then((response) => {
+    jezaApi.get(`/NominaDepartamentos?id=%&idcia=%&idsuc=${dataUsuarios2[0]?.sucursal}`).then((response) => {
       setData(response.data);
     });
   };
   useEffect(() => {
     getinfo();
-  }, []);
+  }, [dataUsuarios2[0]?.sucursal]);
 
   /* Modal */
   const [modalUpdate, setModalUpdate] = useState(false); /* definimos el usestate del modal */

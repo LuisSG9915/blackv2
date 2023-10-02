@@ -225,6 +225,7 @@ function Anticipo() {
     sucursal: 0,
     tipoMovto: 0,
     d_cliente: "",
+    id_formaPago: 0,
   });
 
   const mostrarModalActualizar = (dato: any) => {
@@ -241,7 +242,7 @@ function Anticipo() {
   const formattedDate = format(currentDate, "yyyyMMdd");
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "importe", "observaciones"];
+    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "importe", "observaciones", "id_formaPago", "fechaMovto"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof AnticipoGet) => {
@@ -264,7 +265,7 @@ function Anticipo() {
     return camposVacios.length === 0;
   };
 
-  //LIMPIEZA DE CAMPOS
+  //LIMPIEZA const queryString DE CAMPOS
   const [estado, setEstado] = useState("");
   const limpiezaFormAnticipos = () => {
     setForm({
@@ -296,7 +297,7 @@ function Anticipo() {
             idUsuario: dataUsuarios2[0]?.id,
             tipoMovto: 2,
             referencia: form.referencia,
-            id_formaPago: formPago.id,
+            id_formaPago: form.id_formaPago,
             importe: form.importe * -1,
             observaciones: form.observaciones,
           },
@@ -621,11 +622,9 @@ function Anticipo() {
     const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
-    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${
-      formData.sucursal
-    }&idnoVenta=%&idCliente=${
-      formData.cliente
-    }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
+    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${formData.sucursal
+      }&idnoVenta=%&idCliente=${formData.cliente
+      }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
 
     jezaApi
       .get(queryString)
@@ -671,8 +670,8 @@ function Anticipo() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Anticipos </h1>
-                <HiBuildingStorefront size={35}></HiBuildingStorefront>
+                <h1> Anticipos <HiBuildingStorefront size={35} /></h1>
+
               </div>
               <br />
               <Row>
@@ -882,7 +881,7 @@ function Anticipo() {
 
             <FormGroup>
               <Label>Forma de pago:</Label>
-              <Input type="select" name="id" id="id" value={formPago.id} onChange={handleChange1}>
+              <Input type="select" name="id_formaPago" id="id_formaPago" value={form.id_formaPago} onChange={handleChange}>
                 <option value={0}>Selecciona forma de pago</option>
                 {formasPagosFiltradas.map((formapago: FormaPago) => (
                   <option key={formapago.id} value={formapago.id}>

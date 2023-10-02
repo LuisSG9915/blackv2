@@ -18,4 +18,5 @@ export interface AnticipoGet {
   importe: number;
   observaciones: string;
   d_cliente?: string;
+  id_formaPago: number;
 }
