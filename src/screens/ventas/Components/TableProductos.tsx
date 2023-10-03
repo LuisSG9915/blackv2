@@ -69,6 +69,7 @@ const TableProductos = ({
           Clave_prod: dato.id,
           Observacion: "SERV",
           d_existencia: dato.existencia,
+          existenciaEdit: dato.existencia,
         });
       } else {
         setModalOpen2(false);
@@ -89,6 +90,7 @@ const TableProductos = ({
           Clave_prod: dato.id,
           Observacion: "x",
           d_existencia: dato.existencia,
+          existenciaEdit: dato.existencia,
         });
       }
     }
@@ -170,7 +172,7 @@ const TableProductos = ({
         <Col style={{ marginRight: 10 }} xs={2}>
           {state ? <p>Productos</p> : <p>Servicios</p>}
         </Col>
-        <Col  xs={1}>
+        <Col xs={1}>
           <Input
             checked={state}
             disabled={isLoading}

@@ -29,7 +29,7 @@ import useModalHook from "../../hooks/useModalHook";
 
 import CButton from "../../components/CButton";
 import TableEstilistas from "./Components/TableEstilistas";
-import TableProductos from "./Components/TableProductos";
+import TableProductos, { ProductoExistencia } from "./Components/TableProductos";
 import TableClientesProceso from "./Components/TableClientesProceso";
 import TableCliente from "./Components/TableCliente";
 import ModalActualizarLayout from "../../layout/ModalActualizarLayout";
@@ -65,6 +65,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import { FaCashRegister } from "react-icons/fa";
 import { BsCashCoin } from "react-icons/bs";
+import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -172,6 +173,7 @@ const Ventas = () => {
   const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
   const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
   const idCliente = new URLSearchParams(window.location.search).get("idCliente");
+
   useEffect(() => {
     setDataTemporal((prevDataTemporal) => ({
       ...prevDataTemporal,
@@ -252,6 +254,7 @@ const Ventas = () => {
     sucursal: 0,
     tipoMovto: 0,
     d_cliente: "",
+    idformaPago: 0,
   });
 
   useEffect(() => {
@@ -306,6 +309,7 @@ const Ventas = () => {
     estilista: "",
     producto: "",
     formaPago: 0,
+    existenciaEdit: 0,
   });
   const datosInicialesArreglo = [
     {
@@ -664,7 +668,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
   };
@@ -810,10 +814,10 @@ const Ventas = () => {
   }, [dataVentas]);
 
   const ticketVta = async ({ folio }: any) => {
-    const sp = `TicketVta${folio},1,${dataUsuarios2[0]?.sucursal},${dataUsuarios2[0]?.id},${formPago.totalPago}`;
+    const sp = `TicketVta ${folio},1,${dataUsuarios2[0]?.sucursal},${dataUsuarios2[0]?.id},${formPago.totalPago}`;
     await jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
-      .then(() => alert("Ticket Ejecutada:3" + sp));
+      .then(() => alert("Ticket Ejecutada" + sp));
   };
 
   const endVenta = () => {
@@ -982,12 +986,18 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
+          dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1063,7 +1073,28 @@ const Ventas = () => {
   //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
   //   });
   // };
+  const { dataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
+    descripcion: "%",
+    insumo: 2,
+    inventariable: 2,
+    obsoleto: 2,
+    servicio: 2,
+    sucursal: dataUsuarios2[0]?.sucursal,
+    almacen: 1,
+    cia: dataUsuarios2[0]?.idCia,
+    idCliente: dataTemporal.Cve_cliente,
+  });
 
+  const getExistenciaForeignKey = (idProducto: number) => {
+    if (idProducto) {
+      const cia = dataProductos4.find((item: any) => item.id === idProducto);
+      console.log(idProducto);
+      if (cia && cia.existencia > 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
+        setDataVentaEdit({ ...dataVentaEdit, existenciaEdit: cia.existencia });
+      }
+      return cia ? cia.existencia : 10000;
+    }
+  };
   const historialCitaFutura = (dato: any) => {
     jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
       const dataConFechasFormateadas = response.data.map((item: any) => ({
@@ -1138,7 +1169,9 @@ const Ventas = () => {
       </Row>
       <Container>
         <br />
-        <h1>Venta <FaCashRegister size={35} /></h1>
+        <h1>
+          Venta <FaCashRegister size={35} />
+        </h1>
         <br />
         <Row>
           <Col md={"8"}>
@@ -1629,11 +1662,15 @@ const Ventas = () => {
       </ModalActualizarLayout>
 
       <Modal isOpen={modalOpenPago} size="xl">
-        <ModalHeader><h3>Cobro</h3></ModalHeader>
+        <ModalHeader>
+          <h3>Cobro</h3>
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col md="7">
-              <Label><strong>TOTAL DE ESTA VENTA:</strong> </Label>
+              <Label>
+                <strong>TOTAL DE ESTA VENTA:</strong>{" "}
+              </Label>
             </Col>
             <Col md="5">
               <Input disabled value={"$" + total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}></Input>
@@ -1643,10 +1680,16 @@ const Ventas = () => {
 
           <Row>
             <Col md="4">
-              <Label> <strong>Seleccionar forma de pago:</strong></Label>
+              <Label>
+                {" "}
+                <strong>Seleccionar forma de pago:</strong>
+              </Label>
             </Col>
             <Col md="5">
-              <Button onClick={() => setModalTipoVenta(true)}> Seleccionar <BsCashCoin size={20} /></Button>
+              <Button onClick={() => setModalTipoVenta(true)}>
+                {" "}
+                Seleccionar <BsCashCoin size={20} />
+              </Button>
             </Col>
           </Row>
           <br />
@@ -1708,7 +1751,9 @@ const Ventas = () => {
           <br />
           <Row>
             <Col md="7">
-              <Label><strong>TOTAL DE PAGOS: </strong></Label>
+              <Label>
+                <strong>TOTAL DE PAGOS: </strong>
+              </Label>
             </Col>
             <Col md="5">
               <Input
@@ -1721,7 +1766,9 @@ const Ventas = () => {
           <br />
           <Row>
             <Col md="7">
-              <Label><strong>CAMBIO AL CLIENTE: </strong></Label>
+              <Label>
+                <strong>CAMBIO AL CLIENTE: </strong>
+              </Label>
             </Col>
             <Col md="5">
               {/* <Input name="cambioCliente" value={formPago.cambioCliente > 0 ? formPago.cambioCliente : 0} disabled></Input> */}
@@ -1744,10 +1791,6 @@ const Ventas = () => {
             }}
             text="Salir"
           />
-
-
-
-
 
           <CButton
             color="success"
@@ -2027,7 +2070,9 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalAnticipo} size="xl">
-        <ModalHeader><h3>Elegir anticipo</h3></ModalHeader>
+        <ModalHeader>
+          <h3>Elegir anticipo</h3>
+        </ModalHeader>
         <ModalBody>
           {dataAnticipos.length === 0 ? <h4> Por el momento el cliente no cuenta con anticipos </h4> : null}
           <br />
@@ -2050,7 +2095,9 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalTipoVenta} size="xl">
-        <ModalHeader><h3>Elegir forma de pago</h3></ModalHeader>
+        <ModalHeader>
+          <h3>Elegir forma de pago</h3>
+        </ModalHeader>
         <ModalBody>
           <Label> Forma de pago: </Label>
           <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
@@ -2072,9 +2119,9 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ? (
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2089,6 +2136,7 @@ const Ventas = () => {
             onClick={() => {
               setModalTipoVenta(false);
               setAnticipoSelected(false);
+              setDataArregloTemporal({ ...dataArregloTemporal, formaPago: 0, importe: 0, referencia: "" });
             }}
             text="Salir"
           />
@@ -2208,7 +2256,14 @@ const Ventas = () => {
           <Row>
             <Col>
               <Label>Cantidad en existencia: </Label>
-              <Input disabled placeholder="Cantidad en existencia" onChange={cambiosEdit} name="d_existencia" value={dataVentaEdit.d_existencia} />
+              <Input
+                disabled
+                placeholder="Cantidad en existencia"
+                onChange={cambiosEdit}
+                name="d_existencia"
+                value={dataVentaEdit.d_existencia ? dataVentaEdit.d_existencia : getExistenciaForeignKey(dataVentaEdit.Clave_prod)}
+              />
+              {/* Revisar si hay error de render en esta linea 2264 */}
             </Col>
             <Col>
               <Label>Precio:</Label>
@@ -2262,6 +2317,7 @@ const Ventas = () => {
             onClick={() => {
               setModalOpenVentaEdit(false);
               setDescuento({ min: 0, max: 0 });
+              setDataVentaEdit({ ...dataVentaEdit, Cant_producto: 0, d_existencia: 0 });
             }}
             text="Salir"
           />
@@ -2288,6 +2344,11 @@ const Ventas = () => {
                 Swal.fire({
                   icon: "info",
                   text: "Favor de verificar el descuento",
+                });
+              } else if (Number(dataVentaEdit.Cant_producto) > Number(dataVentaEdit.existenciaEdit)) {
+                Swal.fire({
+                  icon: "info",
+                  text: "Favor de verificar las existencias",
                 });
               } else {
                 //setModalOpen(false);

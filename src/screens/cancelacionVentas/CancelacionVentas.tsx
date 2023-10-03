@@ -65,7 +65,6 @@ function CancelacionVentas() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -76,11 +75,9 @@ function CancelacionVentas() {
     }
   };
 
-
   const handleRedirect = () => {
     navigate("/app"); // Redirige a la ruta "/app"
   };
-
 
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
@@ -130,7 +127,7 @@ function CancelacionVentas() {
       }).then((result) => {
         if (result.isConfirmed) {
           jezaApi
-            .delete(`/VentaDia?no_venta=${dato.No_venta}&suc=${dataUsuarios2[0].sucursal}`)
+            .delete(`/VentaDia?no_venta=${dato.No_venta}&suc=${dataUsuarios2[0]?.sucursal}`)
             .then((response) => {
               setVisible3(true);
               fetchCancelaciones();
@@ -143,8 +140,6 @@ function CancelacionVentas() {
           setTimeout(() => {
             setVisible3(false);
           }, 3000);
-        } else {
-          alert("a");
         }
       });
     }
