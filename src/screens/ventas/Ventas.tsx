@@ -664,7 +664,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) {}
+        } catch (error) { }
       }
     });
   };
@@ -982,18 +982,12 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
-          dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
-          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
-          dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1144,7 +1138,7 @@ const Ventas = () => {
       </Row>
       <Container>
         <br />
-        <h1>Venta <FaCashRegister size={35}/></h1>
+        <h1>Venta <FaCashRegister size={35} /></h1>
         <br />
         <Row>
           <Col md={"8"}>
@@ -1648,11 +1642,11 @@ const Ventas = () => {
           <hr className="my-4" />
 
           <Row>
-          <Col md="4">
-            <Label> <strong>Seleccionar forma de pago:</strong></Label>
+            <Col md="4">
+              <Label> <strong>Seleccionar forma de pago:</strong></Label>
             </Col>
             <Col md="5">
-              <Button onClick={() => setModalTipoVenta(true)}> Seleccionar <BsCashCoin size={20}/></Button>
+              <Button onClick={() => setModalTipoVenta(true)}> Seleccionar <BsCashCoin size={20} /></Button>
             </Col>
           </Row>
           <br />
@@ -1686,7 +1680,7 @@ const Ventas = () => {
                   <Col xs={"2"} md={"2"} className="d-flex justify-content-end mt-4">
                     {/* Utilizamos "justify-content-end" para alinear el botón a la derecha */}
                     <Button
-                    color="danger"
+                      color="danger"
                       onClick={() => {
                         if (Number(pago.formaPago) === 1) {
                           // efectivo
@@ -1750,6 +1744,10 @@ const Ventas = () => {
             }}
             text="Salir"
           />
+
+
+
+
 
           <CButton
             color="success"
@@ -2056,7 +2054,7 @@ const Ventas = () => {
         <ModalBody>
           <Label> Forma de pago: </Label>
           <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
-            <option value={0}>--Seleccione la forma de pago--</option>
+            <option value={""}>--Seleccione la forma de pago--</option>
             {formasPagosFiltradas.map((formaPago, index) => (
               <option key={index} value={formaPago.tipo}>
                 {formaPago.descripcion}
@@ -2074,9 +2072,9 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-          dataArregloTemporal.formaPago == 91 ||
-          dataArregloTemporal.formaPago == 80 ||
-          dataArregloTemporal.formaPago == 92 ? (
+            dataArregloTemporal.formaPago == 91 ||
+            dataArregloTemporal.formaPago == 80 ||
+            dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2151,7 +2149,7 @@ const Ventas = () => {
       <Modal isOpen={modalOpenVentaEdit} size="lg">
         <ModalHeader>
           <div>
-            <h3>Venta edicion</h3>
+            <h3>Venta edición</h3>
           </div>
         </ModalHeader>
         <ModalBody>
