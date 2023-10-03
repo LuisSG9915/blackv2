@@ -64,7 +64,7 @@ import TableAnticipos from "./Components/TableAnticipos";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import { FaCashRegister } from "react-icons/fa";
-
+import { BsCashCoin } from "react-icons/bs";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -1442,7 +1442,7 @@ const Ventas = () => {
 
           <br />
           <Label>
-            Descuento entre {descuento.min} - {descuento.max} :{" "}
+            Descuento entre: {descuento.min} - {descuento.max} :{" "}
           </Label>
           <Row>
             <Col md={"12"}>
@@ -1635,11 +1635,11 @@ const Ventas = () => {
       </ModalActualizarLayout>
 
       <Modal isOpen={modalOpenPago} size="xl">
-        <ModalHeader>Cobro</ModalHeader>
+        <ModalHeader><h3>Cobro</h3></ModalHeader>
         <ModalBody>
           <Row>
             <Col md="7">
-              <Label>TOTAL DE ESTA VENTA: </Label>
+              <Label><strong>TOTAL DE ESTA VENTA:</strong> </Label>
             </Col>
             <Col md="5">
               <Input disabled value={"$" + total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}></Input>
@@ -1648,9 +1648,11 @@ const Ventas = () => {
           <hr className="my-4" />
 
           <Row>
-            <Label> Seleccionar tipo de venta </Label>
+          <Col md="4">
+            <Label> <strong>Seleccionar forma de pago:</strong></Label>
+            </Col>
             <Col md="5">
-              <Button onClick={() => setModalTipoVenta(true)}> Seleccionar </Button>
+              <Button onClick={() => setModalTipoVenta(true)}> Seleccionar <BsCashCoin size={20}/></Button>
             </Col>
           </Row>
           <br />
@@ -1659,11 +1661,11 @@ const Ventas = () => {
               <Container>
                 <Row className="align-items-center">
                   <Col xs={""}>
-                    <Label>Forma de pago</Label>
+                    <Label>Forma de pago:</Label>
                     <Input value={getFormaPago(Number(pago.formaPago))} disabled />
                   </Col>
                   <Col xs={""}>
-                    <Label>Importe</Label>
+                    <Label>Importe:</Label>
                     <Input
                       value={
                         "$" +
@@ -1677,13 +1679,14 @@ const Ventas = () => {
                   </Col>
                   {pago.referencia && (
                     <Col xs={"2"}>
-                      <Label>Referencia</Label>
+                      <Label>Referencia:</Label>
                       <Input value={pago.referencia} disabled />
                     </Col>
                   )}
                   <Col xs={"2"} md={"2"} className="d-flex justify-content-end mt-4">
                     {/* Utilizamos "justify-content-end" para alinear el botón a la derecha */}
                     <Button
+                    color="danger"
                       onClick={() => {
                         if (Number(pago.formaPago) === 1) {
                           // efectivo
@@ -1697,7 +1700,7 @@ const Ventas = () => {
                         }
                       }}
                     >
-                      Eliminar
+                      <AiFillDelete size={20}></AiFillDelete>
                     </Button>
                   </Col>
                 </Row>
@@ -1711,7 +1714,7 @@ const Ventas = () => {
           <br />
           <Row>
             <Col md="7">
-              <Label>TOTAL DE PAGOS: </Label>
+              <Label><strong>TOTAL DE PAGOS: </strong></Label>
             </Col>
             <Col md="5">
               <Input
@@ -1724,7 +1727,7 @@ const Ventas = () => {
           <br />
           <Row>
             <Col md="7">
-              <Label>CAMBIO AL CLIENTE: </Label>
+              <Label><strong>CAMBIO AL CLIENTE: </strong></Label>
             </Col>
             <Col md="5">
               {/* <Input name="cambioCliente" value={formPago.cambioCliente > 0 ? formPago.cambioCliente : 0} disabled></Input> */}
@@ -2026,7 +2029,7 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalAnticipo} size="xl">
-        <ModalHeader>Selección de anticipo</ModalHeader>
+        <ModalHeader><h3>Elegir anticipo</h3></ModalHeader>
         <ModalBody>
           {dataAnticipos.length === 0 ? <h4> Por el momento el cliente no cuenta con anticipos </h4> : null}
           <br />
@@ -2049,11 +2052,11 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalTipoVenta} size="xl">
-        <ModalHeader>Seleccione el tipo de venta</ModalHeader>
+        <ModalHeader><h3>Elegir forma de pago</h3></ModalHeader>
         <ModalBody>
-          <Label> Forma de pago </Label>
+          <Label> Forma de pago: </Label>
           <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
-            <option value={0}>-Seleccione la forma de pago-</option>
+            <option value={0}>--Seleccione la forma de pago--</option>
             {formasPagosFiltradas.map((formaPago, index) => (
               <option key={index} value={formaPago.tipo}>
                 {formaPago.descripcion}
@@ -2061,7 +2064,7 @@ const Ventas = () => {
             ))}
           </Input>
           <br />
-          <Label> Importe </Label>
+          <Label> Importe: </Label>
           <Input
             type="number"
             onChange={handleFormaPagoTemporal}
@@ -2075,7 +2078,7 @@ const Ventas = () => {
           dataArregloTemporal.formaPago == 80 ||
           dataArregloTemporal.formaPago == 92 ? (
             <>
-              <Label> Referencia </Label>
+              <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
             </>
           ) : null}

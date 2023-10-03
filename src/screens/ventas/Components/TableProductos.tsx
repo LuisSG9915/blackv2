@@ -167,10 +167,10 @@ const TableProductos = ({
     <Container>
       <Label></Label>
       <Row>
-        <Col style={{ marginRight: 10 }} xs={1}>
+        <Col style={{ marginRight: 10 }} xs={2}>
           {state ? <p>Productos</p> : <p>Servicios</p>}
         </Col>
-        <Col xs={1}>
+        <Col  xs={1}>
           <Input
             checked={state}
             disabled={isLoading}

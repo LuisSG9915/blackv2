@@ -121,7 +121,7 @@ function CancelacionVentas() {
     } else {
       Swal.fire({
         title: "ADVERTENCIA",
-        text: `¿Está seguro que desea eliminar el registro: ${dato.nombre}?`,
+        text: `¿Está seguro que desea eliminar la venta No# : ${dato.No_venta}?`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
