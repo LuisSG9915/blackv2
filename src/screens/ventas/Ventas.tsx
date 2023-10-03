@@ -63,6 +63,8 @@ import TableHistorial from "./Components/TableHistorial";
 import TableAnticipos from "./Components/TableAnticipos";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import { FaCashRegister } from "react-icons/fa";
+
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -1142,7 +1144,7 @@ const Ventas = () => {
       </Row>
       <Container>
         <br />
-        <h1>Venta </h1>
+        <h1>Venta <FaCashRegister size={35}/></h1>
         <br />
         <Row>
           <Col md={"8"}>
