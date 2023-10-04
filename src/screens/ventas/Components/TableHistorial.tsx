@@ -260,21 +260,21 @@ function TableHistorial({ datah, loadHistorialDetalle, setParamsDetalles, setIsM
         },
         density: "compact",
       }}
-      renderTopToolbarCustomActions={({ table }) => (
-        <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}>
-          <Button
-            color="primary"
-            //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
+    // renderTopToolbarCustomActions={({ table }) => (
+    //   <Box sx={{ display: "flex", gap: "1rem", p: "0.5rem", flexWrap: "wrap" }}>
+    //     <Button
+    //       color="primary"
+    //       //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
 
-            onClick={handleExportData}
-            startIcon={<FileDownloadIcon />}
-            variant="contained"
-          >
-            Export All Data
-          </Button>
-        </Box>
-      )}
-      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+    //       onClick={handleExportData}
+    //       startIcon={<FileDownloadIcon />}
+    //       variant="contained"
+    //     >
+    //       Export All Data
+    //     </Button>
+    //   </Box>
+    // )}
+    // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
     />
   );
 }

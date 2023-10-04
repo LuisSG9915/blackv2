@@ -669,7 +669,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) {}
+        } catch (error) { }
       }
     });
   };
@@ -694,7 +694,36 @@ const Ventas = () => {
     });
   };
 
+  //EDITAR ORIGINAL 
+
+  // const editInsumo = () => {
+  //   jezaApi
+  //     .put("/VentaInsumo", null, {
+  //       params: {
+  //         id: Number(formInsumo.id),
+  //         cantidad: Number(formInsumo.cantidad),
+  //       },
+  //     })
+  //     .then((response) =>
+  //       Swal.fire({
+  //         icon: "success",
+  //         text: "Insumo actualizada con éxito",
+  //         confirmButtonColor: "#3085d6",
+  //       })
+  //     );
+  // };
   const editInsumo = () => {
+    // Verificar si los campos están vacíos
+    if (!formInsumo.id || !formInsumo.cantidad) {
+      Swal.fire({
+        icon: "error",
+        text: "Por favor, complete todos los campos.",
+        confirmButtonColor: "#3085d6",
+      });
+      return; // Salir de la función si faltan campos
+    }
+
+    // Si los campos no están vacíos, realizar la solicitud PUT a la API
     jezaApi
       .put("/VentaInsumo", null, {
         params: {
@@ -710,6 +739,9 @@ const Ventas = () => {
         })
       );
   };
+
+
+
 
   const { dataVentas, fetchVentas } = useVentasV2({
     idCliente: dataTemporal.Cve_cliente,
@@ -1010,18 +1042,12 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
-          dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
-          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
-          dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1385,6 +1411,7 @@ const Ventas = () => {
                     fetchVentasProcesos();
                   }}
                 >
+
                   Clientes en proceso
                   <MdAccessTime size={30} />
                 </Button>
@@ -1392,8 +1419,8 @@ const Ventas = () => {
             </div>
           </Col>
           <Col md={"2"} className="mt-4">
-            <p>Total: ${total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-            <p>Tiempo estimado: {tiempo + " min"} </p>
+            <strong><h4>Total: ${total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4></strong>
+            <strong><p>Tiempo estimado: {tiempo + " min"} </p></strong>
           </Col>
         </Row>
       </Container>
@@ -1405,30 +1432,32 @@ const Ventas = () => {
           </div>
         </ModalHeader>
         <ModalBody>
-          <Label>Producto/servicio:</Label>
+          <Label>Producto/Servicio:</Label>
           <Row>
-            <Col>
-              <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} />
-            </Col>
-            <Col md={2}>
-              <Button onClick={() => setModalOpen3(true)}>Elegir</Button>
+            <Col md={12}>
+              <InputGroup>
+                <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} />
+
+                <Button onClick={() => setModalOpen3(true)}>Elegir</Button>
+              </InputGroup>
             </Col>
           </Row>
           <br />
           <Label>Encargado:</Label>
           <Row>
             <Col>
-              <Input disabled defaultValue={dataTemporal.estilista ? dataTemporal.estilista : ""} />
-            </Col>
-            <Col md={2}>
-              <Button
-                onClick={() => {
-                  setFlagEstilistas(false);
-                  setModalOpen2(true);
-                }}
-              >
-                Elegir
-              </Button>
+              <InputGroup>
+                <Input disabled defaultValue={dataTemporal.estilista ? dataTemporal.estilista : ""} />
+
+                <Button
+                  onClick={() => {
+                    setFlagEstilistas(false);
+                    setModalOpen2(true);
+                  }}
+                >
+                  Elegir
+                </Button>
+              </InputGroup>
             </Col>
           </Row>
           <br />
@@ -1436,37 +1465,45 @@ const Ventas = () => {
             <>
               <Label>Estilista auxiliar:</Label>
               <Row>
-                <Col xs={9}>
-                  <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
-                </Col>
+                <Col xs={10}>
+                  <InputGroup>
+                    <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
 
+                    <Button
+                      onClick={() => {
+                        setModalOpen2(true);
+                        setFlagEstilistas(true);
+                      }}
+                    >
+                      Elegir
+                    </Button>
+
+                  </InputGroup>
+                </Col>
                 <Col xs={1}>
                   <Button color="danger" onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
-                <Col md={1}>
-                  <Button
-                    onClick={() => {
-                      setModalOpen2(true);
-                      setFlagEstilistas(true);
-                    }}
-                  >
-                    Elegir
-                  </Button>
+
+
+                {/* <Col xs={1}>
                 </Col>
+                <Col md={1}>
+                </Col> */}
+
               </Row>
             </>
           ) : null}
           <br />
           <Row>
-            <Col sm={6} md={4}>
+
+            <Col sm={6} md={6}>
               <Label>Cantidad en existencia: </Label>
               <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
-              <br />
             </Col>
-            <Col sm={6} md={4}>
-              <Label>Precio</Label>
+            <Col sm={6} md={6}>
+              <Label>Precio:</Label>
               <Input
                 disabled
                 placeholder="Precio"
@@ -1476,7 +1513,7 @@ const Ventas = () => {
               />
               <br />
             </Col>
-            <Col md={4}>
+            <Col md={6}>
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} type="number" />
               <br />
@@ -1502,7 +1539,7 @@ const Ventas = () => {
           </Row>
           <br />
 
-          <Label style={{ marginRight: 10 }}>Hora de servicio</Label>
+          <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
           <select id="hora" name="hora" onChange={cambios} defaultValue={dataTemporal.hora}>
             {generarOpcionesDeTiempo()}
           </select>
@@ -1558,7 +1595,7 @@ const Ventas = () => {
               }
             }}
           >
-            Agregar
+            Agregar venta
           </Button>
         </ModalFooter>
       </Modal>
@@ -1604,7 +1641,7 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalClientesProceso} size="md">
-        <ModalHeader> Clientes en proceso </ModalHeader>
+        <ModalHeader> <h3>Clientes en proceso </h3></ModalHeader>
         <ModalBody>
           <TableClientesProceso
             dataTemporal={dataTemporal}
@@ -1620,7 +1657,7 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalCliente} size="md">
-        <ModalHeader> Cliente </ModalHeader>
+        <ModalHeader> <h3>Selección de clientes</h3> </ModalHeader>
         <ModalBody>
           <TableCliente
             dataTemporal={dataTemporal}
@@ -1949,28 +1986,17 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalEditInsumo} size="md">
+        <ModalHeader><h3>Edición de insumo</h3> </ModalHeader>
         <ModalBody>
           <Row>
-            <Label> Insumo: {formInsumo.d_insumo} </Label>
-            <br />
-            <br />
-            <Label> Cantidad a modificar: </Label>
-            <Input value={formInsumo.cantidad} name="cantidad" onChange={cambiosInsumos} type="number"></Input>
-            <br />
-            <br />
-            <br />
-            <Button
-              style={{ width: "22%" }}
-              onClick={() => {
-                editInsumo();
-                setTimeout(() => {
-                  setModalEditInsumo(false);
-                  fetchInsumosProducto();
-                }, 1000);
-              }}
-            >
-              Guardar
-            </Button>
+            <Col>
+              <Label> Insumo utilizado: <strong>{formInsumo.d_insumo}</strong> </Label>
+              <br />
+              <br />
+              <Label> Cantidad a modificar: </Label>
+              <Input value={formInsumo.cantidad} name="cantidad" onChange={cambiosInsumos} type="number"></Input>
+              <br />
+            </Col>
           </Row>
         </ModalBody>
         <ModalFooter>
@@ -1981,6 +2007,19 @@ const Ventas = () => {
             }}
             text="Cancelar"
           />
+          <Button
+            color="success"
+            style={{ width: "34%" }}
+            onClick={() => {
+              editInsumo();
+              setTimeout(() => {
+                setModalEditInsumo(false);
+                fetchInsumosProducto();
+              }, 1000);
+            }}
+          >
+            Guardar cambios
+          </Button>
         </ModalFooter>
       </Modal>
 
@@ -2074,7 +2113,7 @@ const Ventas = () => {
                     </>
                   ))
                 ) : (
-                  <h5>Este estilista no se le han asignado insumos a su servicio</h5>
+                  <h5>Se ha impreso ticket de insumos del estilista. </h5>
                 )}
               </div>
               <br />
@@ -2143,9 +2182,9 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-          dataArregloTemporal.formaPago == 91 ||
-          dataArregloTemporal.formaPago == 80 ||
-          dataArregloTemporal.formaPago == 92 ? (
+            dataArregloTemporal.formaPago == 91 ||
+            dataArregloTemporal.formaPago == 80 ||
+            dataArregloTemporal.formaPago == 92 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2225,30 +2264,31 @@ const Ventas = () => {
           </div>
         </ModalHeader>
         <ModalBody>
-          <Label>Producto/servicio:</Label>
+          <Label>Producto/Servicio:</Label>
           <Row>
-            <Col>
-              <Input disabled value={dataVentaEdit.d_producto ? dataVentaEdit.d_producto : ""} />
-            </Col>
-            <Col md={2}>
-              <Button onClick={() => setModalOpen3(true)}>Elegir</Button>
+            <Col md={12}>
+              <InputGroup>
+                <Input disabled value={dataVentaEdit.d_producto ? dataVentaEdit.d_producto : ""} />
+                <Button onClick={() => setModalOpen3(true)}>Elegir</Button>
+              </InputGroup>
             </Col>
           </Row>
           <br />
           <Label>Encargado:</Label>
           <Row>
-            <Col>
-              <Input disabled value={dataVentaEdit.d_estilista ? dataVentaEdit.d_estilista : ""} />
-            </Col>
-            <Col md={2}>
-              <Button
-                onClick={() => {
-                  setModalOpen2(true);
-                  setFlagEstilistas(false);
-                }}
-              >
-                Elegir
-              </Button>
+
+            <Col md={12}>
+              <InputGroup>
+                <Input disabled value={dataVentaEdit.d_estilista ? dataVentaEdit.d_estilista : ""} />
+                <Button
+                  onClick={() => {
+                    setModalOpen2(true);
+                    setFlagEstilistas(false);
+                  }}
+                >
+                  Elegir
+                </Button>
+              </InputGroup>
             </Col>
           </Row>
           <br />
@@ -2256,29 +2296,31 @@ const Ventas = () => {
             <>
               <Label>Estilista auxilliar:</Label>
               <Row>
-                <Col xs={9}>
-                  <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
+                <Col xs={10}>
+                  <InputGroup>
+                    <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
+                    <Button
+                      onClick={() => {
+                        setModalOpen2(true);
+                        setFlagEstilistas(true);
+                      }}
+                    >
+                      Elegir
+                    </Button>
+                  </InputGroup>
                 </Col>
-                <Col xs={1}>
+                <Col xs={2}>
                   <Button color="danger" onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
-                <Col xs={1}>
-                  <Button
-                    onClick={() => {
-                      setModalOpen2(true);
-                      setFlagEstilistas(true);
-                    }}
-                  >
-                    Elegir
-                  </Button>
-                </Col>
               </Row>
+              <br />
             </>
           ) : null}
           <Row>
-            <Col>
+
+            <Col sm="6">
               <Label>Cantidad en existencia: </Label>
               <Input
                 disabled
@@ -2289,7 +2331,7 @@ const Ventas = () => {
               />
               {/* Revisar si hay error de render en esta linea 2264 */}
             </Col>
-            <Col>
+            <Col sm="6">
               <Label>Precio:</Label>
               <Input
                 disabled
@@ -2298,13 +2340,15 @@ const Ventas = () => {
                 name="Precio"
                 value={dataVentaEdit.Precio ? "$" + dataVentaEdit.Precio.toFixed(2) : 0}
               />
+              <br />
             </Col>
 
-            <Col>
+            <Col sm="6">
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
+
             </Col>
-            <Col>
+            <Col sm="6">
               <Label>Tiempo:</Label>
               <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
             </Col>
@@ -2388,10 +2432,10 @@ const Ventas = () => {
               }
             }}
           >
-            Editar
+            Editar venta
           </Button>
         </ModalFooter>
-      </Modal>
+      </Modal >
 
       <Modal isOpen={modalOpen} toggle={toggleModalHistorial} fullscreen>
         <ModalHeader toggle={toggleModalHistorial}>

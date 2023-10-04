@@ -997,8 +997,8 @@ function Productos() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Productos </h1>
-                <AiOutlineShoppingCart size={30}></AiOutlineShoppingCart>
+                <h1> Productos <AiOutlineShoppingCart size={30}></AiOutlineShoppingCart></h1>
+
               </div>
 
               <br />
