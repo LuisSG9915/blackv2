@@ -861,33 +861,52 @@ const Ventas = () => {
       .then(() => alert("Ticket Ejecutada" + sp));
   };
   // FINALIZACIÓN DE VENTAS
+
   const endVenta = () => {
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-      medioPago(Number(response.data.mensaje2));
-      ticketVta({ folio: response.data.mensaje2 });
-      jezaApi
-        .get(
-          `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
-        )
-        .then((response) => {
-          setDatoTicket(response.data);
-          setModalTicket(true);
-        })
-        .then(() => {
-          console.log(datoTicket);
-          axios
-            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-              to: "luis.sg9915@gmail.com, abi_mh9@gmail.com,abimh09@gmail.com",
-              subject: "Ticket",
-              textTicket: datoTicket,
-              text: "...",
-            })
-            .then(() => alert("Correo enviado correctamente"))
-            .catch((error) => {
-              alert(error);
-              console.log(error);
+      medioPago(Number(response.data.mensaje2)).then(() => {
+        jezaApi
+          .get(
+            `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
+          )
+          .then((response) => {
+            setDatoTicket(response.data);
+            setTimeout(() => {
+              Swal.fire({
+                title: "ADVERTENCIA",
+                text: `¿Requiere su ticket por correo?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  axios
+                    .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                      to: "luis.sg9915@gmail.com,abigailmh9@gmail.com",
+                      subject: "Ticket",
+                      textTicket: response.data,
+                      text: "...",
+                    })
+                    .then(() => {
+                      Swal.fire({
+                        icon: "success",
+                        text: "Correo enviado con éxito",
+                        confirmButtonColor: "#3085d6",
+                      });
+                    })
+                    .catch((error) => {
+                      alert(error);
+                      console.log(error);
+                    });
+                } else {
+                  ticketVta({ folio: response.data.mensaje2 });
+                }
+              });
             });
-        });
+          }, 3000);
+      });
       Swal.fire({
         icon: "success",
         text: "Venta finalizada con éxito",
@@ -987,10 +1006,10 @@ const Ventas = () => {
     );
   }
 
-  const medioPago = (noVenta: number) => {
-    arregloTemporal.forEach((elemento) => {
+  const medioPago = async (noVenta: number) => {
+    arregloTemporal.forEach(async (elemento) => {
       const tempIdPago = getIdPago(Number(elemento.formaPago));
-      jezaApi.post("/MedioPago", null, {
+      await jezaApi.post("/MedioPago", null, {
         params: {
           caja: 1,
           no_venta: noVenta,
@@ -2182,9 +2201,18 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
+<<<<<<< Updated upstream
             dataArregloTemporal.formaPago == 91 ||
             dataArregloTemporal.formaPago == 80 ||
             dataArregloTemporal.formaPago == 92 ? (
+=======
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ||
+          dataArregloTemporal.formaPago == 100 ||
+          dataArregloTemporal.formaPago == 101 ||
+          dataArregloTemporal.formaPago == 103 ? (
+>>>>>>> Stashed changes
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2238,7 +2266,10 @@ const Ventas = () => {
                   if (
                     Number(dataArregloTemporal.formaPago) === 90 ||
                     Number(dataArregloTemporal.formaPago) === 91 ||
-                    Number(dataArregloTemporal.formaPago) === 92
+                    Number(dataArregloTemporal.formaPago) === 92 ||
+                    Number(dataArregloTemporal.formaPago) === 100 ||
+                    Number(dataArregloTemporal.formaPago) === 101 ||
+                    Number(dataArregloTemporal.formaPago) === 103
                   ) {
                     setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
                     // Efectivo

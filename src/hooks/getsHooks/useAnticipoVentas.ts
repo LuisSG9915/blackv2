@@ -6,7 +6,7 @@ import { jezaApi } from "../../api/jezaApi";
 import { AnticipoGet } from "../../models/Anticipo";
 interface Props {
   cliente: number;
-  suc: number;
+  suc: string;
 }
 // Ya no se usa
 export const useAnticipoVentas = ({ cliente, suc }: Props) => {

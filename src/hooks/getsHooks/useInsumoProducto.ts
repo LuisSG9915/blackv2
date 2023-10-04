@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
-import { Venta } from "../../models/Venta";
 import { VentaInsumo } from "../../models/VentaInsumo";
 interface Props {
   idVenta: any;
