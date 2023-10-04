@@ -475,9 +475,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
-                      Configuración de puntos por departamentos
-                    </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
@@ -625,12 +623,7 @@ const SidebarHorizontal = () => {
           {isTimerExpired() ? (
             <Timer limitInMinutes={60} onExpiration={handleLogout} redirectPath={undefined} onUpdate={undefined} />
           ) : (
-            <Timer
-              limitInMinutes={60}
-              onExpiration={handleLogout}
-              onUpdate={handleTimerUpdate}
-              redirectPath={undefined}
-            />
+            <Timer limitInMinutes={60} onExpiration={handleLogout} onUpdate={handleTimerUpdate} redirectPath={undefined} />
           )}
         </div>
       </>

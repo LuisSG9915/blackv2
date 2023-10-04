@@ -669,7 +669,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
   };
@@ -694,7 +694,7 @@ const Ventas = () => {
     });
   };
 
-  //EDITAR ORIGINAL 
+  //EDITAR ORIGINAL
 
   // const editInsumo = () => {
   //   jezaApi
@@ -739,9 +739,6 @@ const Ventas = () => {
         })
       );
   };
-
-
-
 
   const { dataVentas, fetchVentas } = useVentasV2({
     idCliente: dataTemporal.Cve_cliente,
@@ -861,10 +858,11 @@ const Ventas = () => {
       .then(() => alert("Ticket Ejecutada" + sp));
   };
   // FINALIZACIÓN DE VENTAS
-
+  const [tempFolio, setTempFolio] = useState(0);
   const endVenta = () => {
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
       medioPago(Number(response.data.mensaje2)).then(() => {
+        setTempFolio(response.data.mensaje2);
         jezaApi
           .get(
             `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
@@ -901,7 +899,7 @@ const Ventas = () => {
                       console.log(error);
                     });
                 } else {
-                  ticketVta({ folio: response.data.mensaje2 });
+                  ticketVta({ folio: tempFolio });
                 }
               });
             });
@@ -1061,12 +1059,18 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
+          dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1430,7 +1434,6 @@ const Ventas = () => {
                     fetchVentasProcesos();
                   }}
                 >
-
                   Clientes en proceso
                   <MdAccessTime size={30} />
                 </Button>
@@ -1438,8 +1441,12 @@ const Ventas = () => {
             </div>
           </Col>
           <Col md={"2"} className="mt-4">
-            <strong><h4>Total: ${total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4></strong>
-            <strong><p>Tiempo estimado: {tiempo + " min"} </p></strong>
+            <strong>
+              <h4>Total: ${total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
+            </strong>
+            <strong>
+              <p>Tiempo estimado: {tiempo + " min"} </p>
+            </strong>
           </Col>
         </Row>
       </Container>
@@ -1496,7 +1503,6 @@ const Ventas = () => {
                     >
                       Elegir
                     </Button>
-
                   </InputGroup>
                 </Col>
                 <Col xs={1}>
@@ -1505,18 +1511,15 @@ const Ventas = () => {
                   </Button>
                 </Col>
 
-
                 {/* <Col xs={1}>
                 </Col>
                 <Col md={1}>
                 </Col> */}
-
               </Row>
             </>
           ) : null}
           <br />
           <Row>
-
             <Col sm={6} md={6}>
               <Label>Cantidad en existencia: </Label>
               <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
@@ -1660,7 +1663,10 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalClientesProceso} size="md">
-        <ModalHeader> <h3>Clientes en proceso </h3></ModalHeader>
+        <ModalHeader>
+          {" "}
+          <h3>Clientes en proceso </h3>
+        </ModalHeader>
         <ModalBody>
           <TableClientesProceso
             dataTemporal={dataTemporal}
@@ -1676,7 +1682,10 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalCliente} size="md">
-        <ModalHeader> <h3>Selección de clientes</h3> </ModalHeader>
+        <ModalHeader>
+          {" "}
+          <h3>Selección de clientes</h3>{" "}
+        </ModalHeader>
         <ModalBody>
           <TableCliente
             dataTemporal={dataTemporal}
@@ -2005,11 +2014,16 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalEditInsumo} size="md">
-        <ModalHeader><h3>Edición de insumo</h3> </ModalHeader>
+        <ModalHeader>
+          <h3>Edición de insumo</h3>{" "}
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col>
-              <Label> Insumo utilizado: <strong>{formInsumo.d_insumo}</strong> </Label>
+              <Label>
+                {" "}
+                Insumo utilizado: <strong>{formInsumo.d_insumo}</strong>{" "}
+              </Label>
               <br />
               <br />
               <Label> Cantidad a modificar: </Label>
@@ -2201,18 +2215,12 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-<<<<<<< Updated upstream
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ? (
-=======
           dataArregloTemporal.formaPago == 91 ||
           dataArregloTemporal.formaPago == 80 ||
           dataArregloTemporal.formaPago == 92 ||
           dataArregloTemporal.formaPago == 100 ||
           dataArregloTemporal.formaPago == 101 ||
           dataArregloTemporal.formaPago == 103 ? (
->>>>>>> Stashed changes
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
@@ -2307,7 +2315,6 @@ const Ventas = () => {
           <br />
           <Label>Encargado:</Label>
           <Row>
-
             <Col md={12}>
               <InputGroup>
                 <Input disabled value={dataVentaEdit.d_estilista ? dataVentaEdit.d_estilista : ""} />
@@ -2350,7 +2357,6 @@ const Ventas = () => {
             </>
           ) : null}
           <Row>
-
             <Col sm="6">
               <Label>Cantidad en existencia: </Label>
               <Input
@@ -2377,7 +2383,6 @@ const Ventas = () => {
             <Col sm="6">
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
-
             </Col>
             <Col sm="6">
               <Label>Tiempo:</Label>
@@ -2466,7 +2471,7 @@ const Ventas = () => {
             Editar venta
           </Button>
         </ModalFooter>
-      </Modal >
+      </Modal>
 
       <Modal isOpen={modalOpen} toggle={toggleModalHistorial} fullscreen>
         <ModalHeader toggle={toggleModalHistorial}>

@@ -15,4 +15,5 @@ export interface Usuario {
   fecha_alta?: string;
   fecha_act?: string;
   d_sucursal?: string;
+  sucursal?: any;
 }
