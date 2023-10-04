@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
-import { AccordionBody, AccordionHeader, AccordionItem, Button, Col, Container, Input, Label, Row, UncontrolledAccordion } from "reactstrap";
+import {
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+  Button,
+  Col,
+  Container,
+  Input,
+  Label,
+  Row,
+  UncontrolledAccordion,
+} from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
 import "../../../css/reportes.css";
 import { ExportToCsv } from "export-to-csv";
@@ -220,13 +231,13 @@ function DemoTresTablas() {
     () => [
       {
         accessorKey: "FormadePago",
-        header: "Forma de pago",
-        size: 5,
+        header: "FormadePago",
+        size: 10,
       },
       {
         accessorKey: "Importe",
         header: "Importe",
-        size: 5,
+        size: 10,
       },
     ],
     []
@@ -236,15 +247,15 @@ function DemoTresTablas() {
     () => [
       {
         accessorKey: "FechaCita",
-        header: "Fecha de cita",
-        size: 1,
+        header: "FechaCita",
+        size: 10,
         Cell: ({ cell }) => {
           return cell.row.original.FechaCita.split("T")[0];
         },
       },
       {
         accessorKey: "DescripcionCita",
-        header: "Descripcion de cita",
+        header: "DescripcionCita",
         size: 10,
       },
     ],
