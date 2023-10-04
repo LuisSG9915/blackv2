@@ -66,6 +66,7 @@ import { useNavigate } from "react-router-dom";
 import { FaCashRegister } from "react-icons/fa";
 import { BsCashCoin } from "react-icons/bs";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
+import axios from "axios";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -792,16 +793,24 @@ const Ventas = () => {
   const postEstilistaTicket = (dato: any) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 19);
-    console.log(dato);
+
+    const sp = `TicketInsumosEstilsta ${dataUsuarios2[0]?.idCia}, ${dataUsuarios2[0]?.sucursal}, ${fechaVieja.replace(
+      /-/g,
+      ""
+    )}, ${fechaVieja.replace(/-/g, "")}, ${dato.User}, ${dato.Cve_cliente}, ${dato.No_venta}`;
     jezaApi
-      .get(
-        `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
-      )
-      .then((response) => {
-        setDatoTicketEstilista(response.data);
-        console.log(response);
-      })
-      .catch((error) => console.log(error));
+      .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
+      .then(() => alert("Ticket Ejecutada" + sp));
+    // TICKET DEL ESTILISTA
+    // jezaApi
+    //   .get(
+    //     `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
+    //   )
+    //   .then((response) => {
+    //     setDatoTicketEstilista(response.data);
+    //     console.log(response);
+    //   })
+    //   .catch((error) => console.log(error));
   };
 
   const [productoSelected, setProductoSelected] = useState<number[]>([]);
@@ -819,7 +828,7 @@ const Ventas = () => {
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
       .then(() => alert("Ticket Ejecutada" + sp));
   };
-
+  // FINALIZACIÓN DE VENTAS
   const endVenta = () => {
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
       medioPago(Number(response.data.mensaje2));
@@ -831,6 +840,21 @@ const Ventas = () => {
         .then((response) => {
           setDatoTicket(response.data);
           setModalTicket(true);
+        })
+        .then(() => {
+          console.log(datoTicket);
+          axios
+            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+              to: "luis.sg9915@gmail.com, abi_mh9@gmail.com,abimh09@gmail.com",
+              subject: "Ticket",
+              textTicket: datoTicket,
+              text: "...",
+            })
+            .then(() => alert("Correo enviado correctamente"))
+            .catch((error) => {
+              alert(error);
+              console.log(error);
+            });
         });
       Swal.fire({
         icon: "success",
