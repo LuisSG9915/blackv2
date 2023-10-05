@@ -292,8 +292,8 @@ function CancelacionVentas() {
         <Row md={8}>
           <Col>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Cancelación de la venta </h1>
-              <ImCancelCircle size={30}></ImCancelCircle>
+              <h1> Cancelación de la venta  <ImCancelCircle size={30}></ImCancelCircle></h1>
+
             </div>
           </Col>
         </Row>
