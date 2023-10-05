@@ -1159,10 +1159,12 @@ const Ventas = () => {
   });
 
   const getExistenciaForeignKey = (idProducto: number) => {
-    if (idProducto) {
+    if (idProducto > 1) {
       const cia = dataProductos4.find((item: any) => item.id === idProducto);
       console.log(idProducto);
       if (cia && cia.existencia > 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
+        setDataVentaEdit({ ...dataVentaEdit, existenciaEdit: cia.existencia });
+      } else if (cia && cia.existencia === 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
         setDataVentaEdit({ ...dataVentaEdit, existenciaEdit: cia.existencia });
       }
       return cia ? cia.existencia : 10000;
@@ -2449,13 +2451,17 @@ const Ventas = () => {
                   icon: "info",
                   text: "Favor de verificar el descuento",
                 });
-              } else if (Number(dataVentaEdit.Cant_producto) > Number(dataVentaEdit.existenciaEdit)) {
-                Swal.fire({
-                  icon: "info",
-                  text: "Favor de verificar las existencias",
-                });
               } else {
                 //setModalOpen(false);
+                if (dataVentaEdit.Observacion !== "SERV") {
+                  if (Number(dataVentaEdit.Cant_producto) > Number(dataVentaEdit.existenciaEdit)) {
+                    Swal.fire({
+                      icon: "info",
+                      text: "Favor de verificar las existencias",
+                    });
+                    return;
+                  }
+                }
                 if (dataVentaEdit.d_producto) {
                   editVenta();
                   setDataTemporal((prevData) => ({

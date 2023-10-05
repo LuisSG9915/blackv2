@@ -82,6 +82,7 @@ const TableProductos = ({
           Observacion: "x",
           d_existencia: dato.existencia,
         });
+
         setDataVentaEdit({
           ...dataVentaEdit,
           d_producto: dato.descripcion,
