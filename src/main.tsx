@@ -68,6 +68,7 @@ import DemoTresTablas from "./screens/ReporteTool/DemoTresTablas";
 import ShopifySinc from "./screens/shopify/ShopifySinc";
 import ClientesShopify from "./screens/clienteshopify/ClientesShopify";
 import Metas from "./screens/metas/Metas";
+import BluetoothPrint from "./screens/BluetoothPrint";
 
 const router = createBrowserRouter([
   {
@@ -335,6 +336,10 @@ const router = createBrowserRouter([
   {
     path: "/Metas",
     element: <Metas />,
+  },
+  {
+    path: "/BluetoothPrint",
+    element: <BluetoothPrint />,
   },
 ]);
 
