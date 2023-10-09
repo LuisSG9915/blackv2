@@ -128,10 +128,6 @@ const TableClienteAnticipos = ({ data, setModalCliente, form, setForm }: Props) 
 
   const columns: MRT_ColumnDef<Cliente>[] = [
     {
-      accessorKey: "nombre",
-      header: "Clientes",
-    },
-    {
       accessorKey: "acciones", // Cambia "Acciones" a "acciones"
       header: "Acciones",
       Cell: ({ cell }) => (
@@ -140,6 +136,11 @@ const TableClienteAnticipos = ({ data, setModalCliente, form, setForm }: Props) 
         </Button>
       ), // Usa cell.row.original para obtener el objeto completo
     },
+    {
+      accessorKey: "nombre",
+      header: "Clientes",
+    },
+
   ];
 
   return (

@@ -325,6 +325,15 @@ function ClientesShopify() {
   const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
     () => [
       {
+        header: "Acciones",
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <CButton color="secondary" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)} text="Seleccionar" />
+          );
+        },
+      },
+      {
         accessorKey: "id_cliente",
         header: "ID",
         size: 100,
@@ -334,17 +343,7 @@ function ClientesShopify() {
         header: "Nombre",
         size: 100,
       },
-      {
-        header: "Acciones",
-        Cell: ({ row }) => {
-          console.log(row.original);
-          return (
-            <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
-              seleccionar
-            </Button>
-          );
-        },
-      },
+
     ],
     []
   );
@@ -410,7 +409,7 @@ function ClientesShopify() {
         </Row>
       </Container>
       <Modal isOpen={modalvinculoOpen} toggle={cerrarModalvinculo}>
-        <ModalHeader toggle={cerrarModalvinculo}>Modal de Vínculo</ModalHeader>
+        <ModalHeader toggle={cerrarModalvinculo}><h3>Seleccione cliente a vincular</h3></ModalHeader>
         <ModalBody>
           <MaterialReactTable
             columns={columnsTrabajador}
@@ -420,13 +419,13 @@ function ClientesShopify() {
           />
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={cerrarModalvinculo}>
-            Cerrar
-          </Button>
+          <CButton color="danger" onClick={cerrarModalvinculo} text="Cancelar" />
+
         </ModalFooter>
-      </Modal>
+      </Modal >
       +{/* modal trabajador */}
-      <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
+      < Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)
+      }>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
           {" "}
           <h3>Seleccione cliente</h3>
@@ -464,7 +463,7 @@ function ClientesShopify() {
             text="Vincular clientes"
           ></CButton>
         </ModalFooter>
-      </Modal>
+      </Modal >
     </>
   );
 }

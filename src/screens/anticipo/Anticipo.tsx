@@ -131,6 +131,16 @@ function Anticipo() {
   const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
     () => [
       {
+        header: "Acciones",
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <CButton color="secondary" text="Seleccionar" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)} />
+
+          );
+        },
+      },
+      {
         accessorKey: "id_cliente",
         header: "ID",
         size: 100,
@@ -140,17 +150,7 @@ function Anticipo() {
         header: "Nombre",
         size: 100,
       },
-      {
-        header: "Acciones",
-        Cell: ({ row }) => {
-          console.log(row.original);
-          return (
-            <Button size="sm" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}>
-              seleccionar
-            </Button>
-          );
-        },
-      },
+
     ],
     []
   );
@@ -891,7 +891,7 @@ function Anticipo() {
             </FormGroup>
             <FormGroup>
               {/* SELECT */}
-              <Label for="idCliente">Cliente</Label>
+              <Label for="idCliente">Cliente:</Label>
               <InputGroup>
                 <Input
                   disabled
@@ -918,16 +918,16 @@ function Anticipo() {
             </FormGroup>
             {!disabledReferencia ? (
               <FormGroup>
-                <Label for="referencia">Referencia</Label>
+                <Label for="referencia">Referencia:</Label>
                 <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
               </FormGroup>
             ) : null}
             <FormGroup>
-              <Label for="importe">Importe</Label>
+              <Label for="importe">Importe:</Label>
               <Input type="number" name="importe" id="importe" value={form.importe} onChange={handleChange} />
             </FormGroup>
             <FormGroup>
-              <Label for="observaciones">Observaciones</Label>
+              <Label for="observaciones">Observaciones:</Label>
               <Input
                 type="text"
                 name="observaciones"
@@ -952,7 +952,7 @@ function Anticipo() {
       </Modal>
 
       <Modal isOpen={modalCliente} size="lg">
-        <ModalHeader> Cliente </ModalHeader>
+        <ModalHeader><h3>Seleccione cliente</h3> </ModalHeader>
         <ModalBody>
           <TableClienteAnticipos
             form={form}
@@ -968,12 +968,12 @@ function Anticipo() {
               setModalCliente(false);
               console.log(modalCliente);
             }}
-            text="Salir"
+            text="Cancelar"
           />
         </ModalFooter>
       </Modal>
       <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
-        <ModalHeader toggle={cerrarModal}>Modal Cliente</ModalHeader>
+        <ModalHeader toggle={cerrarModal}><h3>Seleccione cliente</h3></ModalHeader>
         <ModalBody>
           <MaterialReactTable
             columns={columnsTrabajador}
@@ -983,9 +983,8 @@ function Anticipo() {
           />
         </ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={cerrarModal}>
-            Cerrar
-          </Button>
+          <CButton color="danger" onClick={cerrarModal} text="Cancelar" />
+
         </ModalFooter>
       </Modal>
     </>
