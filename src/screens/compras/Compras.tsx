@@ -243,7 +243,6 @@ function Compras() {
     idSeleccionado,
     dataUsuarios2[0]?.sucursal,
     dataUsuarios2[0]?.idCia
-
   );
   const handle = (dato: Producto) => {
     fetchProduct();
@@ -273,9 +272,7 @@ function Compras() {
       fecha: dato.fecha !== undefined ? dato.fecha.split("T")[0] : "",
       id_compra: dato.id_compra,
       d_Encargado: dato.nombreEncargado,
-
     });
-
 
     setIsOpen(false);
     setIdSeleccionado(dato.id_compra);
@@ -652,7 +649,6 @@ function Compras() {
   });
 
   const getUsuarioForeignKey = (responsable: number) => {
-
     const usuario = dataTrabajadores.find((usuario: Trabajador) => usuario.id === responsable);
 
     return usuario ? usuario.nombre : "Sin usuario";
@@ -827,7 +823,7 @@ function Compras() {
           </Button>
         </div>
         <div className="table-responsive">
-          <Table responsive={"sm"} bordered={true} striped={true} >
+          <Table responsive={"sm"} bordered={true} striped={true}>
             <thead>
               <tr>
                 {TableDataHeaderCompras.map((valor: any) => (
@@ -1007,8 +1003,8 @@ function Compras() {
                 <Input style={{ backgroundColor: "#fafafa" }} disabled defaultValue={dataCompras.d_producto} />
                 <Button
                   onClick={() => {
-                    setModalOpen3(true);
                     fetchProduct4();
+                    setModalOpen3(true);
                     setDataCompras({
                       ...dataCompras,
                       clave_prod: 0,
@@ -1145,7 +1141,9 @@ function Compras() {
       </Modal>
 
       <Modal isOpen={isOpen} size="xl">
-        <ModalHeader><h3>Búsqueda</h3></ModalHeader>
+        <ModalHeader>
+          <h3>Búsqueda</h3>
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col md={2}>
@@ -1409,7 +1407,9 @@ function Compras() {
       </Modal>
 
       <Modal isOpen={isOpen} size="xl">
-        <ModalHeader><h3>Búsqueda</h3></ModalHeader>
+        <ModalHeader>
+          <h3>Búsqueda</h3>
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col md={2}>
@@ -1446,8 +1446,6 @@ function Compras() {
                     <td>{dato.Estatus}</td>
                     <td>{dato.fecha.split("T")[0]}</td>
                     <td>{dato.nombreEncargado}</td>
-
-
                   </tr>
                 ))}
               </tbody>

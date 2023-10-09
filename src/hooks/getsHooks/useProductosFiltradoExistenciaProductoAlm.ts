@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import {  ProductoExistencia } from "../../models/Producto";
+import { ProductoExistencia } from "../../models/Producto";
 import { jezaApi } from "../../api/jezaApi";
 import { useAlmacen } from "./useAlmacen";
 interface Props {
@@ -34,7 +34,7 @@ export const useProductosFiltradoExistenciaProductoAlm = ({
 
       const objetoEncontrado = dataAlmacenes.find((item) => item.sucursal === sucursal && item.almacen === almacen);
 
-      if (objetoEncontrado || almacen > 2) {
+      if ((objetoEncontrado && objetoEncontrado.id) || almacen > 2) {
         try {
           const response: AxiosResponse<ProductoExistencia[]> = await jezaApi.get(
             `/sp_cPSEAC?id=0&descripcion=${

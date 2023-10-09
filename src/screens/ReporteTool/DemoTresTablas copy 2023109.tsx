@@ -109,26 +109,22 @@ function DemoTresTablas() {
       console.log({ dataUsuarios2 });
     }
   }, []);
-  const [fechaPost, setFechaPost] = useState<String | Date>();
+  const [fechaPost, setFechaPost] = useState<Date>();
   const sendEmail = () => {
     const fechaSelected = fechaPost ? fechaPost : new Date();
+    const fechaTemporal = format(fechaSelected, "yyyy-MM-dd");
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
         to: "luis.sg9915@gmail.com, desarrollo01@cbinformatica.net",
         subject: "Corte del dia",
         text: "HLOI",
         sucursal: dataUsuarios2[0]?.sucursal,
-        fecha: fechaSelected,
+        fecha: fechaTemporal,
       })
-      .then(() =>
-        Swal.fire({
-          icon: "success",
-          text: "Correo enviado con éxito",
-          confirmButtonColor: "#3085d6",
-        })
-      )
+      .then(() => alert("Correo enviado correctamente"))
       .catch((error) => {
         alert(error);
+        console.log(error);
       });
   };
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
@@ -203,6 +199,21 @@ function DemoTresTablas() {
     ],
     []
   );
+
+  const arregloOriginal = [
+    {
+      FormadePago: "Aplicacion de Anticipos ",
+      Importe: "$100.00",
+    },
+    {
+      FormadePago: "Efectivo",
+      Importe: "$350.00",
+    },
+    {
+      FormadePago: "Total ",
+      Importe: "$450.00",
+    },
+  ];
   const arregloConID = dataCorteEmailA.map((item, index) => ({
     id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
     value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
@@ -244,7 +255,8 @@ function DemoTresTablas() {
               max={today}
               defaultValue={new Date().toISOString().split("T")[0]}
               onChange={(value) => {
-                setFechaPost(value.target.value);
+                alert(new Date(value.target.value));
+                setFechaPost(new Date(value.target.value));
               }}
             />
           </Col>

@@ -20,9 +20,7 @@ import {
   Table,
   Card,
   CardBody,
-  CardTitle,
-  CardSubtitle,
-  CardText,
+
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
@@ -670,7 +668,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) {}
+        } catch (error) { }
       }
     });
   };
@@ -862,53 +860,32 @@ const Ventas = () => {
   const [tempFolio, setTempFolio] = useState(0);
 
   const endVenta = () => {
-    // Cierro mi venta y mando response a medioPago
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-      medioPago(Number(response.data.mensaje2)).then(() => {
-        setTempFolio(response.data.mensaje2);
-        const temp = response.data.mensaje2;
-        jezaApi
-          .get(
-            `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
-          )
-          .then((response) => {
-            setDatoTicket(response.data);
-            setTimeout(() => {
-              Swal.fire({
-                title: "ADVERTENCIA",
-                text: `¿Requiere su ticket por correo?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  axios
-                    .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                      to: "luis.sg9915@gmail.com,abigailmh9@gmail.com",
-                      subject: "Ticket",
-                      textTicket: response.data,
-                      text: "...",
-                    })
-                    .then(() => {
-                      Swal.fire({
-                        icon: "success",
-                        text: "Correo enviado con éxito",
-                        confirmButtonColor: "#3085d6",
-                      });
-                    })
-                    .catch((error) => {
-                      alert(error);
-                      console.log(error);
-                    });
-                } else {
-                  ticketVta({ folio: temp });
-                }
-              });
+      medioPago(Number(response.data.mensaje2));
+      ticketVta({ folio: response.data.mensaje2 });
+      jezaApi
+        .get(
+          `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
+        )
+        .then((response) => {
+          setDatoTicket(response.data);
+          setModalTicket(true);
+        })
+        .then(() => {
+          console.log(datoTicket);
+          axios
+            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+              to: "luis.sg9915@gmail.com, abi_mh9@gmail.com,abimh09@gmail.com",
+              subject: "Ticket",
+              textTicket: datoTicket,
+              text: "...",
+            })
+            .then(() => alert("Correo enviado correctamente"))
+            .catch((error) => {
+              alert(error);
+              console.log(error);
             });
-          }, 3000);
-      });
+        });
       Swal.fire({
         icon: "success",
         text: "Venta finalizada con éxito",
@@ -951,6 +928,8 @@ const Ventas = () => {
       // anticipoPost(Number(response.data.mensaje2));
     });
   };
+
+
   // const endVenta = () => {
   //   jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
   //     medioPago(Number(response.data.mensaje2)).then(() => {
@@ -1149,20 +1128,15 @@ const Ventas = () => {
       horaDateTime = dataVentaEdit.hora;
     }
 
+
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
-          dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
-          dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
-          dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -2318,12 +2292,12 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-          dataArregloTemporal.formaPago == 91 ||
-          dataArregloTemporal.formaPago == 80 ||
-          dataArregloTemporal.formaPago == 92 ||
-          dataArregloTemporal.formaPago == 100 ||
-          dataArregloTemporal.formaPago == 101 ||
-          dataArregloTemporal.formaPago == 103 ? (
+            dataArregloTemporal.formaPago == 91 ||
+            dataArregloTemporal.formaPago == 80 ||
+            dataArregloTemporal.formaPago == 92 ||
+            dataArregloTemporal.formaPago == 100 ||
+            dataArregloTemporal.formaPago == 101 ||
+            dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
