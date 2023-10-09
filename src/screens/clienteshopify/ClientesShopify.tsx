@@ -303,6 +303,25 @@ function ClientesShopify() {
     setSelectedName(name);
     cerrarModalvinculo();
   };
+
+  // const handleModalSelect = async (id_cliente: number, name: string) => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENTSHOPIFY_UPD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso, se sale de la función
+  //   }
+
+  //   setSelectedId(id_cliente);
+  //   setSelectedName(name);
+  //   cerrarModalvinculo();
+
+  //   // Validar si los campos están vacíos antes de limpiarlos
+  //   if (!selectedName && !selectedId) {
+  //     setSelectedName('');
+  //     setSelectedId('');
+  //   }
+  // };
+
+
   const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
     () => [
       {
@@ -414,15 +433,15 @@ function ClientesShopify() {
         </ModalHeader>
         <ModalBody>
           <Label>Id cliente shopify:</Label>
-          <Input type="text" value={selectedIdShop} disabled="disabled" />
+          <Input type="text" value={selectedIdShop} disabled={true} />
           <br />
           <Label>Nombre cliente shopify:</Label>
-          <Input type="text" value={selectedNameShop} disabled="disabled" />
+          <Input type="text" value={selectedNameShop} disabled={true} />
           <br />
           <Label>Nombre cliente sistema: </Label>
 
           <InputGroup>
-            <Input type="text" value={selectedName} />
+            <Input type="text" value={selectedName} disabled={true} />
             <CButton
               style={{ marginLeft: "auto" }}
               color="secondary"
@@ -432,17 +451,18 @@ function ClientesShopify() {
           </InputGroup>
           <br />
           <Label>Id cliente sistema: </Label>
-          <Input type="text" value={selectedId} />
+          <Input type="text" value={selectedId} disabled={true} />
           <br />
+
+        </ModalBody>
+        <ModalFooter>
+          <CButton text="Cancelar" color="danger" onClick={() => setModalOpen(!modalOpen)} />
           <CButton
             style={{ marginLeft: "auto" }}
             color="success"
             onClick={() => vinculo(selectedId, selectedName, selectedIdShop, selectedNameShop)}
-            text="Vincular"
+            text="Vincular clientes"
           ></CButton>
-        </ModalBody>
-        <ModalFooter>
-          <CButton text="Cancelar" color="danger" onClick={() => setModalOpen(!modalOpen)} />
         </ModalFooter>
       </Modal>
     </>
