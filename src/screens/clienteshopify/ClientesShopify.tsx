@@ -149,9 +149,40 @@ function ClientesShopify() {
     setModalvinculoOpen(false);
   };
 
-  const vinculo = (idCliente: any, nombreCliente: any, shopId: any, shopName: any) => {
+  // const vinculo = (idCliente: any, nombreCliente: any, shopId: any, shopName: any) => {
+  //   Swal.fire({
+  //     text: `¿Desea asignar el cliente ${nombreCliente} al usuario Shopify ${shopName}?`, // Utiliza shopName aquí
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Yes, Agregar!",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi
+  //         .put(`sp_ShopifyClientesUpd?id=${shopId}&idCliente=${idCliente}`)
+  //         .then(() => {
+  //           Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
+  //           cerrarModalvinculo();
+  //           setModalOpen(!modalOpen);
+  //           consulta();
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error al realizar la actualización:", error);
+  //         });
+  //     }
+  //   });
+  // };
+  const vinculo = async (idCliente: any, nombreCliente: any, shopId: any, shopName: any) => {
+    // Verificar el permiso antes de continuar
+
+    const permiso = await filtroSeguridad("CAT_CLIENTSHOPIFY_UPD");
+    if (permiso === false) {
+      return; // Si el per
+    }
+
     Swal.fire({
-      text: `¿Desea asignar el cliente ${nombreCliente} al usuario Shopify ${shopName}?`, // Utiliza shopName aquí
+      text: `¿Desea asignar el cliente ${nombreCliente} al usuario Shopify ${shopName}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -173,6 +204,10 @@ function ClientesShopify() {
       }
     });
   };
+
+
+
+
 
   const consulta = () => {
     fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")

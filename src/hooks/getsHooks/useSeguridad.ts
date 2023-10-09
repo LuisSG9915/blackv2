@@ -87,7 +87,7 @@ const useSeguridad = () => {
     Swal.fire({
       icon: "error",
       title: `${response.data[0].mensaje}`,
-      text: `[PERMISO DENEGADO]Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
+      text: `Su perfil de usuario no cuenta con los permisos necesarios para realizar esta acción. Si necesita obtener los permisos adecuados, por favor, póngase en contacto con el equipo de sistemas.`,
     });
     console.log(response.data[0].permiso);
     return false; // No se otorga el permiso
