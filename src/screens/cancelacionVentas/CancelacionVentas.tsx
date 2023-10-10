@@ -20,6 +20,7 @@ import {
   Label,
   Col,
   Button,
+  Spinner,
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
@@ -38,11 +39,10 @@ import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 function CancelacionVentas() {
-  const { filtroSeguridad, session } = useSeguridad();
-  const [showView, setShowView] = useState(true);
-  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
   useEffect(() => {
+    setIsLoading(true);
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
       const parsedItem = JSON.parse(item);
@@ -53,6 +53,10 @@ function CancelacionVentas() {
       getPermisoPantalla(parsedItem);
     }
   }, []);
+  const { filtroSeguridad, session } = useSeguridad();
+  const [showView, setShowView] = useState(true);
+  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getPermisoPantalla = async (userData) => {
     try {
@@ -163,12 +167,7 @@ function CancelacionVentas() {
     });
     setDatos(resultado);
   };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm((prevState: Cancelacion) => ({ ...prevState, [name]: value }));
-    console.log(form);
-  };
-  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -279,6 +278,12 @@ function CancelacionVentas() {
     []
   );
 
+  useEffect(() => {
+    if (dataUsuarios2[0]?.sucursal > 0) {
+      setIsLoading(false);
+    }
+  }, [dataUsuarios2]);
+
   return (
     <>
       <Row>
@@ -292,14 +297,16 @@ function CancelacionVentas() {
         <Row md={8}>
           <Col>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Cancelación de la venta  <ImCancelCircle size={30}></ImCancelCircle></h1>
-
+              <h1>
+                {" "}
+                Cancelación de la venta <ImCancelCircle size={30}></ImCancelCircle>
+              </h1>
             </div>
           </Col>
         </Row>
         <br />
         <br />
-        <MaterialReactTable columns={columns} data={dataCancelaciones} initialState={{ density: "compact" }} />
+        {!isLoading ? <MaterialReactTable columns={columns} data={dataCancelaciones} initialState={{ density: "compact" }} /> : <Spinner></Spinner>}
       </Container>
     </>
   );

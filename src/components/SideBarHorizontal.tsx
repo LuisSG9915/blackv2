@@ -31,7 +31,7 @@ import "../../css/sidebar.css";
 import logoImage from "../assets/logoN.png";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
 import axios from "axios";
-
+import RataLogo from "../assets/rataTNB.jpeg";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
 
 const SidebarHorizontal = () => {
@@ -323,7 +323,7 @@ const SidebarHorizontal = () => {
       {/* {isDataLoaded && ( */}
       <>
         <div>
-          <Navbar className="navar" expand={"md"} color="rgba(225,224,253,255)">
+          <Navbar className="navar" expand={"md"} color="rgba(255, 255, 255, 1)">
             {/* <NavbarBrand href="/" >{logoImage}</NavbarBrand> */}
             {/* <NavbarBrand href="/" src={logoImage}></NavbarBrand> */}
             {/* <img href="/" src={logoImage} alt="Logotipo" className="logo-inv" /> */}
@@ -353,7 +353,7 @@ const SidebarHorizontal = () => {
             <Collapse isOpen={isOpen} navbar>
               <Nav className="ml-auto" navbar justified={true}>
                 <UncontrolledDropdown>
-                  <DropdownToggle nav caret color="rgba(225,224,253,255)">
+                  <DropdownToggle nav caret color="purple" className="navToggle">
                     Catálogos
                   </DropdownToggle>
                   <DropdownMenu dark>
@@ -606,7 +606,8 @@ const SidebarHorizontal = () => {
         <div>
           {loadingController ? (
             <div className="fondoLoader">
-              <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" />
+              <img style={{ width: "15%" }} src={logoImage} alt="Logotipo" />
+              <img style={{ width: "15%" }} src={RataLogo} alt="Logotipos" />
               <Spinner
                 style={{
                   height: "5rem",
