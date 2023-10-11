@@ -1,36 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Navbar,
   NavbarBrand,
   Nav,
-  NavItem,
-  NavLink,
   Collapse,
   NavbarToggler,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  NavbarText,
-  Container,
   CardHeader,
   Card,
   ListGroup,
   ListGroupItem,
   Input,
-  Button,
   Spinner,
 } from "reactstrap";
 import { Usuario } from "../models/Usuario";
-import Usuarios from "../screens/Usuarios";
 import { AiOutlineUser } from "react-icons/ai";
 import Timer from "../components/Timer";
 import Swal from "sweetalert2";
 import "../../css/sidebar.css";
 import logoImage from "../assets/logoN.png";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
-import axios from "axios";
 import RataLogo from "../assets/rataTNB.jpeg";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
 
@@ -352,13 +345,12 @@ const SidebarHorizontal = () => {
             </div> */}
             <Collapse isOpen={isOpen} navbar>
               <Nav className="ml-auto" navbar justified={true}>
-                <UncontrolledDropdown>
-                  <DropdownToggle nav caret color="purple" className="navToggle">
+                <UncontrolledDropdown color="black">
+                  <DropdownToggle nav caret color="dark" className="navToggle">
                     Catálogos
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem header>Administrativo</DropdownItem>
-
                     <DropdownItem
                       onClick={async () => {
                         const permiso = await filtroSeguridad("sb_cias_view");

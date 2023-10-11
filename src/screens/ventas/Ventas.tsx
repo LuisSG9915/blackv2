@@ -856,7 +856,14 @@ const Ventas = () => {
     const sp = `TicketVta ${folio},1,${dataUsuarios2[0]?.sucursal},${dataUsuarios2[0]?.id},${formPago.totalPago}`;
     await jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
-      .then(() => alert("Ticket Ejecutada" + sp));
+      .then(() =>{
+        Swal.fire({
+          icon: "success",
+          text: "Ticket ejecutada correctamente",
+          confirmButtonColor: "#3085d6",
+        })}
+      )
+      .catch((e) => console.log(e));
   };
   // FINALIZACIÓN DE VENTAS
   const [tempFolio, setTempFolio] = useState(0);
@@ -869,7 +876,9 @@ const Ventas = () => {
         const temp = response.data.mensaje2;
         jezaApi
           .get(
-            `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
+            `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${
+              dataUsuarios2[0]?.id
+            }&pago=${Number(formPago.totalPago)}`
           )
           .then((response) => {
             setDatoTicket(response.data);
@@ -882,6 +891,7 @@ const Ventas = () => {
                 confirmButtonColor: "#3085d6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Sí",
+                cancelButtonText: "No",
               }).then((result) => {
                 if (result.isConfirmed) {
                   axios
@@ -907,7 +917,8 @@ const Ventas = () => {
                 }
               });
             });
-          }, 3000);
+          }, 3000)
+          .catch(() => console.log("Error"));
       });
       Swal.fire({
         icon: "success",
@@ -2166,12 +2177,14 @@ const Ventas = () => {
           <Row>
             <TicketPrint>
               <div className="text-left" style={{ fontFamily: "courier new" }}>
-                {datoTicket.map((ticket) => (
-                  <>
-                    <Label> {ticket.LINEA} </Label>
-                    <br />
-                  </>
-                ))}
+                {datoTicket
+                  ? datoTicket.map((ticket) => (
+                      <>
+                        <Label> {ticket.LINEA} </Label>
+                        <br />
+                      </>
+                    ))
+                  : null}
               </div>
               <br />
             </TicketPrint>
