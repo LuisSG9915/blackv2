@@ -18,10 +18,10 @@ export const useTraspasoEntradaSelector = ({ f1, f2, folio, sucursal, sucursal_d
       const response: AxiosResponse<TraspasoGet[]> = await jezaApi.get(
         `/Traspaso?id=%&folio=${folio === 0 ? "%" : folio}&sucursal=${sucursal}&sucursal_destino=${
           sucursal_destino ? sucursal_destino : "%"
-        }&claveprod=%&f1=20230625&f2=20230928`
+        }&claveprod=%&f1=20230625&f2=20231212`
       );
       setDataTraspasosEntradas(response.data);
-      console.log({dataTraspasosEntradas});
+      console.log({ dataTraspasosEntradas });
     } catch (error) {
       console.log(error);
     }
