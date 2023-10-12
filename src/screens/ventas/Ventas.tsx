@@ -1219,7 +1219,6 @@ const Ventas = () => {
       });
   };
 
-
   const [time, setTime] = useState("12:34pm");
 
   const [datah, setData] = useState<any[]>([]); // Definir el estado datah
@@ -1258,7 +1257,7 @@ const Ventas = () => {
   const getExistenciaForeignKey = (idProducto: number) => {
     if (idProducto > 1) {
       const cia = dataProductos4.find((item: any) => item.id === idProducto);
-      
+
       if (cia && cia.existencia > 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
         setDataVentaEdit({ ...dataVentaEdit, existenciaEdit: cia.existencia });
       } else if (cia && cia.existencia === 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
@@ -1428,9 +1427,9 @@ const Ventas = () => {
                         color="lightred"
                         onClick={() => {
                           deleteVenta(dato);
-                          setTimeout(() => {
-                            fetchVentas();
-                          }, 1000);
+                          // setTimeout(() => {
+                          //   fetchVentas();
+                          // }, 1000);
                         }}
                         size={23}
                       />
