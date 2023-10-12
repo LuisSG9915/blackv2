@@ -194,7 +194,7 @@ const Ventas = () => {
     Costo: 1,
     Cve_cliente: 24,
     Descuento: 0,
-    Fecha: "2023-06-14T08:10:57.817",
+    Fecha: "2023-06-14T00:10:57.817",
     No_venta: 0,
     No_venta_original: 0,
     Observacion: "x",
@@ -209,7 +209,7 @@ const Ventas = () => {
     d_producto: "OXIDANTE CREMA 20 VOL. frasco 1l",
     d_sucursal: "Barrio",
     folio_estilista: "0",
-    hora: "2023-06-14T08:10:57.817",
+    hora: "2023-06-14T00:10:57.817",
     id: 0,
     no_venta2: 0,
     terminado: false,
@@ -856,13 +856,13 @@ const Ventas = () => {
     const sp = `TicketVta ${folio},1,${dataUsuarios2[0]?.sucursal},${dataUsuarios2[0]?.id},${formPago.totalPago}`;
     await jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
-      .then(() =>{
+      .then(() => {
         Swal.fire({
           icon: "success",
           text: "Ticket ejecutada correctamente",
           confirmButtonColor: "#3085d6",
-        })}
-      )
+        });
+      })
       .catch((e) => console.log(e));
   };
   // FINALIZACIÓN DE VENTAS
@@ -1119,9 +1119,8 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
-          // Quiero que me valide si formaPago =  100 me ingrese "Anticipo"
           referencia: Number(elemento.formaPago) === 94 ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
-          importe: elemento.importe,
+          importe: arregloTemporal.length == 1 && elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
       });
@@ -1220,15 +1219,7 @@ const Ventas = () => {
       });
   };
 
-  // .put(
-  //   `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
-  //   }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-  //   }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-  //   }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-  //   }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
-  //   }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
-  //   }`
-  // )
+
   const [time, setTime] = useState("12:34pm");
 
   const [datah, setData] = useState<any[]>([]); // Definir el estado datah
@@ -1252,12 +1243,6 @@ const Ventas = () => {
     setModalOpenH(!modalOpen);
   };
 
-  // const historialCitaFutura = (dato: any) => {
-  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
-  //     setData1(response.data);
-  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
-  //   });
-  // };
   const { dataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
     descripcion: "%",
     insumo: 2,
@@ -1273,7 +1258,7 @@ const Ventas = () => {
   const getExistenciaForeignKey = (idProducto: number) => {
     if (idProducto > 1) {
       const cia = dataProductos4.find((item: any) => item.id === idProducto);
-      console.log(idProducto);
+      
       if (cia && cia.existencia > 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
         setDataVentaEdit({ ...dataVentaEdit, existenciaEdit: cia.existencia });
       } else if (cia && cia.existencia === 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
@@ -1632,12 +1617,22 @@ const Ventas = () => {
               </Row>
             </>
           ) : null}
-          <br />
+          {dataTemporal.Observacion !== "SERV" ? null : <br />}
           <Row>
-            <Col sm={6} md={6}>
-              <Label>Cantidad en existencia: </Label>
-              <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
-            </Col>
+            {dataTemporal.Observacion !== "SERV" ? (
+              <Col sm={6} md={6}>
+                <Label>Cantidad en existencia: </Label>
+                <Input
+                  disabled
+                  placeholder="Cantidad en existencia"
+                  onChange={cambios}
+                  name="d_existencia"
+                  defaultValue={dataTemporal.d_existencia}
+                />
+              </Col>
+            ) : (
+              <br />
+            )}
             <Col sm={6} md={6}>
               <Label>Precio:</Label>
               <Input

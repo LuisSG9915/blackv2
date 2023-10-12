@@ -53,9 +53,7 @@ function CancelacionVentas() {
       getPermisoPantalla(parsedItem);
     }
   }, []);
-  const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
-  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const getPermisoPantalla = async (userData) => {
@@ -83,29 +81,9 @@ function CancelacionVentas() {
     navigate("/app"); // Redirige a la ruta "/app"
   };
 
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
-  const [filtroValorMedico, setFiltroValorMedico] = useState("");
-  const [dataUsuarios, setDataUsuarios] = useState<Usuario[]>([]);
-
   const navigate = useNavigate();
-  const [form, setForm] = useState<Cancelacion>({
-    No_venta: 0,
-    Sucursal: 0,
-    nombre: "",
-    Total: 0,
-    Estatus: "",
-  });
+
   const [datos, setDatos] = useState([]);
-  const [noVentaForm, setNoVentaForm] = useState("");
-
-  const DataTableHeader = ["No. Venta", "Cliente", "Total Venta", "Estado", "Acciones"];
-
-  // const mostrarModalActualizar = (dato: Marca) => {
-  //   setForm(dato);
-  //   console.log(dato);
-  //   setModalActualizar(true);
-  // };
 
   /* alertas */
   const [eliminado, setVisible3] = useState(false);
@@ -135,7 +113,6 @@ function CancelacionVentas() {
             .then((response) => {
               setVisible3(true);
               fetchCancelaciones();
-              setModalActualizar(false);
             })
             .catch((error) => {
               console.log(error);
@@ -187,14 +164,6 @@ function CancelacionVentas() {
 
     obtenerFechaHoy();
   }, []);
-
-  // useEffect(() => {
-  //   const item = localStorage.getItem("userLogged");
-  //   if (item !== null) {
-  //     const parsedItem = JSON.parse(item);
-  //     setDataUsuarios(parsedItem);
-  //   }
-  // }, []);
 
   const columns: MRT_ColumnDef<Cancelacion>[] = useMemo(
     () => [
@@ -290,9 +259,7 @@ function CancelacionVentas() {
         <SidebarHorizontal />
       </Row>
       <Container>
-        <Alert color="success" isOpen={eliminado} toggle={() => setVisible3(false)}>
-          Venta cancelada con éxito....
-        </Alert>
+        <p>{dataUsuarios2[0]?.sucursal}</p>
         <br />
         <Row md={8}>
           <Col>
