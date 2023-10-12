@@ -887,7 +887,7 @@ function Clientes() {
               color="lightred"
               // onClick={() => alert(cell.row.original.id_cliente + "---" + cell.row.original.nombre)}
               onClick={async () => {
-                const permiso = await filtroSeguridad("cat_cli_del ");
+                const permiso = await filtroSeguridad("cat_cli_del");
                 if (permiso === false) {
                   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
                 } else {

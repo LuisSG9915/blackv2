@@ -910,7 +910,7 @@ function Compras() {
                     <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad</th>
                     <th style={{ fontSize: "13px", textAlign: "center" }}>Cantidad facturada</th>
                     <th style={{ fontSize: "13px", textAlign: "center" }}>Mal estado</th>
-                    <th style={{ fontSize: "13px", textAlign: "center" }}>Costo en catalogo</th>
+                    <th style={{ fontSize: "13px", textAlign: "center" }}>Costo en catálogo</th>
                     <th style={{ fontSize: "13px", textAlign: "center" }}>Costo compra</th>
                     <th style={{ fontSize: "13px", textAlign: "center" }}>Importe:</th>
                     <th style={{ fontSize: "13px", textAlign: "center" }}>Bonificación</th>
