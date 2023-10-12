@@ -511,7 +511,7 @@ const SidebarHorizontal = () => {
                     >
                       Visor de citas
                     </DropdownItem>
-                    <DropdownItem> Configuración </DropdownItem>
+                    {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
