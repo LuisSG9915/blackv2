@@ -781,7 +781,7 @@ function Anticipo() {
                         onChange={handleChange3}
                         bsSize="sm"
                       >
-                        <option value="">Seleccione la sucursal</option>
+                        <option value={""}>Seleccione la sucursal</option>
 
                         {dataSucursales.map((item) => (
                           <option value={item.sucursal}>{item.nombre}</option>
