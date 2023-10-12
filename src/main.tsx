@@ -348,31 +348,4 @@ ReactDOM.render(
     <RouterProvider router={router} />
   </>,
   document.getElementById("root")
-
-  // const allowedRoutes = [
-  //   {
-  //     path: "/",
-  //     element: <Home />,
-  //   },
-  //   {
-  //     path: "/usuarios",
-  //     element: <Usuarios />,
-  //   },
-  //   // Resto de las rutas permitidas...
-  // ];
-
-  // const restrictedRoutes = [
-  //   {
-  //     path: "/",
-  //     element: <Home />,
-  //   },
-  //   {
-  //     path: "/",
-  //     element: <Productos />,
-  //   },
-  // ];
-
-  // const [isAuthenticated, setIsAuthenticated] = useState(true)
-  // const filteredRoutes = isAuthenticated ? allowedRoutes : restrictedRoutes;
-  // const router = createBrowserRouter(filteredRoutes);
 );
