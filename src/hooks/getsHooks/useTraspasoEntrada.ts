@@ -11,7 +11,7 @@ export const useTraspasoEntrada = ({ sucursal }: Props) => {
   const fetchTraspasosEntradas = async () => {
     try {
       const response: AxiosResponse<TraspasoGet[]> = await jezaApi.get(
-        `/Traspaso?id=%&folio=%&sucursal=21&sucursal_destino=${sucursal}&claveprod=%&f1=20230625&f2=20230928`
+        `/Traspaso?id=%&folio=%&sucursal=21&sucursal_destino=${sucursal}&claveprod=%&f1=20230625&f2=20231212`
       );
       setDataTraspasosEntradas(response.data);
       console.log(dataTraspasosEntradas);
