@@ -342,7 +342,7 @@ function UnidadMedida() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Unidad de medida   <TbAngle size={40} /></h1>
+                <h1> Unidad de medida <TbAngle size={30} /></h1>
 
               </div>
               <br />
