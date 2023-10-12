@@ -13,7 +13,9 @@ export const useTraspaso = ({ sucursal, folio, sucursal_origen }: Props) => {
   const fetchTraspasos = async () => {
     try {
       const response: AxiosResponse<TraspasoGet[]> = await jezaApi.get(
-        `/Traspaso?id=%&folio=${folio ? folio : "0"}&sucursal=${sucursal_origen}&sucursal_destino=${sucursal}&claveprod=%&f1=20230625&f2=20230929`
+        `/Traspaso?id=%&folio=${
+          folio ? folio : "0"
+        }&sucursal=${sucursal_origen}&sucursal_destino=${sucursal}&claveprod=%&f1=20230625&f2=${"20231212"}`
       );
       setDataTraspasos(response.data);
       console.log({ dataTraspasos });
