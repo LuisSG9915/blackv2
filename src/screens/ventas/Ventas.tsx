@@ -896,7 +896,7 @@ const Ventas = () => {
                 if (result.isConfirmed) {
                   axios
                     .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                      to: "luis.sg9915@gmail.com,abigailmh9@gmail.com",
+                      to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
                       subject: "Ticket",
                       textTicket: response.data,
                       text: "...",
@@ -1371,7 +1371,7 @@ const Ventas = () => {
             onClick={() => {
               if (dataTemporal.cliente) {
                 if (dataVentas.length > 0) {
-                  setDataTemporal;
+                  // setDataTemporal;
                 }
                 setModalOpen(true);
               } else {
@@ -1668,11 +1668,14 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-
-          <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
-          <select id="hora" name="hora" onChange={cambios} defaultValue={dataTemporal.hora}>
-            {generarOpcionesDeTiempo()}
-          </select>
+          {dataTemporal.Observacion == "SERV" ? (
+            <>
+              <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
+              <select id="hora" name="hora" onChange={cambios} defaultValue={dataTemporal.hora}>
+                {generarOpcionesDeTiempo()}
+              </select>
+            </>
+          ) : null}
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -1681,6 +1684,7 @@ const Ventas = () => {
               setModalOpen(false);
               setDataTemporal((prevData) => ({
                 ...datosInicialesArreglo[0],
+                Cant_producto: 1,
                 cliente: prevData.cliente,
                 Cve_cliente: prevData.Cve_cliente,
               }));

@@ -81,15 +81,8 @@ function ClientesShopify() {
     }
   };
 
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -203,11 +196,9 @@ function ClientesShopify() {
           });
       }
     });
+    setSelectedName("");
+    setSelectedId("");
   };
-
-
-
-
 
   const consulta = () => {
     fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
@@ -232,9 +223,6 @@ function ClientesShopify() {
   useEffect(() => {
     consulta();
   }, []);
-
-  const [shopifyId, setShopifyId] = useState<number>(0);
-  const [shopifyName, setShopifyName] = useState<string>("");
 
   const setIdShopify = (shopID: number, shopNAME: string) => {
     setSelectedIdShop(shopID);
@@ -356,16 +344,13 @@ function ClientesShopify() {
   //   }
   // };
 
-
   const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
     () => [
       {
         header: "Acciones",
         Cell: ({ row }) => {
           console.log(row.original);
-          return (
-            <CButton color="secondary" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)} text="Seleccionar" />
-          );
+          return <CButton color="secondary" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)} text="Seleccionar" />;
         },
       },
       {
@@ -378,7 +363,11 @@ function ClientesShopify() {
         header: "Nombre",
         size: 100,
       },
-
+      {
+        accessorKey: "email",
+        header: "Correo",
+        size: 100,
+      },
     ],
     []
   );
@@ -443,8 +432,10 @@ function ClientesShopify() {
           <br />
         </Row>
       </Container>
-      <Modal isOpen={modalvinculoOpen} toggle={cerrarModalvinculo}>
-        <ModalHeader toggle={cerrarModalvinculo}><h3>Seleccione cliente a vincular</h3></ModalHeader>
+      <Modal isOpen={modalvinculoOpen} toggle={cerrarModalvinculo} size="lg">
+        <ModalHeader toggle={cerrarModalvinculo}>
+          <h3>Seleccione cliente a vincular</h3>
+        </ModalHeader>
         <ModalBody>
           <MaterialReactTable
             columns={columnsTrabajador}
@@ -454,13 +445,19 @@ function ClientesShopify() {
           />
         </ModalBody>
         <ModalFooter>
-          <CButton color="danger" onClick={cerrarModalvinculo} text="Cancelar" />
-
+          <CButton
+            color="danger"
+            onClick={() => {
+              cerrarModalvinculo();
+              setSelectedName("");
+              setSelectedId("");
+            }}
+            text="Cancelar"
+          />
         </ModalFooter>
-      </Modal >
+      </Modal>
       +{/* modal trabajador */}
-      < Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)
-      }>
+      <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
           {" "}
           <h3>Seleccione cliente</h3>
@@ -476,21 +473,23 @@ function ClientesShopify() {
 
           <InputGroup>
             <Input type="text" value={selectedName} disabled={true} />
-            <CButton
-              style={{ marginLeft: "auto" }}
-              color="secondary"
-              onClick={abrirModalvinculo}
-              text="Seleccionar"
-            ></CButton>
+            <CButton style={{ marginLeft: "auto" }} color="secondary" onClick={abrirModalvinculo} text="Seleccionar"></CButton>
           </InputGroup>
           <br />
           <Label>Id cliente sistema: </Label>
           <Input type="text" value={selectedId} disabled={true} />
           <br />
-
         </ModalBody>
         <ModalFooter>
-          <CButton text="Cancelar" color="danger" onClick={() => setModalOpen(!modalOpen)} />
+          <CButton
+            text="Cancelar"
+            color="danger"
+            onClick={() => {
+              setModalOpen(!modalOpen);
+              setSelectedName("");
+              setSelectedId("");
+            }}
+          />
           <CButton
             style={{ marginLeft: "auto" }}
             color="success"
@@ -498,7 +497,7 @@ function ClientesShopify() {
             text="Vincular clientes"
           ></CButton>
         </ModalFooter>
-      </Modal >
+      </Modal>
     </>
   );
 }

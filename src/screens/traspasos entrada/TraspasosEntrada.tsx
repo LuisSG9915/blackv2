@@ -42,12 +42,10 @@ import { useNavigate } from "react-router-dom";
 import { BsDownload } from "react-icons/bs";
 import { BiSearchAlt } from "react-icons/bi";
 
-
 function TraspasosEntrada() {
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);
-
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -72,7 +70,6 @@ function TraspasosEntrada() {
           handleRedirect();
         } else {
           setShowView(true);
-
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -178,25 +175,15 @@ function TraspasosEntrada() {
   });
   useEffect(() => {
     const ultimoFolio =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
-        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido
-        : false;
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido : false;
     const sucursalOrigen =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
-        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].suc_origen
-        : 0;
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].suc_origen : 0;
     const sumaCantidades =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
-        ? dataTraspasosEntradas.reduce((total, item) => total + item.cantidad, 0)
-        : [0];
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas.reduce((total, item) => total + item.cantidad, 0) : [0];
     const ultimoNombreAlmOrigen =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
-        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmOrigen
-        : "";
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmOrigen : "";
     const ultimoNombreAlmDestino =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
-        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmDestino
-        : "";
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].nombreAlmDestino : "";
 
     setSetstateRecibido(ultimoFolio);
     setFechaSeleccionada({
@@ -241,10 +228,11 @@ function TraspasosEntrada() {
       <>
         <Container>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <h1> Traspasos de entrada  <ImMoveDown size={40}></ImMoveDown></h1>
-
+            <h1>
+              {" "}
+              Traspasos de entrada <ImMoveDown size={40}></ImMoveDown>
+            </h1>
           </div>
-
         </Container>
         <Container>
           <Row>
@@ -273,14 +261,7 @@ function TraspasosEntrada() {
             </Col>
             <Col md="4">
               <Label>Responsable de envío:</Label>
-              <Input
-                disabled
-                type="text"
-                name="d_usuario"
-                id="d_usuario"
-                value={fechaSeleccionada.d_usuario}
-                onChange={handleChangeFechas}
-              ></Input>
+              <Input disabled type="text" name="d_usuario" id="d_usuario" value={fechaSeleccionada.d_usuario} onChange={handleChangeFechas}></Input>
             </Col>
             <Col md="1">
               <Label>Folio:</Label>
@@ -290,25 +271,11 @@ function TraspasosEntrada() {
           <Row>
             <Col md="3">
               <Label>Almacén origen:</Label>
-              <Input
-                disabled
-                type="text"
-                name="d_almacenOrigen"
-                id="folio"
-                value={informative.d_almacenOrigen}
-                onChange={handleChange}
-              ></Input>
+              <Input disabled type="text" name="d_almacenOrigen" id="folio" value={informative.d_almacenOrigen} onChange={handleChange}></Input>
             </Col>
             <Col md="3">
               <Label>Almacén destino:</Label>
-              <Input
-                disabled
-                type="text"
-                name="d_almacenDestino"
-                id="folio"
-                value={informative.d_almacenDestino}
-                onChange={handleChange}
-              ></Input>
+              <Input disabled type="text" name="d_almacenDestino" id="folio" value={informative.d_almacenDestino} onChange={handleChange}></Input>
             </Col>
           </Row>
           <br />
@@ -352,16 +319,14 @@ function TraspasosEntrada() {
       <>
         <Container>
           <div>
-
             <Button
               style={{ marginRight: 5 }}
-              disabled={!recibido && dataTraspasosEntradas.length > 0 ? false : true}
+              disabled={(!recibido && dataTraspasosEntradas.length > 0 ? false : true) || Number(form.folio) == 0}
               onClick={() => {
                 FinalizaRecepcion();
               }}
               color="success"
             >
-
               Recibir
               <BsDownload size={30} />
             </Button>
@@ -375,7 +340,6 @@ function TraspasosEntrada() {
               </>
             </TicketPrint> */}
             <Button
-
               color="primary"
               onClick={() => {
                 setModalBusqueda(true);
@@ -385,7 +349,6 @@ function TraspasosEntrada() {
               <BiSearchAlt size={30} />
               Búsqueda
             </Button>
-
           </div>
         </Container>
       </>
@@ -472,12 +435,15 @@ function TraspasosEntrada() {
 
     jezaApi
       .get(
-        `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${fechaSeleccionada.suc_destino
-        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"
-        }&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"}`
+        `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${
+          fechaSeleccionada.suc_destino
+        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"}&f2=${
+          fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"
+        }`
       )
       .then((response) => {
-        setDataTraspasoBusqueda2(response.data);
+        const newResponse = response.data.filter((objeto) => objeto.folio > 0);
+        setDataTraspasoBusqueda2(newResponse);
         setForm({
           ...form,
           suc_destino: fechaSeleccionada.suc_destino.toString(),
@@ -492,9 +458,7 @@ function TraspasosEntrada() {
   const [recibido, setRecibido] = useState(false);
   useEffect(() => {
     const ultimoFolio =
-      dataTraspasosEntradas && dataTraspasosEntradas.length > 0
-        ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido
-        : false;
+      dataTraspasosEntradas && dataTraspasosEntradas.length > 0 ? dataTraspasosEntradas[dataTraspasosEntradas.length - 1].recibido : false;
     setRecibido(ultimoFolio);
   }, [dataTraspasosEntradas]);
 
@@ -509,11 +473,7 @@ function TraspasosEntrada() {
         <br />
         <InfoRow />
         <h4>
-          {stateRecibido === true
-            ? "Traspaso recibido"
-            : stateRecibido === false && dataTraspasosEntradas.length > 0
-              ? "Traspaso no recibido"
-              : ""}{" "}
+          {stateRecibido === true ? "Traspaso recibido" : stateRecibido === false && dataTraspasosEntradas.length > 0 ? "Traspaso no recibido" : ""}{" "}
         </h4>
 
         <TableTraspasoEntrada />
@@ -543,12 +503,7 @@ function TraspasosEntrada() {
               </Col>
               <Col md={3}>
                 <Label>Sucursal origen:</Label>
-                <Input
-                  value={fechaSeleccionada.suc_destino}
-                  type="select"
-                  name="suc_destino"
-                  onChange={handleChangeFechas}
-                >
+                <Input value={fechaSeleccionada.suc_destino} type="select" name="suc_destino" onChange={handleChangeFechas}>
                   <option value={0}>Selecciona sucursal</option>
                   <option value={"%"}>Todas las sucursales</option>
                   {filtradoSucursales.map((option: Sucursal) => (
@@ -565,7 +520,10 @@ function TraspasosEntrada() {
                 <br />
               </Col>
             </Row>
-            <Button color="primary" onClick={() => getTraspasoBusqueda()}> Buscar </Button>
+            <Button color="primary" onClick={() => getTraspasoBusqueda()}>
+              {" "}
+              Buscar{" "}
+            </Button>
             <hr />
             <div className="table-responsive">
               <Table>
