@@ -259,7 +259,6 @@ function CancelacionVentas() {
         <SidebarHorizontal />
       </Row>
       <Container>
-        <p>{dataUsuarios2[0]?.sucursal}</p>
         <br />
         <Row md={8}>
           <Col>

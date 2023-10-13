@@ -111,10 +111,10 @@ function DemoTresTablas() {
   }, []);
   const [fechaPost, setFechaPost] = useState<String | Date>();
   const sendEmail = () => {
-    const fechaSelected = fechaPost ? fechaPost : new Date();
+    const fechaSelected = fechaPost ? fechaPost : "2023-10-12";
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
-        to: "luis.sg9915@gmail.com, desarrollo01@cbinformatica.net",
+        to: "luis.sg9915@gmail.com, abigailmh09@gmail.com,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
         subject: "Corte del dia",
         text: "HLOI",
         sucursal: dataUsuarios2[0]?.sucursal,
