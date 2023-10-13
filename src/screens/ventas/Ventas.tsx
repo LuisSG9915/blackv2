@@ -1711,7 +1711,11 @@ const Ventas = () => {
                   icon: "info",
                   text: "No ha seleccionado estilista",
                 });
-              } else if (dataTemporal?.d_existencia < dataTemporal.Cant_producto && dataTemporal.Observacion !== "SERV") {
+              } else if (
+                dataTemporal?.d_existencia &&
+                dataTemporal?.d_existencia < dataTemporal.Cant_producto &&
+                dataTemporal.Observacion !== "SERV"
+              ) {
                 Swal.fire({
                   icon: "info",
                   text: "No hay existencias ",
