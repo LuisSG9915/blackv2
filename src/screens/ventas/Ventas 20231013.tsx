@@ -54,7 +54,7 @@ import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 import { FormaPago } from "../../models/FormaPago";
 import TimeKeeper from "react-timekeeper";
 import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
@@ -896,8 +896,7 @@ const Ventas = () => {
                 if (result.isConfirmed) {
                   axios
                     .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                      // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                      to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
+                      to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
                       subject: "Ticket",
                       textTicket: response.data,
                       text: "...",
