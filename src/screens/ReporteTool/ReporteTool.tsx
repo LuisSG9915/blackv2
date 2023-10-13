@@ -298,6 +298,8 @@ function ReporteTool() {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
+    } else if (reporte == "sp_repoComisiones1") {
+      queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
@@ -604,6 +606,29 @@ function ReporteTool() {
         setShowMetodoPagoInput(true);
         setShowAreaInput(true);
         //----------------------------------------------------------------
+        setShowClaveProdInput(false);
+        setShowClienteInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+
+        setShowDeptoInput(false);
+
+        //sp_repoComisiones1
+      } else if (value === "sp_repoComisiones1") {
+        //f1- f2 -suc-estilista
+
+        setShowSucursalInput(true);
+        setShowEstilistaInput(true);
+
+        //----------------------------------------------------------------
+        setShowTipoDescuentoInput(false);
+
+        setShowMetodoPagoInput(false);
+        setShowAreaInput(false);
+        setShowEmpresaInput(false);
         setShowClaveProdInput(false);
         setShowClienteInput(false);
         setShowSucDesInput(false);
