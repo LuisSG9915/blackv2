@@ -640,36 +640,36 @@ function NominaTrabajadores() {
         <>
           <Container>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Catálago trabajadores </h1>
-              <AiOutlineUser size={30}></AiOutlineUser>
+              <h1> Catálago trabajadores <AiOutlineUser size={30}></AiOutlineUser></h1>
+
             </div>
             <div className="col align-self-start d-flex justify-content-center "></div>
             <br />
-            <br />
-            <ButtonGroup variant="contained" aria-label="outlined primary button group">
-              <Button
-                style={{ marginLeft: "auto" }}
-                color="success"
-                onClick={() => {
-                  setModalInsertar(true);
-                  setEstado("insert");
-                  LimpiezaForm();
-                }}
-              >
-                Crear trabajador
-              </Button>
 
-              <Button color="primary" onClick={handleRedirect}>
-                <IoIosHome size={20}></IoIosHome>
-              </Button>
-              <Button onClick={handleReload}>
-                <IoIosRefresh size={20}></IoIosRefresh>
-              </Button>
-            </ButtonGroup>
+            <div>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <Button
+                  style={{ marginLeft: "auto" }}
+                  color="success"
+                  onClick={() => {
+                    setModalInsertar(true);
+                    setEstado("insert");
+                    LimpiezaForm();
+                  }}
+                >
+                  Crear trabajador
+                </Button>
 
+                <Button color="primary" onClick={handleRedirect}>
+                  <IoIosHome size={20}></IoIosHome>
+                </Button>
+                <Button onClick={handleReload}>
+                  <IoIosRefresh size={20}></IoIosRefresh>
+                </Button>
+              </ButtonGroup>
+            </div>
             <br />
-            <br />
-            <br />
+
             <DataTable></DataTable>
           </Container>
           {/* CREAR TRABAJADOR  */}
