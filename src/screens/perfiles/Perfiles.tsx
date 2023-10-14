@@ -35,9 +35,11 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { BsPersonVcard } from "react-icons/bs";
+
 function Perfiles() {
   const { filtroSeguridad, session } = useSeguridad();
-  
+
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
@@ -52,7 +54,7 @@ function Perfiles() {
       getPermisoPantalla(parsedItem);
     }
   }, []);
-//AAA
+  //AAA
   const getPermisoPantalla = async (userData) => {
     try {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cPerfiles_view`);
@@ -64,7 +66,7 @@ function Perfiles() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -125,7 +127,7 @@ function Perfiles() {
 
   /////CREAR PERFIL
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_EMPRE_ADD");
+    const permiso = await filtroSeguridad("CAT_PERFIL_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -157,7 +159,7 @@ function Perfiles() {
   /////ACTUALIZAR PERFIL
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_EMPRE_UPD");
+    const permiso = await filtroSeguridad("CAT_PERFIL_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -187,7 +189,7 @@ function Perfiles() {
 
   /////ELIMINAR PERFIL
   const eliminar = async (dato: Perfil) => {
-    const permiso = await filtroSeguridad("CAT_EMPRE_DEL");
+    const permiso = await filtroSeguridad("CAT_PERFIL_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -227,10 +229,15 @@ function Perfiles() {
     getPerfiles();
   }, []);
 
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: any) => ({ ...prevState, [name]: value }));
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
   };
+
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
@@ -311,35 +318,34 @@ function Perfiles() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Perfiles </h1>
-          <AiOutlineUser size={30}></AiOutlineUser>
+          <h1> Perfiles  <BsPersonVcard size={30}></BsPersonVcard></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
         <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear trabajador
-          </Button>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear trabajador
+            </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
-
-        <br />
-        <br />
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <DataTable></DataTable>
       </Container>
@@ -353,7 +359,7 @@ function Perfiles() {
 
         <ModalBody>
           <Container>
-            <CFormGroupInput handleChange={handleChange} inputName="descripcion_perfil" labelName="Perfil:" value={form.descripcion_perfil} />
+            <CFormGroupInput handleChange={handleChange} inputName="descripcion_perfil" labelName="Descripción del perfil::" value={form.descripcion_perfil} />
           </Container>
         </ModalBody>
 
