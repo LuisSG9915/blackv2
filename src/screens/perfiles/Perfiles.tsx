@@ -36,7 +36,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { BsPersonVcard } from "react-icons/bs";
-
+import { UserResponse } from "../../models/Home";
 function Perfiles() {
   const { filtroSeguridad, session } = useSeguridad();
 
