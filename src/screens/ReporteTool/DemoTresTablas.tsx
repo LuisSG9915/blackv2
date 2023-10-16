@@ -114,7 +114,8 @@ function DemoTresTablas() {
     const fechaSelected = fechaPost ? fechaPost : "2023-10-12";
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
-        to: "luis.sg9915@gmail.com, abigailmh09@gmail.com,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+        // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+        to: "luis.sg9915@gmail.com, abigailmh09@gmail.com",
         subject: "Corte del dia",
         text: "HLOI",
         sucursal: dataUsuarios2[0]?.sucursal,
@@ -141,7 +142,7 @@ function DemoTresTablas() {
     () => [
       {
         accessorKey: "FormadePago",
-        header: "FormadePago",
+        header: "Forma de pago",
         size: 10,
       },
       {
@@ -157,17 +158,17 @@ function DemoTresTablas() {
     () => [
       {
         accessorKey: "total_Servicios",
-        header: "total_Servicios",
+        header: "Total de servicios",
         size: 10,
       },
       {
         accessorKey: "servicios_Realizados",
-        header: "servicios_Realizados",
+        header: "Servicios realizados",
         size: 10,
       },
       {
         accessorKey: "servicios_Agendados",
-        header: "servicios_Agendados",
+        header: "Sevicios agendados",
         size: 10,
       },
     ],
@@ -176,29 +177,81 @@ function DemoTresTablas() {
   const columnsC: MRT_ColumnDef<CorteC>[] = useMemo(
     () => [
       {
-        accessorKey: "Responsable",
-        header: "Responsable",
+        accessorKey: "colaborador",
+        header: "Colaborador",
         maxSize: 1,
       },
       {
-        accessorKey: "Servicio",
-        header: "Servicio",
+        accessorKey: "ventaServicios",
+        header: "Venta de servicio",
         size: 5,
+        Cell: ({ row }) => {
+          return (
+            <p>
+              {row.original.ventaServicios.toLocaleString("es-MX", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: "currency",
+                currency: "MXN",
+              })}
+            </p>
+          );
+        },
       },
       {
-        accessorKey: "Venta",
-        header: "Venta",
+        accessorKey: "ventaProductos",
+        header: "Venta de productos",
+        size: 10,
+        Cell: ({ row }) => {
+          return (
+            <p>
+              {row.original.ventaProductos.toLocaleString("es-MX", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: "currency",
+                currency: "MXN",
+              })}
+            </p>
+          );
+        },
+      },
+      {
+        accessorKey: "ventaTotal",
+        header: "Venta total",
+        size: 10,
+        Cell: ({ row }) => {
+          return (
+            <p>
+              {row.original.ventaTotal.toLocaleString("es-MX", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                style: "currency",
+                currency: "MXN",
+              })}
+            </p>
+          );
+        },
+      },
+      {
+        accessorKey: "porcentaje",
+        header: "Porcentaje",
+        size: 10,
+        Cell: ({ row }) => {
+          return <p>{row.original.porcentaje.toFixed(2) + "%"}</p>;
+        },
+      },
+      {
+        accessorKey: "numeroTickets",
+        header: "Numero de tickets",
         size: 10,
       },
       {
-        accessorKey: "Color",
-        header: "Color",
+        accessorKey: "ticketPromedio",
+        header: "Tickets promedio",
         size: 10,
-      },
-      {
-        accessorKey: "Productos",
-        header: "Productos",
-        size: 10,
+        Cell: ({ row }) => {
+          return <p>{row.original.ticketPromedio.toFixed(2)}</p>;
+        },
       },
     ],
     []
@@ -210,15 +263,15 @@ function DemoTresTablas() {
   }));
   const arregloFormateado = arregloConID.slice(0, -1);
 
-  const arregloCorte3Servicio = dataCorteEmailC.map((item, index) => ({
+  const arregloCorte3Servicio = dataCorteEmailC?.map((item, index) => ({
     id: index + 1,
-    value: item.Servicio,
-    label: item.Responsable,
+    value: item.ventaServicios,
+    label: item.colaborador,
   }));
-  const arregloCorte3Venta = dataCorteEmailC.map((item, index) => ({
+  const arregloCorte3Venta = dataCorteEmailC?.map((item, index) => ({
     id: index + 1,
-    value: item.Venta,
-    label: item.Responsable,
+    value: item.ventaProductos,
+    label: item.colaborador,
   }));
 
   return (
@@ -309,28 +362,30 @@ function DemoTresTablas() {
         </div>
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
-          <MaterialReactTable
-            columns={columnsC}
-            data={dataCorteEmailC} // Reemplaza "reportes1" con tus datos de la primera tabla
-            enableRowSelection={false}
-            rowSelectionCheckboxes={false}
-            initialState={{ density: "compact" }}
-            renderTopToolbarCustomActions={({ table }) => (
-              <>
-                <h4>Corte 3</h4>
-                <Button
-                  onClick={handleExportDataCorte3}
-                  variant="contained"
-                  color="withe"
-                  style={{ marginLeft: "auto" }}
-                  startIcon={<AiFillFileExcel />}
-                  aria-label="Exportar a Excel"
-                >
-                  <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
-                </Button>
-              </>
-            )}
-          />
+          {dataCorteEmailC ? (
+            <MaterialReactTable
+              columns={columnsC}
+              data={dataCorteEmailC} // Reemplaza "reportes1" con tus datos de la primera tabla
+              enableRowSelection={false}
+              rowSelectionCheckboxes={false}
+              initialState={{ density: "compact" }}
+              renderTopToolbarCustomActions={({ table }) => (
+                <>
+                  <h4>Corte 3</h4>
+                  <Button
+                    onClick={handleExportDataCorte3}
+                    variant="contained"
+                    color="withe"
+                    style={{ marginLeft: "auto" }}
+                    startIcon={<AiFillFileExcel />}
+                    aria-label="Exportar a Excel"
+                  >
+                    <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+                  </Button>
+                </>
+              )}
+            />
+          ) : null}
         </div>
         <div>
           <h4>Corte 1 </h4>
@@ -353,49 +408,53 @@ function DemoTresTablas() {
         </div>
         <div>
           <h4>Corte 3 resumen de servicios</h4>
-          <PieChart
-            series={[
-              {
-                arcLabel: (item) => {
-                  if (item.value > 10)
-                    return `${item.label} (${item.value.toLocaleString("es-MX", {
-                      style: "currency",
-                      currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
-                    })})`;
-                },
+          {arregloCorte3Servicio ? (
+            <PieChart
+              series={[
+                {
+                  arcLabel: (item) => {
+                    if (item.value > 10)
+                      return `${item.label} (${item.value.toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                      })})`;
+                  },
 
-                data: arregloCorte3Servicio,
-                highlightScope: { faded: "global", highlighted: "item" },
-                faded: { innerRadius: 30, additionalRadius: -30 },
-              },
-            ]}
-            width={450}
-            height={350}
-          />
+                  data: arregloCorte3Servicio,
+                  highlightScope: { faded: "global", highlighted: "item" },
+                  faded: { innerRadius: 30, additionalRadius: -30 },
+                },
+              ]}
+              width={450}
+              height={350}
+            />
+          ) : null}
         </div>
 
         <div>
           <h4>Corte 3 resumen de ventas</h4>
-          <PieChart
-            colors={["orange", "purple", "pink"]}
-            series={[
-              {
-                arcLabel: (item) => {
-                  if (item.value > 10)
-                    return `${item.label} (${item.value.toLocaleString("es-MX", {
-                      style: "currency",
-                      currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
-                    })})`;
-                },
+          {arregloCorte3Venta ? (
+            <PieChart
+              colors={["orange", "purple", "pink"]}
+              series={[
+                {
+                  arcLabel: (item) => {
+                    if (item.value > 10)
+                      return `${item.label} (${item.value.toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Cambiamos a pesos mexicanos (MXN)
+                      })})`;
+                  },
 
-                data: arregloCorte3Venta,
-                highlightScope: { faded: "global", highlighted: "item" },
-                faded: { innerRadius: 30, additionalRadius: -30 },
-              },
-            ]}
-            width={450}
-            height={350}
-          />
+                  data: arregloCorte3Venta,
+                  highlightScope: { faded: "global", highlighted: "item" },
+                  faded: { innerRadius: 30, additionalRadius: -30 },
+                },
+              ]}
+              width={450}
+              height={350}
+            />
+          ) : null}
         </div>
       </Container>
     </>

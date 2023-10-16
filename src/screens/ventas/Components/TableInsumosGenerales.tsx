@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Input, Label, Row, Table } from "reactstrap";
-import { useInsumosGenerales } from "../../../hooks/getsHooks/useInsumosGenerales";
+import React, { useEffect, useMemo, useState } from "react";
+import { Button, Input } from "reactstrap";
 import { jezaApi } from "../../../api/jezaApi";
 import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
@@ -10,21 +9,14 @@ import { VentaInsumo } from "../../../models/VentaInsumo";
 import { AiOutlineBarcode } from "react-icons/ai";
 
 import { Box } from "@mui/material";
-interface Venta {
-  id: number;
-  estilista: string;
-  producto: string;
-  cantidad: number;
-  precio: number;
-  tasaIva: number;
-  tiempo: number;
-}
+import { InsumoExistencia } from "./TableProductos";
+
 interface Props {
   data: Estilistas[];
   setModalOpen2: React.Dispatch<React.SetStateAction<boolean>>;
   datoVentaSeleccionado: any;
   handleGetFetch: any;
-  datoInsumosProducto?: VentaInsumo[];
+  datoInsumosProducto: InsumoExistencia[];
 }
 export interface Estilistas {
   id: number;
@@ -36,12 +28,6 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     cantidad: "",
     id_insumo: 0,
   });
-
-  useEffect(() => {
-    fetchInsumosGenerales({ marca: form.marca });
-  }, [form.marca]);
-
-  const { dataInsumoGenerales, fetchInsumosGenerales } = useInsumosGenerales({ marca: form.marca });
 
   const createInsumoTrue = (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
     jezaApi
@@ -63,8 +49,9 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   };
 
   useEffect(() => {
-    console.log(data);
-  }, []);
+    handleGetFetch();
+    console.log(datoInsumosProducto);
+  }, [datoVentaSeleccionado]);
 
   const handleInsumoSelection = (id: number) => {
     // Mostrar el SweetAlert para obtener la cantidad
@@ -122,45 +109,50 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     const cia = dataUnidadMedida.find((cia: UnidadMedidaModel) => cia.id === idTableCia);
     return cia ? cia.descripcion : "Sin unidad de medida";
   };
-  const columns: MRT_ColumnDef<any>[] = [
-    {
-      header: "Insumo",
-      accessorKey: "descripcion",
-      flex: 1,
-    },
-    {
-      header: "Unidad de medida",
-      accessorKey: "d_unidad_medida",
-      flex: 1,
-      // Cell: ({ cell }) => <p>{getCiaForeignKey(cell.getValue())}</p>,
-    },
-    {
-      header: "Marca",
-      accessorKey: "marca",
-      flex: 1,
-    },
-    {
-      header: "Precio",
-      accessorKey: "precio",
-      flex: 1,
-      Cell: ({ cell }) => <p> {"$" + cell.getValue().toFixed(2)} </p>,
-    },
-    {
-      header: "Acciones",
-      accessorKey: "id",
-      flex: 1,
-      Cell: ({ cell }) => <Button onClick={() => handleInsumoSelection(cell.getValue())}>Seleccionar</Button>,
-    },
-  ];
+  const columns: MRT_ColumnDef<InsumoExistencia>[] = useMemo(
+    () => [
+      {
+        header: "Insumo",
+        accessorKey: "descripcion",
+      },
+      // {
+      //   header: "Unidad de medida",
+      //   accessorKey: "d_unidad_medida",
+      //
+      //   // Cell: ({ cell }) => <p>{getCiaForeignKey(cell.getValue())}</p>,
+      // },
+      {
+        header: "Marca",
+        accessorKey: "marca",
+      },
+      {
+        header: "Precio",
+        accessorKey: "precio",
 
-  useEffect(() => {
-    fetchInsumosGenerales();
-  }, []);
+        Cell: ({ cell }) => <p> {"$" + cell.getValue().toFixed(2)} </p>,
+      },
+      {
+        header: "existencia",
+        accessorKey: "existencia",
+      },
+      {
+        header: "Acciones",
+        accessorKey: "id",
+
+        Cell: ({ cell }) => <Button onClick={() => handleInsumoSelection(cell.getValue())}>Seleccionar</Button>,
+      },
+    ],
+    []
+  );
+
+  // useEffect(() => {
+  //   fetchInsumosGenerales();
+  // }, []);
   return (
     <>
       <MaterialReactTable
         columns={columns}
-        data={dataInsumoGenerales}
+        data={datoInsumosProducto ? datoInsumosProducto : []}
         initialState={{
           pagination: {
             pageSize: 10,
@@ -170,12 +162,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         }}
         renderTopToolbarCustomActions={({ table }) => (
           <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Input
-              type="text"
-              placeholder="Codigo de barras"
-              value={form.marca}
-              onChange={(e) => setForm({ ...form, marca: e.target.value })}
-            />
+            <Input type="text" placeholder="Codigo de barras" value={form.marca} onChange={(e) => setForm({ ...form, marca: e.target.value })} />
             <AiOutlineBarcode style={{ fontSize: "24px" }} />
           </Box>
         )}

@@ -113,6 +113,11 @@ function CancelacionVentas() {
             .then((response) => {
               setVisible3(true);
               fetchCancelaciones();
+              Swal.fire({
+                icon: "success",
+                text: "Venta cancelada con éxito",
+                confirmButtonColor: "#3085d6",
+              });
             })
             .catch((error) => {
               console.log(error);
@@ -244,7 +249,7 @@ function CancelacionVentas() {
         },
       },
     ],
-    []
+    [dataUsuarios2[0]?.sucursal]
   );
 
   useEffect(() => {
