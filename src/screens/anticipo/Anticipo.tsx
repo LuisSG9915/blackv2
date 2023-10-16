@@ -49,6 +49,7 @@ import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import axios from "axios";
 function Anticipo() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -135,8 +136,11 @@ function Anticipo() {
         Cell: ({ row }) => {
           console.log(row.original);
           return (
-            <CButton color="secondary" text="Seleccionar" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)} />
-
+            <CButton
+              color="secondary"
+              text="Seleccionar"
+              onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)}
+            />
           );
         },
       },
@@ -150,7 +154,6 @@ function Anticipo() {
         header: "Nombre",
         size: 100,
       },
-
     ],
     []
   );
@@ -401,7 +404,6 @@ function Anticipo() {
     console.log(form);
   };
 
-
   const [disabledReferencia, setdisabledReferencia] = useState(false);
   // const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const selectedId = parseInt(event.target.value);
@@ -421,9 +423,9 @@ function Anticipo() {
     if (selectedId === "") {
       // Mostrar una alerta de SweetAlert2 indicando que debe seleccionar una forma de pago válida
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Por favor, selecciona una forma de pago válida.',
+        icon: "error",
+        title: "Error",
+        text: "Por favor, selecciona una forma de pago válida.",
       });
     } else {
       const selectedFormaPago = dataPago.find((formapago) => formapago.id === parseInt(selectedId, 10));
@@ -433,15 +435,12 @@ function Anticipo() {
       if (selectedFormaPago?.tipo === 1) {
         setdisabledReferencia(true);
         // Si la forma de pago tiene tipo 1, también podrías limpiar el campo de referencia
-        setForm({ ...form, referencia: '' });
+        setForm({ ...form, referencia: "" });
       } else {
         setdisabledReferencia(false);
       }
     }
   };
-
-
-
 
   const handleChange3 = (event) => {
     const { name, value } = event.target;
@@ -648,9 +647,11 @@ function Anticipo() {
     const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
-    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${formData.sucursal
-      }&idnoVenta=%&idCliente=${formData.cliente
-      }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
+    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${
+      formData.sucursal
+    }&idnoVenta=%&idCliente=${
+      formData.cliente
+    }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
 
     jezaApi
       .get(queryString)
@@ -686,6 +687,47 @@ function Anticipo() {
     setFormasPagosFiltradas(formasPagosFiltradas);
   }, [dataPago]);
 
+  const [clientJson, setClientJson] = useState(null);
+  const [error, setError] = useState(null);
+
+  const fetchOrdenes = async () => {
+    // const permiso = await filtroSeguridad("sinc_orden");
+    // if (permiso === false) {
+    //   return;
+    // }
+    try {
+      // Mostrar SweetAlert de carga
+      const loadingAlert = Swal.fire({
+        title: "Sincronizando...",
+        allowOutsideClick: false, // Evita que el usuario cierre la alerta
+        showConfirmButton: false, // Oculta el botón de confirmación
+        timerProgressBar: true, // Muestra la barra de progreso de tiempo
+        didOpen: () => {
+          Swal.showLoading();
+          setTimeout(async () => {
+            const response = await axios.get("http://cbinfo.no-ip.info:9086/api/ordenes");
+
+            if (response.data) {
+              // Ocultar SweetAlert de carga y mostrar el mensaje de éxito
+              Swal.fire({
+                title: "¡Sincronización exitosa!",
+                icon: "success",
+              });
+              setClientJson(response.data);
+              setError(null);
+            } else {
+              setError("Los datos de clientes no son válidos.");
+            }
+          }, 3000); // Cambiar el tiempo según tus necesidades
+        },
+      });
+    } catch (error) {
+      // Mostrar un mensaje de error
+      console.error("Error al obtener los clientes:", error);
+      setError("Ocurrió un error al obtener los clientes.");
+    }
+  };
+
   return (
     <>
       <Row>
@@ -696,8 +738,10 @@ function Anticipo() {
           <Col>
             <Container fluid>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <h1> Anticipos <HiBuildingStorefront size={35}></HiBuildingStorefront> </h1>
-
+                <h1>
+                  {" "}
+                  Anticipos <HiBuildingStorefront size={35}></HiBuildingStorefront>{" "}
+                </h1>
               </div>
               <br />
               <Row>
@@ -814,6 +858,9 @@ function Anticipo() {
                       text="Consultar"
                       onClick={() => ejecutaPeticion(formulario.reporte)}
                     ></CButton>
+                    <Button color="primary" onClick={() => fetchOrdenes()}>
+                      Órdenes
+                    </Button>
                   </Col>
                 </AccordionBody>
               </AccordionItem>
@@ -952,7 +999,9 @@ function Anticipo() {
       </Modal>
 
       <Modal isOpen={modalCliente} size="lg">
-        <ModalHeader><h3>Seleccione cliente</h3> </ModalHeader>
+        <ModalHeader>
+          <h3>Seleccione cliente</h3>{" "}
+        </ModalHeader>
         <ModalBody>
           <TableClienteAnticipos
             form={form}
@@ -973,7 +1022,9 @@ function Anticipo() {
         </ModalFooter>
       </Modal>
       <Modal isOpen={modalOpenCli} toggle={cerrarModal}>
-        <ModalHeader toggle={cerrarModal}><h3>Seleccione cliente</h3></ModalHeader>
+        <ModalHeader toggle={cerrarModal}>
+          <h3>Seleccione cliente</h3>
+        </ModalHeader>
         <ModalBody>
           <MaterialReactTable
             columns={columnsTrabajador}
@@ -984,7 +1035,6 @@ function Anticipo() {
         </ModalBody>
         <ModalFooter>
           <CButton color="danger" onClick={cerrarModal} text="Cancelar" />
-
         </ModalFooter>
       </Modal>
     </>
@@ -992,5 +1042,3 @@ function Anticipo() {
 }
 
 export default Anticipo;
-
-

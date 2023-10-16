@@ -467,7 +467,9 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
+                      Configuración de puntos por departamentos
+                    </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
@@ -504,10 +506,22 @@ const SidebarHorizontal = () => {
                     Citas
                   </DropdownToggle>
                   <DropdownMenu dark>
-                    <DropdownItem
+                    {/* <DropdownItem
                       onClick={() =>
                         (window.location.href = `http://cbinfo.no-ip.info:9085/?idRec=${form[0].id}&suc=${form[0].d_sucursal}&idSuc=${form[0].sucursal}`)
                       }
+                    > */}
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("visor_citas");
+                        if (permiso === false) {
+                          return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                        }
+
+                        if (permiso === true) {
+                          window.location.href = `http://cbinfo.no-ip.info:9085/?idRec=${form[0].id}&suc=${form[0].d_sucursal}&idSuc=${form[0].sucursal}`;
+                        }
+                      }}
                     >
                       Visor de citas
                     </DropdownItem>
@@ -617,7 +631,12 @@ const SidebarHorizontal = () => {
           {isTimerExpired() ? (
             <Timer limitInMinutes={60} onExpiration={handleLogout} redirectPath={undefined} onUpdate={undefined} />
           ) : (
-            <Timer limitInMinutes={60} onExpiration={handleLogout} onUpdate={handleTimerUpdate} redirectPath={undefined} />
+            <Timer
+              limitInMinutes={60}
+              onExpiration={handleLogout}
+              onUpdate={handleTimerUpdate}
+              redirectPath={undefined}
+            />
           )}
         </div>
       </>

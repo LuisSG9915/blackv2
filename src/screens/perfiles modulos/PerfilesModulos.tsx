@@ -45,7 +45,7 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import Select from "react-select";
-
+import { GrSecure } from "react-icons/gr";
 function PerfilesModulos() {
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -487,36 +487,34 @@ function PerfilesModulos() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1>Seguridad</h1>
-          {/* <GrSecures size={30} /> */}
+          <h1>Seguridad < GrSecure size={30} /></h1>
+
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
-        <br />
-        <br />
-        <ButtonGroup variant="contained" aria-label="outlined primary button group">
-          <Button
-            style={{ marginLeft: "auto" }}
-            color="success"
-            onClick={() => {
-              setModalInsertar(true);
-              setEstado("insert");
-              LimpiezaForm();
-            }}
-          >
-            Crear seguridad
-          </Button>
 
-          <Button color="primary" onClick={handleRedirect}>
-            <IoIosHome size={20}></IoIosHome>
-          </Button>
-          <Button onClick={handleReload}>
-            <IoIosRefresh size={20}></IoIosRefresh>
-          </Button>
-        </ButtonGroup>
+        <div>
+          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+            <Button
+              style={{ marginLeft: "auto" }}
+              color="success"
+              onClick={() => {
+                setModalInsertar(true);
+                setEstado("insert");
+                LimpiezaForm();
+              }}
+            >
+              Crear seguridad
+            </Button>
 
-        <br />
-        <br />
+            <Button color="primary" onClick={handleRedirect}>
+              <IoIosHome size={20}></IoIosHome>
+            </Button>
+            <Button onClick={handleReload}>
+              <IoIosRefresh size={20}></IoIosRefresh>
+            </Button>
+          </ButtonGroup>
+        </div>
         <br />
         <DataTable></DataTable>
       </Container>
