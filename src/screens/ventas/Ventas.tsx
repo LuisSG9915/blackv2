@@ -29,7 +29,7 @@ import useModalHook from "../../hooks/useModalHook";
 
 import CButton from "../../components/CButton";
 import TableEstilistas from "./Components/TableEstilistas";
-import TableProductos, { ProductoExistencia } from "./Components/TableProductos";
+import TableProductos, { InsumoExistencia, ProductoExistencia } from "./Components/TableProductos";
 import TableClientesProceso from "./Components/TableClientesProceso";
 import TableCliente from "./Components/TableCliente";
 import ModalActualizarLayout from "../../layout/ModalActualizarLayout";
@@ -67,6 +67,9 @@ import { FaCashRegister } from "react-icons/fa";
 import { BsCashCoin } from "react-icons/bs";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import axios from "axios";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -156,16 +159,13 @@ const Ventas = () => {
 
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
-  const { dataClientes } = useClientes();
+  const { dataClientes, fetchClientes } = useClientes();
   const { dataTrabajadores } = useNominaTrabajadores();
   const { dataDescuentos } = useDescuentos();
   const [formasPagosFiltradas, setFormasPagosFiltradas] = useState<FormaPago[]>([]);
 
   const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
-  useEffect(() => {
-    const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
-    setFormasPagosFiltradas(formasPagosFiltradas);
-  }, [dataFormasPagos]);
+
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
@@ -228,7 +228,6 @@ const Ventas = () => {
   });
 
   const [selectedID2, setSelectedID] = useState(0);
-  const { datoInsumosProducto, fetchInsumosProducto } = useInsumosProductos({ idVenta: selectedID2 });
 
   const [formPago, setFormPago] = useState({
     efectivo: 0,
@@ -374,7 +373,7 @@ const Ventas = () => {
     cancelada: false,
     idEstilista: 0,
     folio_estilista: 1,
-    hora: 8,
+    hora: new Date(),
     tiempo: 1,
     terminado: false,
     validadoServicio: false,
@@ -408,6 +407,7 @@ const Ventas = () => {
   ];
   const TableDataHeaderInsumo = ["Insumo", "Cantidad", "Unidad de medida", "Acciones"];
   const TabñeDataHeaderEstilistaProceso = ["Estilista", ""];
+  const { datoInsumosProductoResumen, fetchInsumosProductoResumen } = useInsumosProductosResumen({ idVenta: selectedID2 });
 
   const [descuento, setDescuento] = useState({
     min: 0,
@@ -521,7 +521,7 @@ const Ventas = () => {
       console.log("a");
     }
     console.log({ dataTemporal });
-  }, [dataTemporal.Descuento]);
+  }, [dataTemporal?.Descuento]);
 
   const generarOpcionesDeTiempo = () => {
     const opciones = [];
@@ -606,7 +606,8 @@ const Ventas = () => {
               No_venta_original: 0,
               cancelada: false,
               folio_estilista: 0,
-              hora: horaDateTime,
+              // hora: horaDateTime,
+              hora: format(dataTemporal.hora, "HH:mm"),
               tiempo: dataTemporal.tiempo == 0 ? 0 : dataTemporal.tiempo,
               // tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
               terminado: false,
@@ -687,7 +688,7 @@ const Ventas = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         try {
-          jezaApi.delete(`/VentaInsumo?id=${dato.id}`).then(() => fetchInsumosProducto());
+          jezaApi.delete(`/VentaInsumo?id=${dato.id}`).then(() => fetchInsumosProductoResumen());
         } catch (error) {
           console.log(error);
         }
@@ -732,17 +733,18 @@ const Ventas = () => {
           cantidad: Number(formInsumo.cantidad),
         },
       })
-      .then((response) =>
+      .then((response) => {
+        fetchInsumosProductoResumen();
         Swal.fire({
           icon: "success",
           text: "Insumo actualizada con éxito",
           confirmButtonColor: "#3085d6",
-        })
-      );
+        });
+      });
   };
 
   const { dataVentas, fetchVentas } = useVentasV2({
-    idCliente: dataTemporal.Cve_cliente,
+    idCliente: dataTemporal?.Cve_cliente,
     sucursal: dataUsuarios2[0]?.sucursal,
   });
 
@@ -822,20 +824,24 @@ const Ventas = () => {
 
   const postEstilistaTicket = (dato: any) => {
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().slice(0, 19);
-
     const sp = `TicketInsumosEstilsta ${dataUsuarios2[0]?.idCia}, ${dataUsuarios2[0]?.sucursal}, ${fechaVieja.replace(
       /-/g,
       ""
     )}, ${fechaVieja.replace(/-/g, "")}, ${dato.User}, ${dato.Cve_cliente}, ${dato.No_venta}`;
     jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
-      .then(() => alert("Ticket Ejecutada" + sp));
+      .then(() =>
+        Swal.fire({
+          icon: "success",
+          text: "Sucursal actualizada con éxito",
+          confirmButtonColor: "#3085d6",
+        })
+      );
     // TICKET DEL ESTILISTA
     // jezaApi
     //   .get(
     //     `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
-    //   )
+    //   )|
     //   .then((response) => {
     //     setDatoTicketEstilista(response.data);
     //     console.log(response);
@@ -894,27 +900,46 @@ const Ventas = () => {
                 cancelButtonText: "No",
               }).then((result) => {
                 if (result.isConfirmed) {
-                  axios
-                    .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                      // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                      to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
-                      subject: "Ticket",
-                      textTicket: response.data,
-                      text: "...",
-                    })
-                    .then(() => {
-                      Swal.fire({
-                        icon: "success",
-                        text: "Correo enviado con éxito",
-                        confirmButtonColor: "#3085d6",
-                      });
-                    })
-                    .catch((error) => {
-                      alert(error);
-                      console.log(error);
-                    });
+                  const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
+                  const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+
+                  Swal.fire({
+                    title: "ADVERTENCIA",
+                    text: `¿Su correo es ${correo[0].email}?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí",
+                    cancelButtonText: "No",
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
+                      const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+                      axios
+                        .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                          // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                          to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                          subject: "Ticket",
+                          textTicket: response.data,
+                          text: "...",
+                        })
+                        .then(() => {
+                          Swal.fire({
+                            icon: "success",
+                            text: "Correo enviado con éxito",
+                            confirmButtonColor: "#3085d6",
+                          });
+                        })
+                        .catch((error) => {
+                          alert(error);
+                          console.log(error);
+                        });
+                    }
+                  });
                 } else {
-                  ticketVta({ folio: temp });
+                  alert("CAMBIO DE CORREO");
+                  // ticketVta({ folio: temp });
                 }
               });
             });
@@ -963,96 +988,9 @@ const Ventas = () => {
       // anticipoPost(Number(response.data.mensaje2));
     });
   };
-  // const endVenta = () => {
-  //   jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-  //     medioPago(Number(response.data.mensaje2)).then(() => {
-  //       setTempFolio(response.data.mensaje2);
-  //       jezaApi
-  //         .get(
-  //           `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
-  //         )
-  //         .then((response) => {
-  //           setDatoTicket(response.data);
-  //           setTimeout(() => {
-  //             Swal.fire({
-  //               title: "ADVERTENCIA",
-  //               text: `¿Requiere su ticket por correo?`,
-  //               icon: "warning",
-  //               showCancelButton: true,
-  //               confirmButtonColor: "#3085d6",
-  //               cancelButtonColor: "#d33",
-  //               confirmButtonText: "Sí",
-  //             }).then((result) => {
-  //               if (result.isConfirmed) {
-  //                 axios
-  //                   .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-  //                     to: "luis.sg9915@gmail.com,abigailmh9@gmail.com",
-  //                     subject: "Ticket",
-  //                     textTicket: response.data,
-  //                     text: "...",
-  //                   })
-  //                   .then(() => {
-  //                     Swal.fire({
-  //                       icon: "success",
-  //                       text: "Correo enviado con éxito",
-  //                       confirmButtonColor: "#3085d6",
-  //                     });
-  //                   })
-  //                   .catch((error) => {
-  //                     alert(error);
-  //                     console.log(error);
-  //                   });
-  //               } else {
-  //                 ticketVta({ folio: tempFolio });
-  //               }
-  //             });
-  //           });
-  //         }, 3000);
-  //     });
-  //     Swal.fire({
-  //       icon: "success",
-  //       text: "Venta finalizada con éxito",
-  //       confirmButtonColor: "#3085d6",
-  //     });
-  //     setDataTemporal({
-  //       Caja: 1,
-  //       cancelada: false,
-  //       Cant_producto: 0,
-  //       Cia: 0,
-  //       Clave_Descuento: 0,
-  //       Clave_prod: 0,
-  //       Corte: 0,
-  //       Corte_parcial: 0,
-  //       Costo: 0,
-  //       Credito: false,
-  //       Cve_cliente: 0,
-  //       Descuento: 0,
-  //       Fecha: "20230724",
-  //       folio_estilista: 0,
-  //       hora: 0,
-  //       idEstilista: 0,
-  //       ieps: 0,
-  //       No_venta: 0,
-  //       Observacion: "",
-  //       Precio: 0,
-  //       Precio_base: 0,
-  //       Sucursal: 0,
-  //       Tasa_iva: 0,
-  //       terminado: false,
-  //       tiempo: 0,
-  //       Usuario: 0,
-  //       validadoServicio: false,
-  //       cliente: "",
-  //       estilista: "",
-  //       id: 0,
-  //       producto: "",
-  //       User: 0,
-  //     });
-  //     // anticipoPost(Number(response.data.mensaje2));
-  //   });
-  // };
+
   const { dataAnticipos } = useAnticipoVentas({
-    cliente: Number(dataTemporal.Cve_cliente),
+    cliente: Number(dataTemporal?.Cve_cliente),
     suc: "%",
   });
   const [anticipoId, setAnticipoId] = useState(0);
@@ -1139,7 +1077,6 @@ const Ventas = () => {
   const editVenta = () => {
     const today2 = new Date();
     const formattedDate = format(today2, "yyyy-MM-dd");
-    const today = new Date();
     const horaTemporal = dataVentaEdit.hora;
     let horaDateTime; // Declare here
 
@@ -1159,6 +1096,7 @@ const Ventas = () => {
       // Realiza el proceso que necesites para manejar un objeto Date aquí
       horaDateTime = dataVentaEdit.hora;
     }
+    const horaFormateada = format(new Date(dataVentaEdit.hora), "yyyy-MM-dd HH:mm");
 
     jezaApi
       .put(
@@ -1170,7 +1108,7 @@ const Ventas = () => {
           dataVentaEdit.Descuento
         }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
           dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${
           dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
         }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
           dataUsuarios2[0]?.id
@@ -1181,7 +1119,7 @@ const Ventas = () => {
           icon: "success",
           text: "Venta actualizada con éxito",
           confirmButtonColor: "#3085d6",
-        });
+        }).catch((e) => alert(e));
         setModalOpenVentaEdit(false);
         setDataVentaEdit({
           Caja: 0,
@@ -1216,8 +1154,13 @@ const Ventas = () => {
           idestilistaAux: 0,
           idRecepcionista: 0,
         });
-        fetchVentas();
+      })
+      .catch((e) => {
+        console.log(e);
       });
+    setTimeout(() => {
+      fetchVentas();
+    }, 1000);
   };
 
   const [time, setTime] = useState("12:34pm");
@@ -1254,7 +1197,17 @@ const Ventas = () => {
     cia: dataUsuarios2[0]?.idCia,
     idCliente: dataTemporal.Cve_cliente,
   });
-
+  const { datoInsumosProducto, fetchInsumosProducto } = useInsumosProductos({
+    descripcion: "%",
+    insumo: 1,
+    inventariable: 1,
+    obsoleto: 0,
+    servicio: 0,
+    sucursal: dataUsuarios2[0]?.sucursal,
+    almacen: 1,
+    cia: dataUsuarios2[0]?.idCia,
+    idCliente: dataTemporal.Cve_cliente,
+  });
   const getExistenciaForeignKey = (idProducto: number) => {
     if (idProducto > 1) {
       const cia = dataProductos4.find((item: any) => item.id === idProducto);
@@ -1333,7 +1286,18 @@ const Ventas = () => {
   // }, [])
 
   const [flagEstilistas, setFlagEstilistas] = useState(false);
-
+  useEffect(() => {
+    const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
+    const clienteSuc33 = dataClientes.filter(
+      (cliente) => Number(cliente.sucursal_origen) === 33 && Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente)
+    );
+    if (clienteSuc33.length > 0) {
+      setFormasPagosFiltradas(formasPagosFiltradas);
+    } else {
+      const formaPagoNomina = dataFormasPagos.filter((nomina) => nomina.tipo != 110 && nomina.sucursal == dataUsuarios2[0]?.sucursal);
+      setFormasPagosFiltradas(formaPagoNomina);
+    }
+  }, [dataFormasPagos, dataTemporal.Cve_cliente]);
   return (
     <>
       <Row>
@@ -1412,38 +1376,59 @@ const Ventas = () => {
                     <td>{dato.nombreEstilistaAux ? dato.nombreEstilistaAux : "Sin estilista auxilliar"}</td>
                     <td>{dato.d_producto}</td>
                     <td align="center">{dato.Cant_producto}</td>
-                    <td>{"$" + dato.Precio.toFixed(2)}</td>
-                    <td>{"$" + (dato.Precio * dato.Cant_producto).toFixed(2)}</td>
+                    <td>
+                      {dato.Precio.toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Código de moneda para el Peso Mexicano
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {(dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Código de moneda para el Peso Mexicano
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     {/* IMPORTE */}
-                    <td>{"$" + (dato.Cant_producto * dato.Descuento * dato.Precio).toFixed(2)}</td>
+                    <td>
+                      {(dato.Cant_producto * dato.Descuento * dato.Precio).toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN", // Código de moneda para el Peso Mexicano
+
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     <td>
                       {dato.Descuento === 0
-                        ? "$" + (dato.Precio * dato.Cant_producto).toFixed(2)
-                        : "$" + (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toFixed(2)}
+                        ? (dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
+                            style: "currency",
+                            currency: "MXN", // Código de moneda para el Peso Mexicano
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
+                        : (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toLocaleString("es-MX", {
+                            style: "currency",
+                            currency: "MXN", // Código de moneda para el Peso Mexicano
+
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                     </td>
-                    {/* <td>{obtenerHoraFormateada(dato.hora)}</td> */}
-                    {/* <td>{dato.tiempo + " min"}</td> */}
                     <td className="gap-5">
                       <AiFillDelete
                         color="lightred"
                         onClick={() => {
                           deleteVenta(dato);
-                          // setTimeout(() => {
-                          //   fetchVentas();
-                          // }, 1000);
                         }}
                         size={23}
                       />
                       <AiFillEdit
                         color="lightred"
                         onClick={() => {
-                          console.log(dato);
-                          const dateObject = new Date(dato.hora);
-
-                          const hours = dateObject.getHours();
-                          const minutes = dateObject.getMinutes();
-
-                          const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
                           setDataVentaEdit({
                             ...dataVentaEdit,
                             id: dato.id,
@@ -1453,7 +1438,7 @@ const Ventas = () => {
                             d_estilista: dato.d_estilista,
                             Cant_producto: dato.Cant_producto,
                             Descuento: dato.Descuento,
-                            hora: formattedTime,
+                            hora: dato.hora,
                             Cve_cliente: dato.Cve_cliente,
                             Precio: dato.Precio,
                             Precio_base: dato.Precio_base,
@@ -1672,9 +1657,16 @@ const Ventas = () => {
           {dataTemporal.Observacion == "SERV" ? (
             <>
               <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
-              <select id="hora" name="hora" onChange={cambios} defaultValue={dataTemporal.hora}>
-                {generarOpcionesDeTiempo()}
-              </select>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <TimePicker
+                  label="Seleccione la hora"
+                  value={new Date(dataTemporal.hora)}
+                  timeSteps={{
+                    minutes: 15,
+                  }}
+                  onChange={(newValue) => setDataTemporal((prev) => ({ ...prev, hora: newValue }))}
+                />
+              </LocalizationProvider>
             </>
           ) : null}
         </ModalBody>
@@ -1892,7 +1884,12 @@ const Ventas = () => {
               </Label>
             </Col>
             <Col md="5">
-              <Button onClick={() => setModalTipoVenta(true)}>
+              <Button
+                onClick={() => {
+                  fetchClientes();
+                  setModalTipoVenta(true);
+                }}
+              >
                 {" "}
                 Seleccionar <BsCashCoin size={20} />
               </Button>
@@ -2043,10 +2040,16 @@ const Ventas = () => {
 
       <Modal isOpen={modalOpenInsumos} size="md">
         <ModalHeader>Insumos del servicio {datoVentaSeleccionado.d_producto}</ModalHeader>
+
         <ModalBody>
           <Row className="justify-content-end">
             <Col md={6}>
-              <Button color="primary" onClick={() => setModalOpenInsumosSelect(true)}>
+              <Button
+                onClick={() => {
+                  setModalOpenInsumosSelect(true);
+                  fetchInsumosProductoResumen();
+                }}
+              >
                 Agregar insumos +
               </Button>
             </Col>
@@ -2063,37 +2066,39 @@ const Ventas = () => {
               </tr>
             </thead>
             <tbody>
-              {datoInsumosProducto.map((dato: VentaInsumo) => (
-                <tr key={dato.id}>
-                  {dato.id ? (
-                    <>
-                      <td>{dato.d_insumo}</td>
-                      <td align="center">{dato.cantidad}</td>
-                      <td align="left">{dato.unidadMedida}</td>
-                      <td className="gap-5">
-                        <AiFillEdit
-                          className="mr-2"
-                          onClick={() => {
-                            setModalEditInsumo(true);
-                            setFormInsumo(dato);
-                          }}
-                          size={23}
-                        ></AiFillEdit>
-                        <AiFillDelete
-                          color="lightred"
-                          onClick={() => {
-                            deleteInsumo(dato);
-                            setTimeout(() => {
-                              fetchInsumosProducto();
-                            }, 1000);
-                          }}
-                          size={23}
-                        />
-                      </td>
-                    </>
-                  ) : null}
-                </tr>
-              ))}
+              {datoInsumosProductoResumen.length > 0
+                ? datoInsumosProductoResumen.map((dato: any) => (
+                    <tr key={dato.id}>
+                      {dato.id ? (
+                        <>
+                          <td>{dato.d_insumo}</td>
+                          <td align="center">{dato.cantidad}</td>
+                          <td align="left">{dato.unidadMedida}</td>
+                          <td className="gap-5">
+                            <AiFillEdit
+                              className="mr-2"
+                              onClick={() => {
+                                setModalEditInsumo(true);
+                                setFormInsumo(dato);
+                              }}
+                              size={23}
+                            ></AiFillEdit>
+                            <AiFillDelete
+                              color="lightred"
+                              onClick={() => {
+                                deleteInsumo(dato);
+                                setTimeout(() => {
+                                  fetchInsumosProducto();
+                                }, 1000);
+                              }}
+                              size={23}
+                            />
+                          </td>
+                        </>
+                      ) : null}
+                    </tr>
+                  ))
+                : null}
             </tbody>
           </Table>
         </ModalBody>
@@ -2115,7 +2120,7 @@ const Ventas = () => {
             datoVentaSeleccionado={selectedID2}
             data={data}
             setModalOpen2={setModalOpenInsumosSelect}
-            handleGetFetch={fetchInsumosProducto}
+            handleGetFetch={fetchInsumosProductoResumen}
             datoInsumosProducto={datoInsumosProducto}
           ></TableInsumosGenerales>
         </ModalBody>
@@ -2339,6 +2344,7 @@ const Ventas = () => {
           dataArregloTemporal.formaPago == 92 ||
           dataArregloTemporal.formaPago == 100 ||
           dataArregloTemporal.formaPago == 101 ||
+          dataArregloTemporal.formaPago == 110 ||
           dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
@@ -2396,6 +2402,7 @@ const Ventas = () => {
                     Number(dataArregloTemporal.formaPago) === 92 ||
                     Number(dataArregloTemporal.formaPago) === 100 ||
                     Number(dataArregloTemporal.formaPago) === 101 ||
+                    Number(dataArregloTemporal.formaPago) === 110 ||
                     Number(dataArregloTemporal.formaPago) === 103
                   ) {
                     setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
@@ -2509,7 +2516,6 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-
           <Label>Tipo de descuento:</Label>
           <Input type="select" name="Clave_Descuento" value={dataVentaEdit.Clave_Descuento} onChange={cambiosEdit}>
             <option value={0}>-Selecciona El tipo de descuento-</option>
@@ -2517,7 +2523,6 @@ const Ventas = () => {
               <option value={descuento.id}>{descuento.descripcion}</option>
             ))}
           </Input>
-
           <br />
           <Label>
             Descuento {descuento.min} - {descuento.max} :{" "}
@@ -2528,11 +2533,15 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-
           <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
-          <select id="hora" name="hora" onChange={cambiosEdit} value={dataVentaEdit.hora}>
-            {generarOpcionesDeTiempo()}
-          </select>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <TimePicker
+              sx={{ width: 1 / 3, height: 1, paddingBottom: 5 }}
+              label="Seleccione la hora"
+              defaultValue={new Date(dataVentaEdit.hora)}
+              onChange={(newValue) => setDataVentaEdit((prev) => ({ ...prev, hora: newValue }))}
+            />
+          </LocalizationProvider>
         </ModalBody>
         <ModalFooter>
           <CButton
