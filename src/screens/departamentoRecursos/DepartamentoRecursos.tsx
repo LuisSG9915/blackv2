@@ -34,7 +34,7 @@ import { useNavigate } from "react-router-dom";
 import { Md6FtApart } from "react-icons/md";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import CFormGroupInput from "../../components/CFormGroupInput";
-
+import { UserResponse } from "../../models/Home";
 function DepartamentoRecursos() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);

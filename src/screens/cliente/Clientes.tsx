@@ -1004,26 +1004,6 @@ function Clientes() {
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} />
             </Col>
-            {/* <Col sm="6">
-              <Label>Red social 2:</Label>
-              <Input
-                type="email"
-                name={"redsocial2"}
-                onChange={(e) => setForm({ ...form, redsocial2: String(e.target.value) })}
-                defaultValue={form.redsocial2}
-              />
-              <br />
-            </Col>
-            <Col sm="6">
-              <Label>Red social 3:</Label>
-              <Input
-                type="email"
-                name={"redsocial3"}
-                onChange={(e) => setForm({ ...form, redsocial3: String(e.target.value) })}
-                defaultValue={form.redsocial3}
-              />
-              <br />
-            </Col> */}
           </Row>
         </ModalBody>
         <ModalFooter>

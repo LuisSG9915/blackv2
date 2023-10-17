@@ -557,7 +557,7 @@ const SidebarHorizontal = () => {
                     Configuración
                   </DropdownToggle>
                   <DropdownMenu dark>
-                    <DropdownItem onClick={() => navigate("/usuarios")}>Usuarios</DropdownItem>
+                    {/* <DropdownItem onClick={() => navigate("/usuarios")}>Usuarios</DropdownItem> */}
                     <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Seguridad</DropdownItem>
 

@@ -47,7 +47,9 @@ import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
 import { useBajas } from "../hooks/getsHooks/useBajas";
 import { useEstatus } from "../hooks/getsHooks/useEstatus";
-
+import { usePerfiles } from "../hooks/getsHooks/useClavePerfil";
+import { UserResponse } from "../models/Home";
+import { RecursosDepartamento } from "../models/RecursosDepartamento";
 function NominaTrabajadores() {
   const { filtroSeguridad, session } = useSeguridad();
 
@@ -95,10 +97,20 @@ function NominaTrabajadores() {
   const fechaHoy = new Date();
 
   const { dataNominaPuestos } = useNominaPuestos();
-  const { dataNominaDepartamentos } = useNominaDepartamentos({ cia: dataUsuarios2[0]?.cia });
+  // const { dataNominaDepartamentos } = useNominaDepartamentos({ cia: dataUsuarios2[0]?.cia, sucursal: dataUsuarios2[0]?.sucursal });
+  const [dataD, setDataD] = useState<RecursosDepartamento[]>([]);
   const { dataNominaNivel } = useNominaEscolaridad();
   const { dataBajas } = useBajas();
   const { dataEstatus } = useEstatus();
+  const { dataPerfiles, } = usePerfiles();
+
+
+  const [formDepartamentos, setFormDepartamnetos] = useState<RecursosDepartamento>({
+    id: 0,
+    descripcion_departamento: "",
+    idSucursal: 0,
+  });
+
 
   const [form, setForm] = useState<Trabajador>({
     id: 0,
@@ -147,7 +159,17 @@ function NominaTrabajadores() {
   };
   useEffect(() => {
     getTrabajador();
-  }, []);
+    getinfo();
+  }, [dataUsuarios2[0]?.sucursal]);
+
+  // Read --->  GET
+  const getinfo = () => {
+    jezaApi.get(`/NominaDepartamentos?id=%&idcia=%&idsuc=${dataUsuarios2[0]?.sucursal}`).then((response) => {
+      setDataD(response.data);
+    });
+  };
+
+
 
   const mostrarModalActualizar = (dato: Trabajador) => {
     setForm(dato);
@@ -804,12 +826,13 @@ function NominaTrabajadores() {
                         </Col>
 
                         <Col sm="6">
-                          <CFormGroupInput
-                            handleChange={handleChange}
-                            inputName="clave_perfil"
-                            labelName="Clave perfil:"
-                            defaultValue={form.clave_perfil ? form.clave_perfil : form.clave_perfil}
-                          />
+                          <Label>Clave perfil:</Label>
+                          <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
+                            <option value={0}>--Selecciona una clave perfil--</option>
+                            {dataPerfiles.map((escolaridad) => (
+                              <option value={escolaridad.clave_perfil}>{escolaridad.descripcion_perfil} </option>
+                            ))}
+                          </Input>
                         </Col>
 
                         <Col sm="6">
@@ -819,6 +842,8 @@ function NominaTrabajadores() {
                             labelName="Password:"
                             defaultValue={form.password ? form.password : form.password}
                           />
+
+
                         </Col>
 
                         <Col sm="6">
@@ -895,7 +920,7 @@ function NominaTrabajadores() {
                           <Label>Departamento:</Label>
                           <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
-                            {dataNominaDepartamentos.map((depto) => (
+                            {dataD.map((depto) => (
                               <option value={depto.id}>{depto.descripcion_departamento} </option>
                             ))}
                           </Input>
@@ -1119,20 +1144,31 @@ function NominaTrabajadores() {
                         </Col>
 
                         <Col sm="6">
-                          <CFormGroupInput
+                          {/* <CFormGroupInput
                             handleChange={handleChange}
                             inputName="clave_perfil"
                             labelName="Clave perfil:"
                             defaultValue={form.clave_perfil ? form.clave_perfil : form.clave_perfil}
-                          />
+                          /> */}
+
+                          <Label>Clave perfil:</Label>
+                          <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
+                            <option value={0}>--Selecciona una clave perfil--</option>
+                            {dataPerfiles.map((escolaridad) => (
+                              <option value={escolaridad.clave_perfil}>{escolaridad.descripcion_perfil} </option>
+                            ))}
+                          </Input>
+
                         </Col>
 
                         <Col sm="6">
+
                           <CFormGroupInput
                             handleChange={handleChange}
                             inputName="password"
                             labelName="Password:"
-                            defaultValue={form.password ? form.password : form.password}
+                            defaultValue={form.password}
+                            type="password"
                           />
                         </Col>
 
@@ -1210,7 +1246,7 @@ function NominaTrabajadores() {
                           <Label>Departamento:</Label>
                           <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
                             <option value={0}>--Selecciona una opción--</option>
-                            {dataNominaDepartamentos.map((depto) => (
+                            {dataD.map((depto) => (
                               <option value={depto.id}>{depto.descripcion_departamento} </option>
                             ))}
                           </Input>
