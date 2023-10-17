@@ -114,6 +114,7 @@ const TableEstilistas = ({ data, setModalOpen2, dataVentaEdit, setDataVentaEdit,
             pageSize: 5,
             pageIndex: 0,
           },
+          sorting: [{ id: "nombre", desc: false }],
         }}
         muiTableBodyRowProps={{
           sx: {

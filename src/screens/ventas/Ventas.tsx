@@ -338,7 +338,7 @@ const Ventas = () => {
       cancelada: false,
       folio_estilista: 0,
       // hora: "2023-06-13T00:00:00",
-      hora: 8,
+      hora: new Date(),
       tiempo: 0,
       terminado: false,
       validadoServicio: false,
@@ -887,6 +887,8 @@ const Ventas = () => {
             }&pago=${Number(formPago.totalPago)}`
           )
           .then((response) => {
+            if (dataUsuarios2[0]?.sucursal == 27) {
+            }
             setDatoTicket(response.data);
             setTimeout(() => {
               Swal.fire({
@@ -911,10 +913,10 @@ const Ventas = () => {
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
                     confirmButtonText: "Sí",
-                    cancelButtonText: "No",
+                    cancelButtonText: "No, imprimir",
                   }).then((result) => {
                     if (result.isConfirmed) {
-                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
+                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
                       const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                       axios
                         .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -938,8 +940,7 @@ const Ventas = () => {
                     }
                   });
                 } else {
-                  alert("CAMBIO DE CORREO");
-                  // ticketVta({ folio: temp });
+                  ticketVta({ folio: temp });
                 }
               });
             });
@@ -1661,9 +1662,6 @@ const Ventas = () => {
                 <TimePicker
                   label="Seleccione la hora"
                   value={new Date(dataTemporal.hora)}
-                  timeSteps={{
-                    minutes: 15,
-                  }}
                   onChange={(newValue) => setDataTemporal((prev) => ({ ...prev, hora: newValue }))}
                 />
               </LocalizationProvider>

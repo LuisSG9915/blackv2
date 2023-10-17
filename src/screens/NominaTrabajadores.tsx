@@ -102,15 +102,13 @@ function NominaTrabajadores() {
   const { dataNominaNivel } = useNominaEscolaridad();
   const { dataBajas } = useBajas();
   const { dataEstatus } = useEstatus();
-  const { dataPerfiles, } = usePerfiles();
-
+  const { dataPerfiles } = usePerfiles();
 
   const [formDepartamentos, setFormDepartamnetos] = useState<RecursosDepartamento>({
     id: 0,
     descripcion_departamento: "",
     idSucursal: 0,
   });
-
 
   const [form, setForm] = useState<Trabajador>({
     id: 0,
@@ -168,8 +166,6 @@ function NominaTrabajadores() {
       setDataD(response.data);
     });
   };
-
-
 
   const mostrarModalActualizar = (dato: Trabajador) => {
     setForm(dato);
@@ -662,8 +658,10 @@ function NominaTrabajadores() {
         <>
           <Container>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Catálago trabajadores <AiOutlineUser size={30}></AiOutlineUser></h1>
-
+              <h1>
+                {" "}
+                Catálago trabajadores <AiOutlineUser size={30}></AiOutlineUser>
+              </h1>
             </div>
             <div className="col align-self-start d-flex justify-content-center "></div>
             <br />
@@ -842,8 +840,6 @@ function NominaTrabajadores() {
                             labelName="Password:"
                             defaultValue={form.password ? form.password : form.password}
                           />
-
-
                         </Col>
 
                         <Col sm="6">
@@ -1158,11 +1154,9 @@ function NominaTrabajadores() {
                               <option value={escolaridad.clave_perfil}>{escolaridad.descripcion_perfil} </option>
                             ))}
                           </Input>
-
                         </Col>
 
                         <Col sm="6">
-
                           <CFormGroupInput
                             handleChange={handleChange}
                             inputName="password"

@@ -1,110 +1,3 @@
-// import React, { useState } from "react";
-// import { Button, Col, Input, Label, Row, Table } from "reactstrap";
-// import { useGentlemanContext } from "../context/VentasContext";
-// import { Cliente } from "../../../models/Cliente";
-// import { useClientes } from "../../../hooks/getsHooks/useClientes";
-// import { GrAdd } from "react-icons/gr";
-// interface Venta {
-//   id?: number;
-//   estilista: string;
-//   producto: string;
-//   cantidad: number;
-//   precio: number;
-//   tasaIva: number;
-//   tiempo: number;
-// }
-// interface Props {
-//   data: Cliente[];
-//   setModalCliente: React.Dispatch<React.SetStateAction<boolean>>;
-// }
-// export interface Clientes {
-//   id: number;
-//   estilista: string;
-// }
-// const TableCliente = ({ data, setModalCliente }: Props) => {
-//   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
-//   const TableDataHeader = ["ID", "Clientes"];
-
-//   const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
-
-//   const handle = (dato: Cliente) => {
-//     setModalCliente(false);
-//     setDataTemporal({ ...dataTemporal, cliente: dato.nombre, Cve_cliente: dato.id_cliente });
-//   };
-//   const [filtroCliente, setFiltroCliente] = useState("");
-
-//   const filtroClientes = (datoMedico: string) => {
-//     var resultado = dataClientes.filter((elemento: Cliente) => {
-//       // Aplica la lógica del filtro solo si hay valores en los inputs
-//       if (
-//         (datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) &&
-//         elemento.nombre.length > 2
-//       ) {
-//         return elemento;
-//       }
-//       console.log("a");
-//     });
-//     setDataClientes(resultado);
-//   };
-//   const handleOpenNewWindowCreateCita = () => {
-//     const url = "http://cbinfo.no-ip.info:9088/ClienteCrear"; // Reemplaza esto con la URL que desees abrir
-//     const width = 500;
-//     const height = 1500;
-//     const left = (window.screen.width - width) / 2;
-//     const top = (window.screen.height - height) / 2;
-
-//     const features = `width=${width},height=${height},left=${left},top=${top},toolbar=0,location=0,menubar=0,scrollbars=1,resizable=1`;
-
-//     // Abrir la ventana emergente
-//     window.open(url, "_blank", features);
-//   };
-//   return (
-//     <>
-//       <Label>Cliente: </Label>
-//       <div className="position-relative float-right" style={{ marginRight: "20px", marginBottom: "20px" }}>
-//         <GrAdd className="" size={30} onClick={() => handleOpenNewWindowCreateCita()} />
-//       </div>
-
-//       <Row>
-//         <Col md={"8"}>
-//           <Input
-//             onChange={(e) => {
-//               setFiltroCliente(e.target.value);
-//               if (e.target.value === "") {
-//                 fetchClientes();
-//               }
-//             }}
-//           ></Input>{" "}
-//         </Col>
-//         <Col md={"2"}>
-//           <Button onClick={() => filtroClientes(filtroCliente)}>Filtro</Button>
-//         </Col>
-//       </Row>
-//       <br />
-//       <br />
-//       <Table size="sm" striped={true} responsive={"sm"}>
-//         <thead>
-//           <tr>
-//             {TableDataHeader.map((valor: any) => (
-//               <th key={valor}>{valor}</th>
-//             ))}
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {dataClientes.map((dato: Cliente, index) => (
-//             <tr key={index}>
-//               <td>{dato.nombre}</td>
-//               <td> {<Button onClick={() => handle(dato)}>Seleccionar</Button>} </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </Table>
-//     </>
-//   );
-// };
-
-// export default TableCliente;
-
 import React, { useState, useMemo } from "react";
 import { Button, Card, CardBody, CardText, CardTitle, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { GrAdd } from "react-icons/gr";
@@ -215,6 +108,9 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
     claveRegistroMovil: "",
     fecha_alta: "",
     fecha_act: "",
+    redsocial1: "",
+    redsocial2: "",
+    redsocial3: "",
   });
   const toggleCreateModal = () => {
     setForm({
@@ -243,6 +139,9 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
       claveRegistroMovil: "",
       fecha_alta: "",
       fecha_act: "",
+      redsocial1: "",
+      redsocial2: "",
+      redsocial3: "",
     });
     setModalCreate(!modalCreate);
   };
@@ -281,9 +180,22 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
     console.log({ form });
     if (validarCampos() === true) {
       await jezaApi
-        .post(
-          `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
-        )
+        .post("/Cliente", null, {
+          params: {
+            nombre: form.nombre,
+            domicilio: form.domicilio,
+            ciudad: form.ciudad,
+            estado: form.estado,
+            colonia: form.colonia,
+            cp: form.cp,
+            telefono: form.telefono,
+            email: form.email,
+            fecha_nac: form.fecha_nac,
+            redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+            redsocial2: "...",
+            redsocial3: "...",
+          },
+        })
         .then((response) => {
           Swal.fire({
             icon: "success",
@@ -384,7 +296,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           </Box>
         )}
 
-      //customize built-in buttons in the top-right of top toolbar
+        //customize built-in buttons in the top-right of top toolbar
       >
         <thead>
           <tr>
@@ -414,6 +326,13 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
               <Input type="text" name={"ciudad"} onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })} defaultValue={form.ciudad} />
               <Label>Estado:</Label>
               <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
+              <Label>Instagram:</Label>
+              <Input
+                type="text"
+                name={"redSocial1"}
+                onChange={(e) => setForm({ ...form, redSocial1: String(e.target.value) })}
+                defaultValue={form.redSocial1}
+              />
             </div>
             <div className="col-md-6">
               <Label>Colonia:</Label>
@@ -471,7 +390,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           </Button>
         </ModalFooter>
       </Modal>
-
     </>
   );
 };
