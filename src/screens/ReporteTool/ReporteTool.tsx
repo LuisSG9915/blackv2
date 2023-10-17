@@ -39,6 +39,7 @@ import { Clase } from "../../models/Clase";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -49,6 +50,18 @@ function ReporteTool() {
   const { dataDeptos, fetchAreas } = useDeptos();
   const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
   const { dataUsuarios, fetchUsuarios } = useUsuarios();
+  const { dataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
+    descripcion: "%",
+    insumo: 2,
+    inventariable: 2,
+    obsoleto: 2,
+    servicio: 2,
+    sucursal: FormData.sucursal,
+    almacen: 1,
+    cia: 1,
+    idCliente: "",
+  });
+
   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
   const { dataSucursales, fetchSucursales } = useSucursales();
   const [modalOpenCli, setModalOpenCli] = useState(false);
@@ -60,6 +73,7 @@ function ReporteTool() {
   const [showClienteInput, setShowClienteInput] = useState(false);
   const [showSucursalInput, setShowSucursalInput] = useState(false);
   const [showEstilistaInput, setShowEstilistaInput] = useState(false);
+  const [showProductoInput, setShowProductoInput] = useState(false);
   const [showEmpresaInput, setShowEmpresaInput] = useState(false);
   const [showSucDesInput, setShowSucDesInput] = useState(false);
   const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
@@ -301,7 +315,7 @@ function ReporteTool() {
     } else if (reporte == "sp_repoComisiones1") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "sp_reporteinventario") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=%&almacen=%&marca=%&tipoProducto=%&palabra=%&claveProd=%`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=%&almacen=%&marca=%&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
@@ -555,6 +569,7 @@ function ReporteTool() {
     tipoPago: "",
     area: "",
     depto: "",
+    cve_prod: "",
   });
 
   function setShowAllInputsToFalse() {
@@ -657,6 +672,27 @@ function ReporteTool() {
         setShowMetodoPagoInput(false);
         setShowClaveProdInput(false);
         setShowTipoDescuentoInput(false);
+      } else if (value === "sp_reporteinventario") {
+        //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
+        setShowSucursalInput(true);
+        setShowAlmOrigenInput(true);
+        setShowClaveProdInput(true);
+        setShowProductoInput(true);
+        //------------------------------------------------------
+        setShowEstilistaInput(false);
+        setShowSucDesInput(false);
+        setShowClienteInput(false);
+        setShowEmpresaInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
       } else {
         setShowClienteInput(false);
         setShowSucursalInput(false);
@@ -786,6 +822,14 @@ function ReporteTool() {
     })),
   ];
 
+  const optionsProductos = [
+    { value: "", label: "--Selecciona un Producto--" },
+    ...dataProductos4.map((item) => ({
+      value: Number(item.clave_prod),
+      label: item.descripcion,
+    })),
+  ];
+
   return (
     <>
       <Row>
@@ -908,6 +952,38 @@ function ReporteTool() {
                         setFormulario((prevState) => ({
                           ...prevState,
                           estilista: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                        }));
+                      }}
+                      placeholder="--Selecciona una opción--"
+                    />
+                  </div>
+                ) : null}
+                {showProductoInput ? (
+                  <div>
+                    <Label>Estilista:</Label>
+                    {/* <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
+
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input> */}
+                    <Select
+                      menuPlacement="top"
+                      name="estilista"
+                      options={optionsProductos}
+                      value={optionsProductos.find((option) => option.value === formulario.cve_prod)}
+                      onChange={(selectedOption) => {
+                        // Aquí actualizas el valor en el estado form
+                        setFormulario((prevState) => ({
+                          ...prevState,
+                          cve_prod: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
                         }));
                       }}
                       placeholder="--Selecciona una opción--"
