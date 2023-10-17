@@ -310,7 +310,7 @@ function ReporteTool() {
     } else if (reporte == "sp_repoComisiones1") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "sp_reporteinventario") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=${formData.palabra}&claveProd=${formData.clave_prod}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
@@ -565,8 +565,8 @@ function ReporteTool() {
     area: "",
     depto: "",
     cve_prod: "",
-    marca:"",
-    palabra:"",
+    marca: "",
+    palabra: "",
   });
 
   function setShowAllInputsToFalse() {
@@ -588,10 +588,13 @@ function ReporteTool() {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
       [name]: value,
     }));
+
+    setFormulario1({ ...formulario, [name]: value });
 
     if (name === "reporte") {
       if (value === "RepVtaSucEstilista" || value === "RepVtaDetalle" || value === "RepVtaSucFecha") {
@@ -685,10 +688,10 @@ function ReporteTool() {
         //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
         setShowSucursalInput(true);
         setShowAlmOrigenInput(true);
-       setShowAlmacenInput(true);
+        setShowAlmacenInput(true);
         setShowProductoInput(true);
         setShowMarcaInput(true);
-        setShowPalabraProdInput(true);
+        setShowPalabraProdInput(false);
         //------------------------------------------------------
         setShowClaveProdInput(false);
         setShowEstilistaInput(false);
@@ -830,17 +833,25 @@ function ReporteTool() {
   //   placeholder="--Selecciona una opción--"
   // />;
 
+  const [formulario1, setFormulario1] = useState({
+    sucursal: "", // El valor inicial de la sucursal
+    // Otras propiedades de tu formulario
+  });
+
   const getProductos = () => {
     jezaApi
-      .get("/sp_cPSEAC?id=0&descripcion=%&verinventariable=2&esServicio=0&esInsumo=0&obsoleto=0&marca=%&cia=26&sucursal=21&almacen=3&idCliente=26296")
+      .get(
+        `/sp_cPSEAC?id=0&descripcion=%&verinventariable=2&esServicio=0&esInsumo=0&obsoleto=0&marca=%&cia=26&sucursal=${formulario1.sucursal}&almacen=3&idCliente=26296`
+      )
       .then((response) => {
         setNprod(response.data);
       })
       .catch((e) => console.log(e));
   };
   useEffect(() => {
+    // Llama a getProductos cuando cambie el valor de formulario.sucursal
     getProductos();
-  }, []);
+  }, [formulario1.sucursal]);
   const getMarca = () => {
     jezaApi
       .get("/Marca?id=0")
@@ -867,42 +878,32 @@ function ReporteTool() {
   const optionsProductos = [
     { value: "", label: "--Selecciona un Producto--" },
     ...nprod.map((item) => ({
-      value: String(item.clave_prod),
+      value: String(item.id),
       label: item.descripcion,
     })),
   ];
   const optionsAlmacen = [
-    { value: "", label: "--Selecciona un Producto--" },
+    { value: "", label: "--Selecciona un Almacen--" },
     ...almacen.map((item) => ({
       value: String(item.id),
       label: item.descripcion,
     })),
   ];
   const optionsMarca = [
-    { value: "", label: "--Selecciona un Producto--" },
+    { value: "", label: "--Selecciona una Marca--" },
     ...marca.map((item) => ({
       value: Number(item.id),
       label: item.marca,
     })),
   ];
 
-
   const optionsEstilista = [
-    { value: "", label: "--Selecciona una opción--" },
+    { value: "", label: "--Selecciona un Estilista--" },
     ...dataUsuarios.map((item) => ({
       value: Number(item.id),
       label: item.nombre,
     })),
   ];
-
-
-
-
-
- 
-
-
-
 
   return (
     <>
@@ -1262,13 +1263,7 @@ function ReporteTool() {
                 {showPalabraProdInput ? (
                   <div>
                     <Label>Palabra</Label>
-                    <Input
-                      type="text"
-                      name="palabra"
-                      value={formulario.palabra}
-                      onChange={handleChange}
-                      bsSize="sm"
-                    />
+                    <Input type="text" name="palabra" value={formulario.palabra} onChange={handleChange} bsSize="sm" />
                   </div>
                 ) : null}
                 {showAreaInput ? (
