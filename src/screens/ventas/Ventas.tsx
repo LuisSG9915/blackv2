@@ -1792,6 +1792,7 @@ const Ventas = () => {
         </ModalHeader>
         <ModalBody>
           <TableCliente
+            sucursal={dataUsuarios2[0]?.sucursal}
             dataTemporal={dataTemporal}
             setDataTemporal={setDataTemporal}
             data={dataClientes}

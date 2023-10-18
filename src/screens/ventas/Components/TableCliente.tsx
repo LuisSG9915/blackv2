@@ -26,9 +26,10 @@ interface Props {
   setModalCliente: React.Dispatch<React.SetStateAction<boolean>>;
   dataTemporal: Venta;
   setDataTemporal: React.Dispatch<React.SetStateAction<Venta>>;
+  sucursal: any;
 }
 
-const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: Props) => {
+const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, sucursal }: Props) => {
   const { dataClientes, setDataClientes } = useClientes();
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
 
@@ -195,7 +196,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
             redsocial1: form.redsocial1 ? form.redsocial1 : "...",
             redsocial2: "...",
             redsocial3: "...",
-            sucOrigen: dataUsuarios2[0]?.sucursal,
+            sucOrigen: sucursal,
           },
         })
         .then((response) => {
@@ -298,7 +299,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           </Box>
         )}
 
-      //customize built-in buttons in the top-right of top toolbar
+        //customize built-in buttons in the top-right of top toolbar
       >
         <thead>
           <tr>
@@ -310,7 +311,9 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
         <tbody>{/* Data is now rendered within the MaterialReactTable */}</tbody>
       </MaterialReactTable>
       <Modal isOpen={modalCreate} toggle={toggleCreateModal} size="lg">
-        <ModalHeader toggle={toggleCreateModal}><h3>Registro de clientes</h3></ModalHeader>
+        <ModalHeader toggle={toggleCreateModal}>
+          <h3>Registro de clientes</h3>
+        </ModalHeader>
         <ModalBody>
           {/* parte */}
           <div className="row">
@@ -329,8 +332,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
               <Label>Estado:</Label>
               <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
               <Label>Instagram:</Label>
-
-
 
               <Input
                 type="text"
