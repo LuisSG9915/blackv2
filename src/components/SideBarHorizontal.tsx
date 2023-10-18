@@ -258,148 +258,146 @@ const SidebarHorizontal = () => {
             </div> */}
             <Collapse isOpen={isOpen} navbar>
               <Nav className="ml-auto" navbar justified={true}>
-                {puedeVerCatalogos == true ? (
-                  <UncontrolledDropdown color="black">
-                    <DropdownToggle nav caret color="dark" className="navToggle">
-                      Catálogos
-                    </DropdownToggle>
-                    <DropdownMenu dark>
-                      <DropdownItem header>Administrativo</DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_cias_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/Cias");
-                        }}
-                      >
-                        Empresas
-                      </DropdownItem>
+                <UncontrolledDropdown color="black">
+                  <DropdownToggle nav caret color="dark" className="navToggle">
+                    Catálogos
+                  </DropdownToggle>
+                  <DropdownMenu dark>
+                    <DropdownItem header>Administrativo</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cias_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Cias");
+                      }}
+                    >
+                      Empresas
+                    </DropdownItem>
 
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_suc_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/Sucursales");
-                        }}
-                      >
-                        Sucursales
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_alm_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/Almacenes");
-                        }}
-                      >
-                        Almacenes
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_prov_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/Proveedores");
-                        }}
-                      >
-                        Proveedores
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_forma_p_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/TipoFormasPago");
-                        }}
-                      >
-                        Tipo de formas pago
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_cat_gasto_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/CategoriaGastos");
-                        }}
-                      >
-                        Categoría de gastos
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_cat_s_gasto_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/CategoriaSubGastos");
-                        }}
-                      >
-                        Subcategorías de gastos
-                      </DropdownItem>
-                      <DropdownItem divider />
-                      <DropdownItem header>Comerciales</DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_marcas_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/Marcas");
-                        }}
-                      >
-                        Marcas
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_area_dep_clas_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/AreaDeptoClases");
-                        }}
-                      >
-                        Área, Departamentos y Clases
-                      </DropdownItem>
-                      <DropdownItem
-                        onClick={async () => {
-                          const permiso = await filtroSeguridad("sb_cli_view");
-                          if (permiso === false) {
-                            return;
-                          }
-                          navigate("/Clientes");
-                        }}
-                      >
-                        Clientes
-                      </DropdownItem>
-                      <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
-                      <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/UnidadMedida")}>Unidad de medida</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/TipoMovto")}>Tipo de movimiento</DropdownItem>
-                      <DropdownItem divider />
-                      <DropdownItem header>Recursos Humanos</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/PuestoRecursosHumanos")}>Puestos RH</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/DepartamentoRecursos")}>Departamentos</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/TipoBajas")}>Tipo de bajas</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/NivelEscolar")}>Niveles de escolaridad</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/Estatuscolaborador")}>Estatus colaboradores</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem>
-                      <DropdownItem onClick={() => navigate("/Metas")}>Metas</DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                ) : null}
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_suc_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Sucursales");
+                      }}
+                    >
+                      Sucursales
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_alm_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Almacenes");
+                      }}
+                    >
+                      Almacenes
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_prov_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Proveedores");
+                      }}
+                    >
+                      Proveedores
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_forma_p_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/TipoFormasPago");
+                      }}
+                    >
+                      Tipo de formas pago
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cat_gasto_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/CategoriaGastos");
+                      }}
+                    >
+                      Categoría de gastos
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cat_s_gasto_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/CategoriaSubGastos");
+                      }}
+                    >
+                      Subcategorías de gastos
+                    </DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem header>Comerciales</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_marcas_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Marcas");
+                      }}
+                    >
+                      Marcas
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_area_dep_clas_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/AreaDeptoClases");
+                      }}
+                    >
+                      Área, Departamentos y Clases
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cli_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Clientes");
+                      }}
+                    >
+                      Clientes
+                    </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/UnidadMedida")}>Unidad de medida</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/TipoMovto")}>Tipo de movimiento</DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem header>Recursos Humanos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/PuestoRecursosHumanos")}>Puestos RH</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DepartamentoRecursos")}>Departamentos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/TipoBajas")}>Tipo de bajas</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/NivelEscolar")}>Niveles de escolaridad</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Estatuscolaborador")}>Estatus colaboradores</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Metas")}>Metas</DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
 
                 <UncontrolledDropdown>
                   <DropdownToggle nav caret color="rgba(225,224,253,255)">
@@ -471,8 +469,8 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     {/* <DropdownItem onClick={() => navigate("/usuarios")}>Usuarios</DropdownItem> */}
-                    <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Seguridad</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles seguridad</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Permisos seguridad</DropdownItem>
 
                     <DropdownItem onClick={() => navigate("/ShopifySinc")}>SINC SHOPIFY</DropdownItem>
                   </DropdownMenu>

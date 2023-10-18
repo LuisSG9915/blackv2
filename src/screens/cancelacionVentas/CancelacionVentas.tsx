@@ -40,7 +40,7 @@ import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 function CancelacionVentas() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
-
+  const { filtroSeguridad, session } = useSeguridad();
   useEffect(() => {
     setIsLoading(true);
     const item = localStorage.getItem("userLoggedv2");
@@ -88,48 +88,115 @@ function CancelacionVentas() {
   /* alertas */
   const [eliminado, setVisible3] = useState(false);
 
-  const deleteVenta = (dato: Cancelacion) => {
-    const idsCanceladas = dataCancelaciones.filter((item: Cancelacion) => item.Estatus === "Cancelada").map((item: Cancelacion) => item.No_venta);
+  const deleteVenta = async (dato: Cancelacion) => {
+    try {
+      // Verificar permiso de seguridad
+      const permiso = await filtroSeguridad("CANCE_VENTA_DEL");
+      if (!permiso) {
+        return; // No tienes permiso para eliminar la venta
+      }
 
-    if (idsCanceladas.includes(Number(dato.No_venta))) {
-      Swal.fire({
-        icon: "info",
-        text: "Venta ya está cancelada",
-        confirmButtonColor: "#3085d6",
-      });
-    } else {
-      Swal.fire({
-        title: "ADVERTENCIA",
-        text: `¿Está seguro que desea eliminar la venta No# : ${dato.No_venta}?`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          jezaApi
-            .delete(`/VentaDia?no_venta=${dato.No_venta}&suc=${dataUsuarios2[0]?.sucursal}`)
-            .then((response) => {
-              setVisible3(true);
-              fetchCancelaciones();
-              Swal.fire({
-                icon: "success",
-                text: "Venta cancelada con éxito",
-                confirmButtonColor: "#3085d6",
-              });
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+      // Obtener los IDs de ventas canceladas
+      const idsCanceladas = dataCancelaciones
+        .filter((item: Cancelacion) => item.Estatus === "Cancelada")
+        .map((item: Cancelacion) => item.No_venta);
+
+      if (idsCanceladas.includes(Number(dato.No_venta))) {
+        Swal.fire({
+          icon: "info",
+          text: "Venta ya está cancelada",
+          confirmButtonColor: "#3085d6",
+        });
+      } else {
+        // Mostrar confirmación antes de eliminar la venta
+        const confirmationResult = await Swal.fire({
+          title: "ADVERTENCIA",
+          text: `¿Está seguro que desea eliminar la venta No# : ${dato.No_venta}?`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminar",
+        });
+
+        if (confirmationResult.isConfirmed) {
+          // Llamar a la API para eliminar la venta
+          const response = await jezaApi.delete(`/VentaDia?no_venta=${dato.No_venta}&suc=${dataUsuarios2[0]?.sucursal}`);
+
+          // Mostrar éxito y actualizar datos
+          setVisible3(true);
+          fetchCancelaciones();
+
+          Swal.fire({
+            icon: "success",
+            text: "Venta cancelada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
 
           setTimeout(() => {
             setVisible3(false);
           }, 3000);
         }
+      }
+    } catch (error) {
+      console.error(error);
+      // Manejar errores aquí, por ejemplo, mostrar un mensaje de error
+      Swal.fire({
+        icon: "error",
+        text: "Error al eliminar la venta",
+        confirmButtonColor: "#3085d6",
       });
     }
   };
+
+
+
+  // const deleteVenta = (dato: Cancelacion) => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENTSHOPIFY_UPD");
+  //   if (permiso === false) {
+  //     return; // Si el per
+  //   }
+  //   const idsCanceladas = dataCancelaciones.filter((item: Cancelacion) => item.Estatus === "Cancelada").map((item: Cancelacion) => item.No_venta);
+
+  //   if (idsCanceladas.includes(Number(dato.No_venta))) {
+  //     Swal.fire({
+  //       icon: "info",
+  //       text: "Venta ya está cancelada",
+  //       confirmButtonColor: "#3085d6",
+  //     });
+  //   } else {
+  //     Swal.fire({
+  //       title: "ADVERTENCIA",
+  //       text: `¿Está seguro que desea eliminar la venta No# : ${dato.No_venta}?`,
+  //       icon: "warning",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#3085d6",
+  //       cancelButtonColor: "#d33",
+  //       confirmButtonText: "Sí, eliminar",
+  //     }).then((result) => {
+  //       if (result.isConfirmed) {
+  //         jezaApi
+  //           .delete(`/VentaDia?no_venta=${dato.No_venta}&suc=${dataUsuarios2[0]?.sucursal}`)
+  //           .then((response) => {
+  //             setVisible3(true);
+  //             fetchCancelaciones();
+  //             Swal.fire({
+  //               icon: "success",
+  //               text: "Venta cancelada con éxito",
+  //               confirmButtonColor: "#3085d6",
+  //             });
+  //           })
+  //           .catch((error) => {
+  //             console.log(error);
+  //           });
+
+  //         setTimeout(() => {
+  //           setVisible3(false);
+  //         }, 3000);
+  //       }
+  //     });
+  //   }
+  // };
 
   const getCancelacionesVtas = () => {
     jezaApi.get("/VentasDia?id=0").then((response) => {

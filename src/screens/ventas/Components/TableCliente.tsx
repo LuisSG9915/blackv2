@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { jezaApi } from "../../../api/jezaApi";
 import useSeguridad from "../../../hooks/getsHooks/useSeguridad";
 import { Venta } from "../../../models/Venta";
+import { UserResponse } from "../../models/Home";
 // interface Venta {
 //   id?: number;
 //   estilista: string;
@@ -44,7 +45,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
 
   const [datah, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-
+  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const toggleModalHistorial = () => {
     setModalOpen(!modalOpen);
   };
@@ -184,16 +185,17 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           params: {
             nombre: form.nombre,
             domicilio: form.domicilio,
-            ciudad: form.ciudad,
-            estado: form.estado,
-            colonia: form.colonia,
-            cp: form.cp,
+            ciudad: form.ciudad ? form.ciudad : "...",
+            estado: form.estado ? form.estado : "...",
+            colonia: form.colonia ? form.redsocial1 : "...",
+            cp: form.cp ? form.cp : "...",
             telefono: form.telefono,
             email: form.email,
             fecha_nac: form.fecha_nac,
             redsocial1: form.redsocial1 ? form.redsocial1 : "...",
             redsocial2: "...",
             redsocial3: "...",
+            sucOrigen: dataUsuarios2[0]?.sucursal,
           },
         })
         .then((response) => {
@@ -296,7 +298,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
           </Box>
         )}
 
-        //customize built-in buttons in the top-right of top toolbar
+      //customize built-in buttons in the top-right of top toolbar
       >
         <thead>
           <tr>
@@ -308,7 +310,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
         <tbody>{/* Data is now rendered within the MaterialReactTable */}</tbody>
       </MaterialReactTable>
       <Modal isOpen={modalCreate} toggle={toggleCreateModal} size="lg">
-        <ModalHeader toggle={toggleCreateModal}>Registro</ModalHeader>
+        <ModalHeader toggle={toggleCreateModal}><h3>Registro de clientes</h3></ModalHeader>
         <ModalBody>
           {/* parte */}
           <div className="row">
@@ -327,11 +329,14 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal }: 
               <Label>Estado:</Label>
               <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
               <Label>Instagram:</Label>
+
+
+
               <Input
                 type="text"
-                name={"redSocial1"}
-                onChange={(e) => setForm({ ...form, redSocial1: String(e.target.value) })}
-                defaultValue={form.redSocial1}
+                name={"redsocial1"}
+                onChange={(e) => setForm({ ...form, redsocial1: String(e.target.value) })}
+                defaultValue={form.redsocial1}
               />
             </div>
             <div className="col-md-6">

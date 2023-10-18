@@ -272,10 +272,10 @@ function Clientes() {
           params: {
             nombre: form.nombre,
             domicilio: form.domicilio,
-            ciudad: form.ciudad,
-            estado: form.estado,
-            colonia: form.colonia,
-            cp: form.cp,
+            ciudad: form.ciudad ? form.ciudad : "...",
+            estado: form.estado ? form.estado : "...",
+            colonia: form.colonia ? form.redsocial1 : "...",
+            cp: form.cp ? form.cp : "...",
             telefono: form.telefono,
             email: form.email,
             fecha_nac: form.fecha_nac,
@@ -1365,7 +1365,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />
