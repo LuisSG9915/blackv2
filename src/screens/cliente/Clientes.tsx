@@ -98,7 +98,6 @@ function Clientes() {
   const [data, setData] = useState<Cliente[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [form, setForm] = useState<Cliente>({
-
     id_cliente: 0,
     nombre: "",
     domicilio: "",
@@ -421,35 +420,34 @@ function Clientes() {
     });
   };
 
-  const eliminar = async (dato: Cliente) => {
+  const eliminar = async (id, nombre) => {
     const permiso = await filtroSeguridad("cat_cli_del");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    Swal.fire({
-      title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar el cliente: ${dato.nombre}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        jezaApi.delete(`/Cliente?id=${form.id_cliente}`).then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Registro eliminado con éxito",
-            confirmButtonColor: "#3085d6",
+    setTimeout(() => {
+      Swal.fire({
+        title: "ADVERTENCIA",
+        text: `¿Está seguro que desea eliminar el cliente: ${nombre}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          jezaApi.delete(`/Cliente?id=${id}`).then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Registro eliminado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            getCliente();
           });
-          getCliente();
-        });
-      }
-    });
+        }
+      });
+    }, 1000);
   };
-
-
-
 
   /* get */
   const getCliente = () => {
@@ -570,7 +568,13 @@ function Clientes() {
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
         {/* <AiFillDelete color="lightred" onClick={() => permiso_elimina(params.row)} size={23}></AiFillDelete> */}
         {/* <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete> */}
-        <AiFillDelete onClick={() => eliminar(params.row.id_cliente)} size={23} />
+        <AiFillDelete
+          onClick={() => {
+            eliminar(params.row);
+            console.log(params.row);
+          }}
+          size={23}
+        />
       </>
     );
   };
@@ -872,7 +876,7 @@ function Clientes() {
         },
       },
     ],
-    []
+    [session]
   );
   const columnsclientes: MRT_ColumnDef<Cliente>[] = useMemo(
     () => [
@@ -888,7 +892,7 @@ function Clientes() {
             <AiFillDelete
               color="lightred"
               // onClick={() => alert(cell.row.original.id_cliente + "---" + cell.row.original.nombre)}
-              onClick={async () => {
+              onClick={() => {
                 // const permiso = await filtroSeguridad("cat_cli_del");
                 // if (permiso === false) {
                 //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -938,7 +942,7 @@ function Clientes() {
         },
       },
     ],
-    []
+    [session]
   );
 
   return (
@@ -1361,7 +1365,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />

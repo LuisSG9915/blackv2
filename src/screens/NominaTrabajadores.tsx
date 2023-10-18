@@ -611,7 +611,7 @@ function NominaTrabajadores() {
       headerClassName: "custom-header",
     },
 
-    { field: "nombre", headerName: "Nombre", flex: 1, headerClassName: "custom-header" },
+    { field: "nombre", headerName: "Nombre", flex: 3, headerClassName: "custom-header" },
     { field: "telefono1", headerName: "Teléfono", flex: 1, headerClassName: "custom-header" },
     { field: "telefono2", headerName: "Celular", flex: 1, headerClassName: "custom-header" },
     { field: "email", headerName: "Email", flex: 1, headerClassName: "custom-header" },
@@ -640,6 +640,9 @@ function NominaTrabajadores() {
             initialState={{
               pagination: {
                 paginationModel: { page: 2, pageSize: 30 },
+              },
+              sorting: {
+                sortModel: [{ field: "nombre", sort: "asc" }],
               },
             }}
             pageSizeOptions={[0, 10]}
