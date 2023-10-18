@@ -98,6 +98,7 @@ function Clientes() {
   const [data, setData] = useState<Cliente[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [form, setForm] = useState<Cliente>({
+
     id_cliente: 0,
     nombre: "",
     domicilio: "",
@@ -282,6 +283,7 @@ function Clientes() {
             redsocial1: form.redsocial1 ? form.redsocial1 : "...",
             redsocial2: "...",
             redsocial3: "...",
+            sucOrigen: dataUsuarios2[0]?.sucursal,
           },
         })
         .then((response) => {
@@ -300,35 +302,36 @@ function Clientes() {
     }
   };
 
-  const insertar1 = async () => {
-    /* CREATE */
-    const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    }
-    console.log(validarCampos());
-    console.log({ form });
-    if (validarCampos() === true) {
-      await jezaApi
-        .post(
-          // `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
-          `/ Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${form.redsocial1}&redsocial2="..."&redsocial3="..."`
-        )
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Cliente creado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalInsertar(false); // Cerrar modal después de guardar
-          getCliente();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-    }
-  };
+  // const insertar1 = async () => {
+  //   /* CREATE */
+  //   const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   console.log(validarCampos());
+  //   console.log({ form });
+  //   if (validarCampos() === true) {
+  //     await jezaApi
+  //       .post(
+  //         // `/Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}`
+  //         // `/ Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${form.redsocial1}&redsocial2="..."&redsocial3="..."`
+  //         `/ Cliente?nombre=${form.nombre}&domicilio=${form.domicilio}&ciudad=${form.ciudad}&estado=${form.estado}&colonia=${form.colonia}&cp=${form.cp}&telefono=${form.telefono}&email=${form.email}&fecha_nac=${form.fecha_nac}&redsocial1=${form.redsocial1}&redsocial2="..."&redsocial3="..."&sucOrigen=${dataUsuarios2[0]?.sucursal}`
+  //       )
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Cliente creado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalInsertar(false); // Cerrar modal después de guardar
+  //         getCliente();
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   } else {
+  //   }
+  // };
 
   const editar = async () => {
     const fechaHoy = new Date();
@@ -347,7 +350,7 @@ function Clientes() {
             estado: form.estado,
             colonia: form.colonia,
             cp: form.cp,
-            rfc: form.rfc,
+            rfc: form.rfc ? form.rfc : "...",
             telefono: form.telefono,
             email: form.email,
             nombre_fiscal: form.nombre_fiscal,
@@ -394,7 +397,7 @@ function Clientes() {
   //   }
   // };
 
-  const eliminar = (id, nombre) => {
+  const eliminar2 = (id, nombre) => {
     /* DELETE */
     Swal.fire({
       title: "ADVERTENCIA",
@@ -417,6 +420,36 @@ function Clientes() {
       }
     });
   };
+
+  const eliminar = async (dato: Cliente) => {
+    const permiso = await filtroSeguridad("cat_cli_del");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar el cliente: ${dato.nombre}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/Cliente?id=${form.id_cliente}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getCliente();
+        });
+      }
+    });
+  };
+
+
+
 
   /* get */
   const getCliente = () => {
@@ -536,7 +569,8 @@ function Clientes() {
         {/* <AiFillEye className="mr-2" onClick={() => toggleModalDetalle(params.row.id_cliente)} size={23}></AiFillEye> */}
         <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
         {/* <AiFillDelete color="lightred" onClick={() => permiso_elimina(params.row)} size={23}></AiFillDelete> */}
-        <AiFillDelete color="lightred" onClick={() => alert(params.row.id)} size={23}></AiFillDelete>
+        {/* <AiFillDelete color="lightred" onClick={() => eliminar(params.row)} size={23}></AiFillDelete> */}
+        <AiFillDelete onClick={() => eliminar(params.row.id_cliente)} size={23} />
       </>
     );
   };
@@ -1327,7 +1361,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />

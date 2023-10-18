@@ -158,11 +158,11 @@ function NominaTrabajadores() {
   useEffect(() => {
     getTrabajador();
     getinfo();
-  }, [dataUsuarios2[0]?.sucursal]);
+  }, []);
 
   // Read --->  GET
   const getinfo = () => {
-    jezaApi.get(`/NominaDepartamentos?id=%&idcia=%&idsuc=${dataUsuarios2[0]?.sucursal}`).then((response) => {
+    jezaApi.get(`/NominaDepartamentos?id=%&idcia=%&idsuc=%`).then((response) => {
       setDataD(response.data);
     });
   };
