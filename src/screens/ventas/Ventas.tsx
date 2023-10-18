@@ -70,6 +70,7 @@ import axios from "axios";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
+import { ALMACEN } from "../../utilities/constsAlmacenes";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -1194,7 +1195,7 @@ const Ventas = () => {
     obsoleto: 2,
     servicio: 2,
     sucursal: dataUsuarios2[0]?.sucursal,
-    almacen: 1,
+    almacen: ALMACEN.VENTAS,
     cia: dataUsuarios2[0]?.idCia,
     idCliente: dataTemporal.Cve_cliente,
   });

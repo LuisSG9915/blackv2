@@ -82,7 +82,7 @@ const useSeguridad = () => {
 
     const response = await jezaApi.get(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);
 
-    if (response.data[0].permiso === false) {
+    if (response.data[0].permiso == false) {
       Swal.fire({
         icon: "error",
         title: `${response.data[0].mensaje}`,

@@ -44,7 +44,7 @@ import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
-import { ALMACEN_DB } from "../../utilities/constsAlmacenes";
+import { ALMACEN, ALMACEN_DB } from "../../utilities/constsAlmacenes";
 import { BsCartPlus } from "react-icons/bs";
 import { Trabajador } from "../../models/Trabajador";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
@@ -638,12 +638,12 @@ function Compras() {
 
   const { dataProductos4, fetchProduct4 } = useProductosFiltradoExistenciaProductoAlm({
     descripcion: filtroProductos,
-    insumo: 0,
+    insumo: 2,
     inventariable: 2,
     obsoleto: 0,
-    servicio: 2,
+    servicio: 0,
     sucursal: dataUsuarios2[0]?.sucursal,
-    almacen: ALMACEN_DB[1],
+    almacen: ALMACEN.RECEPCION_MERC,
     cia: dataUsuarios2[0]?.cia,
     idCliente: 0,
   });

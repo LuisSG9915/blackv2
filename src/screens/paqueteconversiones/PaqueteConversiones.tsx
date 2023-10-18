@@ -16,6 +16,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import Swal from "sweetalert2";
 import Button from "@mui/material/Button";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
+import { ALMACEN } from "../../utilities/constsAlmacenes";
 function PaqueteConversiones() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -92,7 +93,6 @@ function PaqueteConversiones() {
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
 
-
   const [data, setData] = useState<Paquete_conversion[]>([]);
   //AQUI COMIENZA MÉTODO AGREGAR TIPO BAJA
   const insertPaqueteConversion = async () => {
@@ -127,9 +127,6 @@ function PaqueteConversiones() {
     }
   };
 
-
-
-
   // const insertPaqueteConversion = () => {
   /* CREATE */
   // Validar que idPaquete y idPieza no sean iguales
@@ -159,8 +156,6 @@ function PaqueteConversiones() {
   //     });
   // };
 
-
-
   /* get */
   const getPaqueteConversion = () => {
     jezaApi.get("/PaquetePieza?id=0").then((response) => {
@@ -168,7 +163,15 @@ function PaqueteConversiones() {
     });
   };
   const { dataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
-    almacen: 1, cia: dataUsuarios2[0]?.idCia, descripcion: "%", idCliente: 26290, insumo: 1, inventariable: 1, obsoleto: 0, servicio: 0, sucursal: dataUsuarios2[0]?.sucursal,
+    almacen: ALMACEN.RECEPCION_MERC,
+    cia: dataUsuarios2[0]?.idCia,
+    descripcion: "%",
+    idCliente: 26290,
+    insumo: 1,
+    inventariable: 2,
+    obsoleto: 0,
+    servicio: 0,
+    sucursal: dataUsuarios2[0]?.sucursal,
   });
 
   /* update */
@@ -243,7 +246,6 @@ function PaqueteConversiones() {
   //     });
   //   }
   // };
-
 
   const deletePaquetesConversion = async (dato: Paquete_conversion) => {
     const permiso = await filtroSeguridad("CAT_PAQ_CONV_DEL");
@@ -397,9 +399,9 @@ function PaqueteConversiones() {
               if (productType.idPaquete === true) {
                 if (form.idPieza === params.original.id) {
                   Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'idPaquete e idPieza no pueden ser iguales',
+                    icon: "error",
+                    title: "Error",
+                    text: "idPaquete e idPieza no pueden ser iguales",
                   });
                   return;
                 }
@@ -407,9 +409,9 @@ function PaqueteConversiones() {
               } else {
                 if (form.idPaquete === params.original.id) {
                   Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'idPaquete e idPieza no pueden ser iguales',
+                    icon: "error",
+                    title: "Error",
+                    text: "idPaquete e idPieza no pueden ser iguales",
                   });
                   return;
                 }
@@ -419,9 +421,9 @@ function PaqueteConversiones() {
               if (productType.idPaquete === true) {
                 if (form.idPieza === params.original.id) {
                   Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'idPaquete e idPieza no pueden ser iguales',
+                    icon: "error",
+                    title: "Error",
+                    text: "idPaquete e idPieza no pueden ser iguales",
                   });
                   return;
                 }
@@ -429,9 +431,9 @@ function PaqueteConversiones() {
               } else {
                 if (form.idPaquete === params.original.id) {
                   Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'idPaquete e idPieza no pueden ser iguales',
+                    icon: "error",
+                    title: "Error",
+                    text: "idPaquete e idPieza no pueden ser iguales",
                   });
                   return;
                 }
@@ -443,9 +445,6 @@ function PaqueteConversiones() {
       </>
     );
   };
-
-
-
 
   function DataTable() {
     return (
@@ -476,7 +475,10 @@ function PaqueteConversiones() {
       <Container>
         <br />
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1>Paquetes y conversiones<AiOutlineBgColors size={30} /></h1>
+          <h1>
+            Paquetes y conversiones
+            <AiOutlineBgColors size={30} />
+          </h1>
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
@@ -491,7 +493,6 @@ function PaqueteConversiones() {
                 setModalCreate(true);
               }}
             >
-
               Crear conversión
             </Button>
             <Button color="primary" onClick={handleRedirect}>
@@ -501,9 +502,6 @@ function PaqueteConversiones() {
               <IoIosRefresh size={20}></IoIosRefresh>
             </Button>
           </ButtonGroup>
-
-
-
 
           {/* <ButtonGroup variant="contained" aria-label="outlined primary button group">
             <Button
@@ -533,7 +531,9 @@ function PaqueteConversiones() {
       {/* Modals */}
       {/* create */}
       <Modal isOpen={modalCreate} toggle={toggleCreateModal} size="lg">
-        <ModalHeader toggle={toggleCreateModal}><h3>Crear paquete conversión</h3></ModalHeader>
+        <ModalHeader toggle={toggleCreateModal}>
+          <h3>Crear paquete conversión</h3>
+        </ModalHeader>
 
         <ModalBody>
           <Row>
@@ -580,7 +580,6 @@ function PaqueteConversiones() {
                     setProductType({ ...productType, idPaquete: false, idPieza: true, stateCreate: true });
                   }}
                 />
-
               </InputGroup>
             </Col>
           </Row>
@@ -608,19 +607,15 @@ function PaqueteConversiones() {
       </Modal>
       {/* modal para update */}
       <Modal isOpen={modalUpdate} toggle={toggleUpdateModal}>
-        <ModalHeader toggle={toggleUpdateModal}><h3>Editar paquete conversión</h3></ModalHeader>
+        <ModalHeader toggle={toggleUpdateModal}>
+          <h3>Editar paquete conversión</h3>
+        </ModalHeader>
         <ModalBody>
           <Row>
             <Col xs={12}>
               <Label>Paquete:</Label>
               <InputGroup>
-                <Input
-                  disabled
-                  type="select"
-                  name="idPaquete"
-                  className="select"
-                  value={form.idPaquete ? form.idPaquete : 0}
-                >
+                <Input disabled type="select" name="idPaquete" className="select" value={form.idPaquete ? form.idPaquete : 0}>
                   {dataProductos4.map((producto) => (
                     <option value={producto.id}>{producto.descripcion}</option>
                   ))}
@@ -643,7 +638,6 @@ function PaqueteConversiones() {
               <InputGroup>
                 <Input disabled type="select" name="idPieza" className="select" value={form.idPieza ? form.idPieza : 0}>
                   {dataProductos4.map((producto) => (
-
                     <option value={producto.id}>{producto.descripcion}</option>
                   ))}
                 </Input>
@@ -678,22 +672,18 @@ function PaqueteConversiones() {
           <CButton color="primary" text="Actualizar" onClick={() => updatePaqueteConversion(form)} />
           <CButton color="danger" text="Cancelar" onClick={() => setModalUpdate(false)} />
         </ModalFooter>
-      </Modal >
+      </Modal>
 
       <Modal isOpen={modalProduct} toggle={toggleProductModal} size="lg">
-        <ModalHeader toggle={toggleProductModal}><h3>Seleccionar producto</h3></ModalHeader>
+        <ModalHeader toggle={toggleProductModal}>
+          <h3>Seleccionar producto</h3>
+        </ModalHeader>
         <ModalBody>
           {/* <DataGrid columns={columnProduct} rows={dataProductos}></DataGrid> */}
-          <MaterialReactTable
-            columns={columnasTablaProduct}
-            data={dataProductos4}
-            initialState={{ density: "compact" }}
-          ></MaterialReactTable>
+          <MaterialReactTable columns={columnasTablaProduct} data={dataProductos4} initialState={{ density: "compact" }}></MaterialReactTable>
         </ModalBody>
 
-        <ModalFooter>
-          {/* <CButton color="danger" text="Salir" onClick={() => setModalUpdate(false)} /> */}
-        </ModalFooter>
+        <ModalFooter>{/* <CButton color="danger" text="Salir" onClick={() => setModalUpdate(false)} /> */}</ModalFooter>
       </Modal>
     </>
   );

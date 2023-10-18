@@ -197,18 +197,20 @@ const SidebarHorizontal = () => {
   const [puedeVerCatalogos, setPuedeVer] = useState(false);
 
   useEffect(() => {
-    async function obtenerPermiso() {
-      try {
-        const resultado = await filtroSeguridad("sb_cias_view");
-        setPuedeVer(resultado);
-      } catch (error) {
-        console.error(error);
-        // Manejar errores
-      }
+    function obtenerPermiso() {
+      setTimeout(async () => {
+        try {
+          const resultado = await filtroSeguridad("sb_cias_view");
+          setPuedeVer(resultado);
+        } catch (error) {
+          console.error(error);
+          // Manejar errores
+        }
+      }, 1000);
     }
 
     obtenerPermiso();
-  }, []);
+  }, [session]);
 
   const [loadingController, setLoadingController] = useState(true);
   useEffect(() => {

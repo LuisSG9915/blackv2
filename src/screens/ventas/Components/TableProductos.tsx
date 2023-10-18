@@ -8,6 +8,7 @@ import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import { AiOutlineBarcode } from "react-icons/ai";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
+import { ALMACEN } from "../../../utilities/constsAlmacenes";
 
 interface Props {
   setModalOpen2: React.Dispatch<React.SetStateAction<boolean>>;
@@ -142,7 +143,7 @@ const TableProductos = ({
     obsoleto: productoFilter.obsoleto,
     servicio: productoFilter.servicio,
     sucursal: sucursal,
-    almacen: 1,
+    almacen: ALMACEN.VENTAS,
     cia: cia,
     idCliente: dataTemporal.Cve_cliente,
   });
