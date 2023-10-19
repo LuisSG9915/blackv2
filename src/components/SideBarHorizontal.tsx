@@ -538,13 +538,13 @@ const SidebarHorizontal = () => {
           ) : null}
         </div>
 
-        <div className="">
+        {/* <div className="">
           {isTimerExpired() ? (
             <Timer limitInMinutes={60} onExpiration={handleLogout} redirectPath={undefined} onUpdate={undefined} />
           ) : (
             <Timer limitInMinutes={60} onExpiration={handleLogout} onUpdate={handleTimerUpdate} redirectPath={undefined} />
           )}
-        </div>
+        </div> */}
       </>
     </>
   );
