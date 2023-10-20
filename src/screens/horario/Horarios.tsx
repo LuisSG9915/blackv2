@@ -140,6 +140,11 @@ function Horarios() {
         )
         .then((response) => {
           console.log("Horario actualizado:", response.data);
+          Swal.fire({
+            icon: "success",
+            title: "Edición de horarios exitosa",
+            text: "El horario se ha actualizado.",
+          });
 
           // Cierra el modal de edición después de guardar
           setEditModalOpen(false);
@@ -472,6 +477,10 @@ function Horarios() {
 
       // Verifica si ya hay registros para este día
       if (!diasConRegistros.has(dayIndex)) {
+        // console.log(
+        //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
+        // );
+
         jezaApi
           .post(
             `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
