@@ -183,6 +183,8 @@ function Horarios() {
     consulta();
   }, [formData]);
 
+
+
   // const handleDateChange = (e) => {
   //   const newDate = e.target.value;
   //   setSelectedDate(newDate);
@@ -492,11 +494,19 @@ function Horarios() {
             // Verifica si todas las solicitudes han terminado
             if (successfulRequests === formData.length - diasConRegistros.size) {
               // Muestra una alerta de SweetAlert cuando todas las solicitudes hayan terminado
+              setSelectedId("");
+              setSelectedName("");
+             setSelectedDate(""); // Limpia la fecha seleccionada
+              setFormData([]); // Limpia los datos del formulario
+              setHorarios([]); // Limpia los datos de la tabla
+
+      
               Swal.fire({
                 icon: "success",
                 title: "Creación de horarios exitosa",
                 text: "Todos los horarios se han actualizado.",
               });
+     
               consulta();
               toggleModalCrear();
 
@@ -505,6 +515,12 @@ function Horarios() {
           })
           .catch((error) => {
             // Manejo de errores
+            setSelectedId("");
+            setSelectedName("");
+            setSelectedDate(""); // Limpia la fecha seleccionada
+            setFormData([]); // Limpia los datos del formulario
+            setHorarios([]); // Limpia los datos de la tabla
+     
             console.error(`Error en la solicitud POST para ${daysOfWeek[i]}:`, error);
             Swal.fire({
               icon: "success",
