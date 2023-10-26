@@ -363,6 +363,8 @@ function Horarios() {
         size: 100,
         Cell: ({ row }) => {
           const fechaHorario = new Date(row.original.fecha); // Convierte la fecha del horario a un objeto Date
+          fechaHorario.setDate(fechaHorario.getDate() + 1); // Resta un día a la fecha
+
           const esFechaAnterior = fechaHorario < fechaActual; // Comprueba si la fecha es anterior a la fecha actual
 
           return (
@@ -576,6 +578,8 @@ function Horarios() {
                   <Input type="date" value={selectedDate} onChange={handleDateChange} />
                   <br />
                 </Col>
+
+                {/* parte buena */}
                 <Col sm="6">
                   <Button color="primary" onClick={consulta}>
                     Consultar
@@ -630,7 +634,7 @@ function Horarios() {
       {/* modal crear */}
       <Modal size="xl" isOpen={modalCrearOpen} toggle={toggleModalCrear}>
         <ModalHeader toggle={toggleModalCrear}>
-          <h3>Crear horarios</h3>
+          <h3>Crear horarios de :  {selectedName} <p> </p></h3>
         </ModalHeader>
         <ModalBody>
           <Table>
