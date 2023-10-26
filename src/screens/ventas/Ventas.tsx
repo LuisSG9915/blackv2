@@ -1787,7 +1787,6 @@ const Ventas = () => {
 
       <Modal isOpen={modalCliente} size="md">
         <ModalHeader>
-          {" "}
           <h3>Selección de clientes</h3>{" "}
         </ModalHeader>
         <ModalBody>

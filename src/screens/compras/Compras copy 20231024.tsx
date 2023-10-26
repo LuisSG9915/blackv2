@@ -33,6 +33,7 @@ import { useComprasV3 } from "../../hooks/getsHooks/useComprasV3";
 import CurrencyInput from "react-currency-input-field";
 import { useReactToPrint } from "react-to-print";
 import { UserResponse } from "../../models/Home";
+import { useProductosFiltradoExistenciaProducto } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProducto";
 import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
@@ -114,6 +115,8 @@ function Compras() {
   ];
   const TableDataHeaderComprasSeleccion = ["Acción", "Folio compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado"];
 
+  const [estados, setEstados] = useState(false);
+
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
 
   const toggleCrearModal = () => {
@@ -159,6 +162,15 @@ function Compras() {
     }
   };
 
+  const filtroProducto = (datoMedico: string) => {
+    var resultado = dataProductos.filter((elemento: Producto) => {
+      // Aplica la lógica del filtro solo si hay valores en los inputs
+      if ((datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.descripcion.length > 2) {
+        return elemento;
+      }
+    });
+    setDataProductos(resultado);
+  };
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleConsultaModal = () => {
@@ -266,6 +278,69 @@ function Compras() {
     setIsOpen(false);
     setIdSeleccionado(dato.id_compra);
   };
+
+  // const postCompra = async () => {
+  //   const permiso = await filtroSeguridad("COMPRA_ADD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
+  //     // alert("Por favor, complete los campos obligatorios.");
+  //     Swal.fire("", "Por favor, complete los campos obligatorios.", "info");
+  //     return;
+  //   }
+  //   jezaApi
+  //     .post("/Compra", null, {
+  //       params: {
+  //         id_compra: 0,
+  //         fecha: new Date(),
+  //         cia: dataUsuarios2[0]?.idCia,
+  //         idSucursal: dataUsuarios2[0]?.sucursal,
+  //         idProveedor: dataCompras.idProveedor,
+  //         clave_prod: dataCompras.clave_prod,
+  //         cantidad: dataCompras.cantidad,
+  //         cantidadFactura: dataCompras.cantidadFactura,
+  //         cantidadMalEstado: dataCompras.cantidadMalEstado,
+  //         bonificaciones: dataCompras.bonificaciones,
+  //         costounitario: dataCompras.costoUnitario,
+  //         costoCompra: dataCompras.costoCompra,
+  //         Usuario: dataUsuarios2[0]?.id,
+  //         folioDocumento: dataCompras.folioDocumento,
+  //         finalizado: false,
+  //       },
+  //     })
+  //     .then(() => {
+  //       // alert("Compra guardada");
+  //       Swal.fire("", "Compra guardada!", "success");
+  //       fetchCompras();
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       // alert("Error");
+  //       Swal.fire("", "Error", "error");
+  //     });
+  //   setDataCompras({
+  //     ...dataCompras,
+  //     costoUnitario: 0,
+  //     id: 0,
+  //     id_compra: 0,
+  //     cia: 0,
+  //     idSucursal: 0,
+  //     clave_prod: 0,
+  //     cantidad: 0,
+  //     bonificaciones: 0,
+  //     costounitario: 0,
+  //     costoCompra: 0,
+  //     Usuario: 0,
+  //     finalizado: false,
+  //     d_proveedor: "",
+  //     d_producto: "",
+  //     d_unidadMedida: "",
+  //     d_unidadTraspaso: 0,
+  //     cantidadFactura: 0,
+  //     cantidadMalEstado: 0,
+  //   });
+  // };
 
   const putFinalizaCompra = async () => {
     const permiso = await filtroSeguridad("COMPRA_FIN");
@@ -709,6 +784,8 @@ function Compras() {
           </Col>
         </Row>
       </Container>
+
+      {/* <Label>Usuario: {dataUsuarios[0].d_perfil ? dataUsuarios[0].d_perfil : "cbinfortmatica"}</Label> */}
       <Container>
         <div className="alineación-derecha">
           <Button style={{ marginRight: 5 }} disabled={Number(dataCompras?.id_compra) > 0} color="success" onClick={toggleCrearModal}>
@@ -923,6 +1000,7 @@ function Compras() {
           <Row>
             <Col>
               <InputGroup>
+                {/* <Input disabled defaultValue={dataTemporal.producto ? dataTemporal.producto : ""} /> */}
                 <Input style={{ backgroundColor: "#fafafa" }} disabled defaultValue={dataCompras.d_producto} />
                 <Button
                   onClick={() => {
@@ -940,6 +1018,7 @@ function Compras() {
                 </Button>
               </InputGroup>
 
+              {/* <Button onClick={() => setModalOpen3(true)}>Elegir</Button> */}
             </Col>
           </Row>
           <br />
@@ -957,7 +1036,19 @@ function Compras() {
                 onValueChange={(value) => handleValueChange("costoUnitario", value)}
               />
             </Col>
-      
+            {/* <Col md={4} xs={4}>
+              <Label>Existencias:</Label>
+              <CurrencyInput
+                className="custom-currency-input"
+                prefix="$"
+                name="costoUnitario"
+                value={dataCompras.existencias}
+                disabled
+                decimalsLimit={2}
+                decimalScale={2}
+                onValueChange={(value) => handleValueChange("costoUnitario", value)}
+              />AiOutlineSelect
+            </Col> */}
             <Col md={4} xs={4}>
               <Label>Unidad paquete:</Label>
               <CurrencyInput
@@ -1107,6 +1198,58 @@ function Compras() {
           </Button>
         </ModalFooter>
       </Modal>
+
+      {/* <Modal isOpen={modalOpen3} size="lg" toggle={() => setModalOpen3(false)}>
+        <ModalHeader>
+          <Label>Productos: </Label>
+          <Row>
+            <Col md={"9"}>
+              <Input
+                onChange={(e) => {
+                  setFiltroProductos(e.target.value);
+                  if (e.target.value === "") {
+                    fetchProduct();
+                  }
+                }}
+              ></Input>
+              <div className="d-flex justify-content-end"></div>
+            </Col>
+            <Col md={"1"}>
+              <CButton color="success" onClick={() => filtroProducto(filtroProductos)} text="Filtro" />
+            </Col>
+          </Row>
+          <br />
+          <br />
+          <Table size="sm" striped={true} responsive={"sm"}>
+            <thead>
+              <tr>
+                {TableDataHeader.map((valor: any) => (
+                  <th key={valor}>{valor}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {dataProductos4.map((dato: ProductoExistencia, index) => (
+                <tr key={index}>
+                  <td>{dato.descripcion}</td>
+                  <td>{dato.existencia}</td>
+                  <td> {<Button onClick={() => handle(dato)}>Seleccionar</Button>} </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>{" "}
+        </ModalHeader>
+        <ModalBody></ModalBody>
+        <ModalFooter>
+          <CButton
+            color="danger"
+            onClick={() => {
+              setModalOpen3(false);
+            }}
+            text="Salir"
+          />
+        </ModalFooter>
+      </Modal> */}
 
       <Modal isOpen={modalOpen3} size="lg" toggle={() => setModalOpen3(false)}>
         <ModalHeader></ModalHeader>
