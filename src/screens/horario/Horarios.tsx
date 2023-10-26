@@ -26,7 +26,7 @@ import "./horarios.css";
 import Swal from "sweetalert2";
 import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-
+import { UserResponse } from "../../models/Home";
 function Horarios() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -501,6 +501,10 @@ function Horarios() {
               setFormData([]); // Limpia los datos del formulario
               setHorarios([]); // Limpia los datos de la tabla
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
               Swal.fire({
                 icon: "success",
                 title: "Creación de horarios exitosa",
@@ -637,30 +641,31 @@ function Horarios() {
           <h3>Crear horarios de :  {selectedName} <p> </p></h3>
         </ModalHeader>
         <ModalBody>
-          <Table>
-            <thead>
-              <tr>
-                <th>Día de la Semana</th>
-                {/* <th>ID Empleado</th> */}
-                <th>Fecha</th>
-                <th>Entrada</th>
-                <th>Comida</th>
-                <th>Regreso</th>
-                <th>Salida</th>
-                <th>Descanso</th>
-              </tr>
-            </thead>
-            {/* <tbody>
+          <div className="table-responsive">
+            <Table>
+              <thead>
+                <tr>
+                  <th>Día de la Semana</th>
+                  {/* <th>ID Empleado</th> */}
+                  <th>Fecha</th>
+                  <th>Entrada</th>
+                  <th>Comida</th>
+                  <th>Regreso</th>
+                  <th>Salida</th>
+                  <th>Descanso</th>
+                </tr>
+              </thead>
+              {/* <tbody>
               {daysOfWeek.map((day, dayIndex) => (
                 <tr key={dayIndex}> */}
-            <tbody>
-              {daysOfWeek.map((day, dayIndex) => {
-                if (!diasConRegistros.has(dayIndex)) {
-                  // Solo muestra el formulario para los días sin registros
-                  return (
-                    <tr key={dayIndex}>
-                      <td>{day}</td>
-                      {/* <td>
+              <tbody>
+                {daysOfWeek.map((day, dayIndex) => {
+                  if (!diasConRegistros.has(dayIndex)) {
+                    // Solo muestra el formulario para los días sin registros
+                    return (
+                      <tr key={dayIndex}>
+                        <td>{day}</td>
+                        {/* <td>
                     <Input
                       type="text"
                       name="id_empleado"
@@ -668,64 +673,65 @@ function Horarios() {
                       onChange={(e) => handleInputChange(e, dayIndex)}
                     />
                   </td> */}
-                      <td>
-                        <Input
-                          disabled="disabled"
-                          type="date"
-                          name="fecha"
-                          value={formData[dayIndex]?.fecha || ""}
-                          // onChange={(e) => handleDateChange(e, dayIndex)}
-                          onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="time"
-                          name="h1"
-                          value={formData[dayIndex]?.h1 || ""}
-                          onChange={(e) => handleInputChange(e, dayIndex)}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="time"
-                          name="h2"
-                          value={formData[dayIndex]?.h2 || ""}
-                          onChange={(e) => handleInputChange(e, dayIndex)}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="time"
-                          name="h3"
-                          value={formData[dayIndex]?.h3 || ""}
-                          onChange={(e) => handleInputChange(e, dayIndex)}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          type="time"
-                          name="h4"
-                          value={formData[dayIndex]?.h4 || ""}
-                          onChange={(e) => handleInputChange(e, dayIndex)}
-                        />
-                      </td>
-                      <td align="center">
-                        <Input
-                          type="checkbox"
-                          name="descanso"
-                          checked={formData[dayIndex]?.descanso || false}
-                          onChange={(e) => handleCheckboxChange(e, dayIndex)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                } else {
-                  return null; // No muestra nada para los días que ya tienen registros
-                }
-              })}
-            </tbody>
-          </Table>
+                        <td>
+                          <Input
+                            disabled="disabled"
+                            type="date"
+                            name="fecha"
+                            value={formData[dayIndex]?.fecha || ""}
+                            // onChange={(e) => handleDateChange(e, dayIndex)}
+                            onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            type="time"
+                            name="h1"
+                            value={formData[dayIndex]?.h1 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            type="time"
+                            name="h2"
+                            value={formData[dayIndex]?.h2 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            type="time"
+                            name="h3"
+                            value={formData[dayIndex]?.h3 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            type="time"
+                            name="h4"
+                            value={formData[dayIndex]?.h4 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                          />
+                        </td>
+                        <td align="center">
+                          <Input
+                            type="checkbox"
+                            name="descanso"
+                            checked={formData[dayIndex]?.descanso || false}
+                            onChange={(e) => handleCheckboxChange(e, dayIndex)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  } else {
+                    return null; // No muestra nada para los días que ya tienen registros
+                  }
+                })}
+              </tbody>
+            </Table>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit}>
@@ -744,58 +750,60 @@ function Horarios() {
         </ModalHeader>
         <ModalBody>
           {selectedHorario && (
-            <Table>
-              <thead>
-                <tr>
-                  <th> </th>
-                  <th>Hora de entrada</th>
-                  <th>Hora de comida</th>
-                  <th>Hora de regreso</th>
-                  <th>Hora de salida</th>
-                  <th>Descanso</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td></td>
-                  <td>
-                    <input
-                      type="time"
-                      value={selectedHorario.h1}
-                      onChange={(e) => handleEditInputChange("h1", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={selectedHorario.h2}
-                      onChange={(e) => handleEditInputChange("h2", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={selectedHorario.h3}
-                      onChange={(e) => handleEditInputChange("h3", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="time"
-                      value={selectedHorario.h4}
-                      onChange={(e) => handleEditInputChange("h4", e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={selectedHorario.descanso}
-                      onChange={(e) => handleEditCheckboxChange("descanso", e.target.checked)}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+            <div className="table-responsive">
+              <Table>
+                <thead>
+                  <tr>
+                    <th> </th>
+                    <th>Hora de entrada</th>
+                    <th>Hora de comida</th>
+                    <th>Hora de regreso</th>
+                    <th>Hora de salida</th>
+                    <th>Descanso</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <input
+                        type="time"
+                        value={selectedHorario.h1}
+                        onChange={(e) => handleEditInputChange("h1", e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="time"
+                        value={selectedHorario.h2}
+                        onChange={(e) => handleEditInputChange("h2", e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="time"
+                        value={selectedHorario.h3}
+                        onChange={(e) => handleEditInputChange("h3", e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="time"
+                        value={selectedHorario.h4}
+                        onChange={(e) => handleEditInputChange("h4", e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedHorario.descanso}
+                        onChange={(e) => handleEditCheckboxChange("descanso", e.target.checked)}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
           )}
         </ModalBody>
         <ModalFooter>

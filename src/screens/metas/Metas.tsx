@@ -49,7 +49,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { MetasCol } from "../../models/MetasCol";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { Trabajador } from "../../models/Trabajador";
-
+import { UserResponse } from "../../models/Home";
 function Metas() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -115,16 +115,21 @@ function Metas() {
     meta6: 0,
   });
 
-  const mostrarModalActualizar = (dato: any) => {
+  const mostrarModalActualizar = (dato: MetasCol) => {
     setForm(dato);
     setModalActualizar(true);
   };
+
+  // const mostrarModalActualizar = (dato: TiposdeBajas) => {
+  //   setModalActualizar(true);
+  //   setForm(dato);
+  // };
 
   //VALIDACIÓN---->
   const [camposFaltantes, setCamposFaltantes] = useState<Number[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador"];
+    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador", "meta1", "meta2", "meta3", "meta4", "meta5",];
     const camposVacios: Number[] = [];
 
     camposRequeridos.forEach((campo: keyof MetasCol) => {
@@ -152,39 +157,34 @@ function Metas() {
 
   //AQUI COMIENZA MÉTODO AGREGAR SUCURSAL
   const insertar = async () => {
-    // const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    // const permiso = await filtroSeguridad("CAT_META_ADD");
     // if (permiso === false) {
     //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     // }
 
-    // if (validarCampos() === true) {
-    await jezaApi
-      .post(
-        `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=${form.meta6}`
-      )
-      .then((response) => {
-        Swal.fire({
-          icon: "success",
-          text: "Meta creada con éxito",
-          confirmButtonColor: "#3085d6",
+    if (validarCampos() === true) {
+      await jezaApi
+        .post(
+          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6="..."`
+        )
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Meta creada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalInsertar(false);
+          getMetas();
+        })
+        .catch((error) => {
+          console.log(error);
         });
-        setModalInsertar(false);
-        getMetas();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    // } else {
-    // }
+      // } else {
+    }
   };
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    }
-    // alert("si entra");
 
     if (validarCampos() === true) {
       await jezaApi
@@ -199,7 +199,7 @@ function Metas() {
             meta3: form.meta3,
             meta4: form.meta4,
             meta5: form.meta5,
-            meta6: form.meta6,
+            meta6: "...",
           },
         })
         .then((response) => {
@@ -209,19 +209,21 @@ function Metas() {
             confirmButtonColor: "#3085d6",
           });
           setModalActualizar(false);
-          // getMetas();
+          getMetas();
         })
         .catch((error) => {
           console.log(error);
         });
     } else {
     }
+
   };
+
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
   const eliminar = async (dato: MetasCol) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_META_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -262,22 +264,17 @@ function Metas() {
     getMetas();
   }, []);
 
-  const filtroEmail = (datoMedico: string) => {
-    var resultado = data.filter((elemento: any) => {
-      // Aplica la lógica del filtro solo si hay valores en los inputs
-      if (
-        (datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) &&
-        elemento.nombre.length > 2
-      ) {
-        return elemento;
-      }
-    });
-    setData(resultado);
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: any) => ({ ...prevState, [name]: value }));
+  //   console.log(form);
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: any) => ({ ...prevState, [name]: value }));
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(form);
   };
 
@@ -312,33 +309,51 @@ function Metas() {
     {
       field: "Acción",
       renderCell: (params) => <ComponentChiquito params={params} />,
-      width: 120,
+      width: 100,
       headerClassName: "custom-header",
     },
     {
       field: "año",
       headerName: "Año",
-      width: 150,
+      width: 100,
       headerClassName: "custom-header",
       // renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
 
-    { field: "mes", headerName: "Mes", width: 350, headerClassName: "custom-header" },
+    { field: "mes", headerName: "Mes", width: 100, headerClassName: "custom-header" },
     {
-      field: "idcolabolador",
+      field: "nombre",
       headerName: "Colaborador",
       width: 200,
       headerClassName: "custom-header",
     },
     {
       field: "meta1",
-      headerName: "Cuota color",
+      headerName: "Meta color",
       width: 150,
       headerClassName: "custom-header",
     },
     {
       field: "meta2",
-      headerName: "Meta color",
+      headerName: "Meta tratamientos",
+      width: 150,
+      headerClassName: "custom-header",
+    },
+    {
+      field: "meta3",
+      headerName: "Meta productos",
+      width: 150,
+      headerClassName: "custom-header",
+    },
+    {
+      field: "meta4",
+      headerName: "Meta reventa",
+      width: 150,
+      headerClassName: "custom-header",
+    },
+    {
+      field: "meta5",
+      headerName: "Meta servicios",
       width: 150,
       headerClassName: "custom-header",
     },
@@ -465,7 +480,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta1"
-                      labelName="Cuota color:"
+                      labelName="Meta color:"
                       value={form.meta1}
                     />
                   </Col>
@@ -473,7 +488,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta2"
-                      labelName="Cuota servicios:"
+                      labelName="Meta tratamientos:"
                       value={form.meta2}
                     />
                   </Col>
@@ -481,7 +496,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta3"
-                      labelName="Cuota reventa:"
+                      labelName="Meta productos:"
                       value={form.meta3}
                     />
                   </Col>
@@ -489,7 +504,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta4"
-                      labelName="Meta color:"
+                      labelName="Meta reventa:"
                       value={form.meta4}
                     />
                   </Col>
@@ -497,18 +512,18 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta5"
-                      labelName="Meta servicios:"
+                      labelName="Meta Servicios:"
                       value={form.meta5}
                     />
                   </Col>
-                  <Col md={"6"}>
+                  {/* <Col md={"6"}>
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta6"
                       labelName="Meta reventa:"
                       value={form.meta6}
                     />
-                  </Col>
+                  </Col> */}
                 </Row>
               </FormGroup>
             </ModalBody>
@@ -557,7 +572,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta1"
-                      labelName="Cuota color:"
+                      labelName="Meta color:"
                       value={form.meta1}
                     />
                   </Col>
@@ -565,7 +580,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta2"
-                      labelName="Cuota servicios:"
+                      labelName="Meta tratamientos:"
                       value={form.meta2}
                     />
                   </Col>
@@ -573,7 +588,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta3"
-                      labelName="Cuota reventa:"
+                      labelName="Meta productos:"
                       value={form.meta3}
                     />
                   </Col>
@@ -581,7 +596,7 @@ function Metas() {
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta4"
-                      labelName="Meta color:"
+                      labelName="Meta reventa:"
                       value={form.meta4}
                     />
                   </Col>
@@ -593,14 +608,14 @@ function Metas() {
                       value={form.meta5}
                     />
                   </Col>
-                  <Col md={"6"}>
+                  {/* <Col md={"6"}>
                     <CFormGroupInput
                       handleChange={handleChange}
                       inputName="meta6"
                       labelName="Meta reventa:"
                       value={form.meta6}
                     />
-                  </Col>
+                  </Col> */}
                 </Row>
               </FormGroup>
             </ModalBody>
