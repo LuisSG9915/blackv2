@@ -303,6 +303,7 @@ function TipoBajas() {
       <Container>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <br />
           <h1>Tipos de baja  <RiUserUnfollowLine size={30} /></h1>
 
         </div>

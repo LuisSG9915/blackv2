@@ -143,7 +143,7 @@ const TableProductosSalidas = ({ setModalOpen2, setForm, form, productoSelected,
   const [filtroProductos, setFiltroProductos] = useState("");
   const { dataProductos3, fetchProduct3 } = useProductosFiltradoExistenciaAlm({
     descripcion: filtroProductos,
-    insumo: 0,
+    insumo: 2,
     inventariable: 2,
     obsoleto: 0,
     servicio: 0,
