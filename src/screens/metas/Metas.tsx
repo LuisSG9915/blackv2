@@ -1,50 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { AiFillDelete, AiFillEdit, AiFillStop, AiFillPushpin } from "react-icons/ai";
-import { MdInventory } from "react-icons/md";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import {
-  Row,
-  InputGroup,
-  Container,
-  Col,
-  Card,
-  Alert,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  CardText,
-  Input,
-  Table,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Label,
-} from "reactstrap";
+import { Row, Container, Col, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
-import { Sucursal } from "../../models/Sucursal";
-import TableSucursal from "./components/TableSucursal";
-import { Cia } from "../../models/Cia";
-import AlertComponent from "../../components/AlertComponent";
 import { useCias } from "../../hooks/getsHooks/useCias";
-// import { IoIosHome, IoIosRefresh } from "react-icons/io";
-// import Button from '@mui/material/Button';
-// import ButtonGroup from '@mui/material/ButtonGroup';
+
 import { useReactToPrint } from "react-to-print";
 //NUEVAS IMPOTACIONES
 import Swal from "sweetalert2";
-import { BsBuildingAdd } from "react-icons/bs";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import "../../../css/tablaestilos.css";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { MetasCol } from "../../models/MetasCol";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
@@ -88,15 +60,8 @@ function Metas() {
     }
   };
 
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
 
   const [data, setData] = useState<MetasCol[]>([]);
   const { dataCias, fetchCias } = useCias();
@@ -129,12 +94,12 @@ function Metas() {
   const [camposFaltantes, setCamposFaltantes] = useState<Number[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador", "meta1", "meta2", "meta3", "meta4", "meta5",];
+    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador", "meta1", "meta2", "meta3", "meta4", "meta5"];
     const camposVacios: Number[] = [];
 
     camposRequeridos.forEach((campo: keyof MetasCol) => {
       const fieldValue = form[campo];
-      if (!fieldValue || Number(fieldValue).trim() === 0) {
+      if (!fieldValue || fieldValue.trim() === 0) {
         camposVacios.push(campo);
       }
     });
@@ -165,7 +130,7 @@ function Metas() {
     if (validarCampos() === true) {
       await jezaApi
         .post(
-          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6="..."`
+          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0`
         )
         .then((response) => {
           Swal.fire({
@@ -185,7 +150,6 @@ function Metas() {
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-
     if (validarCampos() === true) {
       await jezaApi
         .put(`/sp_cat_colaboradoresMetasUpd`, null, {
@@ -216,9 +180,7 @@ function Metas() {
         });
     } else {
     }
-
   };
-
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
@@ -404,10 +366,7 @@ function Metas() {
         <>
           <Container>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1>
-                {" "}
-                Metas
-              </h1>
+              <h1> Metas</h1>
             </div>
             <div className="col align-self-start d-flex justify-content-center "></div>
             <br />
@@ -461,13 +420,7 @@ function Metas() {
                   </Col>
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
-                    <Input
-                      type="select"
-                      name="idcolabolador"
-                      id="idcolabolador"
-                      defaultValue={form.idcolabolador}
-                      onChange={handleChange}
-                    >
+                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
                       <option value="">Selecciona empresa</option>
                       {dataTrabajadores.map((colaborador: Trabajador) => (
                         <option key={colaborador.id} value={colaborador.id}>
@@ -477,44 +430,19 @@ function Metas() {
                     </Input>
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta1"
-                      labelName="Meta color:"
-                      value={form.meta1}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta color:" value={form.meta1} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta2"
-                      labelName="Meta tratamientos:"
-                      value={form.meta2}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta tratamientos:" value={form.meta2} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta3"
-                      labelName="Meta productos:"
-                      value={form.meta3}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta productos:" value={form.meta3} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta4"
-                      labelName="Meta reventa:"
-                      value={form.meta4}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" value={form.meta4} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta5"
-                      labelName="Meta Servicios:"
-                      value={form.meta5}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta Servicios:" value={form.meta5} />
                   </Col>
                   {/* <Col md={"6"}>
                     <CFormGroupInput
@@ -553,13 +481,7 @@ function Metas() {
                   </Col>
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
-                    <Input
-                      type="select"
-                      name="idcolabolador"
-                      id="idcolabolador"
-                      defaultValue={form.idcolabolador}
-                      onChange={handleChange}
-                    >
+                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
                       <option value="">Selecciona empresa</option>
                       {dataTrabajadores.map((colaborador: Trabajador) => (
                         <option key={colaborador.id} value={colaborador.id}>
@@ -569,44 +491,19 @@ function Metas() {
                     </Input>
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta1"
-                      labelName="Meta color:"
-                      value={form.meta1}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta color:" value={form.meta1} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta2"
-                      labelName="Meta tratamientos:"
-                      value={form.meta2}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta tratamientos:" value={form.meta2} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta3"
-                      labelName="Meta productos:"
-                      value={form.meta3}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta productos:" value={form.meta3} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta4"
-                      labelName="Meta reventa:"
-                      value={form.meta4}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" value={form.meta4} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta5"
-                      labelName="Meta Servicios:"
-                      value={form.meta5}
-                    />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta Servicios:" value={form.meta5} />
                   </Col>
                   {/* <Col md={"6"}>
                     <CFormGroupInput

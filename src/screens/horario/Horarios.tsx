@@ -84,9 +84,7 @@ function Horarios() {
   const handleEditInputChange = (field, value) => {
     // Desmarcar el checkbox si h1 a h4 tienen un valor distinto de "00:00"
     if (field === "h1" || field === "h2" || field === "h3" || field === "h4") {
-      const allTimesEmpty = ![selectedHorario.h1, selectedHorario.h2, selectedHorario.h3, selectedHorario.h4].some(
-        (time) => time !== "00:00"
-      );
+      const allTimesEmpty = ![selectedHorario.h1, selectedHorario.h2, selectedHorario.h3, selectedHorario.h4].some((time) => time !== "00:00");
 
       setSelectedHorario((prevHorario) => ({
         ...prevHorario,
@@ -135,9 +133,7 @@ function Horarios() {
       const { id, id_empleado, fecha, h1, h2, h3, h4, descanso } = selectedHorario;
 
       jezaApi
-        .put(
-          `/Horario?id=${id}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${descanso}`
-        )
+        .put(`/Horario?id=${id}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${descanso}`)
         .then((response) => {
           console.log("Horario actualizado:", response.data);
           Swal.fire({
@@ -447,9 +443,7 @@ function Horarios() {
         accessorKey: "descanso",
         header: "Descanso",
         size: 100,
-        Cell: ({ row }) => (
-          <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>
-        ),
+        Cell: ({ row }) => <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>,
       },
     ],
     []
@@ -501,10 +495,6 @@ function Horarios() {
               setFormData([]); // Limpia los datos del formulario
               setHorarios([]); // Limpia los datos de la tabla
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
               Swal.fire({
                 icon: "success",
                 title: "Creación de horarios exitosa",
@@ -638,7 +628,9 @@ function Horarios() {
       {/* modal crear */}
       <Modal size="xl" isOpen={modalCrearOpen} toggle={toggleModalCrear}>
         <ModalHeader toggle={toggleModalCrear}>
-          <h3>Crear horarios de :  {selectedName} <p> </p></h3>
+          <h3>
+            Crear horarios de : {selectedName} <p> </p>
+          </h3>
         </ModalHeader>
         <ModalBody>
           <div className="table-responsive">
@@ -684,36 +676,16 @@ function Horarios() {
                           />
                         </td>
                         <td>
-                          <Input
-                            type="time"
-                            name="h1"
-                            value={formData[dayIndex]?.h1 || ""}
-                            onChange={(e) => handleInputChange(e, dayIndex)}
-                          />
+                          <Input type="time" name="h1" value={formData[dayIndex]?.h1 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
                         </td>
                         <td>
-                          <Input
-                            type="time"
-                            name="h2"
-                            value={formData[dayIndex]?.h2 || ""}
-                            onChange={(e) => handleInputChange(e, dayIndex)}
-                          />
+                          <Input type="time" name="h2" value={formData[dayIndex]?.h2 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
                         </td>
                         <td>
-                          <Input
-                            type="time"
-                            name="h3"
-                            value={formData[dayIndex]?.h3 || ""}
-                            onChange={(e) => handleInputChange(e, dayIndex)}
-                          />
+                          <Input type="time" name="h3" value={formData[dayIndex]?.h3 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
                         </td>
                         <td>
-                          <Input
-                            type="time"
-                            name="h4"
-                            value={formData[dayIndex]?.h4 || ""}
-                            onChange={(e) => handleInputChange(e, dayIndex)}
-                          />
+                          <Input type="time" name="h4" value={formData[dayIndex]?.h4 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
                         </td>
                         <td align="center">
                           <Input
@@ -766,32 +738,16 @@ function Horarios() {
                   <tr>
                     <td></td>
                     <td>
-                      <input
-                        type="time"
-                        value={selectedHorario.h1}
-                        onChange={(e) => handleEditInputChange("h1", e.target.value)}
-                      />
+                      <input type="time" value={selectedHorario.h1} onChange={(e) => handleEditInputChange("h1", e.target.value)} />
                     </td>
                     <td>
-                      <input
-                        type="time"
-                        value={selectedHorario.h2}
-                        onChange={(e) => handleEditInputChange("h2", e.target.value)}
-                      />
+                      <input type="time" value={selectedHorario.h2} onChange={(e) => handleEditInputChange("h2", e.target.value)} />
                     </td>
                     <td>
-                      <input
-                        type="time"
-                        value={selectedHorario.h3}
-                        onChange={(e) => handleEditInputChange("h3", e.target.value)}
-                      />
+                      <input type="time" value={selectedHorario.h3} onChange={(e) => handleEditInputChange("h3", e.target.value)} />
                     </td>
                     <td>
-                      <input
-                        type="time"
-                        value={selectedHorario.h4}
-                        onChange={(e) => handleEditInputChange("h4", e.target.value)}
-                      />
+                      <input type="time" value={selectedHorario.h4} onChange={(e) => handleEditInputChange("h4", e.target.value)} />
                     </td>
                     <td>
                       <input
