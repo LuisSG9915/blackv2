@@ -81,6 +81,8 @@ const useSeguridad = () => {
     console.log(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);
 
     const response = await jezaApi.get(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);
+    // if(session){
+    // }
 
     if (response.data[0].permiso == false) {
       Swal.fire({

@@ -1,6 +1,6 @@
 export interface MetasCol {
-  id: number,  
-  año: number;
+    id: number;  
+    año: number;
     mes: number;
     idcolabolador: number;
     meta1: number;

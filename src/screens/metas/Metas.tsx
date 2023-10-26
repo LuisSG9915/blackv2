@@ -99,7 +99,7 @@ function Metas() {
 
     camposRequeridos.forEach((campo: keyof MetasCol) => {
       const fieldValue = form[campo];
-      if (!fieldValue || fieldValue.trim() === 0) {
+      if (!fieldValue) {
         camposVacios.push(campo);
       }
     });
@@ -152,20 +152,9 @@ function Metas() {
   const editar = async () => {
     if (validarCampos() === true) {
       await jezaApi
-        .put(`/sp_cat_colaboradoresMetasUpd`, null, {
-          params: {
-            id: form.id,
-            año: form.año,
-            mes: form.mes,
-            idcolaborador: form.idcolabolador,
-            meta1: form.meta1,
-            meta2: form.meta2,
-            meta3: form.meta3,
-            meta4: form.meta4,
-            meta5: form.meta5,
-            meta6: "...",
-          },
-        })
+        .put(
+          `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0`
+        )
         .then((response) => {
           Swal.fire({
             icon: "success",
