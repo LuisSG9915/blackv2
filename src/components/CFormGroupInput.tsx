@@ -9,8 +9,10 @@ interface Props {
   disabled?: boolean;
   defaultChecked?: boolean | undefined;
   defaultValue?: string | number | readonly string[] | undefined;
+  placeholder?: string | undefined
+
 }
-function CFormGroupInput({ handleChange, inputName, labelName, value, type, disabled, defaultChecked, defaultValue }: Props) {
+function CFormGroupInput({ handleChange, inputName, labelName, value, type, disabled, defaultChecked, defaultValue, placeholder }: Props) {
   return (
     <FormGroup>
       <Label>{labelName}</Label>
@@ -23,6 +25,7 @@ function CFormGroupInput({ handleChange, inputName, labelName, value, type, disa
         disabled={disabled}
         defaultChecked={defaultChecked}
         defaultValue={defaultValue}
+        placeholder={placeholder}
       />
     </FormGroup>
   );

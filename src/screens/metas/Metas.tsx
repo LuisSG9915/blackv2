@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { Row, Container, Col, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
+import { Row, Container, Col, Input, InputGroup, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
@@ -22,6 +22,9 @@ import { MetasCol } from "../../models/MetasCol";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { Trabajador } from "../../models/Trabajador";
 import { UserResponse } from "../../models/Home";
+import CurrencyInput from "react-currency-input-field";
+
+import { HiOutlineTrophy } from "react-icons/hi2";
 function Metas() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -283,6 +286,18 @@ function Metas() {
       headerName: "Meta color",
       width: 150,
       headerClassName: "custom-header",
+      renderCell: (params) => (
+        <span>{params.value ? `$${parseFloat(params.value).toFixed(2)}` : '-'}</span>
+      ),
+    },
+    {
+      field: "meta4",
+      headerName: "Meta reventa",
+      width: 150,
+      headerClassName: "custom-header",
+      renderCell: (params) => (
+        <span>{params.value ? `$${parseFloat(params.value).toFixed(2)}` : '-'}</span>
+      ),
     },
     {
       field: "meta2",
@@ -296,12 +311,7 @@ function Metas() {
       width: 150,
       headerClassName: "custom-header",
     },
-    {
-      field: "meta4",
-      headerName: "Meta reventa",
-      width: 150,
-      headerClassName: "custom-header",
-    },
+
     {
       field: "meta5",
       headerName: "Meta servicios",
@@ -318,7 +328,20 @@ function Metas() {
       </>
     );
   };
-
+  const handleValueChange = (fieldName: string, value: string | undefined) => {
+    console.log(value);
+    if (value === undefined) {
+      setForm((prevForm) => ({
+        ...prevForm,
+        [fieldName]: 0, // Actualizar el valor correspondiente en el estado del formulario
+      }));
+    } else {
+      setForm((prevForm) => ({
+        ...prevForm,
+        [fieldName]: value, // Actualizar el valor correspondiente en el estado del formulario
+      }));
+    }
+  };
   function DataTable() {
     const getRowId = (row: MetasCol) => row.id;
     return (
@@ -354,8 +377,10 @@ function Metas() {
       {showView ? (
         <>
           <Container>
+            <br />
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Metas</h1>
+
+              <h1> Metas <HiOutlineTrophy size={30} /></h1>
             </div>
             <div className="col align-self-start d-flex justify-content-center "></div>
             <br />
@@ -417,9 +442,20 @@ function Metas() {
                         </option>
                       ))}
                     </Input>
+                    <br />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta color:" value={form.meta1} />
+                    <label> Meta color:</label>
+                    <CurrencyInput
+                      className="custom-currency-input"
+                      prefix="$"
+                      name="meta1"
+                      placeholder="Introducir un número"
+                      value={form.meta1 ? form.meta1 : 0}
+                      decimalsLimit={2}
+                      onValueChange={(value) => handleValueChange("meta1", value)}
+                    />
+                    {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
                   <Col md={"6"}>
                     <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta tratamientos:" value={form.meta2} />
@@ -428,7 +464,18 @@ function Metas() {
                     <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta productos:" value={form.meta3} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" value={form.meta4} />
+                    {/* <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" placeholder="$" value={form.meta4} /> */}
+                    <label> Meta reventa:</label>
+                    <CurrencyInput
+                      className="custom-currency-input"
+                      prefix="$"
+                      name="meta4"
+                      placeholder="Introducir un número"
+                      value={form.meta4 ? form.meta4 : 0}
+                      decimalsLimit={2}
+                      onValueChange={(value) => handleValueChange("meta4", value)}
+                    />
+
                   </Col>
                   <Col md={"6"}>
                     <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta Servicios:" value={form.meta5} />
@@ -478,9 +525,20 @@ function Metas() {
                         </option>
                       ))}
                     </Input>
+                    <br />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta1" labelName="Meta color:" value={form.meta1} />
+                    <label> Meta color:</label>
+                    <CurrencyInput
+                      className="custom-currency-input"
+                      prefix="$"
+                      name="meta1"
+                      placeholder="Introducir un número"
+                      value={form.meta1 ? form.meta1 : 0}
+                      decimalsLimit={2}
+                      onValueChange={(value) => handleValueChange("meta1", value)}
+                    />
+                    {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
                   <Col md={"6"}>
                     <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Meta tratamientos:" value={form.meta2} />
@@ -489,7 +547,18 @@ function Metas() {
                     <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Meta productos:" value={form.meta3} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" value={form.meta4} />
+                    {/* <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" placeholder="$" value={form.meta4} /> */}
+                    <label> Meta reventa:</label>
+                    <CurrencyInput
+                      className="custom-currency-input"
+                      prefix="$"
+                      name="meta4"
+                      placeholder="Introducir un número"
+                      value={form.meta4 ? form.meta4 : 0}
+                      decimalsLimit={2}
+                      onValueChange={(value) => handleValueChange("meta4", value)}
+                    />
+
                   </Col>
                   <Col md={"6"}>
                     <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Meta Servicios:" value={form.meta5} />
