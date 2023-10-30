@@ -115,9 +115,10 @@ function DemoTresTablas() {
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
         // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-        to: "luis.sg9915@gmail.com, abigailmh09@gmail.com",
+        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
+        // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
         subject: "Corte del dia",
-        text: "HLOI",
+        text: "Corte",
         sucursal: dataUsuarios2[0]?.sucursal,
         fecha: fechaSelected,
       })
@@ -283,8 +284,7 @@ function DemoTresTablas() {
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <h1>
-            {" "}
-            Corte <AiOutlineFileText size={30} />
+            Corte - {dataUsuarios2[0]?.d_sucursal} <AiOutlineFileText size={30} />
           </h1>
         </div>
         <Row>
@@ -302,6 +302,7 @@ function DemoTresTablas() {
             />
           </Col>
           <Col xs={3}>
+            {/* <Button disabled={dataCorteEmailA.length == 0 || dataCorteEmailB.length == 0 || dataCorteEmailC.length == 0} onClick={() => sendEmail()}> */}
             <Button onClick={() => sendEmail()}>Enviar correo</Button>
           </Col>
         </Row>

@@ -47,7 +47,6 @@ import { VentaInsumo } from "../../models/VentaInsumo";
 import { useDescuentos } from "../../hooks/getsHooks/useClientesProceso copy";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
-import { GridColDef, DataGrid } from "@mui/x-data-grid";
 import { AnticipoGet } from "../../models/Anticipo";
 import { useAnticipoVentas } from "../../hooks/getsHooks/useAnticipoVentas";
 import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
@@ -55,10 +54,8 @@ import { FormaPago } from "../../models/FormaPago";
 import TimeKeeper from "react-timekeeper";
 import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
-import { LuCalendarSearch } from "react-icons/lu";
 import TableHistorial from "./Components/TableHistorial";
 import TableAnticipos from "./Components/TableAnticipos";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
@@ -78,7 +75,6 @@ interface TicketPrintProps {
 const Ventas = () => {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
-  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -87,7 +83,6 @@ const Ventas = () => {
       setDataUsuarios2(parsedItem);
       console.log({ parsedItem });
 
-      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
       getPermisoPantalla(parsedItem);
     }
   }, []);
@@ -165,7 +160,7 @@ const Ventas = () => {
   const { dataDescuentos } = useDescuentos();
   const [formasPagosFiltradas, setFormasPagosFiltradas] = useState<FormaPago[]>([]);
 
-  const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
+  const { dataFormasPagos } = useFormasPagos();
 
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
@@ -672,7 +667,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
   };
@@ -883,7 +878,8 @@ const Ventas = () => {
         const temp = response.data.mensaje2;
         jezaApi
           .get(
-            `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${dataUsuarios2[0]?.id
+            `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${
+              dataUsuarios2[0]?.id
             }&pago=${Number(formPago.totalPago)}`
           )
           .then((response) => {
@@ -910,13 +906,16 @@ const Ventas = () => {
                     text: `¿Su correo es ${correo[0].email}?`,
                     icon: "warning",
                     showCancelButton: true,
+                    showDenyButton: true,
+                    denyButtonText: `Asignar correo`,
+                    denyButtonColor: "green",
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
                     confirmButtonText: "Sí",
                     cancelButtonText: "No, imprimir",
                   }).then((result) => {
                     if (result.isConfirmed) {
-                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
+                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
                       const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                       axios
                         .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -937,6 +936,41 @@ const Ventas = () => {
                           alert(error);
                           console.log(error);
                         });
+                    } else if (result.isDenied) {
+                      Swal.fire({
+                        title: "Ingrse el correo",
+                        input: "text",
+                        inputAttributes: {
+                          autocapitalize: "off",
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: "Listo",
+                        showLoaderOnConfirm: true,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
+                          const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                          axios
+                            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                              // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                              to: envioCorreoRem + `,${result.value}`,
+                              subject: "Ticket",
+                              textTicket: response.data,
+                              text: "...",
+                            })
+                            .then(() => {
+                              Swal.fire({
+                                icon: "success",
+                                text: "Correo enviado con éxito",
+                                confirmButtonColor: "#3085d6",
+                              });
+                            })
+                            .catch((error) => {
+                              alert(error);
+                              console.log(error);
+                            });
+                        }
+                      });
                     }
                   });
                 } else {
@@ -1101,12 +1135,18 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
+          dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1400,18 +1440,18 @@ const Ventas = () => {
                     <td>
                       {dato.Descuento === 0
                         ? (dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
-                          style: "currency",
-                          currency: "MXN", // Código de moneda para el Peso Mexicano
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
+                            style: "currency",
+                            currency: "MXN", // Código de moneda para el Peso Mexicano
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
                         : (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toLocaleString("es-MX", {
-                          style: "currency",
-                          currency: "MXN", // Código de moneda para el Peso Mexicano
+                            style: "currency",
+                            currency: "MXN", // Código de moneda para el Peso Mexicano
 
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                     </td>
                     <td className="gap-5">
                       <AiFillDelete
@@ -1778,7 +1818,7 @@ const Ventas = () => {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalCliente} size="md">
+      <Modal isOpen={modalCliente} size="lg">
         <ModalHeader>
           <h3>Selección de clientes</h3>{" "}
         </ModalHeader>
@@ -2056,36 +2096,36 @@ const Ventas = () => {
             <tbody>
               {datoInsumosProductoResumen.length > 0
                 ? datoInsumosProductoResumen.map((dato: any) => (
-                  <tr key={dato.id}>
-                    {dato.id ? (
-                      <>
-                        <td>{dato.d_insumo}</td>
-                        <td align="center">{dato.cantidad}</td>
-                        <td align="left">{dato.unidadMedida}</td>
-                        <td className="gap-5">
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => {
-                              setModalEditInsumo(true);
-                              setFormInsumo(dato);
-                            }}
-                            size={23}
-                          ></AiFillEdit>
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={() => {
-                              deleteInsumo(dato);
-                              setTimeout(() => {
-                                fetchInsumosProducto();
-                              }, 1000);
-                            }}
-                            size={23}
-                          />
-                        </td>
-                      </>
-                    ) : null}
-                  </tr>
-                ))
+                    <tr key={dato.id}>
+                      {dato.id ? (
+                        <>
+                          <td>{dato.d_insumo}</td>
+                          <td align="center">{dato.cantidad}</td>
+                          <td align="left">{dato.unidadMedida}</td>
+                          <td className="gap-5">
+                            <AiFillEdit
+                              className="mr-2"
+                              onClick={() => {
+                                setModalEditInsumo(true);
+                                setFormInsumo(dato);
+                              }}
+                              size={23}
+                            ></AiFillEdit>
+                            <AiFillDelete
+                              color="lightred"
+                              onClick={() => {
+                                deleteInsumo(dato);
+                                setTimeout(() => {
+                                  fetchInsumosProducto();
+                                }, 1000);
+                              }}
+                              size={23}
+                            />
+                          </td>
+                        </>
+                      ) : null}
+                    </tr>
+                  ))
                 : null}
             </tbody>
           </Table>
@@ -2175,11 +2215,11 @@ const Ventas = () => {
               <div className="text-left" style={{ fontFamily: "courier new" }}>
                 {datoTicket
                   ? datoTicket.map((ticket) => (
-                    <>
-                      <Label> {ticket.LINEA} </Label>
-                      <br />
-                    </>
-                  ))
+                      <>
+                        <Label> {ticket.LINEA} </Label>
+                        <br />
+                      </>
+                    ))
                   : null}
               </div>
               <br />
@@ -2327,13 +2367,13 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ||
-            dataArregloTemporal.formaPago == 100 ||
-            dataArregloTemporal.formaPago == 101 ||
-            dataArregloTemporal.formaPago == 110 ||
-            dataArregloTemporal.formaPago == 103 ? (
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ||
+          dataArregloTemporal.formaPago == 100 ||
+          dataArregloTemporal.formaPago == 101 ||
+          dataArregloTemporal.formaPago == 110 ||
+          dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>

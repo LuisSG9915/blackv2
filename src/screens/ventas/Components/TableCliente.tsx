@@ -73,7 +73,22 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
         header: "Nombre",
         flex: 10,
       },
-
+      {
+        accessorKey: "telefono",
+        header: "Telefono",
+        flex: 10,
+        Cell(props) {
+          return props.row.original.telefono ? props.row.original.telefono : "Sin numero";
+        },
+      },
+      {
+        accessorKey: "email",
+        header: "Correo",
+        flex: 10,
+        Cell(props) {
+          return props.row.original.email ? props.row.original.email : "Sin correo";
+        },
+      },
       {
         accessorKey: "acciones",
         header: "Acciones",
@@ -149,7 +164,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
   };
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
   const validarCampos = () => {
-    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac"];
+    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "fecha_nac"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -279,7 +294,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
         data={dataClientesConAcciones}
         initialState={{
           pagination: {
-            pageSize: 5,
+            pageSize: 10,
             pageIndex: 0,
           },
           density: "compact",

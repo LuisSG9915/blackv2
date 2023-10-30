@@ -460,7 +460,6 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/BluetoothPrint")}>Pr</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>

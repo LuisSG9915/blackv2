@@ -176,7 +176,7 @@ function Horarios() {
     setFormData(updatedFormData);
   };
   useEffect(() => {
-    consulta();
+    if (formData.length > 0) consulta();
   }, [formData]);
 
   // const handleDateChange = (e) => {
@@ -228,12 +228,16 @@ function Horarios() {
     // Calcular las fechas correspondientes para cada día de la semana
     const selectedDateObj = new Date(newDate);
 
-    // Obtener el día de la semana actual (0 para Domingo, 1 para Lunes, etc.)
+    // Obtener el día de la semana actual (6 para Domingo, 1 para Lunes, etc.)
     const currentDay = selectedDateObj.getDay();
 
     // Calcular la diferencia en días para ajustar la fecha al día de la semana correcto
     const daysUntilMonday = 0 - currentDay; // Lunes
-    selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
+    if (daysUntilMonday == -6) {
+      selectedDateObj.setDate(selectedDateObj.getDate() + 1);
+    } else {
+      selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
+    }
 
     // Actualizar las fechas en el formulario
     const updatedFormData = daysOfWeek.map((day, dayIndex) => {
@@ -305,28 +309,38 @@ function Horarios() {
       });
   }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
 
+  const getHorarios = () => {
+    jezaApi
+      .get(`/Horario?idTrabajador=${selectedId}&fecha=${selectedDate}`)
+      .then((response) => {
+        setHorarios(response.data);
+
+        // Verifica si el resultado de la consulta es cero
+        if (diasConRegistros.size < 7) {
+          setShowButton(true); // Habilita el botón si hay días sin registros
+        } else {
+          setShowButton(false); // Deshabilita el botón si todos los días tienen registros
+        }
+      })
+      .catch((e) => console.log(e));
+  };
+
   const consulta = () => {
     // Verifica si se ha seleccionado un trabajador y se ha ingresado una fecha
     if (selectedId && selectedDate) {
       // Realiza la solicitud a la API con los parámetros
-      jezaApi
-        .get(`/Horario?idTrabajador=${selectedId}&fecha=${selectedDate}`)
-        .then((response) => {
-          setHorarios(response.data);
-
-          // Verifica si el resultado de la consulta es cero
-          if (diasConRegistros.size < 7) {
-            setShowButton(true); // Habilita el botón si hay días sin registros
-          } else {
-            setShowButton(false); // Deshabilita el botón si todos los días tienen registros
-          }
-        })
-        .catch((e) => console.log(e));
+      getHorarios();
     } else {
       // Muestra un mensaje de error o realiza alguna acción apropiada
-      console.log("Por favor, selecciona un trabajador y una fecha válida.");
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Favor de llenar todos los campos `,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
     }
   };
+
   const columnsTrabajador = useMemo<MRT_ColumnDef<Trabajador>[]>(
     () => [
       {
@@ -489,11 +503,11 @@ function Horarios() {
             // Verifica si todas las solicitudes han terminado
             if (successfulRequests === formData.length - diasConRegistros.size) {
               // Muestra una alerta de SweetAlert cuando todas las solicitudes hayan terminado
-              setSelectedId("");
-              setSelectedName("");
-              setSelectedDate(""); // Limpia la fecha seleccionada
-              setFormData([]); // Limpia los datos del formulario
-              setHorarios([]); // Limpia los datos de la tabla
+              // setSelectedId("");
+              // setSelectedName("");
+              // setSelectedDate(""); // Limpia la fecha seleccionada
+              // setFormData([]); // Limpia los datos del formulario
+              // setHorarios([]); // Limpia los datos de la tabla
 
               Swal.fire({
                 icon: "success",
@@ -509,11 +523,11 @@ function Horarios() {
           })
           .catch((error) => {
             // Manejo de errores
-            setSelectedId("");
-            setSelectedName("");
-            setSelectedDate(""); // Limpia la fecha seleccionada
-            setFormData([]); // Limpia los datos del formulario
-            setHorarios([]); // Limpia los datos de la tabla
+            // setSelectedId("");
+            // setSelectedName("");
+            // setSelectedDate(""); // Limpia la fecha seleccionada
+            // setFormData([]); // Limpia los datos del formulario
+            // setHorarios([]); // Limpia los datos de la tabla
 
             console.error(`Error en la solicitud POST para ${daysOfWeek[i]}:`, error);
             Swal.fire({
@@ -559,7 +573,7 @@ function Horarios() {
                 <Col sm="6">
                   <Label> Seleccione un trabajador: </Label>
                   <InputGroup>
-                    <Input type="text" value={selectedName} />
+                    <Input disabled type="text" value={selectedName} />
                     <Button color="secondary" onClick={() => setModalOpen(true)}>
                       Elegir
                     </Button>
@@ -583,6 +597,7 @@ function Horarios() {
                       color="primary"
                       onClick={() => {
                         const fechaSeleccionada = new Date(selectedDate); // Convierte la fecha seleccionada a un objeto Date
+                        fechaSeleccionada.setDate(fechaSeleccionada.getDate() + 1); // Resta un día
                         const esFechaAnterior = fechaSeleccionada < fechaActual; // Comprueba si la fecha seleccionada es anterior a la fecha actual
 
                         if (esFechaAnterior) {
@@ -676,22 +691,47 @@ function Horarios() {
                           />
                         </td>
                         <td>
-                          <Input type="time" name="h1" value={formData[dayIndex]?.h1 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
+                          <Input
+                            type="time"
+                            name="h1"
+                            value={formData[dayIndex]?.h1 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
+                          />
                         </td>
                         <td>
-                          <Input type="time" name="h2" value={formData[dayIndex]?.h2 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
+                          <Input
+                            type="time"
+                            name="h2"
+                            value={formData[dayIndex]?.h2 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
+                          />
                         </td>
                         <td>
-                          <Input type="time" name="h3" value={formData[dayIndex]?.h3 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
+                          <Input
+                            type="time"
+                            name="h3"
+                            value={formData[dayIndex]?.h3 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
+                          />
                         </td>
                         <td>
-                          <Input type="time" name="h4" value={formData[dayIndex]?.h4 || ""} onChange={(e) => handleInputChange(e, dayIndex)} />
+                          <Input
+                            type="time"
+                            name="h4"
+                            value={formData[dayIndex]?.h4 || ""}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
+                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
+                          />
                         </td>
                         <td align="center">
                           <Input
                             type="checkbox"
                             name="descanso"
                             checked={formData[dayIndex]?.descanso || false}
+                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
                             onChange={(e) => handleCheckboxChange(e, dayIndex)}
                           />
                         </td>
