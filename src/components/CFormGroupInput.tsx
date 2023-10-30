@@ -5,7 +5,7 @@ interface Props {
   labelName: string;
   inputName: string;
   value?: string | number | readonly string[] | undefined;
-  type?: "text" | "password" | "checkbox" | "number" | "date";
+  type?: "text" | "password" | "checkbox" | "number" | "date" | "select";
   disabled?: boolean;
   defaultChecked?: boolean | undefined;
   defaultValue?: string | number | readonly string[] | undefined;

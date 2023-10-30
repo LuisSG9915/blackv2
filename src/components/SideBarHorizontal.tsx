@@ -436,6 +436,8 @@ const SidebarHorizontal = () => {
                     >
                       Visor de citas
                     </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem>
+
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>

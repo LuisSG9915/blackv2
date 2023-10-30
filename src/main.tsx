@@ -69,6 +69,7 @@ import ShopifySinc from "./screens/shopify/ShopifySinc";
 import ClientesShopify from "./screens/clienteshopify/ClientesShopify";
 import Metas from "./screens/metas/Metas";
 import BluetoothPrint from "./screens/BluetoothPrint";
+import BloqueosColaborador from "./screens/bloqueo colaborador/BloqueosColaborador";
 
 const router = createBrowserRouter([
   {
@@ -340,6 +341,9 @@ const router = createBrowserRouter([
   {
     path: "/BluetoothPrint",
     element: <BluetoothPrint />,
+  },
+  {      path: "/BloqueosColaborador",
+    element: <BloqueosColaborador />,
   },
 ]);
 
