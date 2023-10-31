@@ -135,7 +135,7 @@ function BloqueosColaborador() {
         </ModalBody>
 
         <ModalFooter>
-          <CButton color="success" onClick={() => insertar()} text="Guardar"></CButton>
+          <CButton color="success" onClick={() => null} text="Guardar"></CButton>
           <CButton color="danger" onClick={() => setmodalInsertar(false)} text="Cancelar" />
         </ModalFooter>
       </Modal>

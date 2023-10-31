@@ -109,14 +109,14 @@ function DemoTresTablas() {
       console.log({ dataUsuarios2 });
     }
   }, []);
-  const [fechaPost, setFechaPost] = useState<String | Date>();
+  const [fechaPost, setFechaPost] = useState<String | Date>(new Date());
   const sendEmail = () => {
-    const fechaSelected = fechaPost ? fechaPost : "2023-10-12";
+    const fechaSelected = fechaPost ? format(new Date(fechaPost), "yyyy-MM-dd") : "2023-10-12";
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
         // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
-        // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
+        // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
+        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
         subject: "Corte del dia",
         text: "Corte",
         sucursal: dataUsuarios2[0]?.sucursal,
@@ -257,11 +257,14 @@ function DemoTresTablas() {
     ],
     []
   );
-  const arregloConID = dataCorteEmailA.map((item, index) => ({
-    id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
-    value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
-    label: item.FormadePago,
-  }));
+  const arregloConID = dataCorteEmailA
+    ? dataCorteEmailA.map((item, index) => ({
+        id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
+        value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
+        label: item.FormadePago,
+      }))
+    : [];
+
   const arregloFormateado = arregloConID.slice(0, -1);
 
   const arregloCorte3Servicio = dataCorteEmailC?.map((item, index) => ({
@@ -284,7 +287,8 @@ function DemoTresTablas() {
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <h1>
-            Corte - {dataUsuarios2[0]?.d_sucursal} <AiOutlineFileText size={30} />
+            Corte - {dataUsuarios2[0]?.d_sucursal} {fechaPost}
+            <AiOutlineFileText size={30} />
           </h1>
         </div>
         <Row>
@@ -298,6 +302,7 @@ function DemoTresTablas() {
               defaultValue={new Date().toISOString().split("T")[0]}
               onChange={(value) => {
                 setFechaPost(value.target.value);
+                console.log(fechaPost);
               }}
             />
           </Col>
@@ -313,57 +318,61 @@ function DemoTresTablas() {
       <Container style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
-          <MaterialReactTable
-            columns={columnsA}
-            data={dataCorteEmailA} // Reemplaza "reportes1" con tus datos de la primera tabla
-            enableRowSelection={false}
-            rowSelectionCheckboxes={false}
-            initialState={{ density: "compact" }}
-            renderTopToolbarCustomActions={({ table }) => (
-              <>
-                <h4>Corte 1</h4>
-                <Button
-                  onClick={handleExportDataCorte1}
-                  variant="contained"
-                  color="withe"
-                  style={{ marginLeft: "auto" }}
-                  startIcon={<AiFillFileExcel />}
-                  aria-label="Exportar a Excel"
-                >
-                  <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
-                </Button>
-              </>
-            )}
-          />
+          {dataCorteEmailA && dataCorteEmailA.length > 0 ? (
+            <MaterialReactTable
+              columns={columnsA}
+              data={dataCorteEmailA} // Reemplaza "reportes1" con tus datos de la primera tabla
+              enableRowSelection={false}
+              rowSelectionCheckboxes={false}
+              initialState={{ density: "compact" }}
+              renderTopToolbarCustomActions={({ table }) => (
+                <>
+                  <h4>Corte 1</h4>
+                  <Button
+                    onClick={handleExportDataCorte1}
+                    variant="contained"
+                    color="withe"
+                    style={{ marginLeft: "auto" }}
+                    startIcon={<AiFillFileExcel />}
+                    aria-label="Exportar a Excel"
+                  >
+                    <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+                  </Button>
+                </>
+              )}
+            />
+          ) : null}
         </div>
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
-          <MaterialReactTable
-            columns={columnsB}
-            data={dataCorteEmailB} // Reemplaza "reportes1" con tus datos de la primera tabla
-            enableRowSelection={false}
-            rowSelectionCheckboxes={false}
-            initialState={{ density: "compact" }}
-            renderTopToolbarCustomActions={({ table }) => (
-              <>
-                <h4>Corte 2</h4>
-                <Button
-                  onClick={handleExportDataCorte2}
-                  variant="contained"
-                  color="withe"
-                  style={{ marginLeft: "auto" }}
-                  startIcon={<AiFillFileExcel />}
-                  aria-label="Exportar a Excel"
-                >
-                  <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
-                </Button>
-              </>
-            )}
-          />
+          {dataCorteEmailB && dataCorteEmailB.length > 0 ? (
+            <MaterialReactTable
+              columns={columnsB}
+              data={dataCorteEmailB} // Reemplaza "reportes1" con tus datos de la primera tabla
+              enableRowSelection={false}
+              rowSelectionCheckboxes={false}
+              initialState={{ density: "compact" }}
+              renderTopToolbarCustomActions={({ table }) => (
+                <>
+                  <h4>Corte 2</h4>
+                  <Button
+                    onClick={handleExportDataCorte2}
+                    variant="contained"
+                    color="withe"
+                    style={{ marginLeft: "auto" }}
+                    startIcon={<AiFillFileExcel />}
+                    aria-label="Exportar a Excel"
+                  >
+                    <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+                  </Button>
+                </>
+              )}
+            />
+          ) : null}
         </div>
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
-          {dataCorteEmailC ? (
+          {dataCorteEmailC && dataCorteEmailC.length > 0 ? (
             <MaterialReactTable
               columns={columnsC}
               data={dataCorteEmailC} // Reemplaza "reportes1" con tus datos de la primera tabla
