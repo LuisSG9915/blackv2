@@ -1,0 +1,16 @@
+.form{
+    display: flex;
+    gap: 12px
+}
+
+/* Estilo para filas con Descanso "Sí" */
+.si {
+    background-color: pink;
+    /* Cambia el color de fondo según tu preferencia */
+}
+
+/* Estilo para filas con Descanso "No" */
+.no {
+    /* background-color: pink; */
+    /* Cambia el color de fondo según tu preferencia */
+}
