@@ -23,8 +23,9 @@ import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajador
 import { Trabajador } from "../../models/Trabajador";
 import { UserResponse } from "../../models/Home";
 import CurrencyInput from "react-currency-input-field";
-
 import { HiOutlineTrophy } from "react-icons/hi2";
+import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import { Sucursal } from "../../models/Sucursal";
 function Metas() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -69,7 +70,7 @@ function Metas() {
   const [data, setData] = useState<MetasCol[]>([]);
   const { dataCias, fetchCias } = useCias();
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
-
+  const { dataSucursales } = useSucursales();
   const [form, setForm] = useState<MetasCol>({
     id: 0,
     año: 0,
@@ -81,12 +82,16 @@ function Metas() {
     meta4: 0,
     meta5: 0,
     meta6: 0,
+    sucursal: 0,
   });
 
   const mostrarModalActualizar = (dato: MetasCol) => {
     setForm(dato);
     setModalActualizar(true);
   };
+
+
+  const [selectedWorkers, setSelectedWorkers] = useState<Trabajador[]>([]);
 
   // const mostrarModalActualizar = (dato: TiposdeBajas) => {
   //   setModalActualizar(true);
@@ -97,7 +102,7 @@ function Metas() {
   const [camposFaltantes, setCamposFaltantes] = useState<Number[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador", "meta1", "meta2", "meta3", "meta4", "meta5"];
+    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador", "meta1", "meta2", "meta3", "meta4", "meta5", "sucursal"];
     const camposVacios: Number[] = [];
 
     camposRequeridos.forEach((campo: keyof MetasCol) => {
@@ -161,7 +166,8 @@ function Metas() {
     if (validarCampos() === true) {
       await jezaApi
         .post(
-          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0`
+
+          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0&sucursal=${form.sucursal}`
         )
         .then((response) => {
           Swal.fire({
@@ -222,7 +228,7 @@ function Metas() {
     if (validarCampos() === true) {
       await jezaApi
         .put(
-          `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0`
+          `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0&sucursal=${form.sucursal}`
         )
         .then((response) => {
           Swal.fire({
@@ -292,6 +298,7 @@ function Metas() {
 
   useEffect(() => {
     getMetas();
+
   }, []);
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -307,6 +314,13 @@ function Metas() {
     setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(form);
   };
+
+
+  // Asegúrate de que la función setForm actualiza el estado correctamente
+  // Este console.log no reflejará los cambios inmediatamente debido a la naturaleza asincrónica de setForm
+  console.log(form);
+
+
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -331,6 +345,7 @@ function Metas() {
       meta4: 0,
       meta5: 0,
       meta6: 0,
+      sucursal: 0,
     });
   };
 
@@ -355,6 +370,12 @@ function Metas() {
       field: "nombre",
       headerName: "Colaborador",
       width: 200,
+      headerClassName: "custom-header",
+    },
+    {
+      field: "Expr1",
+      headerName: "Sucursal",
+      width: 150,
       headerClassName: "custom-header",
     },
     {
@@ -398,6 +419,7 @@ function Metas() {
       width: 150,
       headerClassName: "custom-header",
     },
+
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -508,13 +530,41 @@ function Metas() {
                 <Row>
                   <Col md={"6"}>
                     <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
+
                   </Col>
-                  <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
+                  <Col md={"6"} style={{ marginBottom: 10 }}>
+                    <Label>Sucursal:</Label>
+                    <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
+                      <option value="">Selecciona sucursal</option>
+                      {dataSucursales.map((sucursal) => (
+                        <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                          {sucursal.nombre}
+                        </option>
+                      ))}
+                    </Input>
                   </Col>
+                  {/* 
+                  <Col md={"6"} style={{ marginBottom: 10 }}>
+                    <Label>Sucursal:</Label>
+                    <select
+                      name="sucursal"
+                      id="exampleSelect"
+                      value={form.sucursal}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecciona sucursal</option>
+                      {dataSucursales.map((sucursal) => (
+                        <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                          {sucursal.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </Col> */}
+
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
-                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
+                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange} disabled={true} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
+                    >
                       <option value="">Selecciona empresa</option>
                       {dataTrabajadores.map((colaborador: Trabajador) => (
                         <option key={colaborador.id} value={colaborador.id}>
@@ -595,6 +645,17 @@ function Metas() {
                   <Col md={"6"}>
                     <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
                   </Col>
+                  <Col md={"6"} style={{ marginBottom: 10 }}>
+                    <Label>Sucursal:</Label>
+                    <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
+                      <option value="">Selecciona sucursal</option>
+                      {dataSucursales.map((sucursal) => (
+                        <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                          {sucursal.nombre}
+                        </option>
+                      ))}
+                    </Input>
+                  </Col>
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
                     <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
@@ -607,6 +668,7 @@ function Metas() {
                     </Input>
                     <br />
                   </Col>
+
                   <Col md={"6"}>
                     <label> Cifra color:</label>
                     <CurrencyInput

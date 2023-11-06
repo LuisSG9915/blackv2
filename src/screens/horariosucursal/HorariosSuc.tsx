@@ -27,10 +27,17 @@ import Swal from "sweetalert2";
 import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
+import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import { Sucursal } from "../../models/Sucursal";
+
 function HorariosSuc() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+  const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
+  const { dataSucursales } = useSucursales();
+
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -108,6 +115,12 @@ function HorariosSuc() {
     })
   );
 
+  const handleSucursalChange = (e) => {
+    const { value } = e.target;
+    setSelectedSuc(value);
+  };
+
+
   const handleEditCheckboxChange = (field, checked) => {
     if (checked) {
       // Si el checkbox está marcado, establecer h1 a h4 en "00:00"
@@ -131,10 +144,12 @@ function HorariosSuc() {
   const handleEditSubmit = () => {
     if (selectedHorario) {
       // Realiza la solicitud PUT con los datos actualizados del horario
-      const { id, id_empleado, fecha, h1, h2, h3, h4, descanso } = selectedHorario;
+      const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal, descanso } = selectedHorario;
 
       jezaApi
-        .put(`/Horario?id=${id}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${descanso}`)
+        .put(` /HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${false}`)
+
+        // .put(`/Horario?id=${id}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${descanso}`)
         .then((response) => {
           console.log("Horario actualizado:", response.data);
           Swal.fire({
@@ -156,6 +171,7 @@ function HorariosSuc() {
 
   const openEditModal = (horario) => {
     setSelectedHorario(horario);
+    setSelectedSuc(selectedSuc);
     setEditModalOpen(true);
   };
 
@@ -252,6 +268,7 @@ function HorariosSuc() {
         h3: "",
         h4: "",
         descanso: false, // Puedes establecer valores predeterminados para otros campos
+        sucursal: 0,
       };
     });
 
@@ -312,7 +329,7 @@ function HorariosSuc() {
 
   const getHorarios = () => {
     jezaApi
-      .get(`/Horario?idTrabajador=${selectedId}&fecha=${selectedDate}`)
+      .get(`/HorarioApoyo?idTrabajador=${selectedId}&fecha=${selectedDate}`)
       .then((response) => {
         setHorarios(response.data);
 
@@ -455,10 +472,10 @@ function HorariosSuc() {
         size: 100,
       },
       {
-        accessorKey: "descanso",
-        header: "Descanso",
+        accessorKey: "sucursal",
+        header: "Surcursal",
         size: 100,
-        Cell: ({ row }) => <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>,
+        // Cell: ({ row }) => <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>,
       },
     ],
     []
@@ -569,7 +586,7 @@ function HorariosSuc() {
             <CardBody>
               <Row>
                 <Col sm="12">
-                  <h3>Horario de: {selectedName}</h3>
+                  <h3>Cambio de sucursal de: {selectedName}</h3>
                   <br />
                 </Col>
                 <Col sm="6">
@@ -584,7 +601,7 @@ function HorariosSuc() {
                 </Col>
 
                 <Col sm="6">
-                  <Label> Seleccione una fecha: </Label>
+                  <Label> Seleccione fecha de cambio: </Label>
                   <Input type="date" value={selectedDate} onChange={handleDateChange} />
                   <br />
                 </Col>
@@ -592,7 +609,7 @@ function HorariosSuc() {
                 {/* parte buena */}
                 <Col sm="6">
                   <Button color="primary" onClick={consulta}>
-                    Consultar
+                    Consultar días de la semana
                   </Button>
                   {showButton && (
                     <Button
@@ -661,7 +678,7 @@ function HorariosSuc() {
                   <th>Comida</th>
                   <th>Regreso</th>
                   <th>Salida</th>
-                  <th>Descanso</th>
+                  <th>Sucursal</th>
                 </tr>
               </thead>
               {/* <tbody>
@@ -688,8 +705,8 @@ function HorariosSuc() {
                             type="date"
                             name="fecha"
                             value={formData[dayIndex]?.fecha || ""}
-                            // onChange={(e) => handleDateChange(e, dayIndex)}
-                            onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
+                            onChange={(e) => handleDateChange(e, dayIndex)}
+                          // onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
                           />
                         </td>
                         <td>
@@ -728,7 +745,7 @@ function HorariosSuc() {
                             disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
                           />
                         </td>
-                        <td align="center">
+                        {/* <td align="center">
                           <Input
                             type="checkbox"
                             name="descanso"
@@ -736,7 +753,29 @@ function HorariosSuc() {
                             disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
                             onChange={(e) => handleCheckboxChange(e, dayIndex)}
                           />
+                        </td> */}
+                        <td>
+
+                          <select
+                            name="sucursal"
+                            id="exampleSelect"
+                            value={selectedSuc}
+                            onChange={handleSucursalChange}
+                          >
+                            <option value="">Selecciona sucursal</option>
+                            {dataSucursales.map((sucursal) => (
+                              <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                                {sucursal.nombre}
+                              </option>
+                            ))}
+                          </select>
                         </td>
+                        {/* <Input
+                          type="text"
+                          name="id_empleado"
+                          value={formData[dayIndex]?.id_empleado || ""}
+                          onChange={(e) => handleInputChange(e, dayIndex)}
+                        /> */}
                       </tr>
                     );
                   } else {
@@ -791,13 +830,32 @@ function HorariosSuc() {
                     <td>
                       <input type="time" value={selectedHorario.h4} onChange={(e) => handleEditInputChange("h4", e.target.value)} />
                     </td>
-                    <td>
+                    {/* <td>
                       <input
                         type="checkbox"
                         checked={selectedHorario.descanso}
                         onChange={(e) => handleEditCheckboxChange("descanso", e.target.checked)}
                       />
+                    </td> */}
+                    <td>
+
+                      <select
+                        name="sucursal"
+                        id="exampleSelect"
+                        value={selectedSuc}
+                        onChange={handleSucursalChange}
+                      >
+                        <option value="">Selecciona sucursal</option>
+                        {dataSucursales.map((sucursal) => (
+                          <option key={sucursal.sucursal} value={sucursal.sucursal}>
+                            {sucursal.nombre}
+                          </option>
+                        ))}
+                      </select>
                     </td>
+
+
+
                   </tr>
                 </tbody>
               </Table>
