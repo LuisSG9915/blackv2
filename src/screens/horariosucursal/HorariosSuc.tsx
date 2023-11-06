@@ -38,7 +38,6 @@ function HorariosSuc() {
   const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
   const { dataSucursales } = useSucursales();
 
-
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -92,7 +91,9 @@ function HorariosSuc() {
   const handleEditInputChange = (field, value) => {
     // Desmarcar el checkbox si h1 a h4 tienen un valor distinto de "00:00"
     if (field === "h1" || field === "h2" || field === "h3" || field === "h4") {
-      const allTimesEmpty = ![selectedHorario.h1, selectedHorario.h2, selectedHorario.h3, selectedHorario.h4].some((time) => time !== "00:00");
+      const allTimesEmpty = ![selectedHorario.h1, selectedHorario.h2, selectedHorario.h3, selectedHorario.h4].some(
+        (time) => time !== "00:00"
+      );
 
       setSelectedHorario((prevHorario) => ({
         ...prevHorario,
@@ -120,7 +121,6 @@ function HorariosSuc() {
     setSelectedSuc(value);
   };
 
-
   const handleEditCheckboxChange = (field, checked) => {
     if (checked) {
       // Si el checkbox está marcado, establecer h1 a h4 en "00:00"
@@ -146,10 +146,15 @@ function HorariosSuc() {
       // Realiza la solicitud PUT con los datos actualizados del horario
       const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal, descanso } = selectedHorario;
 
+      /*      console.log(
+        ` /HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=false`
+      );
+ */
       jezaApi
-        .put(` /HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${false}`)
+        .put(
+          `/HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}`
+        )
 
-        // .put(`/Horario?id=${id}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=${descanso}`)
         .then((response) => {
           console.log("Horario actualizado:", response.data);
           Swal.fire({
@@ -481,7 +486,6 @@ function HorariosSuc() {
     []
   );
 
-
   const handleSubmit = () => {
     // Verifica si todos los campos h1 a h4 están llenos en al menos un día
     const allFieldsFilled = formData.some((dayData) => {
@@ -513,7 +517,9 @@ function HorariosSuc() {
 
         //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
         jezaApi
-          .post(`/HorariosApoyo?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&sucursal=${selectedSuc}`)
+          .post(
+            `/HorariosApoyo?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&sucursal=${selectedSuc}`
+          )
 
           .then((response) => {
             // Incrementa el contador en cada solicitud exitosa
@@ -580,7 +586,8 @@ function HorariosSuc() {
 
         <Container>
           <h1>
-            Cambio sucursal<MdHistoryToggleOff size={35} />
+            Cambio sucursal
+            <MdHistoryToggleOff size={35} />
           </h1>
           <Card>
             <CardBody>
@@ -706,7 +713,7 @@ function HorariosSuc() {
                             name="fecha"
                             value={formData[dayIndex]?.fecha || ""}
                             onChange={(e) => handleDateChange(e, dayIndex)}
-                          // onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
+                            // onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
                           />
                         </td>
                         <td>
@@ -755,7 +762,6 @@ function HorariosSuc() {
                           />
                         </td> */}
                         <td>
-
                           <select
                             name="sucursal"
                             id="exampleSelect"
@@ -819,16 +825,32 @@ function HorariosSuc() {
                   <tr>
                     <td></td>
                     <td>
-                      <input type="time" value={selectedHorario.h1} onChange={(e) => handleEditInputChange("h1", e.target.value)} />
+                      <input
+                        type="time"
+                        value={selectedHorario.h1}
+                        onChange={(e) => handleEditInputChange("h1", e.target.value)}
+                      />
                     </td>
                     <td>
-                      <input type="time" value={selectedHorario.h2} onChange={(e) => handleEditInputChange("h2", e.target.value)} />
+                      <input
+                        type="time"
+                        value={selectedHorario.h2}
+                        onChange={(e) => handleEditInputChange("h2", e.target.value)}
+                      />
                     </td>
                     <td>
-                      <input type="time" value={selectedHorario.h3} onChange={(e) => handleEditInputChange("h3", e.target.value)} />
+                      <input
+                        type="time"
+                        value={selectedHorario.h3}
+                        onChange={(e) => handleEditInputChange("h3", e.target.value)}
+                      />
                     </td>
                     <td>
-                      <input type="time" value={selectedHorario.h4} onChange={(e) => handleEditInputChange("h4", e.target.value)} />
+                      <input
+                        type="time"
+                        value={selectedHorario.h4}
+                        onChange={(e) => handleEditInputChange("h4", e.target.value)}
+                      />
                     </td>
                     {/* <td>
                       <input
@@ -838,13 +860,7 @@ function HorariosSuc() {
                       />
                     </td> */}
                     <td>
-
-                      <select
-                        name="sucursal"
-                        id="exampleSelect"
-                        value={selectedSuc}
-                        onChange={handleSucursalChange}
-                      >
+                      <select name="sucursal" id="exampleSelect" value={selectedSuc} onChange={handleSucursalChange}>
                         <option value="">Selecciona sucursal</option>
                         {dataSucursales.map((sucursal) => (
                           <option key={sucursal.sucursal} value={sucursal.sucursal}>
@@ -853,9 +869,6 @@ function HorariosSuc() {
                         ))}
                       </select>
                     </td>
-
-
-
                   </tr>
                 </tbody>
               </Table>
