@@ -39,12 +39,12 @@ function Webluetooth() {
         // Cerrar la conexión
         await server.disconnect();
 
-        console.log("Impresión exitosa");
+        alert("Impresión exitosa");
       } catch (error) {
-        console.error("Error al imprimir:", error);
+        alert("Error al imprimir:", error);
       }
     } else {
-      console.error("Por favor, selecciona un dispositivo Bluetooth primero.");
+      alert("Por favor, selecciona un dispositivo Bluetooth primero.");
     }
   }
 
