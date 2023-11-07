@@ -543,6 +543,7 @@ function Productos() {
 
   // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
   const insertar = async () => {
+    const fechaHoy = new Date();
     const permiso = await filtroSeguridad("CAT_ALMACEN_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -586,8 +587,8 @@ function Productos() {
             tiempo: form.tiempo,
             comision: form.comision,
             productoLibre: form.productoLibre,
-            fecha_act: "2023-05-30",
-            fecha_alta: "2023-05-30",
+            fecha_act: fechaHoy,
+            fecha_alta: fechaHoy,
           },
         })
         .then((response) => {
@@ -655,6 +656,7 @@ function Productos() {
 
   // AQUÉ COMIENZA MÉTODO PUT PARA ACTUALIZAR REGISTROS
   const editar = async () => {
+    const fechaHoy = new Date();
     const permiso = await filtroSeguridad("CAT_ALMACEN_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -697,8 +699,8 @@ function Productos() {
             tiempo: Number(form.tiempo),
             comision: Number(form.comision),
             productoLibre: form.productoLibre,
-            fecha_act: "2023-05-30T18:38:35",
-            fecha_alta: "2023-05-30T18:38:35",
+            fecha_act: fechaHoy,
+            fecha_alta: form.fecha_alta,
           },
         })
         .then((response) => {
@@ -749,7 +751,7 @@ function Productos() {
   const createProductoSustito = () => {
     jezaApi
       .post(
-        `ProductoSustituto?id_Producto=${productoSustitutoForm.id_Producto}&clave_real=${productoSustitutoForm.clave_real}`
+        `ProductoSustituto?id_Producto=${ProductoSustitutoForm.id_Producto}&clave_real=${ProductoSustitutoForm.clave_real}`
       )
       .then(() => {
         Swal.fire({

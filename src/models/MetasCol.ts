@@ -1,3 +1,4 @@
+import { Sucursal } from './Sucursal';
 export interface MetasCol {
     id: number;  
     año: number;
@@ -9,5 +10,6 @@ export interface MetasCol {
     meta4: number;
     meta5: number;
     meta6: number;
+    sucursal: number;
   }
   
