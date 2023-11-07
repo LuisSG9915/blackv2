@@ -14,7 +14,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { jezaApi } from "../../api/jezaApi";
-import { format } from "date-fns";
+import { format } from "date-fns-tz";
 
 function DemoTresTablas() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -109,18 +109,19 @@ function DemoTresTablas() {
       console.log({ dataUsuarios2 });
     }
   }, []);
-  const [fechaPost, setFechaPost] = useState<String | Date>(new Date());
+  const [fechaPost, setFechaPost] = useState<String>();
+
   const sendEmail = () => {
-    const fechaSelected = fechaPost ? format(new Date(fechaPost), "yyyy-MM-dd") : "2023-10-12";
+    const fechaSelected = fechaPost ? fechaPost : format(new Date(), "yyyy-MM-dd");
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
-        // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-        // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
-        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
-        subject: "Corte del dia",
+        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
+        // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
+        subject: `Corte del dia de: ${dataUsuarios2[0]?.d_sucursal}`,
         text: "Corte",
         sucursal: dataUsuarios2[0]?.sucursal,
         fecha: fechaSelected,
+        dSucurasl: dataUsuarios2[0]?.d_sucursal,
       })
       .then(() =>
         Swal.fire({
@@ -133,6 +134,7 @@ function DemoTresTablas() {
         alert(error);
       });
   };
+
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
   const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({
     sucursal: dataUsuarios2[0]?.sucursal,
@@ -270,13 +272,14 @@ function DemoTresTablas() {
   const arregloCorte3Servicio = dataCorteEmailC?.map((item, index) => ({
     id: index + 1,
     value: item.ventaServicios,
-    label: item.colaborador,
+    label: item.colaborador.split(" ")[0],
   }));
   const arregloCorte3Venta = dataCorteEmailC?.map((item, index) => ({
     id: index + 1,
     value: item.ventaProductos,
-    label: item.colaborador,
+    label: item.colaborador.split(" ")[0],
   }));
+  const zonaHoraria = "America/Mexico_City";
 
   return (
     <>
@@ -287,7 +290,7 @@ function DemoTresTablas() {
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <h1>
-            Corte - {dataUsuarios2[0]?.d_sucursal} {fechaPost}
+            Corte - {dataUsuarios2[0]?.d_sucursal} - {fechaPost ? fechaPost : format(new Date(), "P")}
             <AiOutlineFileText size={30} />
           </h1>
         </div>
@@ -302,12 +305,10 @@ function DemoTresTablas() {
               defaultValue={new Date().toISOString().split("T")[0]}
               onChange={(value) => {
                 setFechaPost(value.target.value);
-                console.log(fechaPost);
               }}
             />
           </Col>
           <Col xs={3}>
-            {/* <Button disabled={dataCorteEmailA.length == 0 || dataCorteEmailB.length == 0 || dataCorteEmailC.length == 0} onClick={() => sendEmail()}> */}
             <Button onClick={() => sendEmail()}>Enviar correo</Button>
           </Col>
         </Row>
@@ -323,11 +324,10 @@ function DemoTresTablas() {
               columns={columnsA}
               data={dataCorteEmailA} // Reemplaza "reportes1" con tus datos de la primera tabla
               enableRowSelection={false}
-              rowSelectionCheckboxes={false}
               initialState={{ density: "compact" }}
               renderTopToolbarCustomActions={({ table }) => (
                 <>
-                  <h4>Corte 1</h4>
+                  <h4>Corte 1 Resumen de ventas</h4>
                   <Button
                     onClick={handleExportDataCorte1}
                     variant="contained"
@@ -350,11 +350,10 @@ function DemoTresTablas() {
               columns={columnsB}
               data={dataCorteEmailB} // Reemplaza "reportes1" con tus datos de la primera tabla
               enableRowSelection={false}
-              rowSelectionCheckboxes={false}
               initialState={{ density: "compact" }}
               renderTopToolbarCustomActions={({ table }) => (
                 <>
-                  <h4>Corte 2</h4>
+                  <h4>Corte 2 Resumen</h4>
                   <Button
                     onClick={handleExportDataCorte2}
                     variant="contained"
@@ -370,6 +369,7 @@ function DemoTresTablas() {
             />
           ) : null}
         </div>
+
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
           {dataCorteEmailC && dataCorteEmailC.length > 0 ? (
@@ -377,7 +377,6 @@ function DemoTresTablas() {
               columns={columnsC}
               data={dataCorteEmailC} // Reemplaza "reportes1" con tus datos de la primera tabla
               enableRowSelection={false}
-              rowSelectionCheckboxes={false}
               initialState={{ density: "compact" }}
               renderTopToolbarCustomActions={({ table }) => (
                 <>
@@ -397,8 +396,10 @@ function DemoTresTablas() {
             />
           ) : null}
         </div>
-        <div>
-          <h4>Corte 1 </h4>
+
+        <div style={{ width: "400px", overflow: "auto" }}>
+          <div className="juntos"></div>
+          <h4>Gráfico resumen de ventas </h4>
           <PieChart
             series={[
               {
@@ -412,14 +413,15 @@ function DemoTresTablas() {
                 faded: { innerRadius: 30, additionalRadius: -30 },
               },
             ]}
-            width={450}
+            width={500}
             height={350}
           />
         </div>
         <div>
-          <h4>Corte 3 resumen de servicios</h4>
+          <h4>Gráfico resumen de servicios</h4>
           {arregloCorte3Servicio ? (
             <PieChart
+              colors={["orange", "purple", "pink"]}
               series={[
                 {
                   arcLabel: (item) => {
@@ -435,14 +437,14 @@ function DemoTresTablas() {
                   faded: { innerRadius: 30, additionalRadius: -30 },
                 },
               ]}
-              width={450}
+              width={500}
               height={350}
             />
           ) : null}
         </div>
 
         <div>
-          <h4>Corte 3 resumen de ventas</h4>
+          <h4>Gráfico resumen de productos</h4>
           {arregloCorte3Venta ? (
             <PieChart
               colors={["orange", "purple", "pink"]}
@@ -461,7 +463,7 @@ function DemoTresTablas() {
                   faded: { innerRadius: 30, additionalRadius: -30 },
                 },
               ]}
-              width={450}
+              width={500}
               height={350}
             />
           ) : null}

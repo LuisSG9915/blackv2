@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { CorteA, CorteB, CorteC } from "../../models/CortesEmail";
-import { format } from "date-fns";
+import { format } from "date-fns-tz";
 
 interface Props {
   sucursal: number;
@@ -17,11 +17,12 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const [ColumnasB, setColumnasB] = useState([]);
   const [ColumnasC, setColumnasC] = useState([]);
   const currentDate = new Date();
+  const zonaHoraria = "America/Mexico_City";
 
   const fetchCorteA = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
-        `/CorteSeccionA?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd")}`
+        `/CorteSeccionA?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd", { timeZone: zonaHoraria })}`
       );
       setDataCorteEmailA(response.data);
     } catch (error) {
@@ -31,7 +32,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const fetchCorteB = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
-        `/CorteSeccionB?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd")}`
+        `/CorteSeccionB?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd", { timeZone: zonaHoraria })}`
       );
       setDataCorteEmailB(response.data);
       if (response.data.length > 0) {
@@ -50,7 +51,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const fetchCorteC = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
-        `/CorteSeccionC?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd")}`
+        `/CorteSeccionC?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd", { timeZone: zonaHoraria })}`
       );
       setDataCorteEmailC(response.data);
       if (response.data.length > 0) {

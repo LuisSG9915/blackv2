@@ -25,6 +25,7 @@
     "bootstrap": "^5.2.3",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0",
     "escpos": "^3.0.0-alpha.6",
     "export-to-csv": "^0.2.2",
     "material-react-table": "^1.14.0",

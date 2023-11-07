@@ -2,20 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import {
-  Row,
-  Container,
-  Col,
-  Card,
-  InputGroup,
-  Alert,
-  Input,
-  FormGroup,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from "reactstrap";
+import { Row, Container, Col, Card, InputGroup, Alert, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
@@ -36,7 +23,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 // sssss
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
- 
+
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
@@ -63,7 +50,6 @@ function Cias() {
           handleRedirect();
         } else {
           setShowView(true);
-     
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -74,15 +60,8 @@ function Cias() {
     }
   };
 
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [data, setData] = useState<Cia[]>([]);
   const [form, setForm] = useState<Cia>({
@@ -391,7 +370,10 @@ function Cias() {
         <Row>
           <Container fluid>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <h1> Empresas <BsBuildingAdd size={30}></BsBuildingAdd></h1>
+              <h1>
+                {" "}
+                Empresas <BsBuildingAdd size={30}></BsBuildingAdd>
+              </h1>
             </div>
 
             <br />
@@ -479,39 +461,19 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="nombre"
-                  labelName="Nombre:"
-                  value={form.nombre}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
               </Col>
               <Col md="6">
                 <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
               </Col>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="domicilio"
-                  labelName="Domicilio:"
-                  value={form.domicilio}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
               </Col>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="regimenFiscal"
-                  labelName="Régimen fiscal:"
-                  value={form.regimenFiscal}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
               </Col>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="cpFiscal"
-                  labelName="Código postal:"
-                  value={form.cpFiscal}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
               </Col>
             </Row>
           </FormGroup>
@@ -535,39 +497,19 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="nombre"
-                  labelName="Nombre:"
-                  value={form.nombre}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
               </Col>
               <Col md="6">
                 <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
               </Col>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="domicilio"
-                  labelName="Domicilio:"
-                  value={form.domicilio}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
               </Col>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="regimenFiscal"
-                  labelName="Régimen fiscal:"
-                  value={form.regimenFiscal}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
               </Col>
               <Col md="6">
-                <CFormGroupInput
-                  handleChange={handleChange}
-                  inputName="cpFiscal"
-                  labelName="Código postal:"
-                  value={form.cpFiscal}
-                />
+                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
               </Col>
             </Row>
           </FormGroup>
