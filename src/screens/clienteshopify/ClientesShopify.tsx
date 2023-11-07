@@ -364,9 +364,20 @@ function ClientesShopify() {
         size: 100,
       },
       {
+        accessorKey: "telefono",
+        header: "Telefono",
+        size: 100,
+        Cell: ({ row }) => {
+          return <p>{row.original.telefono ? row.original.telefono : "Sin telefono"}</p>;
+        },
+      },
+      {
         accessorKey: "email",
         header: "Correo",
         size: 100,
+        Cell: ({ row }) => {
+          return <p>{row.original.email ? row.original.email : "Sin correo"}</p>;
+        },
       },
     ],
     []

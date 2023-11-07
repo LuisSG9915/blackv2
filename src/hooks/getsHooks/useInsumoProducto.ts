@@ -51,7 +51,7 @@ export const useInsumosProductos = ({ descripcion, insumo, inventariable, obsole
 
   useEffect(() => {
     fetchInsumosProducto();
-  }, [dataAlmacenes, sucursal, cia]);
+  }, [dataAlmacenes, sucursal, cia, descripcion]);
 
   return { datoInsumosProducto, fetchInsumosProducto };
 };

@@ -17,12 +17,14 @@ interface Props {
   datoVentaSeleccionado: any;
   handleGetFetch: any;
   datoInsumosProducto: InsumoExistencia[];
+  setDescInsumos?: React.Dispatch<React.SetStateAction<string>>;
+  descInsumos?: string;
 }
 export interface Estilistas {
   id: number;
   estilista: string;
 }
-const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFetch, datoInsumosProducto }: Props) => {
+const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFetch, datoInsumosProducto, setDescInsumos, descInsumos }: Props) => {
   const [form, setForm] = useState({
     marca: "",
     cantidad: "",
@@ -162,7 +164,13 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         }}
         renderTopToolbarCustomActions={({ table }) => (
           <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Input type="text" placeholder="Codigo de barras" value={form.marca} onChange={(e) => setForm({ ...form, marca: e.target.value })} />
+            <Input
+              type="text"
+              placeholder="Codigo de barras"
+              value={descInsumos == "%" ? "" : descInsumos}
+              defaultValue={""}
+              onChange={(e) => setDescInsumos && setDescInsumos(e.target.value ? e.target.value : "%")}
+            />
             <AiOutlineBarcode style={{ fontSize: "24px" }} />
           </Box>
         )}
