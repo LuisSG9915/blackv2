@@ -71,7 +71,7 @@ import Metas from "./screens/metas/Metas";
 import BluetoothPrint from "./screens/BluetoothPrint";
 import BloqueosColaborador from "./screens/bloqueo colaborador/BloqueosColaborador";
 import HorariosSuc from "./screens/horariosucursal/HorariosSuc";
-
+import Webluetooth from "./screens/Webluetooth";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -350,6 +350,10 @@ const router = createBrowserRouter([
   {
     path: "/HorariosSuc",
     element: <HorariosSuc />,
+  },
+  {
+    path: "/webBluetooth",
+    element: <Webluetooth />,
   },
 ]);
 
