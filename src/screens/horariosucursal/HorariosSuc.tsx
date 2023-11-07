@@ -144,7 +144,8 @@ function HorariosSuc() {
   const handleEditSubmit = () => {
     if (selectedHorario) {
       // Realiza la solicitud PUT con los datos actualizados del horario
-      const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal, descanso } = selectedHorario;
+      const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal
+      } = selectedHorario;
 
       /*      console.log(
         ` /HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=false`
@@ -477,7 +478,7 @@ function HorariosSuc() {
         size: 100,
       },
       {
-        accessorKey: "sucursal",
+        accessorKey: "nombreSucursal",
         header: "Surcursal",
         size: 100,
         // Cell: ({ row }) => <div className={row.original.descanso ? "si" : "no"}>{row.original.descanso ? "Sí" : "No"}</div>,
@@ -561,6 +562,7 @@ function HorariosSuc() {
               text: "Todos los horarios se han actualizado.",
             });
             consulta();
+
 
             toggleModalCrear();
           });
@@ -713,7 +715,7 @@ function HorariosSuc() {
                             name="fecha"
                             value={formData[dayIndex]?.fecha || ""}
                             onChange={(e) => handleDateChange(e, dayIndex)}
-                            // onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
+                          // onChange={(e) => handleDateChange(e)} // Utiliza la misma función para actualizar la fecha
                           />
                         </td>
                         <td>

@@ -26,6 +26,9 @@ import CurrencyInput from "react-currency-input-field";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+
+import { getMonthName } from './tuRuta/getMonthName';
+
 function Metas() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -91,7 +94,7 @@ function Metas() {
   };
 
 
-  const [selectedWorkers, setSelectedWorkers] = useState<Trabajador[]>([]);
+
 
   // const mostrarModalActualizar = (dato: TiposdeBajas) => {
   //   setModalActualizar(true);
@@ -182,7 +185,7 @@ function Metas() {
           console.log(error);
           Swal.fire({
             icon: "error",
-            text: "Ocurrió un error al crear la meta",
+            text: "Ocurrió un error al crear la meta, comuniquese con sistemas",
             confirmButtonColor: "#d63031",
           });
         });
@@ -253,11 +256,34 @@ function Metas() {
   };
 
 
-
-
-
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
+  // const eliminar = async (dato: MetasCol) => {
+  //   const permiso = await filtroSeguridad("CAT_META_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar esté registro?`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getMetas();
+  //       });
+  //     }
+  //   });
+  // };
   const eliminar = async (dato: MetasCol) => {
     const permiso = await filtroSeguridad("CAT_META_DEL");
     if (permiso === false) {
@@ -271,19 +297,30 @@ function Metas() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí, eliminar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`).then(() => {
+        try {
+          await jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`);
+
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
             confirmButtonColor: "#3085d6",
           });
           getMetas();
-        });
+        } catch (error) {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Ocurrió un error al eliminar el registro",
+            confirmButtonColor: "#d63031",
+          });
+        }
       }
     });
   };
+
+
 
   //AQUI COMIENZA EL MÉTODO GET PARA VISUALIZAR LOS REGISTROS
   const getMetas = () => {
@@ -307,15 +344,38 @@ function Metas() {
   //   console.log(form);
   // };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   // Eliminar espacios en blanco al principio de la cadena
+  //   const trimmedValue = value.replace(/^\s+/g, "");
+  //   setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+  //   console.log(form);
+  // };
+
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    // Eliminar espacios en blanco al principio de la cadena
-    const trimmedValue = value.replace(/^\s+/g, "");
-    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
-    console.log(form);
+
+    // Eliminar espacios iniciales en todos los campos de entrada de texto
+    const sanitizedValue = value.trim();
+
+    if (name === 'meta5' || 'meta3' || 'meta2' || 'año' || 'mes') {
+      // Eliminar caracteres no numéricos
+      const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
+      setForm({ ...form, [name]: numericValue });
+    } else {
+      // Actualizar el valor sin validación en otros campos
+      const trimmedValue = value.replace(/^\s+/g, "");
+      setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+      console.log(form);
+    }
   };
 
 
+  const trabajadoresDisponibles = dataTrabajadores.filter((trabajador: Trabajador) => {
+    // Filtra los trabajadores que no están en las metas existentes
+    return !data.some((meta: MetasCol) => meta.idcolabolador === trabajador.id);
+  });
   // Asegúrate de que la función setForm actualiza el estado correctamente
   // Este console.log no reflejará los cambios inmediatamente debido a la naturaleza asincrónica de setForm
   console.log(form);
@@ -354,18 +414,18 @@ function Metas() {
     {
       field: "Acción",
       renderCell: (params) => <ComponentChiquito params={params} />,
-      width: 100,
+      width: 80,
       headerClassName: "custom-header",
     },
     {
       field: "año",
       headerName: "Año",
-      width: 100,
+      width: 80,
       headerClassName: "custom-header",
       // renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
     },
 
-    { field: "mes", headerName: "Mes", width: 100, headerClassName: "custom-header" },
+    { field: "mes", headerName: "Mes", width: 60, headerClassName: "custom-header" },
     {
       field: "nombre",
       headerName: "Colaborador",
@@ -430,20 +490,43 @@ function Metas() {
       </>
     );
   };
+  // const handleValueChange = (fieldName: string, value: string | undefined) => {
+  //   console.log(value);
+  //   if (value === undefined) {
+  //     setForm((prevForm) => ({
+  //       ...prevForm,
+  //       [fieldName]: 0, // Actualizar el valor correspondiente en el estado del formulario
+  //     }));
+  //   } else {
+  //     setForm((prevForm) => ({
+  //       ...prevForm,
+  //       [fieldName]: value, // Actualizar el valor correspondiente en el estado del formulario
+  //     }));
+  //   }
+  // };
+
   const handleValueChange = (fieldName: string, value: string | undefined) => {
-    console.log(value);
+    const maxLength = 15; // Definir la longitud máxima permitida, en este caso, 10 caracteres
+
     if (value === undefined) {
       setForm((prevForm) => ({
         ...prevForm,
-        [fieldName]: 0, // Actualizar el valor correspondiente en el estado del formulario
+        [fieldName]: '0', // Actualizar el valor correspondiente en el estado del formulario
       }));
     } else {
+      if (value.length > maxLength) {
+        value = value.slice(0, maxLength); // Cortar el valor si supera la longitud máxima
+      }
       setForm((prevForm) => ({
         ...prevForm,
         [fieldName]: value, // Actualizar el valor correspondiente en el estado del formulario
       }));
     }
   };
+
+
+
+
   function DataTable() {
     const getRowId = (row: MetasCol) => row.id;
     return (
@@ -521,17 +604,56 @@ function Metas() {
           <Modal isOpen={modalActualizar} size="xl">
             <ModalHeader>
               <div>
-                <h3>Editar meta</h3>
+                <h3>Editar cifas</h3>
               </div>
             </ModalHeader>
 
             <ModalBody>
               <FormGroup>
                 <Row>
-                  <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
 
+                  <Col sm="6">
+                    <Label>Año:</Label>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={form.año}>
+                      <option value="">--Selecciona el año--</option>
+                      <option value={"2023"}>2023</option>
+                      <option value={"2024"}>2024</option>
+                      <option value={"2025"}>2025</option>
+                      <option value={"2026"}>2026</option>
+                      <option value={"2027"}>2027</option>
+                      <option value={"2028"}>2028</option>
+                      <option value={"2029"}>2028</option>
+                      <option value={"2030"}>2030</option>
+                    </Input>
                   </Col>
+                  <Col sm="6">
+                    <Label>Mes:</Label>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={form.mes}>
+                      <option value="">--Selecciona el mes--</option>
+                      <option value={"01"}>Enero</option>
+                      <option value={"02"}>Febrero</option>
+                      <option value={"03"}>Marzo</option>
+                      <option value={"04"}>Abril</option>
+                      <option value={"05"}>Mayo</option>
+                      <option value={"06"}>Junio</option>
+                      <option value={"07"}>Julio</option>
+                      <option value={"08"}>Agosto</option>
+                      <option value={"09"}>Septiembre</option>
+                      <option value={"10"}>Octubre</option>
+                      <option value={"11"}>Noviembre</option>
+                      <option value={"12"}>Diciembre</option>
+                    </Input>
+                  </Col>
+
+
+                  {/* <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} minlength={4} maxlength={4} />
+
+                  </Col> */}
+                  {/* <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} minlength={2} maxlength={2} />
+                  </Col> */}
+
                   <Col md={"6"} style={{ marginBottom: 10 }}>
                     <Label>Sucursal:</Label>
                     <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
@@ -588,10 +710,10 @@ function Metas() {
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} minlength={15} maxlength={15} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} minlength={15} maxlength={15} />
                   </Col>
                   <Col md={"6"}>
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" placeholder="$" value={form.meta4} /> */}
@@ -608,7 +730,7 @@ function Metas() {
 
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra Servicios:" value={form.meta5} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra Servicios:" value={form.meta5} minlength={15} maxlength={15} />
                   </Col>
                   {/* <Col md={"6"}>
                     <CFormGroupInput
@@ -632,19 +754,52 @@ function Metas() {
           <Modal isOpen={modalInsertar} size="xl">
             <ModalHeader>
               <div>
-                <h3>Crear meta</h3>
+                <h3>Crear cifras</h3>
               </div>
             </ModalHeader>
 
             <ModalBody>
               <FormGroup>
                 <Row>
-                  <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
+                  <Col sm="6">
+                    <Label>Año:</Label>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={form.año}>
+                      <option value="">--Selecciona el año--</option>
+                      <option value={"2023"}>2023</option>
+                      <option value={"2024"}>2024</option>
+                      <option value={"2025"}>2025</option>
+                      <option value={"2026"}>2026</option>
+                      <option value={"2027"}>2027</option>
+                      <option value={"2028"}>2028</option>
+                      <option value={"2029"}>2028</option>
+                      <option value={"2030"}>2030</option>
+                    </Input>
+                  </Col>
+                  <Col sm="6">
+                    <Label>Mes:</Label>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={form.mes}>
+                      <option value="">--Selecciona el mes--</option>
+                      <option value={"01"}>Enero</option>
+                      <option value={"02"}>Febrero</option>
+                      <option value={"03"}>Marzo</option>
+                      <option value={"04"}>Abril</option>
+                      <option value={"05"}>Mayo</option>
+                      <option value={"06"}>Junio</option>
+                      <option value={"07"}>Julio</option>
+                      <option value={"08"}>Agosto</option>
+                      <option value={"09"}>Septiembre</option>
+                      <option value={"10"}>Octubre</option>
+                      <option value={"11"}>Noviembre</option>
+                      <option value={"12"}>Diciembre</option>
+                    </Input>
+                  </Col>
+                  {/* <Col md={"6"}>
+                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} minlength={4} maxlength={4} />
+
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
-                  </Col>
+                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} minlength={2} maxlength={2} />
+                  </Col> */}
                   <Col md={"6"} style={{ marginBottom: 10 }}>
                     <Label>Sucursal:</Label>
                     <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
@@ -656,11 +811,30 @@ function Metas() {
                       ))}
                     </Input>
                   </Col>
-                  <Col md={"6"}>
+                  {/* <Col md={"6"}>
                     <Label>Trabajadores:</Label>
                     <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
                       <option value="">Selecciona empresa</option>
                       {dataTrabajadores.map((colaborador: Trabajador) => (
+                        <option key={colaborador.id} value={colaborador.id}>
+                          {colaborador.nombre}
+                        </option>
+                      ))}
+                    </Input>
+                    <br />
+                  </Col> */}
+
+                  <Col md={"6"}>
+                    <Label>Trabajadores:</Label>
+                    <Input
+                      type="select"
+                      name="idcolabolador"
+                      id="idcolabolador"
+                      defaultValue={form.idcolabolador}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecciona trabajador</option>
+                      {trabajadoresDisponibles.map((colaborador: Trabajador) => (
                         <option key={colaborador.id} value={colaborador.id}>
                           {colaborador.nombre}
                         </option>
@@ -683,10 +857,10 @@ function Metas() {
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} minlength={15} maxlength={15} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} minlength={15} maxlength={15} />
                   </Col>
                   <Col md={"6"}>
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Meta reventa:" placeholder="$" value={form.meta4} /> */}
@@ -699,11 +873,12 @@ function Metas() {
                       value={form.meta4 ? form.meta4 : 0}
                       decimalsLimit={2}
                       onValueChange={(value) => handleValueChange("meta4", value)}
+
                     />
 
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra Servicios:" value={form.meta5} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra Servicios:" value={form.meta5} minlength={15} maxlength={15} />
                   </Col>
                   {/* <Col md={"6"}>
                     <CFormGroupInput

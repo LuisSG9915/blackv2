@@ -10,9 +10,10 @@ interface Props {
   defaultChecked?: boolean | undefined;
   defaultValue?: string | number | readonly string[] | undefined;
   placeholder?: string | undefined
-
+  minlength?: number;
+  maxlength?: number;
 }
-function CFormGroupInput({ handleChange, inputName, labelName, value, type, disabled, defaultChecked, defaultValue, placeholder }: Props) {
+function CFormGroupInput({ handleChange, inputName, labelName, value, type, disabled, defaultChecked, defaultValue, placeholder, minlength, maxlength }: Props) {
   return (
     <FormGroup>
       <Label>{labelName}</Label>
@@ -26,6 +27,8 @@ function CFormGroupInput({ handleChange, inputName, labelName, value, type, disa
         defaultChecked={defaultChecked}
         defaultValue={defaultValue}
         placeholder={placeholder}
+        minLength={minlength} // Usar la propiedad minLength del input para limitar la longitud mínima
+        maxLength={maxlength} // Usar la 
       />
     </FormGroup>
   );
