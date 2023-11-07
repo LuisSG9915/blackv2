@@ -3,7 +3,7 @@ import SidebarHorizontal from "../components/SidebarHorizontal";
 import { Button, Row } from "reactstrap";
 
 function Webluetooth() {
-  const [device, setDevice] = useState(null);
+  const [device, setDevice] = useState<BluetoothDevice>();
 
   async function connectToDevice() {
     try {
@@ -15,35 +15,32 @@ function Webluetooth() {
       console.error("Error al conectar al dispositivo:", error);
     }
   }
-
   async function imprimirHolaMundo() {
     if (device) {
       try {
-        const server = await device.gatt.connect();
+        if (device.gatt) {
+          const server = await device.gatt.connect();
+          const service = await server.getPrimaryService("49535343-fe7d-4ae5-8fa9-9fafd205e455");
+          const characteristic = await service.getCharacteristic("49535343-8841-43f4-a8d4-ecbe34729bb3");
 
-        // Obtener el servicio de la impresora (reemplaza 'service-uuid' con el UUID del servicio real)
-        const service = await server.getPrimaryService("49535343-fe7d-4ae5-8fa9-9fafd205e455");
+          const textoAImprimir = "Hola, mundo";
+          const textoBytes = new TextEncoder().encode(textoAImprimir);
 
-        // Obtener la característica de escritura de la impresora (reemplaza 'characteristic-uuid' con el UUID de la característica real)
-        const characteristic = await service.getCharacteristic("49535343-8841-43f4-a8d4-ecbe34729bb3");
+          await characteristic.writeValue(textoBytes);
+          await server.disconnect();
 
-        // Preparar los datos a imprimir
-        const textoAImprimir = "Hola, mundo";
-
-        // Convertir el texto en bytes (esto puede variar según la impresora)
-        const textoBytes = new TextEncoder().encode(textoAImprimir);
-
-        // Escribir los datos en la característica de escritura
-        await characteristic.writeValue(textoBytes);
-
-        // Cerrar la conexión
-        await server.disconnect();
-
-        console.log("Impresión exitosa");
+          alert("¡Impresión exitosa!");
+          console.log("Impresión exitosa");
+        } else {
+          alert("El objeto 'gatt' es undefined");
+          console.error("El objeto 'gatt' es undefined");
+        }
       } catch (error) {
+        alert("Error al imprimir: " + error);
         console.error("Error al imprimir:", error);
       }
     } else {
+      alert("Por favor, selecciona un dispositivo Bluetooth primero.");
       console.error("Por favor, selecciona un dispositivo Bluetooth primero.");
     }
   }

@@ -15,6 +15,7 @@ import { deleteBloqueoColab, postBloqueoColaborador, putBloqueoColaborador } fro
 import { UserResponse } from "../../models/Home";
 
 import { format } from "date-fns";
+import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -49,6 +50,7 @@ function BloqueosColaborador() {
 
   const { dataBloqueos, fetchBloqueos } = useBloqueosColaboradores({ estilista: "%", f1: form.f1, f2: form.f2, tipoBloqueo: "%" });
 
+  const { dataTipoBloqueoColaborador } = useTipoBloqueoColaborador();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prevState: any) => ({ ...prevState, [name]: value }));
@@ -71,10 +73,9 @@ function BloqueosColaborador() {
   };
   const limpiarDatos = () => {
     setForm({
+      ...form,
       descripcionBloqueo: "",
       estilista: "",
-      f1: "",
-      f2: "",
       fecha: "",
       h1: "",
       h2: "",
@@ -219,12 +220,9 @@ function BloqueosColaborador() {
               <Label>Tipo de bloqueo</Label>
               <Input type="select" value={form.idTipoBloqueo} name={"idTipoBloqueo"} onChange={handleChange}>
                 <option value={0}> Escoja el bloqueo </option>
-                <option value={1}> Enfermedad/Lesión </option>
-                <option value={3}> Curso/Certificación </option>
-                <option value={4}> Causas mayores </option>
-                <option value={5}> Cita médica </option>
-                <option value={6}> Vacaciones</option>
-                <option value={8}> Viaje de trabajo</option>
+                {dataTipoBloqueoColaborador.map((bloqueo) => {
+                  return <option value={bloqueo.id}> {bloqueo.descripcion} </option>;
+                })}
               </Input>
             </FormGroup>
             <Label>Hora 1: </Label>
@@ -259,7 +257,7 @@ function BloqueosColaborador() {
             color="success"
             onClick={() =>
               postBloqueoColaborador(form, dataUsuarios2[0].id).then((response) => {
-                if ((response.data[0].codigo = 1)) {
+                if (Number(response.data.codigo) == 1) {
                   fetchBloqueos();
                   setmodalInsertar(false);
                   limpiarDatos();
@@ -269,7 +267,14 @@ function BloqueosColaborador() {
             text="Guardar"
           ></CButton>
           {/* <CButton color="success" onClick={() => console.log(dataUsuarios2[0]?.sucursal)} text="Guardar"></CButton> */}
-          <CButton color="danger" onClick={() => setmodalInsertar(false)} text="Cancelar" />
+          <CButton
+            color="danger"
+            onClick={() => {
+              setmodalInsertar(false);
+              limpiarDatos();
+            }}
+            text="Cancelar"
+          />
         </ModalFooter>
       </Modal>
 
@@ -282,8 +287,7 @@ function BloqueosColaborador() {
 
         <ModalBody>
           <Container>
-            {/* <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" value={form.fecha} /> */}
-            <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" />
+            <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" value={form.fecha.split("T")[0]} />
             <FormGroup>
               <Label>Colaborador</Label>
               <Input type="select" value={form.idColaborador} name={"idColaborador"} onChange={handleChange}>
@@ -296,12 +300,9 @@ function BloqueosColaborador() {
               <Label>Tipo de bloqueo</Label>
               <Input type="select" value={form.idTipoBloqueo} name={"idTipoBloqueo"} onChange={handleChange}>
                 <option value={0}> Escoja el bloqueo </option>
-                <option value={1}> Enfermedad/Lesión </option>
-                <option value={3}> Curso/Certificación </option>
-                <option value={4}> Causas mayores </option>
-                <option value={5}> Cita médica </option>
-                <option value={6}> Vacaciones</option>
-                <option value={8}> Viaje de trabajo</option>
+                {dataTipoBloqueoColaborador.map((bloqueo) => {
+                  return <option value={bloqueo.id}> {bloqueo.descripcion} </option>;
+                })}
               </Input>
             </FormGroup>
             <FormGroup>
