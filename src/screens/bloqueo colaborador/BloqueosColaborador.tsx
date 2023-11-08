@@ -13,12 +13,15 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { deleteBloqueoColab, postBloqueoColaborador, putBloqueoColaborador } from "./functions/BloqueosColabApiRest";
 import { UserResponse } from "../../models/Home";
-
+import Swal from "sweetalert2";
 import { format } from "date-fns";
 import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
+import { useNavigate } from "react-router";
+import { jezaApi } from "../../api/jezaApi";
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const [showView, setShowView] = useState(true);
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -26,8 +29,39 @@ function BloqueosColaborador() {
       const parsedItem = JSON.parse(item);
       setDataUsuarios2(parsedItem);
       console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
     }
   }, []);
+
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=PANTALLA_BLOQUEOS`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  // Redirige a la ruta "/app"
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app");
+  };
+
 
   const [form, setForm] = useState({
     id: 0,

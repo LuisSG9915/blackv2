@@ -614,34 +614,34 @@ function Metas() {
 
                   <Col sm="6">
                     <Label>Año:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={form.año}>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={Number(form.año)}>
                       <option value="">--Selecciona el año--</option>
-                      <option value={"2023"}>2023</option>
-                      <option value={"2024"}>2024</option>
-                      <option value={"2025"}>2025</option>
-                      <option value={"2026"}>2026</option>
-                      <option value={"2027"}>2027</option>
-                      <option value={"2028"}>2028</option>
-                      <option value={"2029"}>2028</option>
-                      <option value={"2030"}>2030</option>
+                      <option value={2023}>2023</option>
+                      <option value={2024}>2024</option>
+                      <option value={2025}>2025</option>
+                      <option value={2026}>2026</option>
+                      <option value={2027}>2027</option>
+                      <option value={2028}>2028</option>
+                      <option value={2029}>2028</option>
+                      <option value={2030}>2030</option>
                     </Input>
                   </Col>
                   <Col sm="6">
                     <Label>Mes:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={form.mes}>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={Number(form.mes)}>
                       <option value="">--Selecciona el mes--</option>
-                      <option value={"01"}>Enero</option>
-                      <option value={"02"}>Febrero</option>
-                      <option value={"03"}>Marzo</option>
-                      <option value={"04"}>Abril</option>
-                      <option value={"05"}>Mayo</option>
-                      <option value={"06"}>Junio</option>
-                      <option value={"07"}>Julio</option>
-                      <option value={"08"}>Agosto</option>
-                      <option value={"09"}>Septiembre</option>
-                      <option value={"10"}>Octubre</option>
-                      <option value={"11"}>Noviembre</option>
-                      <option value={"12"}>Diciembre</option>
+                      <option value={1}>Enero</option>
+                      <option value={2}>Febrero</option>
+                      <option value={3}>Marzo</option>
+                      <option value={4}>Abril</option>
+                      <option value={5}>Mayo</option>
+                      <option value={6}>Junio</option>
+                      <option value={7}>Julio</option>
+                      <option value={8}>Agosto</option>
+                      <option value={9}>Septiembre</option>
+                      <option value={10}>Octubre</option>
+                      <option value={11}>Noviembre</option>
+                      <option value={12}>Diciembre</option>
                     </Input>
                   </Col>
 
@@ -763,34 +763,34 @@ function Metas() {
                 <Row>
                   <Col sm="6">
                     <Label>Año:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={form.año}>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={Number(form.año)}>
                       <option value="">--Selecciona el año--</option>
-                      <option value={"2023"}>2023</option>
-                      <option value={"2024"}>2024</option>
-                      <option value={"2025"}>2025</option>
-                      <option value={"2026"}>2026</option>
-                      <option value={"2027"}>2027</option>
-                      <option value={"2028"}>2028</option>
-                      <option value={"2029"}>2028</option>
-                      <option value={"2030"}>2030</option>
+                      <option value={2023}>2023</option>
+                      <option value={2024}>2024</option>
+                      <option value={2025}>2025</option>
+                      <option value={2026}>2026</option>
+                      <option value={2027}>2027</option>
+                      <option value={2028}>2028</option>
+                      <option value={2029}>2028</option>
+                      <option value={2030}>2030</option>
                     </Input>
                   </Col>
                   <Col sm="6">
                     <Label>Mes:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={form.mes}>
+                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={Number(form.mes)}>
                       <option value="">--Selecciona el mes--</option>
-                      <option value={"01"}>Enero</option>
-                      <option value={"02"}>Febrero</option>
-                      <option value={"03"}>Marzo</option>
-                      <option value={"04"}>Abril</option>
-                      <option value={"05"}>Mayo</option>
-                      <option value={"06"}>Junio</option>
-                      <option value={"07"}>Julio</option>
-                      <option value={"08"}>Agosto</option>
-                      <option value={"09"}>Septiembre</option>
-                      <option value={"10"}>Octubre</option>
-                      <option value={"11"}>Noviembre</option>
-                      <option value={"12"}>Diciembre</option>
+                      <option value={1}>Enero</option>
+                      <option value={2}>Febrero</option>
+                      <option value={3}>Marzo</option>
+                      <option value={4}>Abril</option>
+                      <option value={5}>Mayo</option>
+                      <option value={6}>Junio</option>
+                      <option value={7}>Julio</option>
+                      <option value={8}>Agosto</option>
+                      <option value={9}>Septiembre</option>
+                      <option value={10}>Octubre</option>
+                      <option value={11}>Noviembre</option>
+                      <option value={12}>Diciembre</option>
                     </Input>
                   </Col>
                   {/* <Col md={"6"}>
