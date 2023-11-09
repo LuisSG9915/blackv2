@@ -9,7 +9,7 @@ export const useTipoBloqueoColaborador = () => {
 
   const fetchTipoBloqueoColaborador = async () => {
     try {
-      const response: AxiosResponse<TipoBloqueoColaborador[]> = await jezaApi.get("/sp_detalle_bloqueosColaboradoresSel?id=0");
+      const response: AxiosResponse<TipoBloqueoColaborador[]> = await jezaApi.get("/sp_detalle_bloqueosColaboradoresSel?id=%");
       setTipoBloqueoColaborador(response.data);
       console.log({ dataTipoBloqueoColaborador });
     } catch (error) {

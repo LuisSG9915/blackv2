@@ -16,6 +16,8 @@ import { UserResponse } from "../../models/Home";
 
 import { format } from "date-fns";
 import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
+import { useClientes } from "../../hooks/getsHooks/useClientes";
+import { useParams } from "react-router-dom";
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -49,7 +51,7 @@ function BloqueosColaborador() {
   const [modalInsertar, setmodalInsertar] = useState(false);
 
   const { dataBloqueos, fetchBloqueos } = useBloqueosColaboradores({ estilista: "%", f1: form.f1, f2: form.f2, tipoBloqueo: "%" });
-
+  const { dataTrabajadores } = useNominaTrabajadores();
   const { dataTipoBloqueoColaborador } = useTipoBloqueoColaborador();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -59,16 +61,19 @@ function BloqueosColaborador() {
 
   const mostrarModalActualizar = (param) => {
     setmodalActualizar(!modalActualizar);
+    const idColaborador = dataTrabajadores.find((trabajador) => trabajador.nombre == param.estilista);
+    const idTipoBloqueo = dataTipoBloqueoColaborador.find((tipoBloqueo) => tipoBloqueo.descripcion == param.descripcionBloqueo);
     setForm({
       ...form,
       descripcionBloqueo: param.descripcionBloqueo,
-      estilista: param.estilista,
+      idColaborador: idColaborador?.id ? idColaborador?.id : 0,
       fecha: param.fecha,
       h1: param.h1,
       h2: param.h2,
       id: param.id,
       observaciones: param.observaciones,
       usuarioRegistro: param.usuarioRegistro,
+      idTipoBloqueo: idTipoBloqueo?.id ? idTipoBloqueo?.id : 0,
     });
   };
   const limpiarDatos = () => {
@@ -96,7 +101,13 @@ function BloqueosColaborador() {
       flex: 1,
       renderCell: (params) => (
         <>
-          <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
+          <AiFillEdit
+            className="mr-2"
+            onClick={() => {
+              mostrarModalActualizar(params.row);
+            }}
+            size={23}
+          ></AiFillEdit>
           <AiFillDelete
             color="lightred"
             onClick={() =>
@@ -140,7 +151,6 @@ function BloqueosColaborador() {
     },
     { field: "usuarioRegistro", headerName: "Usuario de registro", flex: 1 },
   ];
-  const { dataTrabajadores } = useNominaTrabajadores();
   return (
     <>
       <Row>

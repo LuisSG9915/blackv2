@@ -435,7 +435,6 @@ function ClientesShopify() {
                     ],
                   }}
                 />
-                {/* <MaterialReactTable columns={columnsclientes} data={data} initialState={{ density: "compact" }} /> */}
               </div>
             </Row>
           </Container>
