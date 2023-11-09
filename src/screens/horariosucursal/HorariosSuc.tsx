@@ -29,6 +29,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+import { useNavigate } from "react-router";
 
 function HorariosSuc() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -52,7 +53,7 @@ function HorariosSuc() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_horarios_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=PANTALLA_CAMBIO_SUCURSAL`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -69,6 +70,11 @@ function HorariosSuc() {
     } catch (error) {
       console.error("Error al obtener el permiso:", error);
     }
+  };
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app");
   };
 
   const [horarios, setHorarios] = useState([]);
@@ -177,7 +183,7 @@ function HorariosSuc() {
 
   const openEditModal = (horario) => {
     setSelectedHorario(horario);
-    setSelectedSuc(selectedSuc);
+    setSelectedSuc(horario.sucursal);
     setEditModalOpen(true);
   };
 
@@ -490,7 +496,7 @@ function HorariosSuc() {
   const handleSubmit = () => {
     // Verifica si todos los campos h1 a h4 están llenos en al menos un día
     const allFieldsFilled = formData.some((dayData) => {
-      return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4;
+      return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4 && dayData.sucursal;
     });
 
     // Si no se llenaron todos los campos h1 a h4, muestra una alerta y no realiza la solicitud POST
@@ -519,7 +525,7 @@ function HorariosSuc() {
         //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
         jezaApi
           .post(
-            `/HorariosApoyo?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&sucursal=${selectedSuc}`
+            `/HorariosApoyo?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&sucursal=${dayData.sucursal}`
           )
 
           .then((response) => {
@@ -672,7 +678,7 @@ function HorariosSuc() {
       <Modal size="xl" isOpen={modalCrearOpen} toggle={toggleModalCrear}>
         <ModalHeader toggle={toggleModalCrear}>
           <h3>
-            Crear horarios de : {selectedName} <p> </p>
+            Cambio de sucursal de: {selectedName} <p> </p>
           </h3>
         </ModalHeader>
         <ModalBody>
@@ -767,8 +773,8 @@ function HorariosSuc() {
                           <select
                             name="sucursal"
                             id="exampleSelect"
-                            value={selectedSuc}
-                            onChange={handleSucursalChange}
+                            value={formData[dayIndex]?.sucursal}
+                            onChange={(e) => handleInputChange(e, dayIndex)}
                           >
                             <option value="">Selecciona sucursal</option>
                             {dataSucursales.map((sucursal) => (

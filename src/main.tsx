@@ -72,6 +72,7 @@ import BluetoothPrint from "./screens/BluetoothPrint";
 import BloqueosColaborador from "./screens/bloqueo colaborador/BloqueosColaborador";
 import HorariosSuc from "./screens/horariosucursal/HorariosSuc";
 import Webluetooth from "./screens/Webluetooth";
+import CatBloqueoColaboradores from "./screens/catbloqueosColaboradores/CatBloqueoColaboradores";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -354,6 +355,10 @@ const router = createBrowserRouter([
   {
     path: "/webBluetooth",
     element: <Webluetooth />,
+  },
+  {
+    path: "/CatBloqueoColaboradores",
+    element: <CatBloqueoColaboradores />,
   },
 ]);
 

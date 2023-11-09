@@ -27,6 +27,7 @@ import Swal from "sweetalert2";
 import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
+import { useNavigate } from "react-router";
 function Horarios() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
@@ -64,6 +65,12 @@ function Horarios() {
       console.error("Error al obtener el permiso:", error);
     }
   };
+
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app");
+  };
+
 
   const [horarios, setHorarios] = useState([]);
   const [trabajador, setTrabajadores] = useState([]);

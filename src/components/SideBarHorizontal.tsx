@@ -396,6 +396,8 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>
                     <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Metas")}>Metas</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/CatBloqueoColaboradores")}>Tipo de bloqueos</DropdownItem>
+
                   </DropdownMenu>
                 </UncontrolledDropdown>
 
