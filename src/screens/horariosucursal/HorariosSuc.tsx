@@ -30,11 +30,8 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
-<<<<<<< Updated upstream
-=======
 import { useNavigate } from "react-router";
 import { FaBuildingCircleArrowRight } from "react-icons/fa6";
->>>>>>> Stashed changes
 
 function HorariosSuc() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -54,12 +51,7 @@ function HorariosSuc() {
   }, []);
   const getPermisoPantalla = async (userData) => {
     try {
-<<<<<<< Updated upstream
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_horarios_view`);
-
-=======
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=PANTALLA_CAMBIO_SUCURSAL`);
->>>>>>> Stashed changes
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
@@ -76,14 +68,10 @@ function HorariosSuc() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-<<<<<<< Updated upstream
-
-=======
   const navigate = useNavigate();
   const handleRedirect = () => {
     navigate("/app");
   };
->>>>>>> Stashed changes
   const [horarios, setHorarios] = useState([]);
   const [trabajador, setTrabajadores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -188,15 +176,6 @@ function HorariosSuc() {
         return;
       }
       // Realiza la solicitud PUT con los datos actualizados del horario
-<<<<<<< Updated upstream
-      const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal, descanso } = selectedHorario;
-
-      /*      console.log(
-        ` /HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=false`
-      );
- */
-=======
->>>>>>> Stashed changes
       jezaApi
         .put(`/HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}`)
         .then((response) => {

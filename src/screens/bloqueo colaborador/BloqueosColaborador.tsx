@@ -16,8 +16,6 @@ import { deleteBloqueoColab, postBloqueoColaborador, putBloqueoColaborador } fro
 import { UserResponse } from "../../models/Home";
 
 import { format } from "date-fns";
-<<<<<<< Updated upstream
-=======
 import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
 import { useNavigate } from "react-router";
 import { jezaApi } from "../../api/jezaApi";
@@ -25,7 +23,6 @@ import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
 
 
->>>>>>> Stashed changes
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -39,8 +36,6 @@ function BloqueosColaborador() {
     }
   }, []);
 
-<<<<<<< Updated upstream
-=======
   const getPermisoPantalla = async (userData) => {
     try {
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=PANTALLA_BLOQUEOS`);
@@ -62,6 +57,8 @@ function BloqueosColaborador() {
     }
   };
 
+  const { dataTipoBloqueoColaborador } = useTipoBloqueoColaborador();
+
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
   const handleRedirect = () => {
@@ -72,7 +69,6 @@ function BloqueosColaborador() {
     window.location.reload();
   };
 
->>>>>>> Stashed changes
   const [form, setForm] = useState({
     id: 0,
     fecha: "",
@@ -266,20 +262,10 @@ function BloqueosColaborador() {
               <Label>Tipo de bloqueo</Label>
 
               <Input type="select" value={form.idTipoBloqueo} name={"idTipoBloqueo"} onChange={handleChange}>
-<<<<<<< Updated upstream
-                <option value={0}> Escoja el bloqueo </option>
-                <option value={1}> Enfermedad/Lesión </option>
-                <option value={3}> Curso/Certificación </option>
-                <option value={4}> Causas mayores </option>
-                <option value={5}> Cita médica </option>
-                <option value={6}> Vacaciones</option>
-                <option value={8}> Viaje de trabajo</option>
-=======
                 <option value={""}>--Escoja el bloqueo--</option>
                 {dataTipoBloqueoColaborador.map((bloqueo) => {
                   return <option value={bloqueo.id}> {bloqueo.descripcion} </option>;
                 })}
->>>>>>> Stashed changes
               </Input>
             </FormGroup>
             <Label>Hora 1: </Label>
@@ -351,20 +337,10 @@ function BloqueosColaborador() {
             <FormGroup>
               <Label>Tipo de bloqueo</Label>
               <Input type="select" value={form.idTipoBloqueo} name={"idTipoBloqueo"} onChange={handleChange}>
-<<<<<<< Updated upstream
-                <option value={0}> Escoja el bloqueo </option>
-                <option value={1}> Enfermedad/Lesión </option>
-                <option value={3}> Curso/Certificación </option>
-                <option value={4}> Causas mayores </option>
-                <option value={5}> Cita médica </option>
-                <option value={6}> Vacaciones</option>
-                <option value={8}> Viaje de trabajo</option>
-=======
                 <option value={""}>--Escoja el bloqueo--</option>
                 {dataTipoBloqueoColaborador.map((bloqueo) => {
                   return <option value={bloqueo.id}> {bloqueo.descripcion} </option>;
                 })}
->>>>>>> Stashed changes
               </Input>
             </FormGroup>
             <FormGroup>
