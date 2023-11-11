@@ -1232,9 +1232,8 @@ const Ventas = () => {
     cia: dataUsuarios2[0]?.idCia,
     idCliente: dataTemporal.Cve_cliente,
   });
-  const [descInsumos, setDescInsumos] = useState("%");
   const { datoInsumosProducto, fetchInsumosProducto } = useInsumosProductos({
-    descripcion: descInsumos,
+    descripcion: "%",
     insumo: 1,
     inventariable: 1,
     obsoleto: 0,
@@ -2151,8 +2150,6 @@ const Ventas = () => {
             setModalOpen2={setModalOpenInsumosSelect}
             handleGetFetch={fetchInsumosProductoResumen}
             datoInsumosProducto={datoInsumosProducto}
-            setDescInsumos={setDescInsumos}
-            descInsumos={descInsumos}
           ></TableInsumosGenerales>
         </ModalBody>
         <ModalFooter>
@@ -2541,12 +2538,10 @@ const Ventas = () => {
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
             </Col>
-            {dataVentaEdit.Observacion === "SERV" ? (
-              <Col sm="6">
-                <Label>Tiempo:</Label>
-                <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
-              </Col>
-            ) : null}
+            <Col sm="6">
+              <Label>Tiempo:</Label>
+              <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
+            </Col>
           </Row>
           <br />
           <Label>Tipo de descuento:</Label>
@@ -2566,19 +2561,15 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-          {dataVentaEdit.Observacion === "SERV" ? (
-            <>
-              <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <TimePicker
-                  sx={{ width: 1 / 3, height: 1, paddingBottom: 5 }}
-                  label="Seleccione la hora"
-                  defaultValue={new Date(dataVentaEdit.hora)}
-                  onChange={(newValue) => setDataVentaEdit((prev) => ({ ...prev, hora: newValue }))}
-                />
-              </LocalizationProvider>
-            </>
-          ) : null}
+          <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <TimePicker
+              sx={{ width: 1 / 3, height: 1, paddingBottom: 5 }}
+              label="Seleccione la hora"
+              defaultValue={new Date(dataVentaEdit.hora)}
+              onChange={(newValue) => setDataVentaEdit((prev) => ({ ...prev, hora: newValue }))}
+            />
+          </LocalizationProvider>
         </ModalBody>
         <ModalFooter>
           <CButton
