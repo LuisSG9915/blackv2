@@ -32,6 +32,7 @@ export const postBloqueoColaborador = async (form, idUsuario) => {
 };
 export const putBloqueoColaborador = async (form, idUsuario) => {
   const { id, fecha, idColaborador, idTipoBloqueo, h1, h2, observaciones } = form;
+  if (form.fecha.length && form.idColaborador > 0 && idTipoBloqueo > 0 ) {
   const newH1 = format(new Date(h1), "yyyy-MM-dd HH:mm");
   const newH2 = format(new Date(h2), "yyyy-MM-dd HH:mm");
   await jezaApi
@@ -49,6 +50,15 @@ export const putBloqueoColaborador = async (form, idUsuario) => {
     .catch((e) => {
       console.log(e);
     });
+  } else {
+    Swal.fire({
+      icon: "error",
+      title: "Campos vacíos",
+      text: `Favor de llenar todos los campos`,
+      confirmButtonColor: "#3085d6",
+    });
+    return null; // Devuelve null o un valor apropiado en caso de falla
+  }
 };
 
 export const deleteBloqueoColab = async (id: number, estilista: string, fecha: string) => {

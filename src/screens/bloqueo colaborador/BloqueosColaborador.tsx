@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Container, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
+import { Container, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { AiFillDelete, AiFillEdit, AiFillMinusSquare } from "react-icons/ai";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import { useBloqueosColaboradores } from "../../hooks/getsHooks/useBloqueosColaboradores";
 import CButton from "../../components/CButton";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -15,6 +16,16 @@ import { deleteBloqueoColab, postBloqueoColaborador, putBloqueoColaborador } fro
 import { UserResponse } from "../../models/Home";
 
 import { format } from "date-fns";
+<<<<<<< Updated upstream
+=======
+import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
+import { useNavigate } from "react-router";
+import { jezaApi } from "../../api/jezaApi";
+import Button from "@mui/material/Button";
+import { TbLockCancel } from "react-icons/tb";
+
+
+>>>>>>> Stashed changes
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -28,6 +39,40 @@ function BloqueosColaborador() {
     }
   }, []);
 
+<<<<<<< Updated upstream
+=======
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=PANTALLA_BLOQUEOS`);
+
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
+
+  // Redirige a la ruta "/app"
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app");
+  };
+  // Recargar la página actual
+  const handleReload = () => {
+    window.location.reload();
+  };
+
+>>>>>>> Stashed changes
   const [form, setForm] = useState({
     id: 0,
     fecha: "",
@@ -118,7 +163,7 @@ function BloqueosColaborador() {
       headerName: "Fecha",
       flex: 1,
       renderCell(params) {
-        return params.row.fecha ? format(new Date(params.row.fecha), "P") : "";
+        return params.row.fecha ? format(new Date(params.row.fecha), "dd/MM/yyyy") : "";
       },
     },
     {
@@ -146,34 +191,35 @@ function BloqueosColaborador() {
         <SidebarHorizontal />
       </Row>
       <Container>
+        <br />
         <div style={{ display: "flex", alignItems: "", gap: 10 }}>
           <h1> Bloqueos de colaborador </h1>
-          <AiFillMinusSquare size={30} />
+          <TbLockCancel size={40} />
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
         <Container className="d-flex  ">
-          <Row>
-            <div>
-              <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                <Button
-                  style={{ marginLeft: "auto" }}
-                  color="success"
-                  onClick={() => {
-                    setmodalInsertar(true);
-                  }}
-                >
-                  Crear bloqueo
-                </Button>
-                <Button color="primary" onClick={() => null}>
-                  <IoIosHome size={20}></IoIosHome>
-                </Button>
-                <Button onClick={() => null}>
-                  <IoIosRefresh size={20}></IoIosRefresh>
-                </Button>
-              </ButtonGroup>
-            </div>
-          </Row>
+
+          <div>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+              <Button
+                style={{ marginLeft: "auto" }}
+                color="success"
+                onClick={() => {
+                  setmodalInsertar(true);
+                }}
+              >
+                Crear bloqueo
+              </Button>
+              <Button color="primary" onClick={handleRedirect}>
+                <IoIosHome size={20}></IoIosHome>
+              </Button>
+              <Button onClick={handleReload}>
+                <IoIosRefresh size={20}></IoIosRefresh>
+              </Button>
+            </ButtonGroup>
+          </div>
+
         </Container>
         <br />
         {/* <Row>
@@ -210,6 +256,7 @@ function BloqueosColaborador() {
             <FormGroup>
               <Label>Colaborador</Label>
               <Input type="select" value={form.idColaborador} name={"idColaborador"} onChange={handleChange}>
+                <option value={""}>--Escoja un colaborador--</option>
                 {dataTrabajadores.map((trabajador) => (
                   <option value={trabajador.id}>{trabajador.nombre}</option>
                 ))}
@@ -217,7 +264,9 @@ function BloqueosColaborador() {
             </FormGroup>
             <FormGroup>
               <Label>Tipo de bloqueo</Label>
+
               <Input type="select" value={form.idTipoBloqueo} name={"idTipoBloqueo"} onChange={handleChange}>
+<<<<<<< Updated upstream
                 <option value={0}> Escoja el bloqueo </option>
                 <option value={1}> Enfermedad/Lesión </option>
                 <option value={3}> Curso/Certificación </option>
@@ -225,6 +274,12 @@ function BloqueosColaborador() {
                 <option value={5}> Cita médica </option>
                 <option value={6}> Vacaciones</option>
                 <option value={8}> Viaje de trabajo</option>
+=======
+                <option value={""}>--Escoja el bloqueo--</option>
+                {dataTipoBloqueoColaborador.map((bloqueo) => {
+                  return <option value={bloqueo.id}> {bloqueo.descripcion} </option>;
+                })}
+>>>>>>> Stashed changes
               </Input>
             </FormGroup>
             <Label>Hora 1: </Label>
@@ -250,7 +305,7 @@ function BloqueosColaborador() {
                 />
               </LocalizationProvider>
             </FormGroup>
-            <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName=" Observaciones:" type="text" />
+            <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName=" Observaciones:" type="text" minlength={10} maxlength={180} />
           </Container>
         </ModalBody>
 
@@ -287,6 +342,7 @@ function BloqueosColaborador() {
             <FormGroup>
               <Label>Colaborador</Label>
               <Input type="select" value={form.idColaborador} name={"idColaborador"} onChange={handleChange}>
+                <option value={""}>--Escoja un colaborador--</option>
                 {dataTrabajadores.map((trabajador) => (
                   <option value={trabajador.id}>{trabajador.nombre}</option>
                 ))}
@@ -295,6 +351,7 @@ function BloqueosColaborador() {
             <FormGroup>
               <Label>Tipo de bloqueo</Label>
               <Input type="select" value={form.idTipoBloqueo} name={"idTipoBloqueo"} onChange={handleChange}>
+<<<<<<< Updated upstream
                 <option value={0}> Escoja el bloqueo </option>
                 <option value={1}> Enfermedad/Lesión </option>
                 <option value={3}> Curso/Certificación </option>
@@ -302,6 +359,12 @@ function BloqueosColaborador() {
                 <option value={5}> Cita médica </option>
                 <option value={6}> Vacaciones</option>
                 <option value={8}> Viaje de trabajo</option>
+=======
+                <option value={""}>--Escoja el bloqueo--</option>
+                {dataTipoBloqueoColaborador.map((bloqueo) => {
+                  return <option value={bloqueo.id}> {bloqueo.descripcion} </option>;
+                })}
+>>>>>>> Stashed changes
               </Input>
             </FormGroup>
             <FormGroup>
@@ -326,7 +389,7 @@ function BloqueosColaborador() {
                 />
               </LocalizationProvider>
             </FormGroup>
-            <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName=" Observaciones:" value={form.observaciones} />
+            <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName=" Observaciones:" value={form.observaciones} minlength={10} maxlength={180} />
           </Container>
         </ModalBody>
 
@@ -335,8 +398,9 @@ function BloqueosColaborador() {
             color="success"
             onClick={() => {
               putBloqueoColaborador(form, dataUsuarios2[0]?.id).then(() => fetchBloqueos());
+              setmodalActualizar(false);
             }}
-            text="Editar"
+            text="Actualizar"
           />
           <CButton color="danger" onClick={() => setmodalActualizar(false)} text="Cancelar" />
         </ModalFooter>

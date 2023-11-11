@@ -26,6 +26,10 @@ import CurrencyInput from "react-currency-input-field";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 function Metas() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Row,
@@ -29,31 +30,36 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+<<<<<<< Updated upstream
+=======
+import { useNavigate } from "react-router";
+import { FaBuildingCircleArrowRight } from "react-icons/fa6";
+>>>>>>> Stashed changes
 
 function HorariosSuc() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
-
   const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
   const { dataSucursales } = useSucursales();
-
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
       const parsedItem = JSON.parse(item);
       setDataUsuarios2(parsedItem);
       console.log({ parsedItem });
-
       // Llamar a getPermisoPantalla después de que los datos se hayan establecido
       getPermisoPantalla(parsedItem);
     }
   }, []);
-
   const getPermisoPantalla = async (userData) => {
     try {
+<<<<<<< Updated upstream
       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_horarios_view`);
 
+=======
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=PANTALLA_CAMBIO_SUCURSAL`);
+>>>>>>> Stashed changes
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
@@ -70,7 +76,14 @@ function HorariosSuc() {
       console.error("Error al obtener el permiso:", error);
     }
   };
+<<<<<<< Updated upstream
 
+=======
+  const navigate = useNavigate();
+  const handleRedirect = () => {
+    navigate("/app");
+  };
+>>>>>>> Stashed changes
   const [horarios, setHorarios] = useState([]);
   const [trabajador, setTrabajadores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +97,6 @@ function HorariosSuc() {
   const [selectedHorario, setSelectedHorario] = useState(null);
   const fechaActual = new Date(); // Esto te dará la fecha y hora actual
   // const [cantHorarios, setcantHorarios] = useState([]);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState([]);
   const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
@@ -94,7 +106,6 @@ function HorariosSuc() {
       const allTimesEmpty = ![selectedHorario.h1, selectedHorario.h2, selectedHorario.h3, selectedHorario.h4].some(
         (time) => time !== "00:00"
       );
-
       setSelectedHorario((prevHorario) => ({
         ...prevHorario,
         [field]: value,
@@ -108,19 +119,16 @@ function HorariosSuc() {
       }));
     }
   };
-
   const diasConRegistros = new Set(
     horarios.map((horario) => {
       const fechaHorario = new Date(horario.fecha);
       return fechaHorario.getDay(); // Devuelve el número del día de la semana (0 para Domingo, 1 para Lunes, etc.)
     })
   );
-
   const handleSucursalChange = (e) => {
     const { value } = e.target;
     setSelectedSuc(value);
   };
-
   const handleEditCheckboxChange = (field, checked) => {
     if (checked) {
       // Si el checkbox está marcado, establecer h1 a h4 en "00:00"
@@ -140,21 +148,57 @@ function HorariosSuc() {
       }));
     }
   };
-
+  // const handleEditSubmit = () => {
+  //   if (selectedHorario) {
+  //     // Realiza la solicitud PUT con los datos actualizados del horario
+  //     const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal
+  //     } = selectedHorario;
+  //     jezaApi
+  //       .put(
+  //         `/HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}`
+  //       )
+  //       .then((response) => {
+  //         console.log("Horario actualizado:", response.data);
+  //         Swal.fire({
+  //           icon: "success",
+  //           title: "Edición de horarios exitosa",
+  //           text: "El horario se ha actualizado.",
+  //         });
+  //         // Cierra el modal de edición después de guardar
+  //         setEditModalOpen(false);
+  //         consulta();
+  //         // Puedes realizar una nueva consulta o actualizar la vista según tus necesidades
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error al actualizar el horario:", error);
+  //       });
+  //   }
+  // };
   const handleEditSubmit = () => {
     if (selectedHorario) {
+      // Verifica si los campos requeridos están llenos
+      const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal } = selectedHorario;
+      if (!id_empleado || !fecha || !h1 || !h2 || !h3 || !h4 || !sucursal) {
+        // Si hay campos vacíos, muestra una alerta y evita realizar la solicitud PUT
+        Swal.fire({
+          icon: "error",
+          title: "Campos vacíos",
+          text: "Por favor, llena todos los campos antes de actualizar el horario.",
+        });
+        return;
+      }
       // Realiza la solicitud PUT con los datos actualizados del horario
+<<<<<<< Updated upstream
       const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal, descanso } = selectedHorario;
 
       /*      console.log(
         ` /HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}&descanso=false`
       );
  */
+=======
+>>>>>>> Stashed changes
       jezaApi
-        .put(
-          `/HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}`
-        )
-
+        .put(`/HorarioApoyo?id=${id}&sucursal=${selectedSuc}&id_empleado=${id_empleado}&fecha=${fecha}&h1=${h1}&h2=${h2}&h3=${h3}&h4=${h4}`)
         .then((response) => {
           console.log("Horario actualizado:", response.data);
           Swal.fire({
@@ -162,7 +206,6 @@ function HorariosSuc() {
             title: "Edición de horarios exitosa",
             text: "El horario se ha actualizado.",
           });
-
           // Cierra el modal de edición después de guardar
           setEditModalOpen(false);
           consulta();
@@ -170,20 +213,24 @@ function HorariosSuc() {
         })
         .catch((error) => {
           console.error("Error al actualizar el horario:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error al actualizar el horario",
+            text: "Hubo un error al intentar actualizar el horario o no ingreso la sucursal destino. Por favor, inténtalo de nuevo.",
+          });
         });
     }
   };
+
 
   const openEditModal = (horario) => {
     setSelectedHorario(horario);
     setSelectedSuc(selectedSuc);
     setEditModalOpen(true);
   };
-
   const handleCheckboxChange = (e, dayIndex) => {
     const { checked } = e.target;
     const updatedFormData = [...formData];
-
     // Si el checkbox se selecciona, establece h1, h2, h3 y h4 en "00:00", de lo contrario, deja los valores actuales
     if (checked) {
       updatedFormData[dayIndex]["h1"] = "00:00";
@@ -193,66 +240,55 @@ function HorariosSuc() {
     } else {
       // Aquí puedes manejar el caso en que el checkbox se deselecciona, si es necesario
     }
-
     updatedFormData[dayIndex]["descanso"] = checked; // Actualiza el campo "descanso"
     setFormData(updatedFormData);
   };
   useEffect(() => {
     if (formData.length > 0) consulta();
   }, [formData]);
-
   // const handleDateChange = (e) => {
-  //   const newDate = e.target.value;
-  //   setSelectedDate(newDate);
-  //   // consulta();
-
-  //   // const filteredHorarios = horarios.filter((horario) => {
-  //   //   const horarioDate = new Date(horario.fecha);
-  //   //   return (
-  //   //     horarioDate.getFullYear() === selectedDateObj.getFullYear() &&
-  //   //     horarioDate.getMonth() === selectedDateObj.getMonth() &&
-  //   //     horarioDate.getDate() === selectedDateObj.getDate()
-  //   //   );
-  //   // });
-
-  //   // Calcular las fechas correspondientes para cada día de la semana
-  //   const selectedDateObj = new Date(newDate);
-
-  //   // Obtener el día de la semana actual (0 para Domingo, 1 para Lunes, etc.)
-  //   const currentDay = selectedDateObj.getDay();
-
-  //   // Calcular la diferencia en días para ajustar la fecha al día de la semana correcto
-  //   const daysUntilMonday = 0 - currentDay; // Lunes
-  //   selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
-
-  //   // Actualizar las fechas en el formulario
-  //   const updatedFormData = daysOfWeek.map((day, dayIndex) => {
-  //     const date = new Date(selectedDateObj); // Clonar la fecha seleccionada
-  //     date.setDate(date.getDate() + dayIndex); // Añadir días según el día de la semana
-  //     return {
-  //       id_empleado: "", // Puedes establecer un valor predeterminado aquí
-  //       fecha: formatDate(date), // Utiliza la función auxiliar para formatear la fecha
-  //       h1: "", // Puedes establecer otros campos del formulario aquí
-  //       h2: "",
-  //       h3: "",
-  //       h4: "",
-  //       descanso: false, // Puedes establecer valores predeterminados para otros campos
-  //     };
-  //   });
-
-  //   setFormData(updatedFormData);
+  //   const newDate = e.target.value;
+  //   setSelectedDate(newDate);
+  //   // consulta();
+  //   // const filteredHorarios = horarios.filter((horario) => {
+  //   //   const horarioDate = new Date(horario.fecha);
+  //   //   return (
+  //   //     horarioDate.getFullYear() === selectedDateObj.getFullYear() &&
+  //   //     horarioDate.getMonth() === selectedDateObj.getMonth() &&
+  //   //     horarioDate.getDate() === selectedDateObj.getDate()
+  //   //   );
+  //   // });
+  //   // Calcular las fechas correspondientes para cada día de la semana
+  //   const selectedDateObj = new Date(newDate);
+  //   // Obtener el día de la semana actual (0 para Domingo, 1 para Lunes, etc.)
+  //   const currentDay = selectedDateObj.getDay();
+  //   // Calcular la diferencia en días para ajustar la fecha al día de la semana correcto
+  //   const daysUntilMonday = 0 - currentDay; // Lunes
+  //   selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
+  //   // Actualizar las fechas en el formulario
+  //   const updatedFormData = daysOfWeek.map((day, dayIndex) => {
+  //     const date = new Date(selectedDateObj); // Clonar la fecha seleccionada
+  //     date.setDate(date.getDate() + dayIndex); // Añadir días según el día de la semana
+  //     return {
+  //       id_empleado: "", // Puedes establecer un valor predeterminado aquí
+  //       fecha: formatDate(date), // Utiliza la función auxiliar para formatear la fecha
+  //       h1: "", // Puedes establecer otros campos del formulario aquí
+  //       h2: "",
+  //       h3: "",
+  //       h4: "",
+  //       descanso: false, // Puedes establecer valores predeterminados para otros campos
+  //     };
+  //   });
+  //   setFormData(updatedFormData);
   // };
-
   const handleDateChange = (e) => {
     const newDate = e.target.value;
     setSelectedDate(newDate);
     // consulta();
     // Calcular las fechas correspondientes para cada día de la semana
     const selectedDateObj = new Date(newDate);
-
     // Obtener el día de la semana actual (6 para Domingo, 1 para Lunes, etc.)
     const currentDay = selectedDateObj.getDay();
-
     // Calcular la diferencia en días para ajustar la fecha al día de la semana correcto
     const daysUntilMonday = 0 - currentDay; // Lunes
     if (daysUntilMonday == -6) {
@@ -260,7 +296,6 @@ function HorariosSuc() {
     } else {
       selectedDateObj.setDate(selectedDateObj.getDate() + daysUntilMonday);
     }
-
     // Actualizar las fechas en el formulario
     const updatedFormData = daysOfWeek.map((day, dayIndex) => {
       const date = new Date(selectedDateObj); // Clonar la fecha seleccionada
@@ -276,8 +311,25 @@ function HorariosSuc() {
         sucursal: 0,
       };
     });
-
     setFormData(updatedFormData);
+  };
+
+  const cleanFormData = () => {
+    const newData = formData.map((dayData) => {
+      // Crea un nuevo objeto para cada día manteniendo la fecha sin cambios
+      return {
+        ...dayData,
+        id_empleado: "", // Puedes establecer un valor predeterminado aquí
+        h1: "",
+        h2: "",
+        h3: "",
+        h4: "",
+        descanso: false, // Puedes establecer valores predeterminados para otros campos
+        sucursal: 0,
+      };
+    });
+
+    setFormData(newData); // Actualiza el estado con los datos limpios
   };
 
   // Función auxiliar para formatear la fecha como "YYYY-MM-DD"
@@ -287,37 +339,29 @@ function HorariosSuc() {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
   const handleInputChange = (e, dayIndex) => {
     const { name, value } = e.target;
-
     // Copia el estado actual del formulario
     const updatedFormData = [...formData];
-
     // Actualiza el valor del campo cambiado
     updatedFormData[dayIndex][name] = value;
-
     // Verifica si algún campo h1 a h4 es diferente de "00:00"
     const anyFieldIsNonZero = ["h1", "h2", "h3", "h4"].some((field) => updatedFormData[dayIndex][field] !== "00:00");
-
     // Si algún campo es diferente de "00:00", desmarca el checkbox
     updatedFormData[dayIndex].descanso = !anyFieldIsNonZero;
-
     // Actualiza el estado del formulario con los cambios
     setFormData(updatedFormData);
   };
-
   const toggleModalCrear = () => {
+    cleanFormData(); // Limpia los datos antes de abrir el modals
     setModalCrearOpen(!modalCrearOpen);
   };
-
   const handleModalSelect = (id: React.SetStateAction<string>, name: React.SetStateAction<string>) => {
     setSelectedId(id); // Actualiza el estado con el ID seleccionado
     setSelectedName(name); // Actualiza el estado con el nombre seleccionado
     setModalOpen(false); // Cierra el modal
     setHorarios([]);
   };
-
   useEffect(() => {
     // Dentro de useEffect, realizamos la solicitud a la API
     jezaApi
@@ -331,13 +375,11 @@ function HorariosSuc() {
         console.error("Error al cargar los trabajadores:", error);
       });
   }, []); // El segundo argumento [] indica que este efecto se ejecuta solo una vez al montar el componente
-
   const getHorarios = () => {
     jezaApi
       .get(`/HorarioApoyo?idTrabajador=${selectedId}&fecha=${selectedDate}`)
       .then((response) => {
         setHorarios(response.data);
-
         // Verifica si el resultado de la consulta es cero
         if (diasConRegistros.size < 7) {
           setShowButton(true); // Habilita el botón si hay días sin registros
@@ -347,7 +389,6 @@ function HorariosSuc() {
       })
       .catch((e) => console.log(e));
   };
-
   const consulta = () => {
     // Verifica si se ha seleccionado un trabajador y se ha ingresado una fecha
     if (selectedId && selectedDate) {
@@ -363,7 +404,6 @@ function HorariosSuc() {
       });
     }
   };
-
   const columnsTrabajador = useMemo<MRT_ColumnDef<Trabajador>[]>(
     () => [
       {
@@ -387,7 +427,6 @@ function HorariosSuc() {
     ],
     []
   );
-
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [
       {
@@ -397,9 +436,7 @@ function HorariosSuc() {
         Cell: ({ row }) => {
           const fechaHorario = new Date(row.original.fecha); // Convierte la fecha del horario a un objeto Date
           fechaHorario.setDate(fechaHorario.getDate() + 1); // Resta un día a la fecha
-
           const esFechaAnterior = fechaHorario < fechaActual; // Comprueba si la fecha es anterior a la fecha actual
-
           return (
             <Button size="sm" color="secondary" disabled={esFechaAnterior} onClick={() => openEditModal(row.original)}>
               <MdEditCalendar size={30} />
@@ -414,7 +451,6 @@ function HorariosSuc() {
         Cell: ({ row }) => {
           const dayNumber = row.original.diaSemana;
           let dayName = "";
-
           if (dayNumber === 1) {
             dayName = "Domingo";
           } else if (dayNumber === 2) {
@@ -430,7 +466,6 @@ function HorariosSuc() {
           } else if (dayNumber === 7) {
             dayName = "Sabado";
           }
-
           return dayName;
         },
       },
@@ -441,18 +476,14 @@ function HorariosSuc() {
         Cell: ({ row }) => {
           // Obtiene la cadena de fecha desde row.original.fecha
           const dateStr = row.original.fecha;
-
           // Crea un objeto de fecha a partir de la cadena de fecha
           const date = new Date(dateStr);
-
           // Verifica si la fecha es válida antes de formatearla
           if (isNaN(date.getTime())) {
             return "Fecha inválida";
           }
-
           // Formatea la fecha como día/mes/año
           const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-
           return formattedDate;
         },
       },
@@ -485,13 +516,11 @@ function HorariosSuc() {
     ],
     []
   );
-
   const handleSubmit = () => {
     // Verifica si todos los campos h1 a h4 están llenos en al menos un día
     const allFieldsFilled = formData.some((dayData) => {
       return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4;
     });
-
     // Si no se llenaron todos los campos h1 a h4, muestra una alerta y no realiza la solicitud POST
     if (!allFieldsFilled) {
       Swal.fire({
@@ -501,30 +530,24 @@ function HorariosSuc() {
       });
       return;
     }
-
     let successfulRequests = 0;
-
     // Realiza la solicitud POST solo para los días sin registros
     for (let i = 0; i < formData.length; i++) {
       const dayData = formData[i];
       const dayIndex = i;
-
       // Verifica si ya hay registros para este día
       if (!diasConRegistros.has(dayIndex)) {
         // console.log(
-        //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
+        //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
         // );
-
-        //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
+        //   `/Horarios?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&descanso=${dayData.descanso}`
         jezaApi
           .post(
             `/HorariosApoyo?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&sucursal=${selectedSuc}`
           )
-
           .then((response) => {
             // Incrementa el contador en cada solicitud exitosa
             successfulRequests++;
-
             // Verifica si todas las solicitudes han terminado
             if (successfulRequests === formData.length - diasConRegistros.size) {
               // Muestra una alerta de SweetAlert cuando todas las solicitudes hayan terminado
@@ -533,16 +556,13 @@ function HorariosSuc() {
               // setSelectedDate(""); // Limpia la fecha seleccionada
               // setFormData([]); // Limpia los datos del formulario
               // setHorarios([]); // Limpia los datos de la tabla
-
               Swal.fire({
                 icon: "success",
                 title: "Creación de horarios exitosa",
                 text: "Todos los horarios se han actualizado.",
               });
-
               consulta();
               toggleModalCrear();
-
               // Puedes realizar una nueva consulta o actualizar la vista según tus necesidades
             }
           })
@@ -553,7 +573,6 @@ function HorariosSuc() {
             // setSelectedDate(""); // Limpia la fecha seleccionada
             // setFormData([]); // Limpia los datos del formulario
             // setHorarios([]); // Limpia los datos de la tabla
-
             console.error(`Error en la solicitud POST para ${daysOfWeek[i]}:`, error);
             Swal.fire({
               icon: "success",
@@ -570,7 +589,6 @@ function HorariosSuc() {
       }
     }
   };
-
   const formatFecha = (fecha) => {
     const dateObj = new Date(fecha);
     const dia = dateObj.getDate();
@@ -578,16 +596,15 @@ function HorariosSuc() {
     const año = dateObj.getFullYear();
     return `${dia}/${mes}/${año}`;
   };
-
   return (
     <>
       <div>
         <SidebarHorizontal></SidebarHorizontal>
-
+        <br />
         <Container>
           <h1>
             Cambio sucursal
-            <MdHistoryToggleOff size={35} />
+            <FaBuildingCircleArrowRight size={35} />
           </h1>
           <Card>
             <CardBody>
@@ -606,13 +623,11 @@ function HorariosSuc() {
                   </InputGroup>
                   <br />
                 </Col>
-
                 <Col sm="6">
                   <Label> Seleccione fecha de cambio: </Label>
                   <Input type="date" value={selectedDate} onChange={handleDateChange} />
                   <br />
                 </Col>
-
                 {/* parte buena */}
                 <Col sm="6">
                   <Button color="primary" onClick={consulta}>
@@ -625,7 +640,6 @@ function HorariosSuc() {
                         const fechaSeleccionada = new Date(selectedDate); // Convierte la fecha seleccionada a un objeto Date
                         fechaSeleccionada.setDate(fechaSeleccionada.getDate() + 1); // Resta un día
                         const esFechaAnterior = fechaSeleccionada < fechaActual; // Comprueba si la fecha seleccionada es anterior a la fecha actual
-
                         if (esFechaAnterior) {
                           // Si la fecha es anterior, muestra una alerta de SweetAlert
                           Swal.fire({
@@ -649,7 +663,6 @@ function HorariosSuc() {
           <MaterialReactTable columns={columns} data={horarios} />;
         </Container>
       </div>
-
       {/* modal trabajador */}
       <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
         <ModalHeader toggle={() => setModalOpen(!modalOpen)}></ModalHeader>
@@ -689,8 +702,8 @@ function HorariosSuc() {
                 </tr>
               </thead>
               {/* <tbody>
-              {daysOfWeek.map((day, dayIndex) => (
-                <tr key={dayIndex}> */}
+              {daysOfWeek.map((day, dayIndex) => (
+                <tr key={dayIndex}> */}
               <tbody>
                 {daysOfWeek.map((day, dayIndex) => {
                   if (!diasConRegistros.has(dayIndex)) {
@@ -699,13 +712,13 @@ function HorariosSuc() {
                       <tr key={dayIndex}>
                         <td>{day}</td>
                         {/* <td>
-                    <Input
-                      type="text"
-                      name="id_empleado"
-                      value={formData[dayIndex]?.id_empleado || ""}
-                      onChange={(e) => handleInputChange(e, dayIndex)}
-                    />
-                  </td> */}
+                    <Input
+                      type="text"
+                      name="id_empleado"
+                      value={formData[dayIndex]?.id_empleado || ""}
+                      onChange={(e) => handleInputChange(e, dayIndex)}
+                    />
+                  </td> */}
                         <td>
                           <Input
                             disabled="disabled"
@@ -753,14 +766,14 @@ function HorariosSuc() {
                           />
                         </td>
                         {/* <td align="center">
-                          <Input
-                            type="checkbox"
-                            name="descanso"
-                            checked={formData[dayIndex]?.descanso || false}
-                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
-                            onChange={(e) => handleCheckboxChange(e, dayIndex)}
-                          />
-                        </td> */}
+                          <Input
+                            type="checkbox"
+                            name="descanso"
+                            checked={formData[dayIndex]?.descanso || false}
+                            disabled={new Date(formData[dayIndex + 1]?.fecha) < new Date()}
+                            onChange={(e) => handleCheckboxChange(e, dayIndex)}
+                          />
+                        </td> */}
                         <td>
                           <select
                             name="sucursal"
@@ -777,11 +790,11 @@ function HorariosSuc() {
                           </select>
                         </td>
                         {/* <Input
-                          type="text"
-                          name="id_empleado"
-                          value={formData[dayIndex]?.id_empleado || ""}
-                          onChange={(e) => handleInputChange(e, dayIndex)}
-                        /> */}
+                          type="text"
+                          name="id_empleado"
+                          value={formData[dayIndex]?.id_empleado || ""}
+                          onChange={(e) => handleInputChange(e, dayIndex)}
+                        /> */}
                       </tr>
                     );
                   } else {
@@ -794,7 +807,7 @@ function HorariosSuc() {
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit}>
-            Actualizar horario
+            Actualizar horario sucursal
           </Button>{" "}
           <Button color="danger" onClick={toggleModalCrear}>
             Cancelar
@@ -805,7 +818,7 @@ function HorariosSuc() {
       <Modal isOpen={editModalOpen} size="lg" toggle={() => setEditModalOpen(!editModalOpen)}>
         <ModalHeader toggle={() => setEditModalOpen(!editModalOpen)}>
           {/* Editar Horario: {formatFecha(selectedHorario.fecha)} */}
-          <h3>Editar horario</h3>
+          <h3>Editar horario sucursal</h3>
         </ModalHeader>
         <ModalBody>
           {selectedHorario && (
@@ -818,7 +831,7 @@ function HorariosSuc() {
                     <th>Hora de comida</th>
                     <th>Hora de regreso</th>
                     <th>Hora de salida</th>
-                    <th>Descanso</th>
+                    <th>Sucursal</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -853,12 +866,12 @@ function HorariosSuc() {
                       />
                     </td>
                     {/* <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedHorario.descanso}
-                        onChange={(e) => handleEditCheckboxChange("descanso", e.target.checked)}
-                      />
-                    </td> */}
+                      <input
+                        type="checkbox"
+                        checked={selectedHorario.descanso}
+                        onChange={(e) => handleEditCheckboxChange("descanso", e.target.checked)}
+                      />
+                    </td> */}
                     <td>
                       <select name="sucursal" id="exampleSelect" value={selectedSuc} onChange={handleSucursalChange}>
                         <option value="">Selecciona sucursal</option>
@@ -887,5 +900,4 @@ function HorariosSuc() {
     </>
   );
 }
-
 export default HorariosSuc;
