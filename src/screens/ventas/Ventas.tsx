@@ -1094,7 +1094,7 @@ const Ventas = () => {
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
           referencia: Number(elemento.formaPago) === 94 ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
-          importe: arregloTemporal.length == 1 && elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
+          importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
       });
