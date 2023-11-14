@@ -14,7 +14,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { deleteBloqueoColab, postBloqueoColaborador, putBloqueoColaborador } from "./functions/BloqueosColabApiRest";
 import { UserResponse } from "../../models/Home";
-
+import Swal from "sweetalert2";
 import { format } from "date-fns";
 import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
 import { useNavigate } from "react-router";
@@ -22,7 +22,7 @@ import { jezaApi } from "../../api/jezaApi";
 import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
 
-
+const [showView, setShowView] = useState(true);
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
