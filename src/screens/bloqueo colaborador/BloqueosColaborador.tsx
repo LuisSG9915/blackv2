@@ -22,7 +22,7 @@ import { jezaApi } from "../../api/jezaApi";
 import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
 
-const [showView, setShowView] = useState(true);
+// const [showView, setShowView] = useState(true);
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -195,7 +195,6 @@ function BloqueosColaborador() {
         <div className="col align-self-start d-flex justify-content-center "></div>
         <br />
         <Container className="d-flex  ">
-
           <div>
             <ButtonGroup variant="contained" aria-label="outlined primary button group">
               <Button
@@ -215,7 +214,6 @@ function BloqueosColaborador() {
               </Button>
             </ButtonGroup>
           </div>
-
         </Container>
         <br />
         {/* <Row>
@@ -291,7 +289,14 @@ function BloqueosColaborador() {
                 />
               </LocalizationProvider>
             </FormGroup>
-            <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName=" Observaciones:" type="text" minlength={10} maxlength={180} />
+            <CFormGroupInput
+              handleChange={handleChange}
+              inputName="observaciones"
+              labelName=" Observaciones:"
+              type="text"
+              minlength={10}
+              maxlength={180}
+            />
           </Container>
         </ModalBody>
 
@@ -365,7 +370,14 @@ function BloqueosColaborador() {
                 />
               </LocalizationProvider>
             </FormGroup>
-            <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName=" Observaciones:" value={form.observaciones} minlength={10} maxlength={180} />
+            <CFormGroupInput
+              handleChange={handleChange}
+              inputName="observaciones"
+              labelName=" Observaciones:"
+              value={form.observaciones}
+              minlength={10}
+              maxlength={180}
+            />
           </Container>
         </ModalBody>
 
