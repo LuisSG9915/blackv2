@@ -712,31 +712,35 @@ const Ventas = () => {
   // };
   const editInsumo = () => {
     // Verificar si los campos están vacíos
-    if (!formInsumo.id || !formInsumo.cantidad) {
+    if (!formInsumo.id || !formInsumo.cantidad || formInsumo.cantidad <= 0) {
       Swal.fire({
         icon: "error",
         text: "Por favor, complete todos los campos.",
         confirmButtonColor: "#3085d6",
       });
-      return; // Salir de la función si faltan campos
-    }
-
-    // Si los campos no están vacíos, realizar la solicitud PUT a la API
-    jezaApi
-      .put("/VentaInsumo", null, {
-        params: {
-          id: Number(formInsumo.id),
-          cantidad: Number(formInsumo.cantidad),
-        },
-      })
-      .then((response) => {
-        fetchInsumosProductoResumen();
-        Swal.fire({
-          icon: "success",
-          text: "Insumo actualizada con éxito",
-          confirmButtonColor: "#3085d6",
+      // return; // Salir de la función si faltan campos
+    } else {
+      // Si los campos no están vacíos, realizar la solicitud PUT a la API
+      jezaApi
+        .put("/VentaInsumo", null, {
+          params: {
+            id: Number(formInsumo.id),
+            cantidad: Number(formInsumo.cantidad),
+          },
+        })
+        .then((response) => {
+          fetchInsumosProductoResumen();
+          Swal.fire({
+            icon: "success",
+            text: "Insumo actualizada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setTimeout(() => {
+            setModalEditInsumo(false);
+            fetchInsumosProducto();
+          }, 1000);
         });
-      });
+    }
   };
 
   const { dataVentas, fetchVentas } = useVentasV2({
@@ -2104,14 +2108,15 @@ const Ventas = () => {
                           <td align="center">{dato.cantidad}</td>
                           <td align="left">{dato.unidadMedida}</td>
                           <td className="gap-5">
-                            <AiFillEdit
+                            {/* <AiFillEdit
                               className="mr-2"
                               onClick={() => {
                                 setModalEditInsumo(true);
                                 setFormInsumo(dato);
+                                console.log(dato);
                               }}
                               size={23}
-                            ></AiFillEdit>
+                            ></AiFillEdit> */}
                             <AiFillDelete
                               color="lightred"
                               onClick={() => {
@@ -2198,10 +2203,6 @@ const Ventas = () => {
             style={{ width: "34%" }}
             onClick={() => {
               editInsumo();
-              setTimeout(() => {
-                setModalEditInsumo(false);
-                fetchInsumosProducto();
-              }, 1000);
             }}
           >
             Guardar cambios

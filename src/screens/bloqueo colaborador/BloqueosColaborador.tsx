@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { AiFillDelete, AiFillEdit, AiFillMinusSquare } from "react-icons/ai";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import { useBloqueosColaboradores } from "../../hooks/getsHooks/useBloqueosColaboradores";
 import CButton from "../../components/CButton";

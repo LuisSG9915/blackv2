@@ -58,7 +58,9 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   const handleInsumoSelection = (id: number) => {
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
-    if (datoInsumosProducto?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id))) {
+    const validarInsumoProducto = datoInsumosProducto?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id));
+    console.log(id);
+    if (validarInsumoProducto) {
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -93,6 +95,9 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         if (result.isConfirmed) {
           const cantidad = result.value;
           // Realiza aquí la lógica para guardar la cantidad seleccionada
+          if (cantidad < form.cantidad) {
+            alert("a");
+          }
           setForm((prevState) => {
             const updatedForm = { ...prevState, id_insumo: id, cantidad };
             createInsumoTrue(updatedForm);

@@ -53,10 +53,11 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     console.log(datoInsumosProducto);
   }, [datoVentaSeleccionado]);
 
-  const handleInsumoSelection = (id: number) => {
+  const handleInsumoSelection = (id: InsumoExistencia) => {
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
-    if (datoInsumosProducto?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id))) {
+    const validarInsumoProducto = datoInsumosProducto?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id.id));
+    if (validarInsumoProducto) {
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -91,15 +92,25 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         if (result.isConfirmed) {
           const cantidad = result.value;
           // Realiza aquí la lógica para guardar la cantidad seleccionada
-          setForm((prevState) => {
-            const updatedForm = { ...prevState, id_insumo: id, cantidad };
-            createInsumoTrue(updatedForm);
-            return updatedForm;
-          });
-          setModalOpen2(false);
-          setTimeout(() => {
-            handleGetFetch();
-          }, 1600);
+          if (cantidad > id.existencia) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: `Insumo no tiene existencia para cubrir`,
+              confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+            });
+            return;
+          } else {
+            setForm((prevState) => {
+              const updatedForm = { ...prevState, id_insumo: id.id, cantidad };
+              createInsumoTrue(updatedForm);
+              return updatedForm;
+            });
+            setModalOpen2(false);
+            setTimeout(() => {
+              handleGetFetch();
+            }, 1600);
+          }
         }
       });
     }
@@ -139,7 +150,15 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         header: "Acciones",
         accessorKey: "id",
 
-        Cell: ({ cell }) => <Button onClick={() => handleInsumoSelection(cell.getValue())}>Seleccionar</Button>,
+        Cell: ({ cell }) => (
+          <Button
+            onClick={() => {
+              handleInsumoSelection(cell.row.original);
+            }}
+          >
+            Seleccionar
+          </Button>
+        ),
       },
     ],
     []
