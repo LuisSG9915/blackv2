@@ -41,6 +41,7 @@ import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { UserResponse } from "../../models/Home";
+import { ALMACEN } from "../../utilities/constsAlmacenes";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -836,6 +837,17 @@ function ReporteTool() {
     sucursal: "", // El valor inicial de la sucursal
     // Otras propiedades de tu formulario
   });
+  const { dataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
+    almacen: ALMACEN.VENTAS,
+    cia: dataUsuarios2[0]?.idCia,
+    descripcion: "%",
+    idCliente: 26296,
+    insumo: 2,
+    inventariable: 2,
+    obsoleto: 2,
+    servicio: 2,
+    sucursal: dataUsuarios2[0]?.sucursal,
+  });
 
   const getProductos = () => {
     jezaApi
@@ -878,7 +890,7 @@ function ReporteTool() {
 
   const optionsProductos = [
     { value: "", label: "--Selecciona un Producto--" },
-    ...nprod.map((item) => ({
+    ...dataProductos4.map((item) => ({
       value: String(item.id),
       label: item.descripcion,
     })),
@@ -1039,6 +1051,7 @@ function ReporteTool() {
                     </Input> */}
                     <Select
                       menuPlacement="top"
+                      // styles={{ placeholder }}
                       name="clave_prod"
                       options={optionsProductos}
                       value={optionsProductos.find((option) => option.value === formulario.clave_prod)}

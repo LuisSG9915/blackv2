@@ -40,7 +40,7 @@ export const useProductosFiltradoExistenciaProductoAlm = ({
             `/sp_cPSEAC?id=0&descripcion=${
               descripcion ? descripcion : "%"
             }&verinventariable=${inventariable}&esServicio=${servicio}&esInsumo=${insumo}&obsoleto=${obsoleto}&marca=%&cia=${cia}&sucursal=${sucursal}&almacen=${
-              almacen <= 2 ? objetoEncontrado.id : almacen
+              almacen <= 2 ? objetoEncontrado?.id : almacen
             }&idCliente=${idCliente ? idCliente : 29003}`
           );
           setDataProductos4(response.data);
