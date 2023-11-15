@@ -489,7 +489,7 @@ const SidebarHorizontal = () => {
                         <ListGroup flush>
                           <ListGroupItem>Nombre: {form.length > 0 && form[0].nombre}</ListGroupItem>
                           {/* <ListGroupItem>Sucursal: {form.length > 0 && form[0].d_sucursal}</ListGroupItem> */}
-                          {form[0]?.clave_perfil === 27 ? (
+                          {form[0]?.clave_perfil === 27 || form[0]?.clave_perfil === 1032 ? (
                             <ListGroupItem>
                               <Input
                                 value={form.length > 0 && form[0].sucursal}

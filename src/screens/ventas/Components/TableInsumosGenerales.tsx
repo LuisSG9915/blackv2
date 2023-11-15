@@ -77,26 +77,45 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         cancelButtonText: "Cancelar",
         showLoaderOnConfirm: true,
         preConfirm: (cantidad) => {
-          return new Promise((resolve, reject) => {
-            // Realizar cualquier validación adicional aquí si es necesario
-            const cantidadNumber = parseFloat(cantidad);
-            if (isNaN(cantidadNumber) || cantidadNumber <= 0) {
-              reject("La cantidad debe ser mayor a cero.");
-            } else {
-              resolve(cantidadNumber);
-            }
-          });
+          if (cantidad) {
+            return new Promise((resolve, reject) => {
+              // Realizar cualquier validación adicional aquí si es necesario
+              const cantidadNumber = parseFloat(cantidad);
+              if (
+                isNaN(cantidadNumber) ||
+                cantidadNumber <= 0 ||
+                cantidad === "" || // Check for an empty string
+                cantidadNumber == undefined ||
+                cantidad.toString() == ""
+              ) {
+                reject("La cantidad debe ser mayor a cero y no puede estar vacía.");
+              } else {
+                resolve(cantidadNumber);
+              }
+            });
+          } else {
+            !Swal.isLoading();
+            return;
+          }
         },
         allowOutsideClick: () => !Swal.isLoading(),
       }).then((result) => {
         if (result.isConfirmed) {
-          const cantidad = result.value;
+          const cantidad = result.value as number;
           // Realiza aquí la lógica para guardar la cantidad seleccionada
           if (cantidad > id.existencia) {
             Swal.fire({
               icon: "error",
               title: "Error",
               text: `Insumo no tiene existencia para cubrir`,
+              confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+            });
+            return;
+          } else if (!cantidad) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: `Digite un numero`,
               confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
             });
             return;

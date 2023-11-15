@@ -23,7 +23,6 @@ import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
 import { useParams } from "react-router-dom";
 
-
 // const [showView, setShowView] = useState(true);
 
 function BloqueosColaborador() {
@@ -63,7 +62,6 @@ function BloqueosColaborador() {
       console.error("Error al obtener el permiso:", error);
     }
   };
-
 
   const { dataTipoBloqueoColaborador } = useTipoBloqueoColaborador();
 
@@ -106,27 +104,27 @@ function BloqueosColaborador() {
 
   const mostrarModalActualizar = (param) => {
     setmodalActualizar(!modalActualizar);
+    const idColaborador = dataTrabajadores.find((trabajador) => trabajador.nombre == param.estilista);
+    const idTipoBloqueo = dataTipoBloqueoColaborador.find((tipoBloqueo) => tipoBloqueo.descripcion == param.descripcionBloqueo);
     setForm({
       ...form,
       descripcionBloqueo: param.descripcionBloqueo,
-      estilista: param.estilista,
+      idColaborador: idColaborador?.id ? idColaborador?.id : 0,
       fecha: param.fecha,
       h1: param.h1,
       h2: param.h2,
       id: param.id,
       observaciones: param.observaciones,
       usuarioRegistro: param.usuarioRegistro,
+      idTipoBloqueo: idTipoBloqueo?.id ? idTipoBloqueo?.id : 0,
     });
   };
 
-
-
   const limpiarDatos = () => {
     setForm({
+      ...form,
       descripcionBloqueo: "",
       estilista: "",
-      f1: "",
-      f2: "",
       fecha: "",
       h1: "",
       h2: "",
@@ -316,7 +314,7 @@ function BloqueosColaborador() {
             color="success"
             onClick={() =>
               postBloqueoColaborador(form, dataUsuarios2[0].id).then((response) => {
-                if ((response.data[0].codigo = 1)) {
+                if ((response.data.codigo = 1)) {
                   fetchBloqueos();
                   setmodalInsertar(false);
                   limpiarDatos();
@@ -340,7 +338,7 @@ function BloqueosColaborador() {
         <ModalBody>
           <Container>
             {/* <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" value={form.fecha} /> */}
-            <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" />
+            <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" value={form.fecha.split("T")[0]} />
             <FormGroup>
               <Label>Colaborador</Label>
               <Input type="select" value={form.idColaborador} name={"idColaborador"} onChange={handleChange}>

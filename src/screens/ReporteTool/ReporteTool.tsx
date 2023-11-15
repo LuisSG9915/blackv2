@@ -40,6 +40,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
+import { UserResponse } from "../../models/Home";
 
 function ReporteTool() {
   const [reportes, setReportes] = useState([]);
@@ -156,7 +157,7 @@ function ReporteTool() {
     if (item !== null) {
       const parsedItem = JSON.parse(item);
       setDataUsuarios2(parsedItem);
-      console.log({ parsedItem });
+      setFormulario1(parsedItem[0]?.sucursal.toString());
 
       // Llamar a getPermisoPantalla después de que los datos se hayan establecido
       getPermisoPantalla(parsedItem);
@@ -265,9 +266,7 @@ function ReporteTool() {
     getReporte();
   }, []);
 
-  const handleChangeAreaDeptoClase = (
-    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setClase((prevState) => ({ ...prevState, [name]: value }));
     // console.log(formClase);
@@ -841,7 +840,7 @@ function ReporteTool() {
   const getProductos = () => {
     jezaApi
       .get(
-        `/sp_cPSEAC?id=0&descripcion=%&verinventariable=2&esServicio=0&esInsumo=0&obsoleto=0&marca=%&cia=26&sucursal=${formulario1.sucursal}&almacen=3&idCliente=26296`
+        `/sp_cPSEAC?id=0&descripcion=%&verinventariable=2&esServicio=0&esInsumo=0&obsoleto=0&marca=%&cia=26&sucursal=${formulario1}&almacen=3&idCliente=26296`
       )
       .then((response) => {
         setNprod(response.data);
@@ -850,7 +849,9 @@ function ReporteTool() {
   };
   useEffect(() => {
     // Llama a getProductos cuando cambie el valor de formulario.sucursal
-    getProductos();
+    if (formulario1 && Number(formulario1) > 0) {
+      getProductos();
+    }
   }, [formulario1.sucursal]);
   const getMarca = () => {
     jezaApi
@@ -952,25 +953,12 @@ function ReporteTool() {
                 </div>
                 <div>
                   <Label>Fecha final:</Label>
-                  <Input
-                    type="date"
-                    name="fechaFinal"
-                    value={formulario.fechaFinal}
-                    onChange={handleChange}
-                    disabled={!data[0]?.f2}
-                    bsSize="sm"
-                  />
+                  <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange} disabled={!data[0]?.f2} bsSize="sm" />
                 </div>
                 {showSucursalInput ? (
                   <div>
                     <Label>Sucursal:</Label>
-                    <Input
-                      type="select"
-                      name="sucursal"
-                      value={formulario.sucursal}
-                      onChange={handleChange}
-                      bsSize="sm"
-                    >
+                    <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange} bsSize="sm">
                       <option value="">Seleccione la sucursal</option>
 
                       {dataSucursales.map((item) => (
@@ -1213,13 +1201,7 @@ function ReporteTool() {
                   <div>
                     <Label>Método de pago:</Label>
 
-                    <Input
-                      type="select"
-                      name="tipoPago"
-                      value={formulario.tipoPago}
-                      onChange={handleChange}
-                      bsSize="sm"
-                    >
+                    <Input type="select" name="tipoPago" value={formulario.tipoPago} onChange={handleChange} bsSize="sm">
                       <option value="">Seleccione el tipo de pago</option>
 
                       {dataFormasPagos.map((item) => (
@@ -1233,13 +1215,7 @@ function ReporteTool() {
                   <div>
                     <Label>Tipo de descuento:</Label>
 
-                    <Input
-                      type="select"
-                      name="tipoDescuento"
-                      value={formulario.tipoDescuento}
-                      onChange={handleChange}
-                      bsSize="sm"
-                    >
+                    <Input type="select" name="tipoDescuento" value={formulario.tipoDescuento} onChange={handleChange} bsSize="sm">
                       <option value="">Seleccione el tipo de descuento:</option>
 
                       {descuento.map((item) => (
@@ -1251,13 +1227,7 @@ function ReporteTool() {
                 {showClaveProdInput ? (
                   <div>
                     <Label>Clave producto</Label>
-                    <Input
-                      type="text"
-                      name="clave_prod"
-                      value={formulario.clave_prod}
-                      onChange={handleChange}
-                      bsSize="sm"
-                    />
+                    <Input type="text" name="clave_prod" value={formulario.clave_prod} onChange={handleChange} bsSize="sm" />
                   </div>
                 ) : null}
                 {showPalabraProdInput ? (
@@ -1269,14 +1239,7 @@ function ReporteTool() {
                 {showAreaInput ? (
                   <div>
                     <Label for="area">Área:</Label>
-                    <Input
-                      type="select"
-                      name="area"
-                      id="exampleSelect"
-                      value={formClase.area}
-                      onChange={handleChangeAreaDeptoClase}
-                      bsSize="sm"
-                    >
+                    <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase} bsSize="sm">
                       <option value={0}>Seleccione un área</option>
                       {dataAreas.map((area) => (
                         <option value={area.area}>{area.descripcion}</option>
@@ -1287,14 +1250,7 @@ function ReporteTool() {
                 {showDeptoInput ? (
                   <div>
                     <Label for="departamento">Departamento:</Label>
-                    <Input
-                      bsSize="sm"
-                      type="select"
-                      name="depto"
-                      id="exampleSelect"
-                      value={formClase.depto}
-                      onChange={handleChangeAreaDeptoClase}
-                    >
+                    <Input bsSize="sm" type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
                       <option value={0}>Seleccione un departamento</option>
                       {dataDeptosFiltrado.map((depto) => (
                         <option value={depto.depto}>{depto.descripcion}</option>
@@ -1375,11 +1331,7 @@ function ReporteTool() {
 
                 if (key === "Total" || key === "Importe" || key === "Precio") {
                   if (!isNaN(valor)) {
-                    return (
-                      <span>
-                        ${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </span>
-                    );
+                    return <span>${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
                   } else {
                     return valor;
                   }
@@ -1433,9 +1385,7 @@ function ReporteTool() {
                           <Input
                             type="text"
                             id={columna}
-                            value={
-                              columna === "Total" || columna === "Importe" ? numeral(valor).format("$0,0.00") : valor
-                            }
+                            value={columna === "Total" || columna === "Importe" ? numeral(valor).format("$0,0.00") : valor}
                             disabled
                           />
                         </>
