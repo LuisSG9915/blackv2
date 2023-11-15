@@ -21,11 +21,15 @@ import { useNavigate } from "react-router";
 import { jezaApi } from "../../api/jezaApi";
 import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
+import { useParams } from "react-router-dom";
+
 
 // const [showView, setShowView] = useState(true);
 
 function BloqueosColaborador() {
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const [showView, setShowView] = useState(true);
+  const { dataTrabajadores } = useNominaTrabajadores();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -33,6 +37,9 @@ function BloqueosColaborador() {
       const parsedItem = JSON.parse(item);
       setDataUsuarios2(parsedItem);
       console.log({ parsedItem });
+
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+      getPermisoPantalla(parsedItem);
     }
   }, []);
 
@@ -56,6 +63,7 @@ function BloqueosColaborador() {
       console.error("Error al obtener el permiso:", error);
     }
   };
+
 
   const { dataTipoBloqueoColaborador } = useTipoBloqueoColaborador();
 
@@ -110,6 +118,9 @@ function BloqueosColaborador() {
       usuarioRegistro: param.usuarioRegistro,
     });
   };
+
+
+
   const limpiarDatos = () => {
     setForm({
       descripcionBloqueo: "",
@@ -180,7 +191,7 @@ function BloqueosColaborador() {
     },
     { field: "usuarioRegistro", headerName: "Usuario de registro", flex: 1 },
   ];
-  const { dataTrabajadores } = useNominaTrabajadores();
+
   return (
     <>
       <Row>

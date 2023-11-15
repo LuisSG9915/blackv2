@@ -31,7 +31,7 @@ export const postBloqueoColaborador = async (form, idUsuario) => {
   }
 };
 export const putBloqueoColaborador = async (form, idUsuario) => {
-  const { id, fecha, idColaborador, idTipoBloqueo, h1, h2, observaciones } = form;
+ const { id, fecha, idColaborador, idTipoBloqueo, h1, h2, observaciones } = form;
   if (form.fecha.length && form.idColaborador > 0 && idTipoBloqueo > 0 ) {
   const newH1 = format(new Date(h1), "yyyy-MM-dd HH:mm");
   const newH2 = format(new Date(h2), "yyyy-MM-dd HH:mm");
