@@ -56,7 +56,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   const handleInsumoSelection = (id: InsumoExistencia) => {
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
-    const validarInsumoProducto = datoInsumosProducto?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id.id));
+    const validarInsumoProducto = datoInsumosProducto?.some((elemento: VentaInsumo) => elemento.id === Number(id.id));
     if (validarInsumoProducto) {
       Swal.fire({
         icon: "error",
