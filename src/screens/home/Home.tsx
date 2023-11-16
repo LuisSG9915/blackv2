@@ -176,7 +176,6 @@ function Home() {
                   text: `Es requerido seleccionar una sucursal para iniciar sesión...`,
                   confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
                 });
-
                 // alert("Prueba")
               } else {
                 setTimeout(() => {

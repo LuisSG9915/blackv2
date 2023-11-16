@@ -552,7 +552,7 @@ function MovimientoDiversos() {
                         setform({
                           cia: dataUsuarios2[0]?.idCia,
                           sucursal: dataUsuarios2[0]?.sucursal,
-                          folio: "",
+                          folio: "0",
                           fecha: "",
                           clave_prod: 0,
                           tipo_movto: 0,
