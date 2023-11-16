@@ -126,6 +126,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
               return updatedForm;
             });
             setModalOpen2(false);
+
             setTimeout(() => {
               handleGetFetch();
             }, 1600);

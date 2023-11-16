@@ -8,4 +8,5 @@ export interface VentaInsumo {
   cantidad: number;
   fechaAlta: string;
   unidadMedida: string;
+  existencia?: number || string;
 }

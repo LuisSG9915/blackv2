@@ -221,6 +221,7 @@ const Ventas = () => {
     fechaAlta: "",
     unidadMedida: "",
     d_insumo: "",
+    existencia: 1,
   });
 
   const [selectedID2, setSelectedID] = useState(0);
@@ -401,7 +402,7 @@ const Ventas = () => {
     "Importe",
     "Acciones",
   ];
-  const TableDataHeaderInsumo = ["Insumo", "Cantidad", "Unidad de medida", "Acciones"];
+  const TableDataHeaderInsumo = ["Insumo", "Cantidad", "Unidad de medida", "Existencia", "Acciones"];
   const TabñeDataHeaderEstilistaProceso = ["Estilista", ""];
   const { datoInsumosProductoResumen, fetchInsumosProductoResumen } = useInsumosProductosResumen({ idVenta: selectedID2 });
 
@@ -718,7 +719,16 @@ const Ventas = () => {
         text: "Por favor, complete todos los campos.",
         confirmButtonColor: "#3085d6",
       });
-      // return; // Salir de la función si faltan campos
+      return; // Salir de la función si faltan campos
+    }
+    if (formInsumo.cantidad > formInsumo?.existencia) {
+      Swal.fire({
+        icon: "error",
+        title: "Alerta",
+        text: `No hay suficientes insumos en sucursal`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+      return;
     } else {
       // Si los campos no están vacíos, realizar la solicitud PUT a la API
       jezaApi
@@ -1026,6 +1036,7 @@ const Ventas = () => {
       });
       // anticipoPost(Number(response.data.mensaje2));
     });
+    fetchInsumosProducto();
   };
 
   const { dataAnticipos } = useAnticipoVentas({
@@ -1338,6 +1349,12 @@ const Ventas = () => {
       setFormasPagosFiltradas(formaPagoNomina);
     }
   }, [dataFormasPagos, dataTemporal.Cve_cliente]);
+
+  const cantidadInsumo = (dato: any) => {
+    const cantidadInsumoBusqueda = datoInsumosProducto.find((insumo) => Number(dato) == Number(insumo.id));
+    return cantidadInsumoBusqueda?.existencia ? cantidadInsumoBusqueda?.existencia : 0;
+  };
+
   return (
     <>
       <Row>
@@ -2045,8 +2062,8 @@ const Ventas = () => {
                   setModalOpenPago(false);
                   setDataTemporal({ Cve_cliente: 0 });
                   setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
-                  endVenta();
                   setArregloTemporal([]);
+                  endVenta();
                 } else {
                   // El total de pagos es menor al total de venta, mostrar un mensaje de error
                   Swal.fire({
@@ -2081,6 +2098,7 @@ const Ventas = () => {
                 onClick={() => {
                   setModalOpenInsumosSelect(true);
                   fetchInsumosProductoResumen();
+                  fetchInsumosProducto();
                 }}
               >
                 Agregar insumos +
@@ -2107,16 +2125,25 @@ const Ventas = () => {
                           <td>{dato.d_insumo}</td>
                           <td align="center">{dato.cantidad}</td>
                           <td align="left">{dato.unidadMedida}</td>
+                          <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
                           <td className="gap-5">
-                            {/* <AiFillEdit
+                            <AiFillEdit
                               className="mr-2"
                               onClick={() => {
                                 setModalEditInsumo(true);
-                                setFormInsumo(dato);
-                                console.log(dato);
+                                setFormInsumo({
+                                  cantidad: dato.cantidad,
+                                  fechaAlta: dato.fechaAlta,
+                                  id: dato.id,
+                                  id_insumo: dato.id_insumo,
+                                  id_venta: dato.id_venta,
+                                  unidadMedida: dato.unidadMedida,
+                                  d_insumo: dato.d_insumo,
+                                  existencia: cantidadInsumo(dato.id_insumo),
+                                });
                               }}
                               size={23}
-                            ></AiFillEdit> */}
+                            ></AiFillEdit>
                             <AiFillDelete
                               color="lightred"
                               onClick={() => {
@@ -2179,8 +2206,10 @@ const Ventas = () => {
           <Row>
             <Col>
               <Label>
-                {" "}
                 Insumo utilizado: <strong>{formInsumo.d_insumo}</strong>{" "}
+              </Label>
+              <Label>
+                Cantidad de existencia: <strong>{formInsumo.existencia}</strong>{" "}
               </Label>
               <br />
               <br />
