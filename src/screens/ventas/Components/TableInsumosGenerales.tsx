@@ -163,7 +163,11 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         Cell: ({ cell }) => <p> {"$" + cell.getValue().toFixed(2)} </p>,
       },
       {
-        header: "existencia",
+        header: "Unidad de medida",
+        accessorKey: "d_unidadMedida",
+      },
+      {
+        header: "Existencia",
         accessorKey: "existencia",
       },
       {
