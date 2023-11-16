@@ -2183,6 +2183,7 @@ const Ventas = () => {
             setModalOpen2={setModalOpenInsumosSelect}
             handleGetFetch={fetchInsumosProductoResumen}
             datoInsumosProducto={datoInsumosProducto}
+            datoInsumosProductoResumen={datoInsumosProductoResumen}
             setDescInsumos={setDescInsumos}
             descInsumos={descInsumos}
           ></TableInsumosGenerales>
