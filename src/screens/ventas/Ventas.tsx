@@ -848,15 +848,15 @@ const Ventas = () => {
         })
       );
     // TICKET DEL ESTILISTA
-    // jezaApi
-    //   .get(
-    //     `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
-    //   )|
-    //   .then((response) => {
-    //     setDatoTicketEstilista(response.data);
-    //     console.log(response);
-    //   })
-    //   .catch((error) => console.log(error));
+    jezaApi
+      .get(
+        `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${fechaVieja}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
+      )
+      .then((response) => {
+        setDatoTicketEstilista(response.data);
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
   };
 
   const [productoSelected, setProductoSelected] = useState<number[]>([]);

@@ -57,7 +57,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   const handleInsumoSelection = (id: InsumoExistencia) => {
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
-    console.log(datoInsumosProductoResumen);
+   
     const validarInsumoProducto = datoInsumosProductoResumen?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id.id));
     if (validarInsumoProducto) {
       Swal.fire({
@@ -148,12 +148,6 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
         header: "Insumo",
         accessorKey: "descripcion",
       },
-      // {
-      //   header: "Unidad de medida",
-      //   accessorKey: "d_unidad_medida",
-      //
-      //   // Cell: ({ cell }) => <p>{getCiaForeignKey(cell.getValue())}</p>,
-      // },
       {
         header: "Marca",
         accessorKey: "marca",

@@ -45,7 +45,7 @@ function Home() {
         };
       });
       if (response.data[0].acceso === 1) {
-        if (response.data[0].clave_perfil == 27) {
+        if (response.data[0].clave_perfil == 27 || response.data[0].clave_perfil == 1032) {
           setResponseData(nuevoResponse);
           setModalSucursal(true);
         } else {
@@ -183,8 +183,6 @@ function Home() {
                   navigate("/app");
                 }, 1000);
               }
-
-
             }}
             text="Guardar"
           />
