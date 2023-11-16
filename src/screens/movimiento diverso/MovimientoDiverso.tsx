@@ -794,28 +794,28 @@ function MovimientoDiversos() {
                 <tbody>
                   {dataAjustesBusquedas
                     ? dataAjustesBusquedas.map((ajuste) => (
-                        <tr>
-                          <td>
-                            <AiOutlineSelect
-                              onClick={() => {
-                                setform({
-                                  ...form,
-                                  folio: Number(ajuste.folio),
-                                  tipo_movto: ajuste.tipo_movto,
-                                  fecha: ajuste.fecha.split("T")[0],
-                                });
-                                setModalBusqueda(false);
-                                console.log(ajuste);
-                              }}
-                            ></AiOutlineSelect>
-                          </td>
-                          <td>{ajuste.folio}</td>
-                          <td>{ajuste.descripcion}</td>
-                          <td>{ajuste.items}</td>
-                          <td>{ajuste.nombreUsuario}</td>
-                          <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                        </tr>
-                      ))
+                      <tr>
+                        <td>
+                          <AiOutlineSelect
+                            onClick={() => {
+                              setform({
+                                ...form,
+                                folio: Number(ajuste.folio),
+                                tipo_movto: ajuste.tipo_movto,
+                                fecha: ajuste.fecha.split("T")[0],
+                              });
+                              setModalBusqueda(false);
+                              console.log(ajuste);
+                            }}
+                          ></AiOutlineSelect>
+                        </td>
+                        <td>{ajuste.folio}</td>
+                        <td>{ajuste.descripcion}</td>
+                        <td>{ajuste.items}</td>
+                        <td>{ajuste.nombreUsuario}</td>
+                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                      </tr>
+                    ))
                     : null}
                 </tbody>
               </Table>
@@ -907,11 +907,11 @@ function MovimientoDiversos() {
             onClick={() => {
               if (form.cantidad_salida > form.d_existencia) {
                 Swal.fire("", "No se puede ingresar una cantidad de salida mayor a la existente", "info");
-              } else if (form.cantidad_salida < 0 || form.cantidad_entrada < 0) {
+              } else if (form.cantidad_salida <= 0 || form.cantidad_entrada <= 0) {
                 Swal.fire({
                   icon: "info",
                   title: "Atención",
-                  text: "No se pueden ingresar valores negativos en los campos, favor de verificar",
+                  text: "No se pueden ingresar valores en negativo,  valores en 0 o campos vacios, favor de verificar",
                 });
               } else {
                 setModalResumenEditar(false);
@@ -936,7 +936,7 @@ function MovimientoDiversos() {
             Cancelar
           </Button>
         </ModalFooter>
-      </Modal>
+      </Modal >
     </>
   );
 }
