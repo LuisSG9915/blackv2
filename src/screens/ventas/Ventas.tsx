@@ -1250,7 +1250,7 @@ const Ventas = () => {
     sucursal: dataUsuarios2[0]?.sucursal,
     almacen: 2,
     cia: dataUsuarios2[0]?.idCia,
-    idCliente: dataTemporal.Cve_cliente,
+    idCliente: 26307,
   });
   const getExistenciaForeignKey = (idProducto: number) => {
     if (idProducto > 1) {
