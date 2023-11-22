@@ -357,34 +357,81 @@ function Anticipo() {
     }
   };
 
+  // const eliminar = async (id) => {
+  //   // Recibe el id como parámetro
+  //   const permiso = await filtroSeguridad("CAT_ANT_DEL");
+  //   if (permiso === false || !id) {
+  //     return;
+  //   }
+
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar el anticipo? ${id}`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/Anticipo?id=${id}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         ejecutaPeticion(formulario.reporte);
+  //       });
+  //     }
+  //   });
+  // };
+
+
   const eliminar = async (id) => {
     // Recibe el id como parámetro
     const permiso = await filtroSeguridad("CAT_ANT_DEL");
+
     if (permiso === false || !id) {
       return;
     }
 
-    Swal.fire({
-      title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar el anticipo? ${id}`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-    }).then((result) => {
+    try {
+      const result = await Swal.fire({
+        title: "ADVERTENCIA",
+        text: `¿Está seguro que desea eliminar el anticipo? ${id}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+      });
+
       if (result.isConfirmed) {
-        jezaApi.delete(`/Anticipo?id=${id}`).then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Registro eliminado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          ejecutaPeticion(formulario.reporte);
+        await jezaApi.delete(`/Anticipo?id=${id}`);
+
+        Swal.fire({
+          icon: "success",
+          text: "Registro eliminado con éxito",
+          confirmButtonColor: "#3085d6",
         });
+
+        ejecutaPeticion(formulario.reporte);
+      } else {
+        // El usuario canceló la eliminación
+        // Puedes manejar este caso si es necesario
       }
-    });
+    } catch (error) {
+      console.error(error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un error al eliminar el anticipo. Por favor, inténtalo de nuevo.",
+        confirmButtonColor: "#d33",
+      });
+    }
   };
+
 
   //AQUÍ COMIENZA EL MÉTODO GET PARA VISUALIZAR LOS REGISTROS
   const getFormaPago = () => {
@@ -647,11 +694,9 @@ function Anticipo() {
     const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
-    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${
-      formData.sucursal
-    }&idnoVenta=%&idCliente=${
-      formData.cliente
-    }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
+    const queryString = `/Anticipo?id=%&idcia=${dataUsuarios2[0]?.cia ? dataUsuarios2[0]?.cia : "%"}&idsuc=${formData.sucursal
+      }&idnoVenta=%&idCliente=${formData.cliente
+      }&idtipoMovto=%&idformaPago=%&f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}`;
 
     jezaApi
       .get(queryString)
@@ -858,9 +903,9 @@ function Anticipo() {
                       text="Consultar"
                       onClick={() => ejecutaPeticion(formulario.reporte)}
                     ></CButton>
-                    <Button color="primary" onClick={() => fetchOrdenes()}>
+                    {/* <Button color="primary" onClick={() => fetchOrdenes()}>
                       Órdenes
-                    </Button>
+                    </Button> */}
                   </Col>
                 </AccordionBody>
               </AccordionItem>

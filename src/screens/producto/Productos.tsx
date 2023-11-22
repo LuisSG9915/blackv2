@@ -53,6 +53,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import Swal from "sweetalert2";
 import { useUnidadMedida } from "../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../models/UnidadMedidaModel";
+import { UserResponse } from "../../models/Home";
 
 function Productos() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -515,6 +516,18 @@ function Productos() {
       "area",
       "depto",
       "clase",
+      "observacion",
+      "clave_prov",
+      "tiempo",
+      "tasa_iva",
+      "costo_unitario",
+      "unidad_medida",
+      "tasa_ieps",
+      "unidad_paq",
+      "unidad_paq_traspaso",
+      "comision",
+      "precio",
+
     ];
     const camposVacios: string[] = [];
 
@@ -541,23 +554,89 @@ function Productos() {
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
 
-  // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
+  // // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
+  // const insertar = async () => {
+  //   const fechaHoy = new Date();
+  //   const permiso = await filtroSeguridad("CAT_PROD_ADD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   console.log(validarCampos());
+  //   console.log({ form });
+  //   if (validarCampos() === true) {
+  //     await jezaApi
+  //       .post("/Producto", null, {
+  //         params: {
+  //           clave_prod: form.clave_prod,
+  //           descripcion: form.descripcion,
+  //           descripcion_corta: form.descripcion_corta,
+  //           sucursal_origen: dataUsuarios2[0]?.sucursal,
+  //           idMarca: form.idMarca,
+  //           area: form.area,
+  //           depto: form.depto,
+  //           clase: form.clase,
+  //           observacion: form.observacion,
+  //           inventariable: form.inventariable,
+  //           controlado: form.controlado,
+  //           es_fraccion: form.es_fraccion,
+  //           obsoleto: form.obsoleto,
+  //           es_insumo: form.es_insumo,
+  //           es_servicio: form.es_servicio,
+  //           es_producto: form.es_producto,
+  //           es_kit: form.es_kit,
+  //           tasa_iva: form.tasa_iva,
+  //           tasa_ieps: form.tasa_ieps,
+  //           costo_unitario: form.costo_unitario,
+  //           precio: form.precio,
+  //           unidad_paq: form.unidad_paq ? form.unidad_paq : 0,
+  //           unidad_paq_traspaso: form.unidad_paq_traspaso ? form.unidad_paq_traspaso : 0,
+  //           promocion: form.promocion ? form.promocion : 0,
+  //           porcentaje_promocion: form.porcentaje_promocion ? form.porcentaje_promocion : 0,
+  //           precio_promocion: form.precio_promocion ? form.precio_promocion : 0,
+  //           fecha_inicio: "2023-08-03",
+  //           fecha_final: "2023-08-03",
+  //           unidad_medida: form.unidad_medida,
+  //           clave_prov: form.clave_prov,
+  //           tiempo: form.tiempo,
+  //           comision: form.comision,
+  //           productoLibre: form.productoLibre ? form.productoLibre : false,
+  //           fecha_act: fechaHoy,
+  //           fecha_alta: fechaHoy,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Producto creada con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalInsertar(false);
+  //         fetchProduct();
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+
+  //       });
+  //   } else {
+  //   }
+  // };
+
   const insertar = async () => {
     const fechaHoy = new Date();
-    const permiso = await filtroSeguridad("CAT_ALMACEN_ADD");
+    const permiso = await filtroSeguridad("CAT_PROD_ADD");
+
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos());
-    console.log({ form });
+
     if (validarCampos() === true) {
-      await jezaApi
-        .post("/Producto", null, {
+      try {
+        const response = await jezaApi.post("/Producto", null, {
           params: {
             clave_prod: form.clave_prod,
             descripcion: form.descripcion,
             descripcion_corta: form.descripcion_corta,
-            sucursal_origen: 21,
+            sucursal_origen: dataUsuarios2[0]?.sucursal,
             idMarca: form.idMarca,
             area: form.area,
             depto: form.depto,
@@ -575,35 +654,43 @@ function Productos() {
             tasa_ieps: form.tasa_ieps,
             costo_unitario: form.costo_unitario,
             precio: form.precio,
-            unidad_paq: form.unidad_paq,
-            unidad_paq_traspaso: form.unidad_paq_traspaso,
-            promocion: form.promocion,
-            porcentaje_promocion: form.porcentaje_promocion,
-            precio_promocion: form.precio_promocion,
-            fecha_inicio: "2023-08-03",
-            fecha_final: "2023-08-03",
+            unidad_paq: form.unidad_paq ? form.unidad_paq : 0,
+            unidad_paq_traspaso: form.unidad_paq_traspaso ? form.unidad_paq_traspaso : 0,
+            promocion: false,
+            porcentaje_promocion: form.porcentaje_promocion ? form.porcentaje_promocion : 0,
+            precio_promocion: form.precio_promocion ? form.precio_promocion : 0,
+            fecha_inicio: form.fecha_inicio ? form.fecha_inicio : "2023-08-03",
+            fecha_final: form.fecha_final ? form.fecha_final : "2023-08-03",
             unidad_medida: form.unidad_medida,
             clave_prov: form.clave_prov,
             tiempo: form.tiempo,
             comision: form.comision,
-            productoLibre: form.productoLibre,
+            productoLibre: false,
             fecha_act: fechaHoy,
             fecha_alta: fechaHoy,
           },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Producto creada con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalInsertar(false);
-          fetchProduct();
-        })
-        .catch((error) => {
-          console.log(error);
         });
+
+        Swal.fire({
+          icon: "success",
+          text: "Producto creada con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+
+        setModalInsertar(false);
+        fetchProduct();
+      } catch (error) {
+        console.error(error);
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un error al crear el producto. Por favor, inténtalo de nuevo.",
+          confirmButtonColor: "#d33",
+        });
+      }
     } else {
+      // Manejar el caso donde los campos no son válidos
     }
   };
 
@@ -654,26 +741,99 @@ function Productos() {
     });
   };
 
-  // AQUÉ COMIENZA MÉTODO PUT PARA ACTUALIZAR REGISTROS
+  // // AQUÉ COMIENZA MÉTODO PUT PARA ACTUALIZAR REGISTROS
+  // const editar = async () => {
+  //   const fechaHoy = new Date();
+  //   const permiso = await filtroSeguridad("CAT_ALMACEN_UPD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   if (validarCampos() === true) {
+  //     await jezaApi
+  //       .put(`/Producto`, null, {
+  //         params: {
+  //           id: form.id,
+  //           clave_prod: form.clave_prod,
+  //           descripcion: form.descripcion,
+  //           descripcion_corta: form.descripcion_corta,
+  //           sucursal_origen: form.sucursal_origen,
+  //           idMarca: form.idMarca,
+  //           area: form.area,
+  //           depto: form.depto,
+  //           clase: form.clase,
+  //           observacion: form.observacion,
+  //           inventariable: form.inventariable,
+  //           controlado: form.controlado,
+  //           es_fraccion: form.es_fraccion,
+  //           obsoleto: form.obsoleto,
+  //           es_insumo: form.es_insumo,
+  //           es_servicio: form.es_servicio,
+  //           es_producto: form.es_producto,
+  //           es_kit: form.es_kit,
+  //           tasa_iva: form.tasa_ieps,
+  //           tasa_ieps: form.tasa_ieps,
+  //           costo_unitario: form.costo_unitario,
+  //           precio: form.precio,
+  //           unidad_paq: form.unidad_paq,
+  //           unidad_paq_traspaso: form.unidad_paq_traspaso,
+  //           promocion: false,
+  //           porcentaje_promocion: form.porcentaje_promocion,
+  //           precio_promocion: form.precio_promocion,
+  //           fecha_inicio: form.fecha_inicio ? form.fecha_inicio : "2023-01-01",
+  //           fecha_final: form.fecha_final ? form.fecha_final : "2023-01-01",
+  //           unidad_medida: form.unidad_medida,
+  //           clave_prov: form.clave_prov,
+  //           tiempo: form.tiempo,
+  //           comision: form.comision,
+  //           productoLibre: form.productoLibre,
+  //           fecha_act: fechaHoy,
+  //           fecha_alta: form.fecha_alta,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Producto actualizado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalActualizar(false);
+  //         fetchProduct();
+  //       })
+  //       .catch((error) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "ERROR al actualizar",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         // console.log(error);
+
+  //       });
+  //   } else {
+  //   }
+  // };
+
+
   const editar = async () => {
     const fechaHoy = new Date();
-    const permiso = await filtroSeguridad("CAT_ALMACEN_UPD");
+    const permiso = await filtroSeguridad("CAT_PROD_UPD");
+
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+
     if (validarCampos() === true) {
-      await jezaApi
-        .put(`/Producto`, null, {
+      try {
+        const response = await jezaApi.put(`/Producto`, null, {
           params: {
             id: form.id,
             clave_prod: form.clave_prod,
             descripcion: form.descripcion,
             descripcion_corta: form.descripcion_corta,
-            sucursal_origen: 21,
-            idMarca: Number(form.idMarca),
-            area: Number(form.area),
-            depto: Number(form.depto),
-            clase: Number(form.clase),
+            sucursal_origen: form.sucursal_origen,
+            idMarca: form.idMarca,
+            area: form.area,
+            depto: form.depto,
+            clase: form.clase,
             observacion: form.observacion,
             inventariable: form.inventariable,
             controlado: form.controlado,
@@ -683,47 +843,57 @@ function Productos() {
             es_servicio: form.es_servicio,
             es_producto: form.es_producto,
             es_kit: form.es_kit,
-            tasa_iva: Number(form.tasa_ieps),
-            tasa_ieps: Number(form.tasa_ieps),
-            costo_unitario: Number(form.costo_unitario),
-            precio: Number(form.precio),
-            unidad_paq: Number(form.unidad_paq),
-            unidad_paq_traspaso: Number(form.unidad_paq_traspaso),
-            promocion: false,
-            porcentaje_promocion: Number(form.porcentaje_promocion),
-            precio_promocion: Number(form.precio_promocion),
+            tasa_iva: form.tasa_ieps,
+            tasa_ieps: form.tasa_ieps,
+            costo_unitario: form.costo_unitario,
+            precio: form.precio,
+            unidad_paq: form.unidad_paq,
+            unidad_paq_traspaso: form.unidad_paq_traspaso,
+            promocion: form.promocion,
+            porcentaje_promocion: form.porcentaje_promocion,
+            precio_promocion: form.precio_promocion,
             fecha_inicio: form.fecha_inicio ? form.fecha_inicio : "2023-01-01",
             fecha_final: form.fecha_final ? form.fecha_final : "2023-01-01",
-            unidad_medida: Number(form.unidad_medida),
-            clave_prov: Number(form.clave_prov),
-            tiempo: Number(form.tiempo),
-            comision: Number(form.comision),
+            unidad_medida: form.unidad_medida,
+            clave_prov: form.clave_prov,
+            tiempo: form.tiempo,
+            comision: form.comision,
             productoLibre: form.productoLibre,
             fecha_act: fechaHoy,
             fecha_alta: form.fecha_alta,
           },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Producto actualizado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalActualizar(false);
-          fetchProduct();
-        })
-        .catch((error) => {
-          console.log(error);
         });
+
+        Swal.fire({
+          icon: "success",
+          text: "Producto actualizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+
+        setModalActualizar(false);
+        fetchProduct();
+      } catch (error) {
+        console.error(error);
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un error al actualizar el producto. Por favor, inténtalo de nuevo.",
+          confirmButtonColor: "#d33",
+        });
+      }
     } else {
+      // Manejar el caso donde los campos no son válidos
     }
   };
 
   const eliminar = async (dato: Producto) => {
     const permiso = await filtroSeguridad("CAT_PROD_DEL");
+
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+
     Swal.fire({
       title: "ADVERTENCIA",
       text: `¿Está seguro que desea eliminar el producto: ${dato.descripcion_corta}?`,
@@ -732,20 +902,61 @@ function Productos() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí, eliminar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/Producto?id=${dato.id}`).then(() => {
+        try {
+          await jezaApi.delete(`/Producto?id=${dato.id}`);
+
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
             confirmButtonColor: "#3085d6",
           });
+
           setModalActualizar(false);
           fetchProduct();
-        });
+        } catch (error) {
+          console.error(error);
+
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un error al eliminar el producto. Por favor, inténtalo de nuevo.",
+            confirmButtonColor: "#d33",
+          });
+        }
       }
     });
   };
+
+
+  // const eliminar = async (dato: Producto) => {
+  //   const permiso = await filtroSeguridad("CAT_PROD_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar el producto: ${dato.descripcion_corta}?`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/Producto?id=${dato.id}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalActualizar(false);
+  //         fetchProduct();
+  //       });
+  //     }
+  //   });
+  // };
 
   // Update ---> POS PRODUCTO SUSTITUTOS
   const createProductoSustito = () => {
@@ -831,6 +1042,27 @@ function Productos() {
       setForm((prevState: Producto) => ({ ...prevState, [name]: value }));
     }
     console.log(form);
+  };
+
+  const handleChange1 = (e) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+    // Eliminar espacios iniciales en todos los campos de entrada de texto
+    const sanitizedValue = value.trim();
+    if (name === 'precio' || 'costo_unitario' || 'comision' || 'tasa_iva' || 'tiempo' || 'tasa_ieps' || 'unidad_paq' || 'unidad_paq_traspaso' || 'precio_promocion' || 'porcentaje_promocion') {
+      // Eliminar caracteres no numéricos
+      const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
+      setForm({ ...form, [name]: numericValue });
+    }
+    // else {
+    //   // Actualizar el valor sin validación en otros campos
+    //   const trimmedValue = value.replace(/^\s+/g, "");
+    //   setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    //   console.log(form);
+    // }
   };
   const handleNav = () => {
     navigate("/ProductosCrear");
@@ -940,16 +1172,16 @@ function Productos() {
     },
 
     {
-      id: "inventariable",
-      header: "Inventariable",
+      id: "es_insumo",
+      header: "Es insumo",
       Cell: ({ row }) => {
-        if (row.original.inventariable === true) {
+        if (row.original.es_insumo === true) {
           return <Input type="checkbox" disabled="disabled" checked="checked" />;
         } else {
           return <Input type="checkbox" disabled="disabled" />;
         }
       },
-      accessorFn: (row) => row.inventariable,
+      accessorFn: (row) => row.es_insumo,
       size: 5,
     },
     {
@@ -1084,7 +1316,7 @@ function Productos() {
                     <Col>
                       <Label>Área:</Label>
                       <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
-                        <option value={0}>-Selecciona Area-</option>
+                        <option value={""}>-Selecciona Area-</option>
                         {dataAreas.map((area) => (
                           <option value={area.area}>{area.descripcion}</option>
                         ))}
@@ -1093,7 +1325,7 @@ function Productos() {
 
                       <Label>Departamento:</Label>
                       <Input type="select" name="depto" id="exampleSelect" value={form.depto} onChange={handleChange}>
-                        <option value={0}>-Selecciona departamento-</option>
+                        <option value={""}>-Selecciona departamento-</option>
                         {dataDeptosFiltrado.map((depto: Departamento) => (
                           <option value={depto.depto}>{depto.descripcion}</option>
                         ))}
@@ -1101,7 +1333,7 @@ function Productos() {
                       <br />
                       <Label>Clase:</Label>
                       <Input type="select" name="clase" id="exampleSelect" value={form.clase} onChange={handleChange}>
-                        <option value={0}>-Selecciona Clase-</option>
+                        <option value={""}>-Selecciona Clase-</option>
                         {dataClasesFiltrado.map((depto: Clase) => (
                           <option value={depto.clase}>{depto.descripcion}</option>
                         ))}
@@ -1115,7 +1347,7 @@ function Productos() {
                         value={form.idMarca}
                         onChange={handleChange}
                       >
-                        <option value={0}>-Selecciona marca-</option>
+                        <option value={""}>-Selecciona marca-</option>
                         {dataMarcas.map((marca) => (
                           <option value={marca.id}>{marca.marca}</option>
                         ))}
@@ -1127,6 +1359,7 @@ function Productos() {
                         inputName="descripcion"
                         labelName="Descripción:"
                         value={form.descripcion}
+                        minlength={1} maxlength={199}
                       />
                       <div style={{ paddingBottom: 0 }}></div>
                       <CFormGroupInput
@@ -1134,20 +1367,23 @@ function Productos() {
                         inputName="clave_prod"
                         labelName="Clave producto:"
                         value={form.clave_prod}
+                        minlength={1} maxlength={30}
                       />
                     </Col>
                     <Col>
                       <CFormGroupInput
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="tiempo"
                         labelName="Tiempo:"
                         type="number"
+                        minlength={1} maxlength={30}
                       />
                       <CFormGroupInput
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="comision"
                         labelName="Comisión:"
                         type="number"
+                        minlength={1} maxlength={100}
                       />
                       <br />
                       <Label>Proveedor:</Label>
@@ -1159,7 +1395,7 @@ function Productos() {
                         onChange={handleChange}
                         style={{ marginBottom: 17 }}
                       >
-                        <option value={0}>--Selecciona el proveedor--</option>
+                        <option value={""}>--Selecciona el proveedor--</option>
                         {dataProveedores.map((proveedor) => (
                           <option value={proveedor.id}>{proveedor.nombre}</option>
                         ))}
@@ -1169,6 +1405,8 @@ function Productos() {
                         inputName="descripcion_corta"
                         labelName="Descripción corta:"
                         value={form.descripcion_corta}
+                        minlength={1} maxlength={199}
+
                       />
 
                       <CFormGroupInput
@@ -1176,6 +1414,7 @@ function Productos() {
                         inputName="observacion"
                         labelName="Observación:"
                         value={form.observacion}
+                        minlength={1} maxlength={500}
                       />
                     </Col>
                   </Row>
@@ -1305,15 +1544,17 @@ function Productos() {
                     <Col sm="6">
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="tasa_iva"
                         labelName="Tasa IVA:"
+                        minlength={1} maxlength={100}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="costo_unitario"
                         labelName="Costo unitario:"
+                        minlength={1} maxlength={100}
                       />
 
                       <Label>Unidad de medida:</Label>
@@ -1324,7 +1565,7 @@ function Productos() {
                         value={form.unidad_medida}
                         onChange={handleChange}
                       >
-                        <option value={0}>-Selecciona unida medida-</option>
+                        <option value={""}>-Selecciona unida medida-</option>
                         {dataUnidadMedida.map((medida: UnidadMedidaModel) => (
                           <option value={medida.id}>{medida.descripcion}</option>
                         ))}
@@ -1333,28 +1574,31 @@ function Productos() {
                     <Col sm="6">
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="tasa_ieps"
                         labelName="Tasa IEPS:"
+                        minlength={1} maxlength={100}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="precio"
                         labelName="Precio:"
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="unidad_paq"
                         labelName="Unidad paquete compra:"
                         value={form.unidad_paq}
+                        minlength={1} maxlength={100}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="unidad_paq_traspaso"
                         labelName="Unidad paquete traspaso:"
+                        minlength={1} maxlength={100}
                       />
                     </Col>
                   </Row>
@@ -1367,15 +1611,17 @@ function Productos() {
                       <Col sm="6">
                         <CFormGroupInput
                           type="number"
-                          handleChange={handleChange}
+                          handleChange={handleChange1}
                           inputName="precio_promocion"
                           labelName="Precio promoción:"
+                          minlength={1} maxlength={100}
                         />
                         <CFormGroupInput
                           type="number"
-                          handleChange={handleChange}
+                          handleChange={handleChange1}
                           inputName="porcentaje_promocion"
                           labelName="Porcentaje promoción:"
+                          minlength={1} maxlength={100}
                         />
                         <label className="checkbox-container">
                           <input type="checkbox" checked={form.promocion} onChange={handleChange} name="promocion" />
@@ -1466,7 +1712,7 @@ function Productos() {
                     <Col>
                       <Label>Área:</Label>
                       <Input type="select" name="area" id="exampleSelect" value={form.area} onChange={handleChange}>
-                        <option value={0}>-Selecciona Area-</option>
+                        <option value={""}>-Selecciona Area-</option>
                         {dataAreas.map((area) => (
                           <option value={area.area}>{area.descripcion}</option>
                         ))}
@@ -1474,7 +1720,7 @@ function Productos() {
                       <br />
                       <Label>Clase:</Label>
                       <Input type="select" name="clase" id="exampleSelect" value={form.clase} onChange={handleChange}>
-                        <option value={0}>-Selecciona Clase-</option>
+                        <option value={""}>-Selecciona Clase-</option>
                         {dataClasesFiltrado.map((depto: Clase) => (
                           <option value={depto.clase}>{depto.descripcion}</option>
                         ))}
@@ -1485,6 +1731,7 @@ function Productos() {
                         inputName="descripcion"
                         labelName="Descripción:"
                         value={form.descripcion}
+                        minlength={1} maxlength={199}
                       />
                       <div style={{ paddingBottom: 0 }}></div>
                       <CFormGroupInput
@@ -1492,16 +1739,17 @@ function Productos() {
                         inputName="clave_prod"
                         labelName="Clave Producto:"
                         value={form.clave_prod}
+                        minlength={1} maxlength={30}
                       />
                       <CFormGroupInput
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="tiempo"
                         labelName="Tiempo:"
                         value={form.tiempo}
                         type="number"
                       />
                       <CFormGroupInput
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="comision"
                         labelName="Comisión:"
                         value={form.comision}
@@ -1512,7 +1760,7 @@ function Productos() {
                     <Col>
                       <Label>Departamento:</Label>
                       <Input type="select" name="depto" id="exampleSelect" value={form.depto} onChange={handleChange}>
-                        <option value={0}>-Selecciona departamento-</option>
+                        <option value={""}>-Selecciona departamento-</option>
                         {dataDeptosFiltrado.map((depto: Departamento) => (
                           <option value={depto.depto}>{depto.descripcion}</option>
                         ))}
@@ -1526,7 +1774,7 @@ function Productos() {
                         value={form.idMarca}
                         onChange={handleChange}
                       >
-                        <option value={0}>-Selecciona Marca-</option>
+                        <option value={""}>-Selecciona Marca-</option>
                         {dataMarcas.map((marca) => (
                           <option value={marca.id}>{marca.marca}</option>
                         ))}
@@ -1541,7 +1789,7 @@ function Productos() {
                         onChange={handleChange}
                         style={{ marginBottom: 17 }}
                       >
-                        <option value={0}>--Selecciona el proveedor--</option>
+                        <option value={""}>--Selecciona el proveedor--</option>
                         {dataProveedores.map((proveedor: Proveedor) => (
                           <option value={proveedor.id}> {proveedor.nombre} </option>
                         ))}
@@ -1551,12 +1799,14 @@ function Productos() {
                         inputName="descripcion_corta"
                         labelName="Descripción corta:"
                         value={form.descripcion_corta}
+                        minlength={1} maxlength={30}
                       />
                       <CFormGroupInput
                         handleChange={handleChange}
                         inputName="observacion"
                         labelName="Observación:"
                         value={form.observacion}
+                        minlength={1} maxlength={500}
                       />
                       <Label>Unidad de medida:</Label>
                       <Input
@@ -1566,7 +1816,7 @@ function Productos() {
                         value={form.unidad_medida}
                         onChange={handleChange}
                       >
-                        <option value={0}>-Selecciona unida medida-</option>
+                        <option value={""}>-Selecciona unida medida-</option>
                         {dataUnidadMedida.map((medida: UnidadMedidaModel) => (
                           <option value={medida.id}>{medida.descripcion}</option>
                         ))}
@@ -1695,14 +1945,14 @@ function Productos() {
                     <Col sm="6">
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="tasa_iva"
                         labelName="Tasa IVA:"
                         value={form.tasa_iva}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="costo_unitario"
                         labelName="Costo unitario:"
                         value={form.costo_unitario}
@@ -1711,28 +1961,28 @@ function Productos() {
                     <Col sm="6">
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="tasa_ieps"
                         labelName="Tasa IEPS:"
                         value={form.tasa_ieps}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="precio"
                         labelName="Precio:"
                         value={form.precio}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="unidad_paq"
                         labelName="Unidad paquete compra:"
                         value={form.unidad_paq}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange}
+                        handleChange={handleChange1}
                         inputName="unidad_paq_traspaso"
                         labelName="Unidad paquete traspaso:"
                         value={form.unidad_paq_traspaso}
@@ -1749,14 +1999,14 @@ function Productos() {
                       <Col sm="6">
                         <CFormGroupInput
                           type="number"
-                          handleChange={handleChange}
+                          handleChange={handleChange1}
                           inputName="precio_promocion"
                           labelName="Precio promoción:"
                           value={form.precio_promocion}
                         />
                         <CFormGroupInput
                           type="number"
-                          handleChange={handleChange}
+                          handleChange={handleChange1}
                           inputName="porcentaje_promocion"
                           labelName="Porcentaje promoción:"
                           value={form.porcentaje_promocion}

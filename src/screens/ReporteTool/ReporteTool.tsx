@@ -75,6 +75,7 @@ function ReporteTool() {
   const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
   const [showAlmDestInput, setShowAlmDestInput] = useState(false);
   const [showTipoMovtoInput, setShowTipoMovtoInput] = useState(false);
+  const [showNoVentaInput, setShowNoVentaInput] = useState(false);
   const [showProveedorInput, setShowProveedorInput] = useState(false);
   const [showMetodoPagoInput, setShowMetodoPagoInput] = useState(false);
   const [showClaveProdInput, setShowClaveProdInput] = useState(false);
@@ -304,15 +305,18 @@ function ReporteTool() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else if (reporte == "sp_repoComisiones1") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
-    } else if (reporte == "sp_reporteinventario") {
+    } else if (reporte == "TicketInsumosEstilsta") { //---------------------
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+    }
+    else if (reporte == "sp_reporteinventario") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${formData.empresa}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
 
     jezaApi
@@ -567,6 +571,7 @@ function ReporteTool() {
     cve_prod: "",
     marca: "",
     palabra: "",
+    noVenta: "",
   });
 
   function setShowAllInputsToFalse() {
@@ -599,7 +604,7 @@ function ReporteTool() {
     if (name === "reporte") {
       if (value === "RepVtaSucEstilista" || value === "RepVtaDetalle" || value === "RepVtaSucFecha") {
         // Mostrar los campos para estos informes
-        setShowEmpresaInput(true);
+
         setShowSucursalInput(true);
         setShowClienteInput(true);
         setShowEstilistaInput(true);
@@ -618,8 +623,10 @@ function ReporteTool() {
         setShowProductoInput(false);
         setShowAlmacenInput(false);
         setShowPalabraProdInput(false);
+        setShowNoVentaInput(false);
+        setShowEmpresaInput(false);
       } else if (value === "sp_reporte5_Ventas") {
-        setShowEmpresaInput(true);
+
         setShowSucursalInput(true);
 
         setShowTipoDescuentoInput(true);
@@ -627,6 +634,7 @@ function ReporteTool() {
         setShowMetodoPagoInput(true);
         setShowAreaInput(true);
         //----------------------------------------------------------------
+        setShowEmpresaInput(false);
         setShowClaveProdInput(false);
         setShowClienteInput(false);
         setShowSucDesInput(false);
@@ -638,6 +646,7 @@ function ReporteTool() {
         setShowDeptoInput(false);
         setShowProductoInput(false);
         setShowAlmacenInput(false);
+        setShowNoVentaInput(false);
         setShowPalabraProdInput(false);
         //sp_repoComisiones1
       } else if (value === "sp_repoComisiones1") {
@@ -663,6 +672,7 @@ function ReporteTool() {
         setShowProductoInput(false);
         setShowDeptoInput(false);
         setShowAlmacenInput(false);
+        setShowNoVentaInput(false);
         setShowPalabraProdInput(false);
       } else if (value === "sp_reporte4_Estilistas") {
         setShowEstilistaInput(true);
@@ -684,6 +694,7 @@ function ReporteTool() {
         setShowProductoInput(false);
         setShowAlmacenInput(false);
         setShowPalabraProdInput(false);
+        setShowNoVentaInput(false);
       } else if (value === "sp_reporteinventario") {
         //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
         setShowSucursalInput(true);
@@ -704,7 +715,31 @@ function ReporteTool() {
         setShowTipoMovtoInput(false);
         setShowProveedorInput(false);
         setShowMetodoPagoInput(false);
-
+        setShowNoVentaInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+      } else if (value === "TicketInsumosEstilsta") {
+        //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
+        setShowSucursalInput(true);
+        setShowClienteInput(true);
+        setShowEstilistaInput(true);
+        setShowNoVentaInput(true);
+        //------------------------------------------------------
+        setShowAlmOrigenInput(false);
+        setShowClaveProdInput(false);
+        setShowMarcaInput(false);
+        setShowPalabraProdInput(false);
+        setShowSucDesInput(false);
+        setShowProductoInput(false);
+        setShowEmpresaInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowAlmacenInput(false);
         setShowTipoDescuentoInput(false);
         setShowAreaInput(false);
         setShowDeptoInput(false);
@@ -727,6 +762,7 @@ function ReporteTool() {
         setShowProductoInput(false);
         setShowAlmacenInput(false);
         setShowPalabraProdInput(false);
+        setShowNoVentaInput(false);
       }
       // Agrega lógica similar para otros campos según sea necesario
     }
@@ -1247,6 +1283,12 @@ function ReporteTool() {
                   <div>
                     <Label>Palabra</Label>
                     <Input type="text" name="palabra" value={formulario.palabra} onChange={handleChange} bsSize="sm" />
+                  </div>
+                ) : null}
+                {showNoVentaInput ? (
+                  <div>
+                    <Label>No. venta</Label>
+                    <Input type="text" name="noVenta" value={formulario.noVenta} onChange={handleChange} bsSize="sm" />
                   </div>
                 ) : null}
                 {showAreaInput ? (

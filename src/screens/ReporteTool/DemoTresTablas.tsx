@@ -115,7 +115,7 @@ function DemoTresTablas() {
     const fechaSelected = fechaPost ? fechaPost : format(new Date(), "yyyy-MM-dd");
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
-        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
+        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, paoacv@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
         // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
         subject: `Corte del dia de: ${dataUsuarios2[0]?.d_sucursal}`,
         text: "Corte",
@@ -261,10 +261,10 @@ function DemoTresTablas() {
   );
   const arregloConID = dataCorteEmailA
     ? dataCorteEmailA.map((item, index) => ({
-        id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
-        value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
-        label: item.FormadePago,
-      }))
+      id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
+      value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
+      label: item.FormadePago,
+    }))
     : [];
 
   const arregloFormateado = arregloConID.slice(0, -1);
