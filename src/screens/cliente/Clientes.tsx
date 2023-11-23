@@ -296,10 +296,16 @@ function Clientes() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
   };
+
 
   // const insertar1 = async () => {
   //   /* CREATE */
@@ -382,6 +388,11 @@ function Clientes() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -1004,29 +1015,29 @@ function Clientes() {
           {/* parte */}
           <Row>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+              <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
+              <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
+              <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
+              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
+              <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} minlength={1} maxlength={100} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
+              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
             </Col>
 
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} />
+              <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
             </Col>
 
             <Col sm="6">
@@ -1040,7 +1051,7 @@ function Clientes() {
             </Col>
 
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} />
+              <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} minlength={1} maxlength={199} />
             </Col>
           </Row>
         </ModalBody>
@@ -1082,7 +1093,7 @@ function Clientes() {
                 <TabPane tabId="1">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={190} />
                     </Col>
                     <Col sm="6">
                       <CFormGroupInput
@@ -1095,27 +1106,27 @@ function Clientes() {
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                      <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} minlength={1} maxlength={190} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} />
+                      <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} minlength={1} maxlength={190} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} />
+                      <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} minlength={1} maxlength={190} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} />
+                      <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} minlength={1} maxlength={190} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} />
+                      <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} minlength={1} maxlength={100} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
+                      <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} minlength={1} maxlength={199} />
                     </Col>
                   </Row>
                   <br />
@@ -1124,15 +1135,15 @@ function Clientes() {
                 <TabPane tabId="2">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} />
+                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} />
+                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="redSocial1" labelName="Instagram:" value={form.redSocial1} />
+                      <CFormGroupInput handleChange={handleChange} inputName="redSocial1" labelName="Instagram:" value={form.redSocial1} minlength={1} maxlength={199} />
                     </Col>
 
                     <Col sm="6">
@@ -1141,13 +1152,14 @@ function Clientes() {
                         inputName="correo_factura"
                         labelName="Correo de facturación:"
                         value={form.correo_factura}
+                        minlength={1} maxlength={199}
                       />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Regimen fiscal:" value={form.regimenFiscal} />
+                      <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Regimen fiscal:" value={form.regimenFiscal} minlength={1} maxlength={199} />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} />
+                      <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} minlength={1} maxlength={199} />
                     </Col>
 
                     {/* <Col sm="6">
@@ -1303,6 +1315,9 @@ function Clientes() {
                         </p>
                         <p>
                           <strong>Domicilio:</strong> {clienteSeleccionado.domicilio}
+                        </p>
+                        <p>
+                          <strong>Sucursal origen:</strong> {clienteSeleccionado.sucursal_origen}
                         </p>
                         <p>
                           <strong>Fecha de nacimiento:</strong> {formatDate(clienteSeleccionado.fecha_nac)}

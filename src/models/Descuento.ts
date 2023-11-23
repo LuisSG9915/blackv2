@@ -2,7 +2,7 @@
 
 export interface Descuento {
   id: number;
-  descripcion: any;
+  descripcion: string;
   min_descto: number;
   max_descto: number;
 }

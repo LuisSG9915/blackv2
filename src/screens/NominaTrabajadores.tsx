@@ -373,6 +373,11 @@ function NominaTrabajadores() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -485,6 +490,11 @@ function NominaTrabajadores() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -500,32 +510,75 @@ function NominaTrabajadores() {
   //   }
   // };
 
+  // const eliminar = async (dato: Trabajador) => {
+  //   const permiso = await filtroSeguridad("CAT_TRABAJADORES_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar el trabajador: ${dato.nombre}?`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/Trabajador?id=${dato.id}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getTrabajador();
+  //       });
+  //     }
+  //   });
+  // };
+
   const eliminar = async (dato: Trabajador) => {
     const permiso = await filtroSeguridad("CAT_TRABAJADORES_DEL");
+
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    Swal.fire({
-      title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar el trabajador: ${dato.nombre}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-    }).then((result) => {
+
+    try {
+      const result = await Swal.fire({
+        title: "ADVERTENCIA",
+        text: `¿Está seguro que desea eliminar el trabajador: ${dato.nombre}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+      });
+
       if (result.isConfirmed) {
-        jezaApi.delete(`/Trabajador?id=${dato.id}`).then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Registro eliminado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          getTrabajador();
+        await jezaApi.delete(`/Trabajador?id=${dato.id}`);
+        Swal.fire({
+          icon: "success",
+          text: "Registro eliminado con éxito",
+          confirmButtonColor: "#3085d6",
         });
+        getTrabajador();
+      } else {
+        // Manejar el caso donde el usuario cancela la eliminación
+        console.log("Eliminación cancelada");
       }
-    });
+    } catch (error) {
+      console.error(error);
+
+      // Mostrar alerta de error al usuario
+      Swal.fire({
+        icon: "error",
+        text: "Hubo un error al intentar eliminar el trabajador. Por favor, inténtalo de nuevo.",
+        confirmButtonColor: "#d33",
+      });
+    }
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -639,7 +692,7 @@ function NominaTrabajadores() {
             hideFooter={false}
             initialState={{
               pagination: {
-                paginationModel: { page: 2, pageSize: 30 },
+                paginationModel: { page: 1, pageSize: 15 },
               },
               sorting: {
                 sortModel: [{ field: "nombre", sort: "asc" }],
@@ -739,6 +792,7 @@ function NominaTrabajadores() {
                             inputName="nombre"
                             labelName="Nombre:"
                             defaultValue={form ? form.nombre : ""}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
 
@@ -748,6 +802,7 @@ function NominaTrabajadores() {
                             inputName="domicilio"
                             labelName="Domicilio:"
                             defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -766,6 +821,8 @@ function NominaTrabajadores() {
                             inputName="colonia"
                             labelName="Colonia:"
                             defaultValue={form.colonia ? form.colonia : form.colonia}
+                            minlength={1} maxlength={200}
+
                           />
                         </Col>
 
@@ -787,6 +844,7 @@ function NominaTrabajadores() {
                             inputName="poblacion"
                             labelName="Población:"
                             defaultValue={form.poblacion ? form.poblacion : form.poblacion}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -796,6 +854,7 @@ function NominaTrabajadores() {
                             inputName="lugar_nacimiento"
                             labelName="Lugar de nacimiento:"
                             defaultValue={form.lugar_nacimiento ? form.lugar_nacimiento : form.lugar_nacimiento}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -805,6 +864,7 @@ function NominaTrabajadores() {
                             inputName="estado"
                             labelName="Estado:"
                             defaultValue={form.estado ? form.estado : form.estado}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -814,6 +874,7 @@ function NominaTrabajadores() {
                             inputName="clave_empleado"
                             labelName="Clave empleado:"
                             defaultValue={form.clave_empleado ? form.clave_empleado : form.clave_empleado}
+                            minlength={1} maxlength={20}
                           />
                         </Col>
 
@@ -823,13 +884,14 @@ function NominaTrabajadores() {
                             inputName="codigo_postal"
                             labelName="Código postal:"
                             value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
 
                         <Col sm="6">
                           <Label>Clave perfil:</Label>
                           <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
-                            <option value={0}>--Selecciona una clave perfil--</option>
+                            <option value={""}>--Selecciona una clave perfil--</option>
                             {dataPerfiles.map((escolaridad) => (
                               <option value={escolaridad.clave_perfil}>{escolaridad.descripcion_perfil} </option>
                             ))}
@@ -842,6 +904,7 @@ function NominaTrabajadores() {
                             inputName="password"
                             labelName="Password:"
                             defaultValue={form.password ? form.password : form.password}
+                            minlength={1} maxlength={30}
                           />
                         </Col>
 
@@ -851,6 +914,7 @@ function NominaTrabajadores() {
                             inputName="nombreAgenda"
                             labelName="Nombre de agenda:"
                             defaultValue={form.nombreAgenda ? form.nombreAgenda : form.nombreAgenda}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
 
@@ -860,6 +924,7 @@ function NominaTrabajadores() {
                             inputName="aliasTickets"
                             labelName="Alias en el tiket:"
                             defaultValue={form.aliasTickets ? form.aliasTickets : form.aliasTickets}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                       </Row>
@@ -873,6 +938,7 @@ function NominaTrabajadores() {
                             inputName="telefono1"
                             labelName="Teléfono:"
                             defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
@@ -881,6 +947,7 @@ function NominaTrabajadores() {
                             inputName="telefono2"
                             labelName="Celular:"
                             defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
@@ -889,6 +956,7 @@ function NominaTrabajadores() {
                             inputName="email"
                             labelName="Email:"
                             defaultValue={form.email ? form.email : form.email}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                       </Row>
@@ -902,6 +970,7 @@ function NominaTrabajadores() {
                             inputName="RFC"
                             labelName="RFC:"
                             defaultValue={form.RFC ? form.RFC : form.RFC}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
@@ -910,15 +979,16 @@ function NominaTrabajadores() {
                             inputName="CURP"
                             labelName="CURP:"
                             defaultValue={form.CURP ? form.CURP : form.CURP}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
-                          <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} />
+                          <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} minlength={1} maxlength={50} />
                         </Col>
                         <Col sm="6">
                           <Label>Departamento:</Label>
                           <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
-                            <option value={0}>--Selecciona una opción--</option>
+                            <option value={""}>--Selecciona una opción--</option>
                             {dataD.map((depto) => (
                               <option value={depto.id}>{depto.descripcion_departamento} </option>
                             ))}
@@ -930,13 +1000,14 @@ function NominaTrabajadores() {
                             inputName="observaciones"
                             labelName="Observaciones:"
                             defaultValue={form ? form.observaciones : ""}
+                            minlength={1} maxlength={90}
                           />
                         </Col>
 
                         <Col sm="6">
                           <Label>Nivel de escolaridad:</Label>
                           <Input type="select" name="nivel_escolaridad" id="exampleSelect" value={form.nivel_escolaridad} onChange={handleChange}>
-                            <option value={0}>--Selecciona una opción--</option>
+                            <option value={""}>--Selecciona una opción--</option>
                             {dataNominaNivel.map((escolaridad) => (
                               <option value={escolaridad.id}>{escolaridad.descripcion} </option>
                             ))}
@@ -946,7 +1017,7 @@ function NominaTrabajadores() {
                         <Col sm="6">
                           <Label>Puesto:</Label>
                           <Input type="select" name="idPuesto" id="exampleSelect" value={form.idPuesto} onChange={handleChange}>
-                            <option value={0}>--Selecciona una opción--</option>
+                            <option value={""}>--Selecciona una opción--</option>
                             {dataNominaPuestos.map((puesto) => (
                               <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
                             ))}
@@ -956,7 +1027,7 @@ function NominaTrabajadores() {
                         <Col sm="6">
                           <Label>Estatus:</Label>
                           <Input type="select" name="status" id="exampleSelect" value={form.status} onChange={handleChange}>
-                            <option value={0}>--Selecciona un estatus--</option>
+                            <option value={""}>--Selecciona un estatus--</option>
                             {dataEstatus.map((estatus) => (
                               <option value={estatus.id}>{estatus.descripcion_baja} </option>
                             ))}
@@ -1055,6 +1126,7 @@ function NominaTrabajadores() {
                             inputName="nombre"
                             labelName="Nombre:"
                             defaultValue={form ? form.nombre : ""}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
 
@@ -1064,6 +1136,7 @@ function NominaTrabajadores() {
                             inputName="domicilio"
                             labelName="Domicilio:"
                             defaultValue={form?.domicilio ? form.domicilio : form.domicilio}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -1082,6 +1155,7 @@ function NominaTrabajadores() {
                             inputName="colonia"
                             labelName="Colonia:"
                             defaultValue={form.colonia ? form.colonia : form.colonia}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -1103,6 +1177,7 @@ function NominaTrabajadores() {
                             inputName="poblacion"
                             labelName="Población:"
                             defaultValue={form.poblacion ? form.poblacion : form.poblacion}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -1112,6 +1187,7 @@ function NominaTrabajadores() {
                             inputName="lugar_nacimiento"
                             labelName="Lugar de nacimiento:"
                             defaultValue={form.lugar_nacimiento ? form.lugar_nacimiento : form.lugar_nacimiento}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -1121,6 +1197,7 @@ function NominaTrabajadores() {
                             inputName="estado"
                             labelName="Estado:"
                             defaultValue={form.estado ? form.estado : form.estado}
+                            minlength={1} maxlength={200}
                           />
                         </Col>
 
@@ -1130,6 +1207,7 @@ function NominaTrabajadores() {
                             inputName="clave_empleado"
                             labelName="Clave empleado:"
                             defaultValue={form.clave_empleado ? form.clave_empleado : form.clave_empleado}
+                            minlength={1} maxlength={20}
                           />
                         </Col>
 
@@ -1139,6 +1217,7 @@ function NominaTrabajadores() {
                             inputName="codigo_postal"
                             labelName="Código postal:"
                             value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
 
@@ -1152,7 +1231,7 @@ function NominaTrabajadores() {
 
                           <Label>Clave perfil:</Label>
                           <Input type="select" name="clave_perfil" id="exampleSelect" value={form.clave_perfil} onChange={handleChange}>
-                            <option value={0}>--Selecciona una clave perfil--</option>
+                            <option value={""}>--Selecciona una clave perfil--</option>
                             {dataPerfiles.map((escolaridad) => (
                               <option value={escolaridad.clave_perfil}>{escolaridad.descripcion_perfil} </option>
                             ))}
@@ -1164,8 +1243,9 @@ function NominaTrabajadores() {
                             handleChange={handleChange}
                             inputName="password"
                             labelName="Password:"
-                            defaultValue={form.password}
+                            defaultValue={form.password ? form.password : form.password}
                             type="password"
+                            minlength={1} maxlength={30}
                           />
                         </Col>
 
@@ -1175,6 +1255,7 @@ function NominaTrabajadores() {
                             inputName="nombreAgenda"
                             labelName="Nombre de agenda:"
                             defaultValue={form.nombreAgenda ? form.nombreAgenda : form.nombreAgenda}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
 
@@ -1184,6 +1265,7 @@ function NominaTrabajadores() {
                             inputName="aliasTickets"
                             labelName="Alias en el tiket:"
                             defaultValue={form.aliasTickets ? form.aliasTickets : form.aliasTickets}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                       </Row>
@@ -1197,6 +1279,7 @@ function NominaTrabajadores() {
                             inputName="telefono1"
                             labelName="Teléfono:"
                             defaultValue={form.telefono1 ? form.telefono1 : form.telefono1}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
@@ -1205,6 +1288,7 @@ function NominaTrabajadores() {
                             inputName="telefono2"
                             labelName="Celular:"
                             defaultValue={form.telefono2 ? form.telefono2 : form.telefono2}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
@@ -1213,6 +1297,7 @@ function NominaTrabajadores() {
                             inputName="email"
                             labelName="Email:"
                             defaultValue={form.email ? form.email : form.email}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                       </Row>
@@ -1226,6 +1311,7 @@ function NominaTrabajadores() {
                             inputName="RFC"
                             labelName="RFC:"
                             defaultValue={form.RFC ? form.RFC : form.RFC}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
@@ -1234,15 +1320,16 @@ function NominaTrabajadores() {
                             inputName="CURP"
                             labelName="CURP:"
                             defaultValue={form.CURP ? form.CURP : form.CURP}
+                            minlength={1} maxlength={50}
                           />
                         </Col>
                         <Col sm="6">
-                          <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} />
+                          <CFormGroupInput handleChange={handleChange} inputName="imss" labelName="IMSS:" defaultValue={form ? form.imss : ""} minlength={1} maxlength={50} />
                         </Col>
                         <Col sm="6">
                           <Label>Departamento:</Label>
                           <Input type="select" name="idDepartamento" id="exampleSelect" value={form.idDepartamento} onChange={handleChange}>
-                            <option value={0}>--Selecciona una opción--</option>
+                            <option value={""}>--Selecciona una opción--</option>
                             {dataD.map((depto) => (
                               <option value={depto.id}>{depto.descripcion_departamento} </option>
                             ))}
@@ -1254,13 +1341,14 @@ function NominaTrabajadores() {
                             inputName="observaciones"
                             labelName="Observaciones:"
                             defaultValue={form ? form.observaciones : ""}
+                            minlength={1} maxlength={90}
                           />
                         </Col>
 
                         <Col sm="6">
                           <Label>Nivel de escolaridad:</Label>
                           <Input type="select" name="nivel_escolaridad" id="exampleSelect" value={form.nivel_escolaridad} onChange={handleChange}>
-                            <option value={0}>--Selecciona una opción--</option>
+                            <option value={""}>--Selecciona una opción--</option>
                             {dataNominaNivel.map((escolaridad) => (
                               <option value={escolaridad.id}>{escolaridad.descripcion} </option>
                             ))}
@@ -1270,7 +1358,7 @@ function NominaTrabajadores() {
                         <Col sm="6">
                           <Label>Puesto:</Label>
                           <Input type="select" name="idPuesto" id="exampleSelect" value={form.idPuesto} onChange={handleChange}>
-                            <option value={0}>--Selecciona una opción--</option>
+                            <option value={""}>--Selecciona una opción--</option>
                             {dataNominaPuestos.map((puesto) => (
                               <option value={puesto.clave_puesto}>{puesto.descripcion_puesto}</option>
                             ))}
@@ -1280,7 +1368,7 @@ function NominaTrabajadores() {
                         <Col sm="6">
                           <Label>Estatus:</Label>
                           <Input type="select" name="status" id="exampleSelect" value={form.status} onChange={handleChange}>
-                            <option value={0}>--Selecciona un estatus--</option>
+                            <option value={""}>--Selecciona un estatus--</option>
                             {dataEstatus.map((estatus) => (
                               <option value={estatus.id}>{estatus.descripcion_baja} </option>
                             ))}
@@ -1306,7 +1394,7 @@ function NominaTrabajadores() {
                           <Col sm="6">
                             <Label>Motivo de baja:</Label>
                             <Input type="select" name="motivo_baja" id="exampleSelect" value={form.motivo_baja} onChange={handleChange}>
-                              <option value={0}>--Selecciona un motivo de baja--</option>
+                              <option value={""}>--Selecciona un motivo de baja--</option>
                               {dataBajas.map((baja) => (
                                 <option value={baja.id}>{baja.descripcion_baja} </option>
                               ))}
@@ -1319,6 +1407,7 @@ function NominaTrabajadores() {
                               inputName="motivo_baja_especificacion"
                               labelName="Especificación de motivo de baja:"
                               defaultValue={form.motivo_baja_especificacion}
+                              minlength={1} maxlength={250}
                             />
                           </Col>
                         </Row>

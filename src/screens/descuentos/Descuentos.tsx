@@ -157,7 +157,7 @@ function Descuentos() {
       }
       Swal.fire({
         icon: "success",
-        text: "Sucursal actualizada con éxito",
+        text: "Descuento actualizado con éxito",
         confirmButtonColor: "#3085d6",
       });
     } else {
@@ -187,9 +187,14 @@ function Descuentos() {
           });
           getDescuento();
         });
+
       }
     });
   };
+
+
+
+
   const getDescuento = () => {
     jezaApi
       .get("/Tipodescuento?id=0")
@@ -202,23 +207,35 @@ function Descuentos() {
     getDescuento();
   }, []);
 
-  const filtroEmail = (datoMedico: string, datoEmail: string) => {
-    // var resultado = data.filter((elemento: any) => {
-    //   // Aplica la lógica del filtro solo si hay valores en los inputs
-    //   if (
-    //     (datoEmail === "" || elemento.email.toLowerCase().includes(datoEmail.toLowerCase())) &&
-    //     (datoMedico === "" || elemento.nombre.toLowerCase().includes(datoMedico.toLowerCase())) &&
-    //     elemento.nombre.length > 2
-    //   ) {
-    //     return elemento;
-    //   }
-    // });
-    // setData(resultado);
+  const LimpiezaForm = () => {
+    setForm({
+      id: 0,
+      descripcion: "",
+      min_descto: 0.0,
+      max_descto: 0.0,
+    });
   };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prevState: any) => ({ ...prevState, [name]: value }));
-    console.log(form);
+
+    // Verificar si el campo es 'min_descto' o 'max_descto'
+    if (name === 'min_descto' || name === 'max_descto') {
+      // Restricciones para 'min_descto' y 'max_descto'
+      const numericValue = value.replace(/[^0-9.]/g, '');
+
+      // Verificar si ya hay un punto en el valor
+      if (numericValue.indexOf('.') === -1 || numericValue.lastIndexOf('.') === numericValue.indexOf('.')) {
+        setForm((prevState) => ({ ...prevState, [name]: numericValue }));
+      }
+    } else {
+      // Permitir la entrada de espacios solo después de que se haya ingresado al menos un carácter
+      if (value.length === 0 || /^\s*$/.test(value)) {
+        setForm((prevState) => ({ ...prevState, [name]: '' }));
+      } else {
+        setForm((prevState) => ({ ...prevState, [name]: value }));
+      }
+    }
   };
 
   const [isSidebarVisible, setSidebarVisible] = useState(false);
@@ -243,7 +260,7 @@ function Descuentos() {
       ),
     },
     { field: "descripcion", headerName: "Descripción", flex: 1 },
-    { field: "min_descto", headerName: "Minimo descuento", flex: 1 },
+    { field: "min_descto", headerName: "Mínimo descuento", flex: 1 },
     { field: "max_descto", headerName: "Máximo descuento", flex: 1 },
   ];
 
@@ -264,34 +281,81 @@ function Descuentos() {
     window.location.reload();
   };
 
+  // const insertar = async () => {
+  //   const permiso = await filtroSeguridad("CAT_DESCUENTO_ADD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   console.log(validarCampos());
+  //   console.log({ form });
+  //   if (validarCampos() === true) {
+  //     await jezaApi
+  //       .post("/Tipodescuento", null, {
+  //         params: {
+  //           descripcion: form.descripcion,
+  //           min_descto: form.min_descto,
+  //           max_descto: form.max_descto,
+  //         },
+  //       })
+  //       .then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Descuento creado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalInsertar(false);
+  //         getDescuento();
+  //       });
+  //   } else {
+  //   }
+  // };
+
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_DESCUENTO_ADD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    }
-    console.log(validarCampos());
-    console.log({ form });
-    if (validarCampos() === true) {
-      await jezaApi
-        .post("/Tipodescuento", null, {
-          params: {
-            descripcion: form.descripcion,
-            min_descto: form.min_descto,
-            max_descto: form.max_descto,
-          },
-        })
-        .then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Descuento creado con éxito",
-            confirmButtonColor: "#3085d6",
+    try {
+      const permiso = await filtroSeguridad("CAT_DESCUENTO_ADD");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+      console.log(validarCampos());
+      console.log({ form });
+      if (validarCampos() === true) {
+        await jezaApi
+          .post("/Tipodescuento", null, {
+            params: {
+              descripcion: form.descripcion,
+              min_descto: form.min_descto,
+              max_descto: form.max_descto,
+            },
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Descuento creado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            setModalInsertar(false);
+            getDescuento();
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Hubo un problema al crear el descuento. Por favor, inténtalo de nuevo.",
+              confirmButtonColor: "#d33",
+            });
           });
-          setModalInsertar(false);
-          getDescuento();
-        });
-    } else {
+      } else {
+        // Lógica para campos no válidos
+      }
+    } catch (error) {
+      console.error("Error en la función crear:", error);
     }
   };
+
+
+
+
 
   return (
     <>
@@ -322,7 +386,7 @@ function Descuentos() {
                 <CButton color="secondary" onClick={() => filtroEmail(filtroValorMedico)} text="Buscar" />
               </InputGroup> */}
               <br />
-              <br />
+
 
               <ButtonGroup variant="contained" aria-label="outlined primary button group">
                 <Button
@@ -331,7 +395,7 @@ function Descuentos() {
                   onClick={() => {
                     setModalInsertar(true);
                     // setEstado("insert");
-                    // LimpiezaForm();
+                    LimpiezaForm();
                   }}
                 >
                   Crear descuento
@@ -365,24 +429,10 @@ function Descuentos() {
 
         <ModalBody>
           <Container>
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="descripcion"
-              labelName="Descripción:"
-              defaultValue={form.descripcion}
-            />
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="min_descto"
-              labelName="Minimo de descuento:"
-              defaultValue={form.min_descto}
-            />
-            <CFormGroupInput
-              handleChange={handleChange}
-              inputName="max_descto"
-              labelName="Máximo de descuento:"
-              defaultValue={form.max_descto}
-            />
+            <CFormGroupInput type="text" handleChange={handleChange} inputName="descripcion" labelName="Descripción:" value={form.descripcion} minlength={1} maxlength={45} />
+            <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Mínimo descuento:" value={form.min_descto} minlength={1} maxlength={10} />
+            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo descuento:" value={form.max_descto} minlength={1} maxlength={10} />
+
           </Container>
         </ModalBody>
 
@@ -408,9 +458,13 @@ function Descuentos() {
 
         <ModalBody>
           <Container>
-            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName=" Descripción:" />
+            <CFormGroupInput type="text" handleChange={handleChange} inputName="descripcion" labelName="Descripción:" value={form.descripcion} minlength={1} maxlength={45} />
+            <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Mínimo descuento:" value={form.min_descto} minlength={1} maxlength={10} />
+            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo descuento:" value={form.max_descto} minlength={1} maxlength={10} />
+
+            {/* <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName=" Descripción:" />
             <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName=" Minimo descuento:" />
-            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName=" Máximo descuento:" />
+            <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName=" Máximo descuento:" /> */}
           </Container>
         </ModalBody>
 
