@@ -168,7 +168,7 @@ function ReporteCifra() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepCifra_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -268,7 +268,9 @@ function ReporteCifra() {
     getReporte();
   }, []);
 
-  const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeAreaDeptoClase = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setClase((prevState) => ({ ...prevState, [name]: value }));
     // console.log(formClase);
@@ -305,18 +307,26 @@ function ReporteCifra() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
+        formData.tipoPago
+      }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else if (reporte == "sp_repoComisiones1") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
-    } else if (reporte == "TicketInsumosEstilsta") { //---------------------
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
-    }
-    else if (reporte == "sp_reporteinventario") {
+    } else if (reporte == "TicketInsumosEstilsta") {
+      //---------------------
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
+        formData.fechaFinal
+      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+    } else if (reporte == "sp_reporteinventario") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
 
     jezaApi
@@ -626,7 +636,6 @@ function ReporteCifra() {
         setShowNoVentaInput(false);
         setShowEmpresaInput(false);
       } else if (value === "sp_reporte5_Ventas") {
-
         setShowSucursalInput(true);
 
         setShowTipoDescuentoInput(true);
@@ -977,12 +986,14 @@ function ReporteCifra() {
                   <Label>Reporte:</Label>
                   <Input type="select" name="reporte" value={formulario.reporte} onChange={handleChange}>
                     <option value="">Seleccione un reporte</option>
+                    <option value="sp_reporteCifras">Reporte Cifras</option>
+                    <option value="sp_reporteCifrasEmpleado">Reporte Cifras Empleado/option>
 
-                    {data.map((item) => (
+                    {/* {data.map((item) => (
                       <option key={item.id} value={item.metodoApi}>
                         {item.descripcion}
                       </option>
-                    ))}
+                    ))} */}
                   </Input>
                 </div>
               </div>
@@ -1001,12 +1012,25 @@ function ReporteCifra() {
                 </div>
                 <div>
                   <Label>Fecha final:</Label>
-                  <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange} disabled={!data[0]?.f2} bsSize="sm" />
+                  <Input
+                    type="date"
+                    name="fechaFinal"
+                    value={formulario.fechaFinal}
+                    onChange={handleChange}
+                    disabled={!data[0]?.f2}
+                    bsSize="sm"
+                  />
                 </div>
                 {showSucursalInput ? (
                   <div>
                     <Label>Sucursal:</Label>
-                    <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="sucursal"
+                      value={formulario.sucursal}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
                       <option value="">Seleccione la sucursal</option>
 
                       {dataSucursales.map((item) => (
@@ -1250,7 +1274,13 @@ function ReporteCifra() {
                   <div>
                     <Label>Método de pago:</Label>
 
-                    <Input type="select" name="tipoPago" value={formulario.tipoPago} onChange={handleChange} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="tipoPago"
+                      value={formulario.tipoPago}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
                       <option value="">Seleccione el tipo de pago</option>
 
                       {dataFormasPagos.map((item) => (
@@ -1264,7 +1294,13 @@ function ReporteCifra() {
                   <div>
                     <Label>Tipo de descuento:</Label>
 
-                    <Input type="select" name="tipoDescuento" value={formulario.tipoDescuento} onChange={handleChange} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="tipoDescuento"
+                      value={formulario.tipoDescuento}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
                       <option value="">Seleccione el tipo de descuento:</option>
 
                       {descuento.map((item) => (
@@ -1276,7 +1312,13 @@ function ReporteCifra() {
                 {showClaveProdInput ? (
                   <div>
                     <Label>Clave producto</Label>
-                    <Input type="text" name="clave_prod" value={formulario.clave_prod} onChange={handleChange} bsSize="sm" />
+                    <Input
+                      type="text"
+                      name="clave_prod"
+                      value={formulario.clave_prod}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    />
                   </div>
                 ) : null}
                 {showPalabraProdInput ? (
@@ -1294,7 +1336,14 @@ function ReporteCifra() {
                 {showAreaInput ? (
                   <div>
                     <Label for="area">Área:</Label>
-                    <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="area"
+                      id="exampleSelect"
+                      value={formClase.area}
+                      onChange={handleChangeAreaDeptoClase}
+                      bsSize="sm"
+                    >
                       <option value={0}>Seleccione un área</option>
                       {dataAreas.map((area) => (
                         <option value={area.area}>{area.descripcion}</option>
@@ -1305,7 +1354,14 @@ function ReporteCifra() {
                 {showDeptoInput ? (
                   <div>
                     <Label for="departamento">Departamento:</Label>
-                    <Input bsSize="sm" type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
+                    <Input
+                      bsSize="sm"
+                      type="select"
+                      name="depto"
+                      id="exampleSelect"
+                      value={formClase.depto}
+                      onChange={handleChangeAreaDeptoClase}
+                    >
                       <option value={0}>Seleccione un departamento</option>
                       {dataDeptosFiltrado.map((depto) => (
                         <option value={depto.depto}>{depto.descripcion}</option>
@@ -1386,7 +1442,11 @@ function ReporteCifra() {
 
                 if (key === "Total" || key === "Importe" || key === "Precio") {
                   if (!isNaN(valor)) {
-                    return <span>${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
+                    return (
+                      <span>
+                        ${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    );
                   } else {
                     return valor;
                   }
@@ -1440,7 +1500,9 @@ function ReporteCifra() {
                           <Input
                             type="text"
                             id={columna}
-                            value={columna === "Total" || columna === "Importe" ? numeral(valor).format("$0,0.00") : valor}
+                            value={
+                              columna === "Total" || columna === "Importe" ? numeral(valor).format("$0,0.00") : valor
+                            }
                             disabled
                           />
                         </>
