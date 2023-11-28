@@ -43,7 +43,7 @@ import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 
-function ReporteTool() {
+function ReporteCifra() {
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
   const [data, setData] = useState<ReporteTool[]>([]);
@@ -1486,4 +1486,4 @@ function ReporteTool() {
   );
 }
 
-export default ReporteTool;
+export default ReporteCifra;
