@@ -73,6 +73,7 @@ import BloqueosColaborador from "./screens/bloqueo colaborador/BloqueosColaborad
 import HorariosSuc from "./screens/horariosucursal/HorariosSuc";
 import Webluetooth from "./screens/Webluetooth";
 import CatBloqueoColaboradores from "./screens/catbloqueosColaboradores/CatBloqueoColaboradores";
+import ReporteCifra from "./screens/cifraColaborador/ReporteCifra";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -359,6 +360,11 @@ const router = createBrowserRouter([
   {
     path: "/CatBloqueoColaboradores",
     element: <CatBloqueoColaboradores />,
+  },
+
+  {
+    path: "/ReporteCifra",
+    element: <ReporteCifra />,
   },
 ]);
 

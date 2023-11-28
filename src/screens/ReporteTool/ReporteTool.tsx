@@ -219,7 +219,7 @@ function ReporteTool() {
 
   const getDescuento = () => {
     jezaApi
-      .get("/Tipodescuento?id=0")
+      .get("/TipodescuentoGeneral?id=0")
       .then((response) => {
         setDescuento(response.data);
       })
