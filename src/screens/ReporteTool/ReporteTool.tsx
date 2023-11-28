@@ -83,6 +83,10 @@ function ReporteTool() {
   const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
   const [showAreaInput, setShowAreaInput] = useState(false);
   const [showDeptoInput, setShowDeptoInput] = useState(false);
+  const [showf1, setShowf1] = useState(false);
+  const [showf2, setShowf2] = useState(false);
+  const [showAñoInput, setShowAñoInput] = useState(false);
+  const [showMesInput, setShowMesInput] = useState(false);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
 
   const { filtroSeguridad, session } = useSeguridad();
@@ -268,7 +272,9 @@ function ReporteTool() {
     getReporte();
   }, []);
 
-  const handleChangeAreaDeptoClase = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChangeAreaDeptoClase = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setClase((prevState) => ({ ...prevState, [name]: value }));
     // console.log(formClase);
@@ -298,25 +304,45 @@ function ReporteTool() {
       return;
     }
 
-    if (formData.fechaInicial === "%" || formData.fechaInicial === "%") {
-      Swal.fire("", "Debe seleccionar el rango de fechas", "info");
-      return;
-    }
+    // if (
+    //   (formData.fechaInicial === "%" && formData.fechaInicial === "%" && reporte != "sp_reporteCifrasEmpleado") ||
+    //   (formData.fechaInicial === "%" && formData.fechaInicial === "%" && reporte != "sp_reporteCifras")
+    // ) {
+    //   Swal.fire("", "Debe seleccionar el rango de fechas", "info");
+    //   return;
+    // }
+
+    // if (formData.fechaInicial === "%" || formData.fechaInicial === "%") {
+    //   Swal.fire("", "Debe seleccionar el rango de fechas", "info");
+    //   return;
+    // }
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal}&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
+        formData.tipoPago
+      }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else if (reporte == "sp_repoComisiones1") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
-    } else if (reporte == "TicketInsumosEstilsta") { //---------------------
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
-    }
-    else if (reporte == "sp_reporteinventario") {
+    } else if (reporte == "TicketInsumosEstilsta") {
+      //---------------------
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
+        formData.fechaFinal
+      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+    } else if (reporte == "sp_reporteinventario") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
+    } else if (reporte == "sp_reporteCifrasEmpleado") {
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
+    } else if (reporte == "sp_reporteCifras") {
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal}&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
 
     jezaApi
@@ -572,6 +598,8 @@ function ReporteTool() {
     marca: "",
     palabra: "",
     noVenta: "",
+    año: "",
+    mes: "",
   });
 
   function setShowAllInputsToFalse() {
@@ -608,6 +636,8 @@ function ReporteTool() {
         setShowSucursalInput(true);
         setShowClienteInput(true);
         setShowEstilistaInput(true);
+        setShowf1(true);
+        setShowf2(true);
         //------------------------------------
         setShowSucDesInput(false);
         setShowAlmOrigenInput(false);
@@ -625,14 +655,17 @@ function ReporteTool() {
         setShowPalabraProdInput(false);
         setShowNoVentaInput(false);
         setShowEmpresaInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
       } else if (value === "sp_reporte5_Ventas") {
-
         setShowSucursalInput(true);
 
         setShowTipoDescuentoInput(true);
         setShowEstilistaInput(true);
         setShowMetodoPagoInput(true);
         setShowAreaInput(true);
+        setShowf1(true);
+        setShowf2(true);
         //----------------------------------------------------------------
         setShowEmpresaInput(false);
         setShowClaveProdInput(false);
@@ -648,13 +681,16 @@ function ReporteTool() {
         setShowAlmacenInput(false);
         setShowNoVentaInput(false);
         setShowPalabraProdInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
         //sp_repoComisiones1
       } else if (value === "sp_repoComisiones1") {
         //f1- f2 -suc-estilista
 
         setShowSucursalInput(true);
         setShowEstilistaInput(true);
-
+        setShowf1(true);
+        setShowf2(true);
         //----------------------------------------------------------------
         setShowTipoDescuentoInput(false);
 
@@ -674,7 +710,11 @@ function ReporteTool() {
         setShowAlmacenInput(false);
         setShowNoVentaInput(false);
         setShowPalabraProdInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
       } else if (value === "sp_reporte4_Estilistas") {
+        setShowf1(true);
+        setShowf2(true);
         setShowEstilistaInput(true);
         setShowSucursalInput(true);
         setShowAreaInput(true);
@@ -695,8 +735,12 @@ function ReporteTool() {
         setShowAlmacenInput(false);
         setShowPalabraProdInput(false);
         setShowNoVentaInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
       } else if (value === "sp_reporteinventario") {
         //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
+        setShowf1(true);
+        setShowf2(true);
         setShowSucursalInput(true);
         setShowAlmOrigenInput(true);
         setShowAlmacenInput(true);
@@ -719,8 +763,12 @@ function ReporteTool() {
         setShowTipoDescuentoInput(false);
         setShowAreaInput(false);
         setShowDeptoInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
       } else if (value === "TicketInsumosEstilsta") {
         //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
+        setShowf1(true);
+        setShowf2(true);
         setShowSucursalInput(true);
         setShowClienteInput(true);
         setShowEstilistaInput(true);
@@ -743,6 +791,36 @@ function ReporteTool() {
         setShowTipoDescuentoInput(false);
         setShowAreaInput(false);
         setShowDeptoInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
+      } else if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras") {
+        // Mostrar los campos para estos informes
+
+        setShowSucursalInput(true);
+        setShowMesInput(true);
+        setShowAñoInput(true);
+
+        //------------------------------------
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+        setShowMarcaInput(false);
+        setShowProductoInput(false);
+        setShowAlmacenInput(false);
+        setShowPalabraProdInput(false);
+        setShowNoVentaInput(false);
+        setShowEmpresaInput(false);
+        setShowClienteInput(false);
+        setShowEstilistaInput(false);
+        setShowf1(false);
+        setShowf2(false);
       } else {
         setShowClienteInput(false);
         setShowSucursalInput(false);
@@ -763,6 +841,10 @@ function ReporteTool() {
         setShowAlmacenInput(false);
         setShowPalabraProdInput(false);
         setShowNoVentaInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
+        setShowf1(false);
+        setShowf2(false);
       }
       // Agrega lógica similar para otros campos según sea necesario
     }
@@ -988,25 +1070,42 @@ function ReporteTool() {
               </div>
               <br />
               <div className="formulario">
-                <div>
-                  <Label>Fecha inicial:</Label>
-                  <Input
-                    type="date"
-                    name="fechaInicial"
-                    value={formulario.fechaInicial}
-                    onChange={handleChange}
-                    disabled={!data[0]?.f1}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Fecha final:</Label>
-                  <Input type="date" name="fechaFinal" value={formulario.fechaFinal} onChange={handleChange} disabled={!data[0]?.f2} bsSize="sm" />
-                </div>
+                {showf1 ? (
+                  <div>
+                    <Label>Fecha inicial:</Label>
+                    <Input
+                      type="date"
+                      name="fechaInicial"
+                      value={formulario.fechaInicial}
+                      onChange={handleChange}
+                      disabled={!data[0]?.f1}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showf2 ? (
+                  <div>
+                    <Label>Fecha final:</Label>
+                    <Input
+                      type="date"
+                      name="fechaFinal"
+                      value={formulario.fechaFinal}
+                      onChange={handleChange}
+                      disabled={!data[0]?.f2}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
                 {showSucursalInput ? (
                   <div>
                     <Label>Sucursal:</Label>
-                    <Input type="select" name="sucursal" value={formulario.sucursal} onChange={handleChange} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="sucursal"
+                      value={formulario.sucursal}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
                       <option value="">Seleccione la sucursal</option>
 
                       {dataSucursales.map((item) => (
@@ -1250,7 +1349,13 @@ function ReporteTool() {
                   <div>
                     <Label>Método de pago:</Label>
 
-                    <Input type="select" name="tipoPago" value={formulario.tipoPago} onChange={handleChange} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="tipoPago"
+                      value={formulario.tipoPago}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
                       <option value="">Seleccione el tipo de pago</option>
 
                       {dataFormasPagos.map((item) => (
@@ -1264,7 +1369,13 @@ function ReporteTool() {
                   <div>
                     <Label>Tipo de descuento:</Label>
 
-                    <Input type="select" name="tipoDescuento" value={formulario.tipoDescuento} onChange={handleChange} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="tipoDescuento"
+                      value={formulario.tipoDescuento}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
                       <option value="">Seleccione el tipo de descuento:</option>
 
                       {descuento.map((item) => (
@@ -1276,7 +1387,13 @@ function ReporteTool() {
                 {showClaveProdInput ? (
                   <div>
                     <Label>Clave producto</Label>
-                    <Input type="text" name="clave_prod" value={formulario.clave_prod} onChange={handleChange} bsSize="sm" />
+                    <Input
+                      type="text"
+                      name="clave_prod"
+                      value={formulario.clave_prod}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    />
                   </div>
                 ) : null}
                 {showPalabraProdInput ? (
@@ -1294,7 +1411,14 @@ function ReporteTool() {
                 {showAreaInput ? (
                   <div>
                     <Label for="area">Área:</Label>
-                    <Input type="select" name="area" id="exampleSelect" value={formClase.area} onChange={handleChangeAreaDeptoClase} bsSize="sm">
+                    <Input
+                      type="select"
+                      name="area"
+                      id="exampleSelect"
+                      value={formClase.area}
+                      onChange={handleChangeAreaDeptoClase}
+                      bsSize="sm"
+                    >
                       <option value={0}>Seleccione un área</option>
                       {dataAreas.map((area) => (
                         <option value={area.area}>{area.descripcion}</option>
@@ -1302,10 +1426,53 @@ function ReporteTool() {
                     </Input>
                   </div>
                 ) : null}
+                {showAñoInput ? (
+                  <div>
+                    <Label>Año</Label>
+                    <Input type="select" name="año" value={formulario.año} onChange={handleChange}>
+                      <option value="">Seleccione un Año</option>
+                      <option value={2023}>2023</option>
+                      <option value={2024}>2024</option>
+                      <option value={2025}>2025</option>
+                      <option value={2026}>2026</option>
+                      <option value={2027}>2027</option>
+                      <option value={2028}>2028</option>
+                      <option value={2029}>2028</option>
+                      <option value={2030}>2030</option>
+                    </Input>
+                  </div>
+                ) : null}
+                {showMesInput ? (
+                  <div>
+                    <Label>Mes</Label>
+                    <Input type="select" name="mes" value={formulario.mes} onChange={handleChange}>
+                      <option value="">Seleccione un Mes</option>
+                      <option value="1">Enero</option>
+                      <option value="2">Febrero</option>
+                      <option value="3">Marzo</option>
+                      <option value="4">Abril</option>
+                      <option value="5">Mayo</option>
+                      <option value="6">Junio</option>
+                      <option value="7">Julio</option>
+                      <option value="8">Agosto</option>
+                      <option value="9">Septiembre</option>
+                      <option value="10">Octubre</option>
+                      <option value="11">Noviembre</option>
+                      <option value="12">Diciembre</option>
+                    </Input>
+                  </div>
+                ) : null}
                 {showDeptoInput ? (
                   <div>
                     <Label for="departamento">Departamento:</Label>
-                    <Input bsSize="sm" type="select" name="depto" id="exampleSelect" value={formClase.depto} onChange={handleChangeAreaDeptoClase}>
+                    <Input
+                      bsSize="sm"
+                      type="select"
+                      name="depto"
+                      id="exampleSelect"
+                      value={formClase.depto}
+                      onChange={handleChangeAreaDeptoClase}
+                    >
                       <option value={0}>Seleccione un departamento</option>
                       {dataDeptosFiltrado.map((depto) => (
                         <option value={depto.depto}>{depto.descripcion}</option>
@@ -1386,7 +1553,11 @@ function ReporteTool() {
 
                 if (key === "Total" || key === "Importe" || key === "Precio") {
                   if (!isNaN(valor)) {
-                    return <span>${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
+                    return (
+                      <span>
+                        ${valor.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    );
                   } else {
                     return valor;
                   }
@@ -1440,7 +1611,9 @@ function ReporteTool() {
                           <Input
                             type="text"
                             id={columna}
-                            value={columna === "Total" || columna === "Importe" ? numeral(valor).format("$0,0.00") : valor}
+                            value={
+                              columna === "Total" || columna === "Importe" ? numeral(valor).format("$0,0.00") : valor
+                            }
                             disabled
                           />
                         </>

@@ -73,6 +73,7 @@ function ReporteCifra() {
   const [showEmpresaInput, setShowEmpresaInput] = useState(false);
   const [showSucDesInput, setShowSucDesInput] = useState(false);
   const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
+
   const [showAlmDestInput, setShowAlmDestInput] = useState(false);
   const [showTipoMovtoInput, setShowTipoMovtoInput] = useState(false);
   const [showNoVentaInput, setShowNoVentaInput] = useState(false);
@@ -84,7 +85,10 @@ function ReporteCifra() {
   const [showAreaInput, setShowAreaInput] = useState(false);
   const [showDeptoInput, setShowDeptoInput] = useState(false);
   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
-
+  const [showf1, setShowf1] = useState(false);
+  const [showf2, setShowf2] = useState(false);
+  const [showAñoInput, setShowAñoInput] = useState(false);
+  const [showMesInput, setShowMesInput] = useState(false);
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
@@ -300,19 +304,17 @@ function ReporteCifra() {
       return;
     }
 
-    if (formData.fechaInicial === "%" || formData.fechaInicial === "%") {
-      Swal.fire("", "Debe seleccionar el rango de fechas", "info");
-      return;
-    }
+    // if (formData.fechaInicial === "%" || formData.fechaInicial === "%") {
+    //   Swal.fire("", "Debe seleccionar el rango de fechas", "info");
+    //   return;
+    // }
 
     let queryString = "";
     if (reporte == "sp_reporteCifras") {
-      alert(reporte);
-      queryString = `/${reporte}?año=%&mes=%&suc=${formData.sucursal}`;
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     }
     if (reporte == "sp_reporteCifrasEmpleado") {
-      alert(reporte);
-      queryString = `/${reporte}?año=%&mes=%&suc=${formData.sucursal}`;
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&suc=${formData.sucursal}`;
     }
 
     // if (reporte == "sp_reporte5_Ventas") {
@@ -598,6 +600,8 @@ function ReporteCifra() {
     marca: "",
     palabra: "",
     noVenta: "",
+    año: "",
+    mes: "",
   });
 
   function setShowAllInputsToFalse() {
@@ -628,12 +632,13 @@ function ReporteCifra() {
     setFormulario1({ ...formulario, [name]: value });
 
     if (name === "reporte") {
-      if (value === "RepVtaSucEstilista" || value === "RepVtaDetalle" || value === "RepVtaSucFecha") {
+      if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras") {
         // Mostrar los campos para estos informes
 
         setShowSucursalInput(true);
-        setShowClienteInput(true);
-        setShowEstilistaInput(true);
+        setShowMesInput(true);
+        setShowAñoInput(true);
+
         //------------------------------------
         setShowSucDesInput(false);
         setShowAlmOrigenInput(false);
@@ -651,144 +656,35 @@ function ReporteCifra() {
         setShowPalabraProdInput(false);
         setShowNoVentaInput(false);
         setShowEmpresaInput(false);
-      } else if (value === "sp_reporte5_Ventas") {
-        setShowSucursalInput(true);
-
-        setShowTipoDescuentoInput(true);
-        setShowEstilistaInput(true);
-        setShowMetodoPagoInput(true);
-        setShowAreaInput(true);
-        //----------------------------------------------------------------
-        setShowEmpresaInput(false);
-        setShowClaveProdInput(false);
         setShowClienteInput(false);
-        setShowSucDesInput(false);
-        setShowAlmOrigenInput(false);
-        setShowAlmDestInput(false);
-        setShowTipoMovtoInput(false);
-        setShowProveedorInput(false);
-        setShowMarcaInput(false);
-        setShowDeptoInput(false);
-        setShowProductoInput(false);
-        setShowAlmacenInput(false);
-        setShowNoVentaInput(false);
-        setShowPalabraProdInput(false);
-        //sp_repoComisiones1
-      } else if (value === "sp_repoComisiones1") {
-        //f1- f2 -suc-estilista
-
-        setShowSucursalInput(true);
-        setShowEstilistaInput(true);
-
-        //----------------------------------------------------------------
-        setShowTipoDescuentoInput(false);
-
-        setShowMetodoPagoInput(false);
-        setShowAreaInput(false);
-        setShowEmpresaInput(false);
-        setShowClaveProdInput(false);
-        setShowClienteInput(false);
-        setShowSucDesInput(false);
-        setShowAlmOrigenInput(false);
-        setShowAlmDestInput(false);
-        setShowTipoMovtoInput(false);
-        setShowProveedorInput(false);
-        setShowMarcaInput(false);
-        setShowProductoInput(false);
-        setShowDeptoInput(false);
-        setShowAlmacenInput(false);
-        setShowNoVentaInput(false);
-        setShowPalabraProdInput(false);
-      } else if (value === "sp_reporte4_Estilistas") {
-        setShowEstilistaInput(true);
-        setShowSucursalInput(true);
-        setShowAreaInput(true);
-        setShowDeptoInput(true);
-        setShowMarcaInput(false);
-        //------------------------------------------------------
-        setShowClienteInput(false);
-        setShowEmpresaInput(false);
-        setShowSucDesInput(false);
-        setShowAlmOrigenInput(false);
-        setShowAlmDestInput(false);
-        setShowTipoMovtoInput(false);
-        setShowProveedorInput(false);
-        setShowMetodoPagoInput(false);
-        setShowClaveProdInput(false);
-        setShowTipoDescuentoInput(false);
-        setShowProductoInput(false);
-        setShowAlmacenInput(false);
-        setShowPalabraProdInput(false);
-        setShowNoVentaInput(false);
-      } else if (value === "sp_reporteinventario") {
-        //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
-        setShowSucursalInput(true);
-        setShowAlmOrigenInput(true);
-        setShowAlmacenInput(true);
-        setShowProductoInput(true);
-        setShowMarcaInput(true);
-        setShowPalabraProdInput(false);
-        //------------------------------------------------------
-        setShowClaveProdInput(false);
         setShowEstilistaInput(false);
-        setShowSucDesInput(false);
-        setShowClienteInput(false);
-        setShowEmpresaInput(false);
-        setShowSucDesInput(false);
-        setShowAlmOrigenInput(false);
-        setShowAlmDestInput(false);
-        setShowTipoMovtoInput(false);
-        setShowProveedorInput(false);
-        setShowMetodoPagoInput(false);
-        setShowNoVentaInput(false);
-        setShowTipoDescuentoInput(false);
-        setShowAreaInput(false);
-        setShowDeptoInput(false);
-      } else if (value === "TicketInsumosEstilsta") {
-        //f1☻,f2☻,suc☻,almacen☻,marca,tipoProd,palabra,cveProd☻
-        setShowSucursalInput(true);
-        setShowClienteInput(true);
-        setShowEstilistaInput(true);
-        setShowNoVentaInput(true);
-        //------------------------------------------------------
-        setShowAlmOrigenInput(false);
-        setShowClaveProdInput(false);
-        setShowMarcaInput(false);
-        setShowPalabraProdInput(false);
-        setShowSucDesInput(false);
-        setShowProductoInput(false);
-        setShowEmpresaInput(false);
-        setShowSucDesInput(false);
-        setShowAlmOrigenInput(false);
-        setShowAlmDestInput(false);
-        setShowTipoMovtoInput(false);
-        setShowProveedorInput(false);
-        setShowMetodoPagoInput(false);
-        setShowAlmacenInput(false);
-        setShowTipoDescuentoInput(false);
-        setShowAreaInput(false);
-        setShowDeptoInput(false);
-      } else {
-        setShowClienteInput(false);
-        setShowSucursalInput(false);
-        setShowEstilistaInput(false);
-        setShowEmpresaInput(false);
-        setShowSucDesInput(false);
-        setShowAlmOrigenInput(false);
-        setShowAlmDestInput(false);
-        setShowTipoMovtoInput(false);
-        setShowProveedorInput(false);
-        setShowMetodoPagoInput(false);
-        setShowClaveProdInput(false);
-        setShowTipoDescuentoInput(false);
-        setShowAreaInput(false);
-        setShowDeptoInput(false);
-        setShowMarcaInput(false);
-        setShowProductoInput(false);
-        setShowAlmacenInput(false);
-        setShowPalabraProdInput(false);
-        setShowNoVentaInput(false);
+        setShowf2(false);
+        setShowf2(false);
       }
+      // } else if (value === "sp_reporte5_Ventas") {
+      //   setShowSucursalInput(true);
+
+      //   setShowTipoDescuentoInput(true);
+      //   setShowEstilistaInput(true);
+      //   setShowMetodoPagoInput(true);
+      //   setShowAreaInput(true);
+      //   //----------------------------------------------------------------
+      //   setShowEmpresaInput(false);
+      //   setShowClaveProdInput(false);
+      //   setShowClienteInput(false);
+      //   setShowSucDesInput(false);
+      //   setShowAlmOrigenInput(false);
+      //   setShowAlmDestInput(false);
+      //   setShowTipoMovtoInput(false);
+      //   setShowProveedorInput(false);
+      //   setShowMarcaInput(false);
+      //   setShowDeptoInput(false);
+      //   setShowProductoInput(false);
+      //   setShowAlmacenInput(false);
+      //   setShowNoVentaInput(false);
+      //   setShowPalabraProdInput(false);
+      //   //sp_repoComisiones1
+      // }
       // Agrega lógica similar para otros campos según sea necesario
     }
   };
@@ -1015,28 +911,32 @@ function ReporteCifra() {
               </div>
               <br />
               <div className="formulario">
-                <div>
-                  <Label>Fecha inicial:</Label>
-                  <Input
-                    type="date"
-                    name="fechaInicial"
-                    value={formulario.fechaInicial}
-                    onChange={handleChange}
-                    disabled={!data[0]?.f1}
-                    bsSize="sm"
-                  />
-                </div>
-                <div>
-                  <Label>Fecha final:</Label>
-                  <Input
-                    type="date"
-                    name="fechaFinal"
-                    value={formulario.fechaFinal}
-                    onChange={handleChange}
-                    disabled={!data[0]?.f2}
-                    bsSize="sm"
-                  />
-                </div>
+                {showf1 ? (
+                  <div>
+                    <Label>Fecha inicial:</Label>
+                    <Input
+                      type="date"
+                      name="fechaInicial"
+                      value={formulario.fechaInicial}
+                      onChange={handleChange}
+                      disabled={!data[0]?.f1}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showf2 ? (
+                  <div>
+                    <Label>Fecha final:</Label>
+                    <Input
+                      type="date"
+                      name="fechaFinal"
+                      value={formulario.fechaFinal}
+                      onChange={handleChange}
+                      disabled={!data[0]?.f2}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
                 {showSucursalInput ? (
                   <div>
                     <Label>Sucursal:</Label>
@@ -1230,6 +1130,42 @@ function ReporteCifra() {
                       disabled={!data[0]?.sucDestino}
                       bsSize="sm"
                     />
+                  </div>
+                ) : null}
+                {showAñoInput ? (
+                  <div>
+                    <Label>Año</Label>
+                    <Input type="select" name="año" value={formulario.año} onChange={handleChange}>
+                      <option value="">Seleccione un Año</option>
+                      <option value={2023}>2023</option>
+                      <option value={2024}>2024</option>
+                      <option value={2025}>2025</option>
+                      <option value={2026}>2026</option>
+                      <option value={2027}>2027</option>
+                      <option value={2028}>2028</option>
+                      <option value={2029}>2028</option>
+                      <option value={2030}>2030</option>
+                    </Input>
+                  </div>
+                ) : null}
+                {showMesInput ? (
+                  <div>
+                    <Label>Mes</Label>
+                    <Input type="select" name="mes" value={formulario.mes} onChange={handleChange}>
+                      <option value="">Seleccione un Mes</option>
+                      <option value="1">Enero</option>
+                      <option value="2">Febrero</option>
+                      <option value="3">Marzo</option>
+                      <option value="4">Abril</option>
+                      <option value="5">Mayo</option>
+                      <option value="6">Junio</option>
+                      <option value="7">Julio</option>
+                      <option value="8">Agosto</option>
+                      <option value="9">Septiembre</option>
+                      <option value="10">Octubre</option>
+                      <option value="11">Noviembre</option>
+                      <option value="12">Diciembre</option>
+                    </Input>
                   </div>
                 ) : null}
 
