@@ -168,7 +168,7 @@ function ReporteCifra() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepCifra_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -306,28 +306,44 @@ function ReporteCifra() {
     }
 
     let queryString = "";
-    if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
-        formData.tipoPago
-      }`;
-    } else if (reporte == "sp_reporte4_Estilistas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
-    } else if (reporte == "sp_repoComisiones1") {
-      queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
-    } else if (reporte == "TicketInsumosEstilsta") {
-      //---------------------
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
-        formData.fechaFinal
-      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
-    } else if (reporte == "sp_reporteinventario") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
-    } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    if (reporte == "sp_reporteCifras") {
+      alert(reporte);
+      queryString = `/${reporte}?año=%&mes=%&suc=${formData.sucursal}`;
     }
+    if (reporte == "sp_reporteCifrasEmpleado") {
+      alert(reporte);
+      queryString = `/${reporte}?año=%&mes=%&suc=${formData.sucursal}`;
+    }
+
+    // if (reporte == "sp_reporte5_Ventas") {
+    //   queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+    //     formData.sucursal
+    //   }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
+    //     formData.tipoPago
+    //   }`;
+
+    // if (reporte == "sp_reporte5_Ventas") {
+    //   queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+    //     formData.sucursal
+    //   }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
+    //     formData.tipoPago
+    //   }`;
+    // } else if (reporte == "sp_reporte4_Estilistas") {
+    //   queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
+    // } else if (reporte == "sp_repoComisiones1") {
+    //   queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
+    // } else if (reporte == "TicketInsumosEstilsta") {
+    //   //---------------------
+    //   queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
+    //     formData.fechaFinal
+    //   }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+    // } else if (reporte == "sp_reporteinventario") {
+    //   queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
+    // } else {
+    //   queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+    //     formData.sucursal
+    //   }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    // }
 
     jezaApi
 
