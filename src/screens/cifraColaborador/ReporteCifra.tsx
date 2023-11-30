@@ -172,7 +172,7 @@ function ReporteCifra() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepCifra_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -362,9 +362,10 @@ function ReporteCifra() {
           // Si no se encuentra el objeto, mostrar el mensaje predeterminado
           setDescripcionReporte("Seleccione un reporte");
         }
-        setReportes(responseData);
+        const newData = responseData.filter((filtrado) => filtrado.nombre == dataUsuarios2[0]?.nombre);
+        setReportes(newData);
         setTablaData({
-          data: responseData,
+          data: newData,
           columns: responseData.length > 0 ? Object.keys(responseData[0]) : [],
         });
       })
@@ -1422,16 +1423,6 @@ function ReporteCifra() {
             data={tablaData.data}
             enableColumnFilterModes
             enableFilters={false}
-            initialState={{
-              columnFilters: [
-                {
-                  id: "nombre",
-                  // value: "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
-                  value: dataUsuarios2[0]?.nombre.toString(),
-                },
-              ],
-              density: "compact",
-            }}
             enableBottomToolbar={true}
             renderTopToolbarCustomActions={({ table }) => (
               <>
