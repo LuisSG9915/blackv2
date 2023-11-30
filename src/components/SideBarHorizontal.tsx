@@ -380,7 +380,9 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
+                      Configuración de puntos por departamentos
+                    </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
@@ -437,7 +439,9 @@ const SidebarHorizontal = () => {
                     >
                       Visor de citas
                     </DropdownItem>
-                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>
+                      Bloqueos de colaborador
+                    </DropdownItem>
                     <DropdownItem onClick={() => navigate("/HorariosSuc")}>Cambio sucursal</DropdownItem>
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
@@ -464,6 +468,7 @@ const SidebarHorizontal = () => {
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
                     <DropdownItem onClick={() => navigate("/ReporteCifra")}>Reporte Cifra</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/ReporteArbol")}>Reporte Arbol</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>

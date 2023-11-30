@@ -74,6 +74,7 @@ import HorariosSuc from "./screens/horariosucursal/HorariosSuc";
 import Webluetooth from "./screens/Webluetooth";
 import CatBloqueoColaboradores from "./screens/catbloqueosColaboradores/CatBloqueoColaboradores";
 import ReporteCifra from "./screens/cifraColaborador/ReporteCifra";
+import ReporteArbol from "./screens/ReporteArbol/ReporteArbol";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -365,6 +366,10 @@ const router = createBrowserRouter([
   {
     path: "/ReporteCifra",
     element: <ReporteCifra />,
+  },
+  {
+    path: "/ReporteArbol",
+    element: <ReporteArbol />,
   },
 ]);
 

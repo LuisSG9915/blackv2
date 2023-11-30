@@ -1384,6 +1384,7 @@ function ReporteCifra() {
             
           )}
         /> */}
+
           <MaterialReactTable
             columns={tablaData.columns.map((key) => ({
               accessorKey: key,
@@ -1419,9 +1420,18 @@ function ReporteCifra() {
               },
             }))}
             data={tablaData.data}
-            enableRowSelection={false}
-            rowSelectionCheckboxes={false}
-            initialState={{ density: "compact" }}
+            enableColumnFilterModes
+            enableFilters={false}
+            initialState={{
+              columnFilters: [
+                {
+                  id: "nombre",
+                  // value: "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
+                  value: dataUsuarios2[0]?.nombre.toString(),
+                },
+              ],
+              density: "compact",
+            }}
             enableBottomToolbar={true}
             renderTopToolbarCustomActions={({ table }) => (
               <>
