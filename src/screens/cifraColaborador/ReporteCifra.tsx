@@ -900,7 +900,7 @@ function ReporteCifra() {
                   <Input type="select" name="reporte" value={formulario.reporte} onChange={handleChange}>
                     <option value="">Seleccione un reporte</option>
                     <option value="sp_reporteCifras">Reporte Cifras</option>
-                    <option value="sp_reporteCifrasEmpleado">Reporte Cifras Empleado</option>
+                    <option value="sp_reporteCifrasEmpleado">Reporte Avance Mensual</option>
 
                     {/* {data.map((item) => (
                       <option key={item.id} value={item.metodoApi}>
