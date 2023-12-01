@@ -16,6 +16,7 @@ import {
   ModalFooter,
   ModalHeader,
   InputGroup,
+  Alert,
 } from "reactstrap";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -89,6 +90,7 @@ function Descuentos() {
     descripcion: "",
     min_descto: 0.0,
     max_descto: 0.0,
+    activo: false,
   });
 
   const DataTableHeader = ["Descripción", "Minimo descuento", "Máximo descuento", "Acciones"];
@@ -144,6 +146,7 @@ function Descuentos() {
             descripcion: form.descripcion,
             min_descto: Number(form.min_descto),
             max_descto: Number(form.max_descto),
+            activo: form.activo,
           },
         })
 
@@ -213,6 +216,7 @@ function Descuentos() {
       descripcion: "",
       min_descto: 0.0,
       max_descto: 0.0,
+      activo: false,
     });
   };
 
@@ -238,6 +242,17 @@ function Descuentos() {
     }
   };
 
+  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    if (name === "activo") {
+      setForm((prevState) => ({ ...prevState, [name]: checked }));
+    } else {
+      setForm((prevState: Descuento) => ({ ...prevState, [name]: value }));
+    }
+  };
+
+
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   const toggleSidebar = () => {
@@ -262,6 +277,13 @@ function Descuentos() {
     { field: "descripcion", headerName: "Descripción", flex: 1 },
     { field: "min_descto", headerName: "Mínimo descuento", flex: 1 },
     { field: "max_descto", headerName: "Máximo descuento", flex: 1 },
+    {
+      field: "activo",
+      headerName: "Decuento visible",
+      width: 150,
+      headerClassName: "custom-header",
+      renderCell: (params) => <span>{params.row.activo ? "Sí" : "No"}</span>,
+    },
   ];
 
   const rows: GridRowsProp = data.map((dato) => ({
@@ -269,6 +291,8 @@ function Descuentos() {
     descripcion: dato.descripcion,
     min_descto: dato.min_descto,
     max_descto: dato.max_descto,
+    activo: dato.activo,
+
   }));
 
   // Redirige a la ruta "/app"
@@ -325,6 +349,7 @@ function Descuentos() {
               descripcion: form.descripcion,
               min_descto: form.min_descto,
               max_descto: form.max_descto,
+              activo: true,
             },
           })
           .then(() => {
@@ -433,6 +458,18 @@ function Descuentos() {
             <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Mínimo descuento:" value={form.min_descto} minlength={1} maxlength={10} />
             <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo descuento:" value={form.max_descto} minlength={1} maxlength={10} />
 
+            <br />
+            <label className="checkbox-container">
+              <input type="checkbox" checked={form.activo} onChange={handleChange1} name="activo" />
+              <span className="checkmark"></span>
+              Descuento visible
+            </label>
+            <br />
+            <br />
+            <Alert color="primary">
+              Si desea ocultar el descuento en ventas, por favor, desmarque la casilla 'Descuento visible'.
+            </Alert>
+
           </Container>
         </ModalBody>
 
@@ -461,6 +498,13 @@ function Descuentos() {
             <CFormGroupInput type="text" handleChange={handleChange} inputName="descripcion" labelName="Descripción:" value={form.descripcion} minlength={1} maxlength={45} />
             <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName="Mínimo descuento:" value={form.min_descto} minlength={1} maxlength={10} />
             <CFormGroupInput handleChange={handleChange} inputName="max_descto" labelName="Máximo descuento:" value={form.max_descto} minlength={1} maxlength={10} />
+
+            {/* <br />
+            <label className="checkbox-container">
+              <input type="checkbox" checked={form.activo} onChange={handleChange} name="activo" />
+              <span className="checkmark"></span>
+              No visible para recepción
+            </label> */}
 
             {/* <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName=" Descripción:" />
             <CFormGroupInput handleChange={handleChange} inputName="min_descto" labelName=" Minimo descuento:" />

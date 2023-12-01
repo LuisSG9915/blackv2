@@ -5,4 +5,5 @@ export interface Descuento {
   descripcion: string;
   min_descto: number;
   max_descto: number;
+  activo: boolean;
 }

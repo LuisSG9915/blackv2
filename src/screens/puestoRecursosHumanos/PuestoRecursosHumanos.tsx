@@ -102,7 +102,7 @@ function PuestoRecursosHumanos() {
 
   // Update ---> PUT
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
     const trimmedValue = value.replace(/^\s+/g, "");
@@ -110,13 +110,37 @@ function PuestoRecursosHumanos() {
     console.log(form);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Verificar si el campo es 'min_descto' o 'max_descto'
+    if (name === 'sueldo_base' || name === 'porcentajeComision') {
+      // Restricciones para 'min_descto' y 'max_descto'
+      const numericValue = value.replace(/[^0-9.]/g, '');
+
+      // Verificar si ya hay un punto en el valor
+      if (numericValue.indexOf('.') === -1 || numericValue.lastIndexOf('.') === numericValue.indexOf('.')) {
+        setForm((prevState) => ({ ...prevState, [name]: numericValue }));
+      }
+    } else {
+      // Permitir la entrada de espacios solo después de que se haya ingresado al menos un carácter
+      if (value.length === 0 || /^\s*$/.test(value)) {
+        setForm((prevState) => ({ ...prevState, [name]: '' }));
+      } else {
+        setForm((prevState) => ({ ...prevState, [name]: value }));
+      }
+    }
+  };
+
+
+
 
 
   //VALIDACIÓN---->
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof RecursosHumanosPuesto)[] = ["descripcion_puesto"];
+    const camposRequeridos: (keyof RecursosHumanosPuesto)[] = ["descripcion_puesto", "sueldo_base", "porcentajeComision"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof RecursosHumanosPuesto) => {
@@ -144,7 +168,7 @@ function PuestoRecursosHumanos() {
   const [estado, setEstado] = useState("");
 
   const LimpiezaForm = () => {
-    setForm({ clave_puesto: 0, descripcion_puesto: "" });
+    setForm({ clave_puesto: 0, descripcion_puesto: "", sueldo_base: 0, porcentajeComision: 0 });
   };
 
   // AQUÍ COMIENZA MI MÉTODO PUT PARA AGREGAR ALMACENES
@@ -160,6 +184,8 @@ function PuestoRecursosHumanos() {
         .post("/Puesto", null, {
           params: {
             descripcion: form.descripcion_puesto,
+            sueldo_base: form.sueldo_base,
+            porcentajeComision: form.porcentajeComision,
           },
         })
         .then((response) => {
@@ -198,6 +224,8 @@ function PuestoRecursosHumanos() {
           params: {
             id: form.clave_puesto,
             descripcion: form.descripcion_puesto,
+            sueldo_base: form.sueldo_base,
+            porcentajeComision: form.porcentajeComision,
           },
         })
         .then((response) => {
@@ -285,6 +313,8 @@ function PuestoRecursosHumanos() {
     },
 
     { field: "descripcion_puesto", headerName: "Puestos", flex: 1, headerClassName: "custom-header" },
+    { field: "sueldo_base", headerName: "Sueldo base", flex: 1, headerClassName: "custom-header" },
+    { field: "porcentajeComision", headerName: "Porcentaje comisión", flex: 1, headerClassName: "custom-header" },
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -433,7 +463,10 @@ function PuestoRecursosHumanos() {
             inputName="descripcion_puesto"
             labelName="Descripción de puesto:"
             value={form.descripcion_puesto}
+            minlength={1} maxlength={49}
           />
+          <CFormGroupInput handleChange={handleChange} inputName="sueldo_base" labelName="Sueldo base:" value={form.sueldo_base} minlength={1} maxlength={20} />
+          <CFormGroupInput handleChange={handleChange} inputName="porcentajeComision" labelName="Porcentaje de comisión:" value={form.porcentajeComision} minlength={1} maxlength={20} />
         </ModalBody>
         <ModalFooter>
           <CButton color="success" text="Guardar puesto" onClick={insertar} />
@@ -452,7 +485,11 @@ function PuestoRecursosHumanos() {
             inputName="descripcion_puesto"
             labelName="Descripción de puesto:"
             value={form.descripcion_puesto}
+            minlength={1} maxlength={49}
           />
+          <CFormGroupInput handleChange={handleChange} inputName="sueldo_base" labelName="Sueldo base:" value={form.sueldo_base} minlength={1} maxlength={20} />
+          <CFormGroupInput handleChange={handleChange} inputName="porcentajeComision" labelName="Porcentaje de comisión:" value={form.porcentajeComision} minlength={1} maxlength={20} />
+
         </ModalBody>
         <ModalFooter>
           <CButton color="primary" text="Actualizar" onClick={editar} />
