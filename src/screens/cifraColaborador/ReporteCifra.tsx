@@ -311,10 +311,10 @@ function ReporteCifra() {
 
     let queryString = "";
     if (reporte == "sp_reporteCifras") {
-      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${dataUsuarios2[0]?.sucursal}`;
     }
     if (reporte == "sp_reporteCifrasEmpleado") {
-      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&suc=${formData.sucursal}`;
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${dataUsuarios2[0]?.sucursal}`;
     }
 
     // if (reporte == "sp_reporte5_Ventas") {
@@ -636,7 +636,7 @@ function ReporteCifra() {
       if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras") {
         // Mostrar los campos para estos informes
 
-        setShowSucursalInput(true);
+        setShowSucursalInput(false);
         setShowMesInput(true);
         setShowAñoInput(true);
 
@@ -885,7 +885,7 @@ function ReporteCifra() {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <h1>
             {" "}
-            Reportes <AiOutlineFileText size={30}></AiOutlineFileText>
+            Reporte cifra empleado<AiOutlineFileText size={30}></AiOutlineFileText>
           </h1>
         </div>
         <br />
