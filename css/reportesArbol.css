@@ -1,22 +1,24 @@
-/* Estilos para la tabla principal */
-table {
+
+.table_arbol {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
 
-th, td {
+.th_arbol,
+.td_arbol {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
 }
 
-th {
+.th_arbol {
   background-color: #f5f5f5;
 }
 
-/* Estilos para los botones de expansión */
-button {
+/* Estilos para botones y filas expandidas */
+.button_arbol {
+  width: 100%;
   padding: 8px 12px;
   cursor: pointer;
   background-color: #4caf50;
@@ -25,30 +27,26 @@ button {
   border-radius: 4px;
 }
 
-/* Estilos para las tablas anidadas */
-.nested-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-/* Estilos para las filas de datos en las tablas anidadas */
-.nested-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-
-/* Estilos para los botones de expansión en las tablas anidadas */
-.expand-button {
-  padding: 5px 8px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-
-/* Estilos para las filas expandidas en las tablas anidadas */
 .expanded-row {
   background-color: #c8def7;
+}
+
+/* Consulta de medios para responsividad */
+@media only screen and (max-width: 600px) {
+
+  /* Oculta la cabecera de la tabla en dispositivos móviles */
+  .th_arbol {
+    display: none;
+  }
+
+  /* Ajustes para filas en dispositivos móviles */
+  .td_arbol{
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* Estilos adicionales para botones en dispositivos móviles */
+  .button_arbol {
+    padding: 10px;
+  }
 }
