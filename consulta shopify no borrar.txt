@@ -1,0 +1,11 @@
+--insert  edoCtaCtes    
+--(cia, sucursal, caja, fecha, no_venta, fechaMovto, idCliente, idUsuario, tipoMovto, referencia, id_formaPago, importe, observaciones)    
+--SELECT        26 AS cia, 33 AS sucursal, 1 AS caja, GETDATE() AS fecha, 0 AS no_venta, ShopifyOrders.created_at AS fechaMovto, ShopifyClientes.idCliente, 0 AS idUsuario, 2 AS tipoMovto, ShopifyOrders.id AS referencia,     
+--                         2081 AS id_formaPago, cast(ShopifyOrders.current_total_price as float ) *-1 AS importe,  ShopifyOrdersProducts.nombreProducto AS observaciones    
+--FROM            ShopifyOrdersCustomer INNER JOIN    
+--                         ShopifyOrders ON ShopifyOrdersCustomer.order_id = ShopifyOrders.id INNER JOIN    
+--                         ShopifyClientes ON ShopifyOrdersCustomer.id = ShopifyClientes.id LEFT OUTER JOIN    
+--                         edoCtaCtes ON ShopifyClientes.idCliente = edoCtaCtes.idCliente AND CAST(ShopifyOrders.id AS nvarchar(50)) = edoCtaCtes.referencia
+--						 LEFT OUTER JOIN ShopifyOrdersProducts ON ShopifyOrders.id = ShopifyOrdersProducts.order_id
+--WHERE        (edoCtaCtes.referencia IS NULL) AND (edoCtaCtes.idCliente IS NULL)    
+--and ShopifyClientes.idCliente is not null    
