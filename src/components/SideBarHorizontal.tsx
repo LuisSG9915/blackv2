@@ -467,8 +467,8 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/ReporteCifra")}>Reporte Cifra</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/ReporteArbol")}>Reporte Arbol</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/ReporteCifra")}>Reporte cifra empleado</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/ReporteArbol")}>Reporte nómina</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
