@@ -868,16 +868,162 @@ function reporteArbol() {
     })),
   ];
 
-  const [expand, setExpand] = useState(false);
-  const [expandSecondLevel, setExpandSecondLevel] = useState(false);
+  const [expandedRows, setExpandedRows] = useState([]);
 
-  const handleExpand = () => {
-    setExpand((prevExpand) => !prevExpand);
+  const handleExpand = (index) => {
+    setExpandedRows((prevExpandedRows) => {
+      const newExpandedRows = [...prevExpandedRows];
+      // Invierte el estado del nivel actual
+      newExpandedRows[index] = !newExpandedRows[index];
+      return newExpandedRows;
+    });
   };
 
-  const handleExpandSecondLevel = () => {
-    setExpandSecondLevel((prevExpand) => !prevExpand);
-  };
+  const sampleData = [
+    {
+      date: "2023-01-01",
+      client: "John Doe",
+      totalSale: "$100.00",
+      paymentMethod: "Credit Card",
+      expandedData: [
+        {
+          product: "Product 1",
+          quantity: 2,
+          price: "$50.00",
+          priceInsumo: "$10.00",
+          auxiliar: "Aux 1",
+          promoDiscount: "10%",
+        },
+        // Add more entries as needed
+      ],
+      secondLevelData: [
+        {
+          branch: "Branch 1",
+          date: "2023-01-01",
+          client: "Jane Doe",
+          stylist: "Stylist 1",
+          product: "Product 1",
+          quantity: 1,
+          price: "$30.00",
+          priceInsumo: "$5.00",
+          auxiliar: "Aux 2",
+          promoDiscount: "5%",
+        },
+        // Add more entries as needed
+      ],
+      thirdLevelData: [
+        {
+          store: "Store X",
+          date: "2023-01-01",
+          client: "Jane Doe",
+          stylist: "Stylist 1",
+          product: "Product 1",
+          quantity: 1,
+          price: "$30.00",
+          priceInsumo: "$5.00",
+          auxiliar: "Aux 2",
+          promoDiscount: "5%",
+        },
+        // Add more entries as needed
+      ],
+    },
+    {
+      date: "2023-01-02",
+      client: "Alice Smith",
+      totalSale: "$120.00",
+      paymentMethod: "Cash",
+      expandedData: [
+        {
+          product: "Product 2",
+          quantity: 3,
+          price: "$60.00",
+          priceInsumo: "$15.00",
+          auxiliar: "Aux 3",
+          promoDiscount: "15%",
+        },
+        // Add more entries as needed
+      ],
+      secondLevelData: [
+        {
+          branch: "Branch 2",
+          date: "2023-01-02",
+          client: "Bob Johnson",
+          stylist: "Stylist 2",
+          product: "Product 2",
+          quantity: 2,
+          price: "$40.00",
+          priceInsumo: "$8.00",
+          auxiliar: "Aux 4",
+          promoDiscount: "8%",
+        },
+        // Add more entries as needed
+      ],
+      thirdLevelData: [
+        {
+          store: "Store Y",
+          date: "2023-01-02",
+          client: "Charlie Brown",
+          stylist: "Stylist 2",
+          product: "Product 2",
+          quantity: 1,
+          price: "$20.00",
+          priceInsumo: "$4.00",
+          auxiliar: "Aux 5",
+          promoDiscount: "4%",
+        },
+        // Add more entries as needed
+      ],
+    },
+    // Add more elements as needed
+    {
+      date: "2023-01-03",
+      client: "Eva Green",
+      totalSale: "$80.00",
+      paymentMethod: "Debit Card",
+      expandedData: [
+        {
+          product: "Product 3",
+          quantity: 1,
+          price: "$40.00",
+          priceInsumo: "$8.00",
+          auxiliar: "Aux 6",
+          promoDiscount: "20%",
+        },
+        // Add more entries as needed
+      ],
+      secondLevelData: [
+        {
+          branch: "Branch 3",
+          date: "2023-01-03",
+          client: "David White",
+          stylist: "Stylist 3",
+          product: "Product 3",
+          quantity: 3,
+          price: "$30.00",
+          priceInsumo: "$6.00",
+          auxiliar: "Aux 7",
+          promoDiscount: "12%",
+        },
+        // Add more entries as needed
+      ],
+      thirdLevelData: [
+        {
+          store: "Store Z",
+          date: "2023-01-03",
+          client: "Frank Black",
+          stylist: "Stylist 3",
+          product: "Product 3",
+          quantity: 2,
+          price: "$30.00",
+          priceInsumo: "$6.00",
+          auxiliar: "Aux 8",
+          promoDiscount: "8%",
+        },
+        // Add more entries as needed
+      ],
+    },
+    // Add more elements as needed
+  ];
 
   return (
     <>
@@ -890,7 +1036,103 @@ function reporteArbol() {
             Reportes <AiOutlineFileText size={30} />
           </h1>
         </div>
-        <div className="App">
+        <table border="5">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Venta Total</th>
+              <th>Método Pago</th>
+              <th>Expandir</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sampleData.map((sale, index) => (
+              <React.Fragment key={index}>
+                <tr>
+                  <td>{sale.date}</td>
+                  <td>{sale.client}</td>
+                  <td>{sale.totalSale}</td>
+                  <td>{sale.paymentMethod}</td>
+                  <td>
+                    <button onClick={() => handleExpand(index)}>Expandir Nivel 2</button>
+                  </td>
+                </tr>
+                {expandedRows[index] && (
+                  <tr>
+                    <td colSpan="4">
+                      <table border="1">
+                        <thead>
+                          <tr>
+                            <th>Producto/Servicio</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Precio Insumo</th>
+                            <th>Auxiliar</th>
+                            <th>Promoción/Descuento</th>
+                            <th>Expandir</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Agregar más datos de segundo nivel según sea necesario */}
+                          <tr>
+                            <td>Product 1</td>
+                            <td>2</td>
+                            <td>$50.00</td>
+                            <td>$10.00</td>
+                            <td>Aux 1</td>
+                            <td>10%</td>
+                            <td>
+                              <button onClick={() => handleExpand(index + 1)}>Expandir Nivel 3</button>
+                            </td>
+                          </tr>
+                          {expandedRows[index + 1] && (
+                            <tr>
+                              <td colSpan="6">
+                                <table border="1">
+                                  <thead>
+                                    <tr>
+                                      <th>Sucursal</th>
+                                      <th>Fecha</th>
+                                      <th>Cliente</th>
+                                      <th>Estilista</th>
+                                      <th>Producto/servicio</th>
+                                      <th>Cantidad</th>
+                                      <th>Precio</th>
+                                      <th>Precio insumo</th>
+                                      <th>Auxiliar</th>
+                                      <th>Promo/descuento</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {/* Agregar más datos de tercer nivel según sea necesario */}
+                                    <tr>
+                                      <td>Store X</td>
+                                      <td>2023-01-01</td>
+                                      <td>Jane Doe</td>
+                                      <td>Stylist 1</td>
+                                      <td>Product 1</td>
+                                      <td>1</td>
+                                      <td>$30.00</td>
+                                      <td>$5.00</td>
+                                      <td>Aux 2</td>
+                                      <td>5%</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+        {/* <div className="App">
           <Paper>
             <Table>
               <TableHead>
@@ -903,17 +1145,19 @@ function reporteArbol() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow>
-                  <TableCell>...</TableCell>
-                  <TableCell>...</TableCell>
-                  <TableCell>...</TableCell>
-                  <TableCell>...</TableCell>
-                  <TableCell>
-                    <IconButton onClick={handleExpand}>
-                      <SvgMore />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                {sampleData.sales.map((sale, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{sale.date}</TableCell>
+                    <TableCell>{sale.client}</TableCell>
+                    <TableCell>{sale.totalSale}</TableCell>
+                    <TableCell>{sale.paymentMethod}</TableCell>
+                    <TableCell>
+                      <IconButton onClick={handleExpand}>
+                        <SvgMore />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
                 {expand ? (
                   <TableRow>
                     <TableCell colSpan={4}>
@@ -930,24 +1174,61 @@ function reporteArbol() {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          <TableRow>
-                            <TableCell>...</TableCell>
-                            <TableCell>...</TableCell>
-                            <TableCell>...</TableCell>
-                            <TableCell>...</TableCell>
-                            <TableCell>...</TableCell>
-                            <TableCell>...</TableCell>
-                            <TableCell>
-                              <IconButton onClick={handleExpandSecondLevel}>
-                                <SvgMore />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
+                          {sampleData.expandedData.map((data, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{data.product}</TableCell>
+                              <TableCell>{data.quantity}</TableCell>
+                              <TableCell>{data.price}</TableCell>
+                              <TableCell>{data.priceInsumo}</TableCell>
+                              <TableCell>{data.auxiliar}</TableCell>
+                              <TableCell>{data.promoDiscount}</TableCell>
+                              <TableCell>
+                                <IconButton onClick={handleExpandSecondLevel}>
+                                  <SvgMore />
+                                </IconButton>
+                              </TableCell>
+                            </TableRow>
+                          ))}
                           {expandSecondLevel ? (
                             <TableRow>
                               <TableCell colSpan={6}>
-                                {/* Contenido del tercer nivel */}
-                                <Table>{/* ... */}</Table>
+                                <Table>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell>Sucursal</TableCell>
+                                      <TableCell>Fecha</TableCell>
+                                      <TableCell>Cliente</TableCell>
+                                      <TableCell>Estilista</TableCell>
+                                      <TableCell>Producto/servicio</TableCell>
+                                      <TableCell>Cantidad</TableCell>
+                                      <TableCell>Precio</TableCell>
+                                      <TableCell>Precio insumo</TableCell>
+                                      <TableCell>Auxiliar</TableCell>
+                                      <TableCell>Promo/descuento</TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {sampleData.secondLevelData.map((data, index) => (
+                                      <TableRow key={index}>
+                                        <TableCell>{data.branch}</TableCell>
+                                        <TableCell>{data.date}</TableCell>
+                                        <TableCell>{data.client}</TableCell>
+                                        <TableCell>{data.stylist}</TableCell>
+                                        <TableCell>{data.product}</TableCell>
+                                        <TableCell>{data.quantity}</TableCell>
+                                        <TableCell>{data.price}</TableCell>
+                                        <TableCell>{data.priceInsumo}</TableCell>
+                                        <TableCell>{data.auxiliar}</TableCell>
+                                        <TableCell>{data.promoDiscount}</TableCell>
+                                        <TableCell>
+                                          <IconButton onClick={handleExpandSecondLevel}>
+                                            <SvgMore />
+                                          </IconButton>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
                               </TableCell>
                             </TableRow>
                           ) : null}
@@ -959,7 +1240,7 @@ function reporteArbol() {
               </TableBody>
             </Table>
           </Paper>
-        </div>
+        </div> */}
       </Container>
     </>
   );
