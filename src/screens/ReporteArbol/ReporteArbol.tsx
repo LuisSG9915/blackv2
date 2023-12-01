@@ -19,7 +19,7 @@ import {
   UncontrolledAccordion,
 } from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
-import "../../../css/reportes.css";
+import "../../../css/reportesArbol.css";
 import { ExportToCsv } from "export-to-csv";
 import { MaterialReactTable, MRT_ColumnDef, MRT_Row } from "material-react-table";
 import { Padding } from "@mui/icons-material";
@@ -870,11 +870,11 @@ function reporteArbol() {
 
   const [expandedRows, setExpandedRows] = useState([]);
 
-  const handleExpand = (index) => {
+  const handleExpand = (date) => {
     setExpandedRows((prevExpandedRows) => {
-      const newExpandedRows = [...prevExpandedRows];
+      const newExpandedRows = { ...prevExpandedRows };
       // Invierte el estado del nivel actual
-      newExpandedRows[index] = !newExpandedRows[index];
+      newExpandedRows[date] = !newExpandedRows[date];
       return newExpandedRows;
     });
   };
@@ -1036,7 +1036,7 @@ function reporteArbol() {
             Reportes <AiOutlineFileText size={30} />
           </h1>
         </div>
-        <table border="5">
+        <table className="custom-table"  border="5">
           <thead>
             <tr>
               <th>Fecha</th>
@@ -1049,19 +1049,19 @@ function reporteArbol() {
           <tbody>
             {sampleData.map((sale, index) => (
               <React.Fragment key={index}>
-                <tr>
+                <tr className="expanded-row" >
                   <td>{sale.date}</td>
                   <td>{sale.client}</td>
                   <td>{sale.totalSale}</td>
                   <td>{sale.paymentMethod}</td>
                   <td>
-                    <button onClick={() => handleExpand(index)}>Expandir Nivel 2</button>
+                    <button  className="expand-button" onClick={() => handleExpand(sale.date)}>Expandir Nivel 2</button>
                   </td>
                 </tr>
-                {expandedRows[index] && (
+                {expandedRows[sale.date] && (
                   <tr>
                     <td colSpan="4">
-                      <table border="1">
+                      <table className="nested-table">
                         <thead>
                           <tr>
                             <th>Producto/Servicio</th>
@@ -1083,13 +1083,13 @@ function reporteArbol() {
                             <td>Aux 1</td>
                             <td>10%</td>
                             <td>
-                              <button onClick={() => handleExpand(index + 1)}>Expandir Nivel 3</button>
+                              <button  className="expand-button" onClick={() => handleExpand(index + 1)}>Expandir Nivel 3</button>
                             </td>
                           </tr>
                           {expandedRows[index + 1] && (
-                            <tr>
+                            <tr >
                               <td colSpan="6">
-                                <table border="1">
+                                <table className="nested-table">
                                   <thead>
                                     <tr>
                                       <th>Sucursal</th>
@@ -1132,115 +1132,6 @@ function reporteArbol() {
             ))}
           </tbody>
         </table>
-        {/* <div className="App">
-          <Paper>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Cliente</TableCell>
-                  <TableCell>Venta Total</TableCell>
-                  <TableCell>Metodo Pago</TableCell>
-                  <TableCell>Expandir</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {sampleData.sales.map((sale, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{sale.date}</TableCell>
-                    <TableCell>{sale.client}</TableCell>
-                    <TableCell>{sale.totalSale}</TableCell>
-                    <TableCell>{sale.paymentMethod}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={handleExpand}>
-                        <SvgMore />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {expand ? (
-                  <TableRow>
-                    <TableCell colSpan={4}>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Producto/Servicio</TableCell>
-                            <TableCell>Cantidad</TableCell>
-                            <TableCell>Precio</TableCell>
-                            <TableCell>Precio Insumo</TableCell>
-                            <TableCell>Auxiliar</TableCell>
-                            <TableCell>Promoción/Descuento</TableCell>
-                            <TableCell>Expandir</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {sampleData.expandedData.map((data, index) => (
-                            <TableRow key={index}>
-                              <TableCell>{data.product}</TableCell>
-                              <TableCell>{data.quantity}</TableCell>
-                              <TableCell>{data.price}</TableCell>
-                              <TableCell>{data.priceInsumo}</TableCell>
-                              <TableCell>{data.auxiliar}</TableCell>
-                              <TableCell>{data.promoDiscount}</TableCell>
-                              <TableCell>
-                                <IconButton onClick={handleExpandSecondLevel}>
-                                  <SvgMore />
-                                </IconButton>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                          {expandSecondLevel ? (
-                            <TableRow>
-                              <TableCell colSpan={6}>
-                                <Table>
-                                  <TableHead>
-                                    <TableRow>
-                                      <TableCell>Sucursal</TableCell>
-                                      <TableCell>Fecha</TableCell>
-                                      <TableCell>Cliente</TableCell>
-                                      <TableCell>Estilista</TableCell>
-                                      <TableCell>Producto/servicio</TableCell>
-                                      <TableCell>Cantidad</TableCell>
-                                      <TableCell>Precio</TableCell>
-                                      <TableCell>Precio insumo</TableCell>
-                                      <TableCell>Auxiliar</TableCell>
-                                      <TableCell>Promo/descuento</TableCell>
-                                    </TableRow>
-                                  </TableHead>
-                                  <TableBody>
-                                    {sampleData.secondLevelData.map((data, index) => (
-                                      <TableRow key={index}>
-                                        <TableCell>{data.branch}</TableCell>
-                                        <TableCell>{data.date}</TableCell>
-                                        <TableCell>{data.client}</TableCell>
-                                        <TableCell>{data.stylist}</TableCell>
-                                        <TableCell>{data.product}</TableCell>
-                                        <TableCell>{data.quantity}</TableCell>
-                                        <TableCell>{data.price}</TableCell>
-                                        <TableCell>{data.priceInsumo}</TableCell>
-                                        <TableCell>{data.auxiliar}</TableCell>
-                                        <TableCell>{data.promoDiscount}</TableCell>
-                                        <TableCell>
-                                          <IconButton onClick={handleExpandSecondLevel}>
-                                            <SvgMore />
-                                          </IconButton>
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              </TableCell>
-                            </TableRow>
-                          ) : null}
-                        </TableBody>
-                      </Table>
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </Paper>
-        </div> */}
       </Container>
     </>
   );
