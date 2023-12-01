@@ -1036,26 +1036,28 @@ function reporteArbol() {
             Reportes <AiOutlineFileText size={30} />
           </h1>
         </div>
-        <table className="custom-table"  border="5">
+        <table className="table_arbol" border="5">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Cliente</th>
-              <th>Venta Total</th>
-              <th>Método Pago</th>
-              <th>Expandir</th>
+              <th className="th_arbol">Fecha</th>
+              <th className="th_arbol">Cliente</th>
+              <th className="th_arbol">Venta Total</th>
+              <th className="th_arbol">Método Pago</th>
+              <th className="th_arbol">Expandir</th>
             </tr>
           </thead>
           <tbody>
             {sampleData.map((sale, index) => (
               <React.Fragment key={index}>
-                <tr className="expanded-row" >
-                  <td>{sale.date}</td>
-                  <td>{sale.client}</td>
-                  <td>{sale.totalSale}</td>
-                  <td>{sale.paymentMethod}</td>
-                  <td>
-                    <button  className="expand-button" onClick={() => handleExpand(sale.date)}>Expandir Nivel 2</button>
+                <tr className="expanded-row">
+                  <td className="td_arbol">{sale.date}</td>
+                  <td className="td_arbol">{sale.client}</td>
+                  <td className="td_arbol">{sale.totalSale}</td>
+                  <td className="td_arbol">{sale.paymentMethod}</td>
+                  <td className="td_arbol">
+                    <button className="button_arbol" onClick={() => handleExpand(sale.date)}>
+                      Expandir Nivel 2
+                    </button>
                   </td>
                 </tr>
                 {expandedRows[sale.date] && (
@@ -1064,59 +1066,61 @@ function reporteArbol() {
                       <table className="nested-table">
                         <thead>
                           <tr>
-                            <th>Producto/Servicio</th>
-                            <th>Cantidad</th>
-                            <th>Precio</th>
-                            <th>Precio Insumo</th>
-                            <th>Auxiliar</th>
-                            <th>Promoción/Descuento</th>
-                            <th>Expandir</th>
+                            <th className="th_arbol">Producto/Servicio</th>
+                            <th className="th_arbol">Cantidad</th>
+                            <th className="th_arbol">Precio</th>
+                            <th className="th_arbol">Precio Insumo</th>
+                            <th className="th_arbol">Auxiliar</th>
+                            <th className="th_arbol">Promoción/Descuento</th>
+                            <th className="th_arbol">Expandir</th>
                           </tr>
                         </thead>
                         <tbody>
                           {/* Agregar más datos de segundo nivel según sea necesario */}
                           <tr>
-                            <td>Product 1</td>
-                            <td>2</td>
-                            <td>$50.00</td>
-                            <td>$10.00</td>
-                            <td>Aux 1</td>
-                            <td>10%</td>
-                            <td>
-                              <button  className="expand-button" onClick={() => handleExpand(index + 1)}>Expandir Nivel 3</button>
+                            <td className="td_arbol">Product 1</td>
+                            <td className="td_arbol">2</td>
+                            <td className="td_arbol">$50.00</td>
+                            <td className="td_arbol">$10.00</td>
+                            <td className="td_arbol">Aux 1</td>
+                            <td className="td_arbol">10%</td>
+                            <td className="td_arbol">
+                              <button className="button_arbol" onClick={() => handleExpand(index + 1)}>
+                                Expandir Nivel 3
+                              </button>
                             </td>
                           </tr>
                           {expandedRows[index + 1] && (
-                            <tr >
+                            <tr>
                               <td colSpan="6">
                                 <table className="nested-table">
                                   <thead>
                                     <tr>
-                                      <th>Sucursal</th>
-                                      <th>Fecha</th>
-                                      <th>Cliente</th>
-                                      <th>Estilista</th>
-                                      <th>Producto/servicio</th>
-                                      <th>Cantidad</th>
-                                      <th>Precio</th>
-                                      <th>Precio insumo</th>
-                                      <th>Auxiliar</th>
-                                      <th>Promo/descuento</th>
+                                      <th className="th_arbol">Sucursal</th>
+                                      <th className="th_arbol">Fecha</th>
+                                      <th className="th_arbol">Cliente</th>
+                                      <th className="th_arbol">Estilista</th>
+                                      <th className="th_arbol">Producto/servicio</th>
+                                      <th className="th_arbol">Cantidad</th>
+                                      <th className="th_arbol">Precio</th>
+                                      <th className="th_arbol">Precio insumo</th>
+                                      <th className="th_arbol">Auxiliar</th>
+                                      <th className="th_arbol">Promo/descuento</th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     {/* Agregar más datos de tercer nivel según sea necesario */}
                                     <tr>
-                                      <td>Store X</td>
-                                      <td>2023-01-01</td>
-                                      <td>Jane Doe</td>
-                                      <td>Stylist 1</td>
-                                      <td>Product 1</td>
-                                      <td>1</td>
-                                      <td>$30.00</td>
-                                      <td>$5.00</td>
-                                      <td>Aux 2</td>
-                                      <td>5%</td>
+                                      <td className="td_arbol">Store X</td>
+                                      <td className="td_arbol">2023-01-01</td>
+                                      <td className="td_arbol">Jane Doe</td>
+                                      <td className="td_arbol">Stylist 1</td>
+                                      <td className="td_arbol">Product 1</td>
+                                      <td className="td_arbol">1</td>
+                                      <td className="td_arbol">$30.00</td>
+                                      <td className="td_arbol">$5.00</td>
+                                      <td className="td_arbol">Aux 2</td>
+                                      <td className="td_arbol">5%</td>
                                     </tr>
                                   </tbody>
                                 </table>
