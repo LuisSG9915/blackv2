@@ -8,7 +8,7 @@ import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import axios from "axios";
 import { UserResponse } from "../../models/Home";
 import { useCortesEmail } from "../../hooks/getsHooks/useCortesEmail";
-import { CorteA, CorteB, CorteC } from "../../models/CortesEmail";
+import { CorteA, CorteB, CorteC, CorteD } from "../../models/CortesEmail";
 import { PieChart } from "@mui/x-charts/PieChart";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
@@ -100,6 +100,22 @@ function DemoTresTablas() {
     csvExporter.generateCsv(dataCorteEmailC);
   };
 
+  const handleExportDataCorte4 = () => {
+    const csvOptions = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      useBom: true,
+      useKeysAsHeaders: false,
+      headers: columnsD.map((col) => col.header),
+    };
+
+    const csvExporter = new ExportToCsv(csvOptions);
+    csvExporter.generateCsv(dataCorteEmailD);
+  };
+
+
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -136,9 +152,10 @@ function DemoTresTablas() {
   };
 
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-  const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({
+  const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({
     sucursal: dataUsuarios2[0]?.sucursal,
     fecha: fechaPost,
+
   });
 
   const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
@@ -259,6 +276,41 @@ function DemoTresTablas() {
     ],
     []
   );
+
+  const columnsD: MRT_ColumnDef<CorteD>[] = useMemo(
+    () => [
+      {
+        accessorKey: "clave_empleado",
+        header: "clave_empleado",
+        size: 10,
+      },
+      {
+        accessorKey: "ventaServicio",
+        header: "ventaServicio",
+        size: 10,
+      },
+      {
+        accessorKey: "avanceServicio",
+        header: "Sevicios agendados",
+        size: 10,
+      },
+      {
+        accessorKey: "ventaReventa ",
+        header: "ventaReventa ",
+        size: 10,
+      },
+      {
+        accessorKey: "ventaReventa ",
+        header: "ventaReventa ",
+        size: 10,
+      },
+
+
+    ],
+    []
+  );
+
+
   const arregloConID = dataCorteEmailA
     ? dataCorteEmailA.map((item, index) => ({
       id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
@@ -396,6 +448,35 @@ function DemoTresTablas() {
             />
           ) : null}
         </div>
+
+        <div style={{ width: "400px", overflow: "auto" }}>
+          <div className="juntos"></div>
+          {dataCorteEmailD && dataCorteEmailD.length > 0 ? (
+            <MaterialReactTable
+              columns={columnsD}
+              data={dataCorteEmailD} // Reemplaza "reportes1" con tus datos de la primera tabla
+              enableRowSelection={false}
+              initialState={{ density: "compact" }}
+              renderTopToolbarCustomActions={({ table }) => (
+                <>
+                  <h4>Corte 4 Resumen de cifras</h4>
+                  <Button
+                    onClick={handleExportDataCorte4}
+                    variant="contained"
+                    color="withe"
+                    style={{ marginLeft: "auto" }}
+                    startIcon={<AiFillFileExcel />}
+                    aria-label="Exportar a Excel"
+                  >
+                    <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+                  </Button>
+                </>
+              )}
+            />
+          ) : null}
+        </div>
+
+
 
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
