@@ -29,3 +29,19 @@ export interface CorteC {
   numeroTickets: number;
   tiempoAtencion: string;
 }
+
+export interface CorteD {
+clave_empleado :	string, 	
+ventaServicio :	string, 	
+avanceServicio :	string, 	
+ventaReventa :	string, 	
+avanceVenta : string, 	
+cantidadColor : number, 	
+cantidadProductos : number, 	
+cantidadTratamietos :	number, 	
+total : string, 	
+porcentajeTotal : string, 	
+nombre :	string, 	
+resta : string,
+  
+}
