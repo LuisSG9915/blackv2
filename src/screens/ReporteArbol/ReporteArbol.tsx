@@ -1,6 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+
+import React, { useState, useEffect, useMemo,useRef } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import numeral from "numeral";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import { CgAdd } from "react-icons/cg";
+import { CgChevronDoubleDown } from "react-icons/cg";
 import {
   AccordionBody,
   AccordionHeader,
@@ -42,6 +48,7 @@ import Select from "react-select";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
+
 
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
@@ -334,7 +341,7 @@ function reporteArbol() {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else if (reporte == "sp_reporteCifrasEmpleado") {
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
-    } else if (reporte == "sp_reporteCifras") {
+    } else if (reporte == "--") {
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     } else {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
@@ -676,7 +683,7 @@ function reporteArbol() {
         setShowDeptoInput(false);
         setShowMesInput(false);
         setShowAñoInput(false);
-      } else if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras") {
+      } else if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras"|| value=="--" ) {
         // Mostrar los campos para estos informes
 
         setShowSucursalInput(true);
@@ -869,6 +876,7 @@ function reporteArbol() {
   ];
 
   const [expandedRows, setExpandedRows] = useState([]);
+  const tableRef = useRef(null);
 
   const handleExpand = (date) => {
     setExpandedRows((prevExpandedRows) => {
@@ -877,6 +885,49 @@ function reporteArbol() {
       newExpandedRows[date] = !newExpandedRows[date];
       return newExpandedRows;
     });
+  };
+
+
+
+  const handleExportToPDF = () => {
+    const input = tableRef.current;
+
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.save('table.pdf');
+    });
+  };
+
+
+  const handleExportDataArbol = (filename: string) => {
+    if (sampleData.length > 0) {
+      const columnHeaders = Object.keys(sampleData[0]);
+  
+      const formattedData = sampleData.map((sale, index) => {
+        const formattedRow = {};
+        columnHeaders.forEach((header) => {
+          formattedRow[header] = sale[header];
+        });
+        return formattedRow;
+      });
+  
+      const workbook = XLSX.utils.book_new();
+      const sheet = XLSX.utils.json_to_sheet(formattedData);
+      XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
+  
+      // Guardar el archivo Excel
+      XLSX.writeFile(workbook, `${filename}.xlsx`);
+    } else {
+      Swal.fire("", "No hay datos para exportar", "info");
+    }
+  };
+
+  const exportToExcel = () => {
+    handleExportData("mi_archivo");
   };
 
   const sampleData = [
@@ -1036,29 +1087,483 @@ function reporteArbol() {
             Reportes <AiOutlineFileText size={30} />
           </h1>
         </div>
-        <table className="table_arbol" border="5">
+        <br />
+        <UncontrolledAccordion defaultOpen="1">
+          <AccordionItem>
+            <AccordionHeader targetId="1">Filtros</AccordionHeader>
+            <AccordionBody accordionId="1">
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div>
+                  <Label>Reporte:</Label>
+                  <Input type="select" name="reporte" value={formulario.reporte} onChange={handleChange}>
+                    <option value="">Seleccione un reporte</option>
+                    <option value="--">Reporte --por llegar--</option>
+                    {/* <option value="--">Reporte Avance Mensual</option> */}
+
+                    {/* {data.map((item) => (
+                      <option key={item.id} value={item.metodoApi}>
+                        {item.descripcion}
+                      </option>
+                    ))} */}
+                  </Input>
+                </div>
+              </div>
+              <br />
+              <div className="formulario">
+                {showf1 ? (
+                  <div>
+                    <Label>Fecha inicial:</Label>
+                    <Input
+                      type="date"
+                      name="fechaInicial"
+                      value={formulario.fechaInicial}
+                      onChange={handleChange}
+                      disabled={!data[0]?.f1}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showf2 ? (
+                  <div>
+                    <Label>Fecha final:</Label>
+                    <Input
+                      type="date"
+                      name="fechaFinal"
+                      value={formulario.fechaFinal}
+                      onChange={handleChange}
+                      disabled={!data[0]?.f2}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showSucursalInput ? (
+                  <div>
+                    <Label>Sucursal:</Label>
+                    <Input
+                      type="select"
+                      name="sucursal"
+                      value={formulario.sucursal}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione la sucursal</option>
+
+                      {dataSucursales.map((item) => (
+                        <option value={item.sucursal}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showClienteInput ? (
+                  <div>
+                    <>
+                      <Label>Clientes:</Label>
+                      <InputGroup>
+                        {" "}
+                        <Input
+                          type="text"
+                          name="cliente"
+                          value={selectedName} // Usamos selectedId si formulario.cliente está vacío
+                          bsSize="sm"
+                          placeholder="Ingrese el cliente"
+                        />
+                        <Button size="sm" color="secondary" onClick={abrirModal}>
+                          seleccionar
+                        </Button>
+                      </InputGroup>
+                    </>
+                  </div>
+                ) : null}
+
+                {showEstilistaInput ? (
+                  <div>
+                    <Label>Estilista:</Label>
+                    {/* <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
+
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input> */}
+                    <Select
+                      menuPlacement="top"
+                      name="estilista"
+                      options={optionsEstilista}
+                      value={optionsEstilista.find((option) => option.value === formulario.estilista)}
+                      onChange={(selectedOption) => {
+                        // Aquí actualizas el valor en el estado form
+                        setFormulario((prevState) => ({
+                          ...prevState,
+                          estilista: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                        }));
+                      }}
+                      placeholder="--Selecciona una opción--"
+                    />
+                  </div>
+                ) : null}
+                {showProductoInput ? (
+                  <div>
+                    <Label>Clave Producto:</Label>
+                    {/* <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
+
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input> */}
+                    <Select
+                      menuPlacement="top"
+                      // styles={{ placeholder }}
+                      name="clave_prod"
+                      options={optionsProductos}
+                      value={optionsProductos.find((option) => option.value === formulario.clave_prod)}
+                      onChange={(selectedOption) => {
+                        // Aquí actualizas el valor en el estado form
+                        setFormulario((prevState) => ({
+                          ...prevState,
+                          clave_prod: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                        }));
+                      }}
+                      placeholder="--Selecciona una opción--"
+                    />
+                  </div>
+                ) : null}
+                {showMarcaInput ? (
+                  <div>
+                    <Label>Marca:</Label>
+                    {/* <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
+
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input> */}
+                    <Select
+                      menuPlacement="top"
+                      name="marca"
+                      options={optionsMarca}
+                      value={optionsMarca.find((option) => option.value === formulario.marca)}
+                      onChange={(selectedOption) => {
+                        // Aquí actualizas el valor en el estado form
+                        setFormulario((prevState) => ({
+                          ...prevState,
+                          marca: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                        }));
+                      }}
+                      placeholder="--Selecciona una opción--"
+                    />
+                  </div>
+                ) : null}
+                {showAlmacenInput ? (
+                  <div>
+                    <Label>Almacen:</Label>
+                    {/* <Input
+                      type="select"
+                      name="estilista"
+                      value={formulario.estilista}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione un Estilista</option>
+
+                      {dataUsuarios.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input> */}
+                    <Select
+                      menuPlacement="top"
+                      name="marca"
+                      options={optionsAlmacen}
+                      value={optionsAlmacen.find((option) => option.value === formulario.almacen)}
+                      onChange={(selectedOption) => {
+                        // Aquí actualizas el valor en el estado form
+                        setFormulario((prevState) => ({
+                          ...prevState,
+                          almacen: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                        }));
+                      }}
+                      placeholder="--Selecciona una opción--"
+                    />
+                  </div>
+                ) : null}
+                {showEmpresaInput ? (
+                  <div>
+                    <Label>Empresa:</Label>
+                    <Input type="select" name="empresa" value={formulario.empresa} onChange={handleChange} bsSize="sm">
+                      <option value="">Seleccione la empresa</option>
+
+                      {dataCias.map((item) => (
+                        <option value={item.id}>{item.nombre}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showSucDesInput ? (
+                  <div>
+                    <Label>Sucursal destino:</Label>
+                    <Input
+                      type="text"
+                      name="sucursalDestino"
+                      value={formulario.sucursalDestino}
+                      onChange={handleChange}
+                      disabled={!data[0]?.sucDestino}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showAñoInput ? (
+                  <div>
+                    <Label>Año</Label>
+                    <Input type="select" name="año" value={formulario.año} onChange={handleChange}>
+                      <option value="">Seleccione un Año</option>
+                      <option value={2023}>2023</option>
+                      <option value={2024}>2024</option>
+                      <option value={2025}>2025</option>
+                      <option value={2026}>2026</option>
+                      <option value={2027}>2027</option>
+                      <option value={2028}>2028</option>
+                      <option value={2029}>2028</option>
+                      <option value={2030}>2030</option>
+                    </Input>
+                  </div>
+                ) : null}
+                {showMesInput ? (
+                  <div>
+                    <Label>Mes</Label>
+                    <Input type="select" name="mes" value={formulario.mes} onChange={handleChange}>
+                      <option value="">Seleccione un Mes</option>
+                      <option value="1">Enero</option>
+                      <option value="2">Febrero</option>
+                      <option value="3">Marzo</option>
+                      <option value="4">Abril</option>
+                      <option value="5">Mayo</option>
+                      <option value="6">Junio</option>
+                      <option value="7">Julio</option>
+                      <option value="8">Agosto</option>
+                      <option value="9">Septiembre</option>
+                      <option value="10">Octubre</option>
+                      <option value="11">Noviembre</option>
+                      <option value="12">Diciembre</option>
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showAlmOrigenInput ? (
+                  <div>
+                    <Label>Almacen origen:</Label>
+                    <Input
+                      type="text"
+                      name="almacen"
+                      value={formulario.almacen}
+                      onChange={handleChange}
+                      disabled={!data[0]?.almacenOrigen}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showAlmDestInput ? (
+                  <div>
+                    <Label>Almacen destino:</Label>
+                    <Input
+                      type="text"
+                      name="almacendestino"
+                      value={formulario.almacenDestino}
+                      onChange={handleChange}
+                      disabled={!data[0]?.almacenDestino}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showTipoMovtoInput ? (
+                  <div>
+                    <Label>Tipo de movimiento:</Label>
+                    <Input
+                      type="text"
+                      name="tipoMovimiento"
+                      value={formulario.tipoMovimiento}
+                      onChange={handleChange}
+                      disabled={!data[0]?.tipomovto}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+
+                {showProveedorInput ? (
+                  <div>
+                    <Label>Proveedor:</Label>
+                    <Input
+                      type="text"
+                      name="proveedor"
+                      value={formulario.proveedor}
+                      onChange={handleChange}
+                      disabled={!data[0]?.proveedor}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showMetodoPagoInput ? (
+                  <div>
+                    <Label>Método de pago:</Label>
+
+                    <Input
+                      type="select"
+                      name="tipoPago"
+                      value={formulario.tipoPago}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione el tipo de pago</option>
+
+                      {dataFormasPagos.map((item) => (
+                        <option value={item.id}>{item.descripcion}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+
+                {showTipoDescuentoInput ? (
+                  <div>
+                    <Label>Tipo de descuento:</Label>
+
+                    <Input
+                      type="select"
+                      name="tipoDescuento"
+                      value={formulario.tipoDescuento}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    >
+                      <option value="">Seleccione el tipo de descuento:</option>
+
+                      {descuento.map((item) => (
+                        <option value={item.id}>{item.descripcion}</option>
+                      ))}
+                    </Input>
+                  </div>
+                ) : null}
+                {showClaveProdInput ? (
+                  <div>
+                    <Label>Clave producto</Label>
+                    <Input
+                      type="text"
+                      name="clave_prod"
+                      value={formulario.clave_prod}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    />
+                  </div>
+                ) : null}
+                {showPalabraProdInput ? (
+                  <div>
+                    <Label>Palabra</Label>
+                    <Input type="text" name="palabra" value={formulario.palabra} onChange={handleChange} bsSize="sm" />
+                  </div>
+                ) : null}
+                {showNoVentaInput ? (
+                  <div>
+                    <Label>No. venta</Label>
+                    <Input type="text" name="noVenta" value={formulario.noVenta} onChange={handleChange} bsSize="sm" />
+                  </div>
+                ) : null}
+                {showAreaInput ? (
+                  <div>
+                    <Label for="area">Área:</Label>
+                    <Input
+                      type="select"
+                      name="area"
+                      id="exampleSelect"
+                      value={formClase.area}
+                      onChange={handleChangeAreaDeptoClase}
+                      bsSize="sm"
+                    >
+                      <option value={0}>Seleccione un área</option>
+                      {dataAreas.map((area) => (
+                        <option value={area.area}>{area.descripcion}</option>
+                      ))}{" "}
+                    </Input>
+                  </div>
+                ) : null}
+                {showDeptoInput ? (
+                  <div>
+                    <Label for="departamento">Departamento:</Label>
+                    <Input
+                      bsSize="sm"
+                      type="select"
+                      name="depto"
+                      id="exampleSelect"
+                      value={formClase.depto}
+                      onChange={handleChangeAreaDeptoClase}
+                    >
+                      <option value={0}>Seleccione un departamento</option>
+                      {dataDeptosFiltrado.map((depto) => (
+                        <option value={depto.depto}>{depto.descripcion}</option>
+                      ))}{" "}
+                    </Input>
+                  </div>
+                ) : null}
+              </div>
+              <br />
+              <div className="d-flex justify-content-end">
+                <Button className="ml-auto" onClick={() => ejecutaReporte(formulario.reporte)}>
+                  Consultar
+                </Button>
+              </div>
+            </AccordionBody>
+          </AccordionItem>
+        </UncontrolledAccordion>
+        <button onClick={handleExportToPDF}>Exportar a PDF</button>
+        <DownloadTableExcel
+                    filename="users table"
+                    sheet="users"
+                    currentTableRef={tableRef.current}
+                >
+
+                   <button> Export excel </button>
+
+                </DownloadTableExcel>
+        <table className="table_arbol" border="5" ref={tableRef}>
           <thead>
             <tr>
+            <th className="th_arbol"></th>
               <th className="th_arbol">Fecha</th>
               <th className="th_arbol">Cliente</th>
               <th className="th_arbol">Venta Total</th>
               <th className="th_arbol">Método Pago</th>
-              <th className="th_arbol">Expandir</th>
+              
             </tr>
           </thead>
           <tbody>
             {sampleData.map((sale, index) => (
               <React.Fragment key={index}>
                 <tr className="expanded-row">
+                <td className="td_arbol">
+                
+                    <CgChevronDoubleDown onClick={() => handleExpand(sale.date)} />
+                  </td>
                   <td className="td_arbol">{sale.date}</td>
                   <td className="td_arbol">{sale.client}</td>
                   <td className="td_arbol">{sale.totalSale}</td>
                   <td className="td_arbol">{sale.paymentMethod}</td>
-                  <td className="td_arbol">
-                    <button className="button_arbol" onClick={() => handleExpand(sale.date)}>
-                      Expandir Nivel 2
-                    </button>
-                  </td>
+           
                 </tr>
                 {expandedRows[sale.date] && (
                   <tr>
@@ -1066,29 +1571,31 @@ function reporteArbol() {
                       <table className="nested-table">
                         <thead>
                           <tr>
-                            <th className="th_arbol">Producto/Servicio</th>
-                            <th className="th_arbol">Cantidad</th>
-                            <th className="th_arbol">Precio</th>
-                            <th className="th_arbol">Precio Insumo</th>
-                            <th className="th_arbol">Auxiliar</th>
-                            <th className="th_arbol">Promoción/Descuento</th>
-                            <th className="th_arbol">Expandir</th>
+                            <th className="th_arbol_lv2"></th>
+                            <th className="th_arbol_lv2">Producto/Servicio</th>
+                            <th className="th_arbol_lv2">Cantidad</th>
+                            <th className="th_arbol_lv2">Precio</th>
+                            <th className="th_arbol_lv2">Precio Insumo</th>
+                            <th className="th_arbol_lv2">Auxiliar</th>
+                            <th className="th_arbol_lv2">Promoción/Descuento</th>
+                            
                           </tr>
                         </thead>
                         <tbody>
                           {/* Agregar más datos de segundo nivel según sea necesario */}
                           <tr>
-                            <td className="td_arbol">Product 1</td>
-                            <td className="td_arbol">2</td>
-                            <td className="td_arbol">$50.00</td>
-                            <td className="td_arbol">$10.00</td>
-                            <td className="td_arbol">Aux 1</td>
-                            <td className="td_arbol">10%</td>
-                            <td className="td_arbol">
-                              <button className="button_arbol" onClick={() => handleExpand(index + 1)}>
-                                Expandir Nivel 3
-                              </button>
+                          <td className="td_arbol_lv2">
+                           
+                              <CgChevronDoubleDown  onClick={() => handleExpand(index + 1)} />
+                            
                             </td>
+                            <td className="td_arbol_lv2">Product 1</td>
+                            <td className="td_arbol_lv2">2</td>
+                            <td className="td_arbol_lv2">$50.00</td>
+                            <td className="td_arbol_lv2">$10.00</td>
+                            <td className="td_arbol_lv2">Aux 1</td>
+                            <td className="td_arbol_lv2">10%</td>
+                         
                           </tr>
                           {expandedRows[index + 1] && (
                             <tr>
@@ -1096,31 +1603,31 @@ function reporteArbol() {
                                 <table className="nested-table">
                                   <thead>
                                     <tr>
-                                      <th className="th_arbol">Sucursal</th>
-                                      <th className="th_arbol">Fecha</th>
-                                      <th className="th_arbol">Cliente</th>
-                                      <th className="th_arbol">Estilista</th>
-                                      <th className="th_arbol">Producto/servicio</th>
-                                      <th className="th_arbol">Cantidad</th>
-                                      <th className="th_arbol">Precio</th>
-                                      <th className="th_arbol">Precio insumo</th>
-                                      <th className="th_arbol">Auxiliar</th>
-                                      <th className="th_arbol">Promo/descuento</th>
+                                      <th className="th_arbol_lv3">Sucursal</th>
+                                      <th className="th_arbol_lv3">Fecha</th>
+                                      <th className="th_arbol_lv3">Cliente</th>
+                                      <th className="th_arbol_lv3">Estilista</th>
+                                      <th className="th_arbol_lv3">Producto/servicio</th>
+                                      <th className="th_arbol_lv3">Cantidad</th>
+                                      <th className="th_arbol_lv3">Precio</th>
+                                      <th className="th_arbol_lv3">Precio insumo</th>
+                                      <th className="th_arbol_lv3">Auxiliar</th>
+                                      <th className="th_arbol_lv3">Promo/descuento</th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     {/* Agregar más datos de tercer nivel según sea necesario */}
                                     <tr>
-                                      <td className="td_arbol">Store X</td>
-                                      <td className="td_arbol">2023-01-01</td>
-                                      <td className="td_arbol">Jane Doe</td>
-                                      <td className="td_arbol">Stylist 1</td>
-                                      <td className="td_arbol">Product 1</td>
-                                      <td className="td_arbol">1</td>
-                                      <td className="td_arbol">$30.00</td>
-                                      <td className="td_arbol">$5.00</td>
-                                      <td className="td_arbol">Aux 2</td>
-                                      <td className="td_arbol">5%</td>
+                                      <td className="td_arbol_lv3">Store X</td>
+                                      <td className="td_arbol_lv3">2023-01-01</td>
+                                      <td className="td_arbol_lv3">Jane Doe</td>
+                                      <td className="td_arbol_lv3">Stylist 1</td>
+                                      <td className="td_arbol_lv3">Product 1</td>
+                                      <td className="td_arbol_lv3">1</td>
+                                      <td className="td_arbol_lv3">$30.00</td>
+                                      <td className="td_arbol_lv3">$5.00</td>
+                                      <td className="td_arbol_lv3">Aux 2</td>
+                                      <td className="td_arbol_lv3">5%</td>
                                     </tr>
                                   </tbody>
                                 </table>
