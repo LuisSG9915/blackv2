@@ -54,7 +54,14 @@ import { FormaPago } from "../../models/FormaPago";
 import TimeKeeper from "react-timekeeper";
 import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
+import {
+  MdOutlineReceiptLong,
+  MdAttachMoney,
+  MdAccessTime,
+  MdDataSaverOn,
+  MdPendingActions,
+  MdEmojiPeople,
+} from "react-icons/md";
 import { format } from "date-fns";
 import TableHistorial from "./Components/TableHistorial";
 import TableAnticipos from "./Components/TableAnticipos";
@@ -135,10 +142,6 @@ const Ventas = () => {
   const [tiempo, setTiempo] = useState<number>(0);
   const [hora, setHora] = useState<string>("");
 
-  const [validacion, setValidacion] = useState(false);
-  const [dataVentasValidacion, setDataVentasValidacion] = useState<Venta[]>();
-  const [dataVentasOld, setDataVentasOld] = useState<Venta[]>();
-
   const [visible, setVisible] = useState<boolean>(false);
   const [estilistaProceso, setEstilistaProceso] = useState([
     {
@@ -149,7 +152,9 @@ const Ventas = () => {
     },
   ]);
   const [fechaVieja, setFechaVieja] = useState("");
-  const [arregloTemporal, setArregloTemporal] = useState<{ importe: number; formaPago: number; referencia: string }[]>([]);
+  const [arregloTemporal, setArregloTemporal] = useState<{ importe: number; formaPago: number; referencia: string }[]>(
+    []
+  );
   const [dataArregloTemporal, setDataArregloTemporal] = useState({
     formaPago: 0,
     importe: 0,
@@ -788,50 +793,16 @@ const Ventas = () => {
   }, []);
 
   useEffect(() => {
-    let totalPorProductoNormal = 0;
-    let totalPorProductoOld = 0;
-    let totalPorProductoValidacion = 0;
-    if (!validacion) {
-      setDataVentasOld(dataVentas);
-    } else {
-      setDataVentasValidacion(dataVentas);
-    }
+    let totalPorProducto = 0;
+
     dataVentas.forEach((producto) => {
-      totalPorProductoNormal += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
+      totalPorProducto +=
+        producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
     });
 
-    setTotal(Number(totalPorProductoNormal));
+    setTotal(Number(totalPorProducto));
     setTiempo(dataVentas.reduce((total, objeto) => total + (objeto.tiempo ?? 0), 0));
   }, [dataVentas]);
-
-  useEffect(() => {
-    let totalPorProductoOld = 0;
-    let totalPorProductoValidacion = 0;
-    if (dataVentasOld) {
-      dataVentasOld.forEach((producto) => {
-        totalPorProductoOld += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
-      });
-    }
-    if (dataVentasValidacion) {
-      dataVentasValidacion.forEach((producto) => {
-        totalPorProductoValidacion += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
-      });
-    }
-    if (totalPorProductoOld !== totalPorProductoValidacion && validacion) {
-      Swal.fire({
-        icon: "info",
-        text: "Los precios o los servicios de la venta han cambiado, favor de verificar",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) setModalOpenPago(false);
-      });
-
-      setValidacion(false);
-
-      setDataVentasOld(dataVentas);
-      return;
-    }
-  }, [dataVentasValidacion]);
 
   const TicketPrint: React.FC<TicketPrintProps> = ({ children }) => {
     const componentRef = useRef<HTMLDivElement>(null);
@@ -863,7 +834,11 @@ const Ventas = () => {
       if (
         Observacion === "SERV" &&
         !listaEstilistas.some(
-          (item) => item.d_estilista === d_estilista && item.User === User && item.No_venta === No_venta && item.Cve_cliente === Cve_cliente
+          (item) =>
+            item.d_estilista === d_estilista &&
+            item.User === User &&
+            item.No_venta === No_venta &&
+            item.Cve_cliente === Cve_cliente
         )
       ) {
         listaEstilistas.push({ d_estilista, User, No_venta, Cve_cliente });
@@ -880,7 +855,9 @@ const Ventas = () => {
       ""
     )}, ${fechaVieja.replace(/-/g, "")}, ${dato.User}, ${dato.Cve_cliente}, ${dato.No_venta}`;
     jezaApi
-      .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
+      .post(
+        `sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`
+      )
       .then(() =>
         Swal.fire({
           icon: "success",
@@ -912,7 +889,9 @@ const Ventas = () => {
   const ticketVta = async ({ folio }: any) => {
     const sp = `TicketVta ${folio},1,${dataUsuarios2[0]?.sucursal},${dataUsuarios2[0]?.id},${formPago.totalPago}`;
     await jezaApi
-      .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
+      .post(
+        `sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`
+      )
       .then(() => {
         Swal.fire({
           icon: "success",
@@ -927,157 +906,165 @@ const Ventas = () => {
 
   const endVenta = () => {
     // Cierro mi venta y mando response a medioPago
-    jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-      medioPago(Number(response.data.mensaje2)).then(() => {
-        setTempFolio(response.data.mensaje2);
-        const temp = response.data.mensaje2;
-        jezaApi
-          .get(
-            `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${
-              dataUsuarios2[0]?.id
-            }&pago=${Number(formPago.totalPago)}`
-          )
-          .then((response) => {
-            if (dataUsuarios2[0]?.sucursal == 27) {
-            }
-            setDatoTicket(response.data);
-            setTimeout(() => {
-              Swal.fire({
-                title: "ADVERTENCIA",
-                text: `¿Requiere su ticket por correo?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí",
-                cancelButtonText: "No",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
-                  const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+    jezaApi
+      .put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`)
+      .then((response) => {
+        medioPago(Number(response.data.mensaje2)).then(() => {
+          setTempFolio(response.data.mensaje2);
+          const temp = response.data.mensaje2;
+          jezaApi
+            .get(
+              `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(
+                dataUsuarios2[0]?.sucursal
+              )}&usr=${dataUsuarios2[0]?.id}&pago=${Number(formPago.totalPago)}`
+            )
+            .then((response) => {
+              if (dataUsuarios2[0]?.sucursal == 27) {
+              }
+              setDatoTicket(response.data);
+              setTimeout(() => {
+                Swal.fire({
+                  title: "ADVERTENCIA",
+                  text: `¿Requiere su ticket por correo?`,
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Sí",
+                  cancelButtonText: "No",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
+                    const correo = dataClientes.filter(
+                      (cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente)
+                    );
 
-                  Swal.fire({
-                    title: "ADVERTENCIA",
-                    text: `¿Su correo es ${correo[0].email}?`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    denyButtonText: `Asignar correo`,
-                    denyButtonColor: "green",
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí",
-                    cancelButtonText: "No, imprimir",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                      const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-                      axios
-                        .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                          // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                          to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
-                          subject: "Ticket",
-                          textTicket: response.data,
-                          text: "...",
-                        })
-                        .then(() => {
-                          Swal.fire({
-                            icon: "success",
-                            text: "Correo enviado con éxito",
-                            confirmButtonColor: "#3085d6",
-                          });
-                        })
-                        .catch((error) => {
-                          alert(error);
-                          console.log(error);
-                        });
-                    } else if (result.isDenied) {
-                      Swal.fire({
-                        title: "Ingrse el correo",
-                        input: "text",
-                        inputAttributes: {
-                          autocapitalize: "off",
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: "Listo",
-                        showLoaderOnConfirm: true,
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
-                          const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                          axios
-                            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                              // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                              to: envioCorreoRem + `,${result.value}`,
-                              subject: "Ticket",
-                              textTicket: response.data,
-                              text: "...",
-                            })
-                            .then(() => {
-                              Swal.fire({
-                                icon: "success",
-                                text: "Correo enviado con éxito",
-                                confirmButtonColor: "#3085d6",
-                              });
-                            })
-                            .catch((error) => {
-                              alert(error);
-                              console.log(error);
+                    Swal.fire({
+                      title: "ADVERTENCIA",
+                      text: `¿Su correo es ${correo[0].email}?`,
+                      icon: "warning",
+                      showCancelButton: true,
+                      showDenyButton: true,
+                      denyButtonText: `Asignar correo`,
+                      denyButtonColor: "green",
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Sí",
+                      cancelButtonText: "No, imprimir",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        const envioCorreoRem =
+                          "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                        const correo = dataClientes.filter(
+                          (cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente)
+                        );
+                        axios
+                          .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                            // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                            to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                            subject: "Ticket",
+                            textTicket: response.data,
+                            text: "...",
+                          })
+                          .then(() => {
+                            Swal.fire({
+                              icon: "success",
+                              text: "Correo enviado con éxito",
+                              confirmButtonColor: "#3085d6",
                             });
-                        }
-                      });
-                    }
-                  });
-                } else {
-                  ticketVta({ folio: temp });
-                  setModalTicket(true);
-                }
+                          })
+                          .catch((error) => {
+                            alert(error);
+                            console.log(error);
+                          });
+                      } else if (result.isDenied) {
+                        Swal.fire({
+                          title: "Ingrse el correo",
+                          input: "text",
+                          inputAttributes: {
+                            autocapitalize: "off",
+                          },
+                          showCancelButton: true,
+                          confirmButtonText: "Listo",
+                          showLoaderOnConfirm: true,
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
+                            const envioCorreoRem =
+                              "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                            axios
+                              .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                                // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                                to: envioCorreoRem + `,${result.value}`,
+                                subject: "Ticket",
+                                textTicket: response.data,
+                                text: "...",
+                              })
+                              .then(() => {
+                                Swal.fire({
+                                  icon: "success",
+                                  text: "Correo enviado con éxito",
+                                  confirmButtonColor: "#3085d6",
+                                });
+                              })
+                              .catch((error) => {
+                                alert(error);
+                                console.log(error);
+                              });
+                          }
+                        });
+                      }
+                    });
+                  } else {
+                    ticketVta({ folio: temp });
+                    setModalTicket(true);
+                  }
+                });
               });
-            });
-          }, 3000)
-          .catch(() => console.log("Error"));
+            }, 3000)
+            .catch(() => console.log("Error"));
+        });
+        Swal.fire({
+          icon: "success",
+          text: "Venta finalizada con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+        setDataTemporal({
+          Caja: 1,
+          cancelada: false,
+          Cant_producto: 0,
+          Cia: 0,
+          Clave_Descuento: 0,
+          Clave_prod: 0,
+          Corte: 0,
+          Corte_parcial: 0,
+          Costo: 0,
+          Credito: false,
+          Cve_cliente: 0,
+          Descuento: 0,
+          Fecha: "20230724",
+          folio_estilista: 0,
+          hora: 0,
+          idEstilista: 0,
+          ieps: 0,
+          No_venta: 0,
+          Observacion: "",
+          Precio: 0,
+          Precio_base: 0,
+          Sucursal: 0,
+          Tasa_iva: 0,
+          terminado: false,
+          tiempo: 0,
+          Usuario: 0,
+          validadoServicio: false,
+          cliente: "",
+          estilista: "",
+          id: 0,
+          producto: "",
+          User: 0,
+        });
+        // anticipoPost(Number(response.data.mensaje2));
       });
-      Swal.fire({
-        icon: "success",
-        text: "Venta finalizada con éxito",
-        confirmButtonColor: "#3085d6",
-      });
-      setDataTemporal({
-        Caja: 1,
-        cancelada: false,
-        Cant_producto: 0,
-        Cia: 0,
-        Clave_Descuento: 0,
-        Clave_prod: 0,
-        Corte: 0,
-        Corte_parcial: 0,
-        Costo: 0,
-        Credito: false,
-        Cve_cliente: 0,
-        Descuento: 0,
-        Fecha: "20230724",
-        folio_estilista: 0,
-        hora: 0,
-        idEstilista: 0,
-        ieps: 0,
-        No_venta: 0,
-        Observacion: "",
-        Precio: 0,
-        Precio_base: 0,
-        Sucursal: 0,
-        Tasa_iva: 0,
-        terminado: false,
-        tiempo: 0,
-        Usuario: 0,
-        validadoServicio: false,
-        cliente: "",
-        estilista: "",
-        id: 0,
-        producto: "",
-        User: 0,
-      });
-      // anticipoPost(Number(response.data.mensaje2));
-    });
     fetchInsumosProducto();
   };
 
@@ -1132,7 +1119,10 @@ const Ventas = () => {
     return (
       <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
         <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
-          <TableAnticipos anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableAnticipos>
+          <TableAnticipos
+            anticipoSelectedFunction={anticipoSelectedFunction}
+            dataAnticipos={dataAnticipos}
+          ></TableAnticipos>
         </div>
       </div>
     );
@@ -1150,7 +1140,12 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
-          referencia: Number(elemento.formaPago) === 94 ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
+          referencia:
+            Number(elemento.formaPago) === 94
+              ? anticipoIdentificador
+              : elemento.referencia
+              ? elemento.referencia
+              : "Efectivo",
           importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
@@ -1162,7 +1157,9 @@ const Ventas = () => {
     return cia ? cia.descripcion : "Sin forma de pago";
   };
   const getIdPago = (idTipoPago: number) => {
-    const cia = dataFormasPagos.find((cia: FormaPago) => cia.tipo === idTipoPago && cia.sucursal === dataUsuarios2[0]?.sucursal);
+    const cia = dataFormasPagos.find(
+      (cia: FormaPago) => cia.tipo === idTipoPago && cia.sucursal === dataUsuarios2[0]?.sucursal
+    );
     return cia ? cia.id : 1;
   };
 
@@ -1196,15 +1193,17 @@ const Ventas = () => {
           dataUsuarios2[0]?.sucursal
         }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
           dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${
+          dataVentaEdit.Observacion
+        }&Descuento=${dataVentaEdit.Descuento}&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${
+          dataVentaEdit.idEstilista
+        }&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo}&Precio_base=${
+          dataVentaEdit.Precio_base
+        }&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${
           dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
-          dataUsuarios2[0]?.id
-        }`
+        }&terminado=false&validadoServicio=false&idestilistaAux=${
+          dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0
+        }&idRecepcionista=${dataUsuarios2[0]?.id}`
       )
       .then(() => {
         Swal.fire({
@@ -1380,14 +1379,19 @@ const Ventas = () => {
 
   const [flagEstilistas, setFlagEstilistas] = useState(false);
   useEffect(() => {
-    const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
+    const formasPagosFiltradas = dataFormasPagos.filter(
+      (formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal
+    );
     const clienteSuc33 = dataClientes.filter(
-      (cliente) => Number(cliente.sucursal_origen) === 33 && Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente)
+      (cliente) =>
+        Number(cliente.sucursal_origen) === 33 && Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente)
     );
     if (clienteSuc33.length > 0) {
       setFormasPagosFiltradas(formasPagosFiltradas);
     } else {
-      const formaPagoNomina = dataFormasPagos.filter((nomina) => nomina.tipo != 110 && nomina.sucursal == dataUsuarios2[0]?.sucursal);
+      const formaPagoNomina = dataFormasPagos.filter(
+        (nomina) => nomina.tipo != 110 && nomina.sucursal == dataUsuarios2[0]?.sucursal
+      );
       setFormasPagosFiltradas(formaPagoNomina);
     }
   }, [dataFormasPagos, dataTemporal.Cve_cliente]);
@@ -1499,7 +1503,12 @@ const Ventas = () => {
                     <MdEmojiPeople size={23} />
                     Elegir
                   </Button>
-                  <Button disabled={!dataTemporal.cliente} color="primary" size="sm" onClick={() => historial(dataTemporal.id)}>
+                  <Button
+                    disabled={!dataTemporal.cliente}
+                    color="primary"
+                    size="sm"
+                    onClick={() => historial(dataTemporal.id)}
+                  >
                     Historial
                     <MdPendingActions size={23} />
                   </Button>
@@ -1590,7 +1599,10 @@ const Ventas = () => {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
                           })
-                        : (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toLocaleString("es-MX", {
+                        : (
+                            dato.Precio * dato.Cant_producto -
+                            dato.Precio * dato.Cant_producto * dato.Descuento
+                          ).toLocaleString("es-MX", {
                             style: "currency",
                             currency: "MXN", // Código de moneda para el Peso Mexicano
 
@@ -1629,7 +1641,9 @@ const Ventas = () => {
                             d_estilistaAuxilliar: dato.nombreEstilistaAux,
                             tiempo: dato.tiempo,
                           });
-                          const descuentito = dataDescuentos.find((objeto) => objeto.id === Number(dato.Clave_Descuento));
+                          const descuentito = dataDescuentos.find(
+                            (objeto) => objeto.id === Number(dato.Clave_Descuento)
+                          );
 
                           setDescuento({
                             min: descuentito?.min_descto ? Number(descuentito?.min_descto) : 0,
@@ -1673,8 +1687,6 @@ const Ventas = () => {
                   onClick={() => {
                     setModalOpenPago(true);
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
-                    fetchVentas();
-                    setValidacion(true);
                   }}
                 >
                   <MdAttachMoney size={35} />
@@ -1759,7 +1771,10 @@ const Ventas = () => {
               <Row>
                 <Col xs={10}>
                   <InputGroup>
-                    <Input disabled defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""} />
+                    <Input
+                      disabled
+                      defaultValue={dataTemporal.d_estilistaAuxilliar ? dataTemporal.d_estilistaAuxilliar : ""}
+                    />
 
                     <Button
                       onClick={() => {
@@ -1772,7 +1787,10 @@ const Ventas = () => {
                   </InputGroup>
                 </Col>
                 <Col xs={1}>
-                  <Button color="danger" onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                  <Button
+                    color="danger"
+                    onClick={() => setDataTemporal({ ...dataTemporal, idestilistaAux: 0, d_estilistaAuxilliar: "" })}
+                  >
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
@@ -1813,13 +1831,25 @@ const Ventas = () => {
             </Col>
             <Col md={6}>
               <Label>Cantidad a vender:</Label>
-              <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" value={dataTemporal.Cant_producto} type="number" />
+              <Input
+                placeholder="Cantidad"
+                onChange={cambios}
+                name="Cant_producto"
+                value={dataTemporal.Cant_producto}
+                type="number"
+              />
               <br />
             </Col>
           </Row>
 
           <Label>Tipo de descuento:</Label>
-          <Input type="select" name="Clave_Descuento" id="exampleSelect" value={dataTemporal.Clave_Descuento} onChange={cambios}>
+          <Input
+            type="select"
+            name="Clave_Descuento"
+            id="exampleSelect"
+            value={dataTemporal.Clave_Descuento}
+            onChange={cambios}
+          >
             <option value={0}>-Selecciona el tipo de descuento-</option>
             {dataDescuentos.map((descuento) => (
               <option value={descuento.id}>{descuento.descripcion}</option>
@@ -1883,7 +1913,10 @@ const Ventas = () => {
                   icon: "info",
                   text: "No ha seleccionado estilista",
                 });
-              } else if (Number(dataTemporal.d_existencia) < Number(dataTemporal.Cant_producto) && dataTemporal.Observacion !== "SERV") {
+              } else if (
+                Number(dataTemporal.d_existencia) < Number(dataTemporal.Cant_producto) &&
+                dataTemporal.Observacion !== "SERV"
+              ) {
                 Swal.fire({
                   icon: "info",
                   text: "No hay existencias ",
@@ -1999,7 +2032,12 @@ const Ventas = () => {
         nombreActualizar="Editar venta / servicio"
       >
         <Label>Cliente</Label>
-        <Input disabled defaultValue={dataTemporal.cliente ? dataTemporal.cliente : ""} onChange={cambios} name={"cve_cliente"} />
+        <Input
+          disabled
+          defaultValue={dataTemporal.cliente ? dataTemporal.cliente : ""}
+          onChange={cambios}
+          name={"cve_cliente"}
+        />
         <Label>Producto/servicio</Label>
         <Row>
           <Col>
@@ -2021,10 +2059,21 @@ const Ventas = () => {
         </Row>
         <br />
         <Label>Cantidad</Label>
-        <Input placeholder="Cantidad" onChange={cambios} name="Cant_producto" defaultValue={dataTemporal.Cant_producto} />
+        <Input
+          placeholder="Cantidad"
+          onChange={cambios}
+          name="Cant_producto"
+          defaultValue={dataTemporal.Cant_producto}
+        />
         <br />
         <Label>Cantidad en existencia </Label>
-        <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
+        <Input
+          disabled
+          placeholder="Cantidad en existencia"
+          onChange={cambios}
+          name="d_existencia"
+          defaultValue={dataTemporal.d_existencia}
+        />
         <br />
         <Label style={{ marginRight: 10 }}>Hora de servicio</Label>
         {/* <select id="hora" name="hora" onChange={cambios} value={dataTemporal.hora}>
@@ -2046,7 +2095,10 @@ const Ventas = () => {
               </Label>
             </Col>
             <Col md="5">
-              <Input disabled value={"$" + total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}></Input>
+              <Input
+                disabled
+                value={"$" + total.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ></Input>
             </Col>
           </Row>
           <hr className="my-4" />
@@ -2137,7 +2189,10 @@ const Ventas = () => {
               <Input
                 disabled
                 name="totalPago"
-                value={"$ " + formPago.totalPago.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                value={
+                  "$ " +
+                  formPago.totalPago.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                }
               ></Input>
             </Col>
           </Row>
@@ -2152,7 +2207,10 @@ const Ventas = () => {
               {/* <Input name="cambioCliente" value={formPago.cambioCliente > 0 ? formPago.cambioCliente : 0} disabled></Input> */}
               <Input
                 name="cambioCliente"
-                value={"$ " + formPago.cambioCliente.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                value={
+                  "$ " +
+                  formPago.cambioCliente.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                }
                 disabled
               ></Input>
             </Col>
@@ -2166,7 +2224,6 @@ const Ventas = () => {
               setModalOpenPago(false);
               setArregloTemporal([]);
               setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
-              setValidacion(false);
             }}
             text="Salir"
           />
@@ -2180,6 +2237,7 @@ const Ventas = () => {
               const totalVenta = parseFloat(total); // Asegúrate de que "total" sea un número
 
               // Validar que el cambio no sea mayor al efectivo
+              // if (cambioCliente >= 0 && cambioCliente <= efectivo) {
               if (cambioCliente <= efectivo) {
                 // Validar que el total de pagos sea mayor o igual al total de venta
                 if (parseFloat(formPago.totalPago) >= totalVenta) {
@@ -2188,7 +2246,6 @@ const Ventas = () => {
                   setDataTemporal({ Cve_cliente: 0 });
                   setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
                   setArregloTemporal([]);
-                  setValidacion(true);
                   endVenta();
                 } else {
                   // El total de pagos es menor al total de venta, mostrar un mensaje de error
@@ -2539,7 +2596,12 @@ const Ventas = () => {
         </ModalHeader>
         <ModalBody>
           <Label> Forma de pago: </Label>
-          <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
+          <Input
+            type="select"
+            onChange={handleFormaPagoTemporal}
+            value={dataArregloTemporal.formaPago}
+            name={"formaPago"}
+          >
             <option value={""}>--Seleccione la forma de pago--</option>
             {formasPagosFiltradas.map((formaPago, index) => (
               <option key={index} value={formaPago.tipo}>
@@ -2567,7 +2629,11 @@ const Ventas = () => {
           dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
-              <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
+              <Input
+                onChange={handleFormaPagoTemporal}
+                value={dataArregloTemporal.referencia}
+                name={"referencia"}
+              ></Input>
             </>
           ) : null}
 
@@ -2595,7 +2661,7 @@ const Ventas = () => {
                   text: "Por favor, seleccione una forma de pago.",
                 });
                 return;
-              } else if (dataArregloTemporal.importe < 0) {
+              } else if (!dataArregloTemporal.importe || dataArregloTemporal.importe <= 0) {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
@@ -2681,7 +2747,10 @@ const Ventas = () => {
               <Row>
                 <Col xs={10}>
                   <InputGroup>
-                    <Input disabled value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""} />
+                    <Input
+                      disabled
+                      value={dataVentaEdit.d_estilistaAuxilliar ? dataVentaEdit.d_estilistaAuxilliar : ""}
+                    />
                     <Button
                       onClick={() => {
                         setModalOpen2(true);
@@ -2693,7 +2762,10 @@ const Ventas = () => {
                   </InputGroup>
                 </Col>
                 <Col xs={2}>
-                  <Button color="danger" onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}>
+                  <Button
+                    color="danger"
+                    onClick={() => setDataVentaEdit({ ...dataVentaEdit, idestilistaAux: 0, d_estilistaAuxilliar: "" })}
+                  >
                     <AiFillDelete></AiFillDelete>
                   </Button>
                 </Col>
@@ -2709,7 +2781,11 @@ const Ventas = () => {
                 placeholder="Cantidad en existencia"
                 onChange={cambiosEdit}
                 name="d_existencia"
-                value={dataVentaEdit.d_existencia ? dataVentaEdit.d_existencia : getExistenciaForeignKey(dataVentaEdit.Clave_prod)}
+                value={
+                  dataVentaEdit.d_existencia
+                    ? dataVentaEdit.d_existencia
+                    : getExistenciaForeignKey(dataVentaEdit.Clave_prod)
+                }
               />
               {/* Revisar si hay error de render en esta linea 2264 */}
             </Col>
@@ -2727,7 +2803,12 @@ const Ventas = () => {
 
             <Col sm="6">
               <Label>Cantidad a vender:</Label>
-              <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
+              <Input
+                placeholder="Cantidad"
+                onChange={cambiosEdit}
+                name="Cant_producto"
+                value={dataVentaEdit.Cant_producto}
+              />
             </Col>
             {dataVentaEdit.Observacion === "SERV" ? (
               <Col sm="6">
@@ -2750,7 +2831,13 @@ const Ventas = () => {
           </Label>
           <Row>
             <Col md={"12"}>
-              <Input name="Descuento" value={dataVentaEdit.Descuento} onChange={cambiosEdit} placeholder="0.0" type="number"></Input>
+              <Input
+                name="Descuento"
+                value={dataVentaEdit.Descuento}
+                onChange={cambiosEdit}
+                placeholder="0.0"
+                type="number"
+              ></Input>
             </Col>
           </Row>
           <br />
