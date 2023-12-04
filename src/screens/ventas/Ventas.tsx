@@ -2178,12 +2178,13 @@ const Ventas = () => {
               const cambioCliente = parseFloat(formPago.cambioCliente);
               const efectivo = parseFloat(formPago.efectivo);
               const totalVenta = parseFloat(total); // Asegúrate de que "total" sea un número
-
               // Validar que el cambio no sea mayor al efectivo
               if (cambioCliente <= efectivo) {
                 // Validar que el total de pagos sea mayor o igual al total de venta
                 if (parseFloat(formPago.totalPago) >= totalVenta) {
                   // El total de pagos es mayor o igual al total de venta, continuar con el proceso de cobro
+                  fetchVentas();
+
                   setModalOpenPago(false);
                   setDataTemporal({ Cve_cliente: 0 });
                   setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
