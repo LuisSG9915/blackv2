@@ -68,6 +68,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
+import TableTiendaVirtual from "./Components/TableTiendaVirtual";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -128,6 +129,7 @@ const Ventas = () => {
   const [modalTicket, setModalTicket] = useState<boolean>(false);
   const [modalTicketEstilista, setModalTicketEstilista] = useState<boolean>(false);
   const [modalAnticipo, setModalAnticipo] = useState<boolean>(false);
+  const [modalTiendaVirtual, setModalTiendaVirtual] = useState<boolean>(false);
   const [modalTipoVenta, setModalTipoVenta] = useState<boolean>(false);
   const [modalEstilistaSelector, setModalEstilistaSelector] = useState<boolean>(false);
 
@@ -484,6 +486,10 @@ const Ventas = () => {
       });
     } else if (name === "formaPago" && Number(value) === 94) {
       setModalAnticipo(true);
+      setAnticipoSelected(true);
+      setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
+    } else if (name === "formaPago" && Number(value) === 100) {
+      setModalTiendaVirtual(true);
       setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     } else {
@@ -1103,6 +1109,7 @@ const Ventas = () => {
     setAnticipoId(Number(params.row.id));
     setAnticipoIdentificador(Number(params.row.id));
     setModalAnticipo(false);
+    setModalTiendaVirtual(false)
   };
 
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1); // Inicialmente, no hay ningún índice seleccionado
@@ -1133,6 +1140,15 @@ const Ventas = () => {
       <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
         <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
           <TableAnticipos anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableAnticipos>
+        </div>
+      </div>
+    );
+  }
+  function DataTableTiendaVirtual() {
+    return (
+      <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
+        <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
+          <TableTiendaVirtual anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableTiendaVirtual>
         </div>
       </div>
     );
@@ -2528,6 +2544,30 @@ const Ventas = () => {
             color="danger"
             onClick={() => {
               setModalAnticipo(false);
+            }}
+            text="Salir"
+          />
+        </ModalFooter>
+      </Modal>
+      <Modal isOpen={modalTiendaVirtual} size="xl">
+        <ModalHeader>
+          <h3>Elegir tienda virtual</h3>
+        </ModalHeader>
+        <ModalBody>
+          {dataAnticipos.length === 0 ? <h4> Por el momento el cliente no cuenta con anticipos </h4> : null}
+          <br />
+          <DataTableTiendaVirtual></DataTableTiendaVirtual>
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+        </ModalBody>
+        <ModalFooter>
+          <CButton
+            color="danger"
+            onClick={() => {
+              setModalTiendaVirtual(false);
             }}
             text="Salir"
           />

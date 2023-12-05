@@ -18,7 +18,8 @@ import {
   Spinner,
 } from "reactstrap";
 import { Usuario } from "../models/Usuario";
-import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineUser, AiOutlineAlert, AiFillAlert } from "react-icons/ai";
+
 import Timer from "../components/Timer";
 import Swal from "sweetalert2";
 import "../../css/sidebar.css";
@@ -26,8 +27,38 @@ import logoImage from "../assets/logoN.png";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
 import RataLogo from "../assets/rataTNB.jpeg";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
+import axios from "axios";
+import { useQuery } from "react-query";
+import { versionSistema } from "../utilities/constGenerales";
 
 const SidebarHorizontal = () => {
+  const { isLoading, error, data, isFetching } = useQuery(
+    "repoData",
+    () =>
+      axios.get("http://localhost:3003/version").then((res) => {
+        if (res.data.ver > versionSistema) {
+          Swal.fire({
+            title: "Actualización",
+            text: `Favor de actualizar sitio, hemos detectado una versión anterior`,
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Actualizar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.reload();
+            }
+          });
+          setVerificadorVersion(true);
+        } else {
+          setVerificadorVersion(false);
+        }
+      }),
+    { staleTime: 10000 }
+  );
+
+  const [verificadorVersion, setVerificadorVersion] = useState(false);
   const { filtroSeguridad, session } = useSeguridad();
 
   /* sincronizacionshopify */
@@ -380,9 +411,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
-                      Configuración de puntos por departamentos
-                    </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
@@ -439,9 +468,7 @@ const SidebarHorizontal = () => {
                     >
                       Visor de citas
                     </DropdownItem>
-                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>
-                      Bloqueos de colaborador
-                    </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem>
                     <DropdownItem onClick={() => navigate("/HorariosSuc")}>Cambio sucursal</DropdownItem>
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
@@ -485,7 +512,8 @@ const SidebarHorizontal = () => {
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
                   <DropdownToggle nav caret color="rgba(225,224,253,255)">
-                    <AiOutlineUser></AiOutlineUser>Perfil
+                    {verificadorVersion ? <AiFillAlert size={20} color="orange"></AiFillAlert> : <AiOutlineUser></AiOutlineUser>}
+                    Perfil
                   </DropdownToggle>
                   <DropdownMenu dark>
                     {/* <DropdownItem header> {form.map((usuario) => usuario.nombre)}</DropdownItem> */}
@@ -494,6 +522,7 @@ const SidebarHorizontal = () => {
                         <CardHeader>{currentDateTime}</CardHeader>
                         <ListGroup flush>
                           <ListGroupItem>Nombre: {form.length > 0 && form[0].nombre}</ListGroupItem>
+                          <ListGroupItem>Versión: {versionSistema} </ListGroupItem>
                           {/* <ListGroupItem>Sucursal: {form.length > 0 && form[0].d_sucursal}</ListGroupItem> */}
                           {form[0]?.clave_perfil === 27 || form[0]?.clave_perfil === 1032 ? (
                             <ListGroupItem>

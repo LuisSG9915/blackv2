@@ -115,7 +115,6 @@ function DemoTresTablas() {
     csvExporter.generateCsv(dataCorteEmailD);
   };
 
-
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -155,7 +154,6 @@ function DemoTresTablas() {
   const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({
     sucursal: dataUsuarios2[0]?.sucursal,
     fecha: fechaPost,
-
   });
 
   const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
@@ -304,19 +302,16 @@ function DemoTresTablas() {
         header: "ventaReventa ",
         size: 10,
       },
-
-
     ],
     []
   );
 
-
   const arregloConID = dataCorteEmailA
     ? dataCorteEmailA.map((item, index) => ({
-      id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
-      value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
-      label: item.FormadePago,
-    }))
+        id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
+        value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
+        label: item.FormadePago,
+      }))
     : [];
 
   const arregloFormateado = arregloConID.slice(0, -1);
@@ -475,8 +470,6 @@ function DemoTresTablas() {
             />
           ) : null}
         </div>
-
-
 
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>

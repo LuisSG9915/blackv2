@@ -6,10 +6,10 @@ interface Props {
   dataAnticipos: AnticipoGet[];
   anticipoSelectedFunction: (params: any) => void;
 }
-function TableAnticipos({ dataAnticipos, anticipoSelectedFunction }: Props) {
+function TableTiendaVirtual({ dataAnticipos, anticipoSelectedFunction }: Props) {
   const [newDataAnticipos, setNewDataAnticipos] = useState<AnticipoGet[]>([]);
   useEffect(() => {
-    setNewDataAnticipos(dataAnticipos.filter((tipoMovto) => tipoMovto.tipoMovto == 2));
+    setNewDataAnticipos(dataAnticipos.filter((tipoMovto) => tipoMovto.tipoMovto == 7));
   }, [dataAnticipos]);
 
   const getRowId = (row: AnticipoGet) => row.id;
@@ -85,4 +85,4 @@ function TableAnticipos({ dataAnticipos, anticipoSelectedFunction }: Props) {
   );
 }
 
-export default TableAnticipos;
+export default TableTiendaVirtual;

@@ -75,6 +75,10 @@ import Webluetooth from "./screens/Webluetooth";
 import CatBloqueoColaboradores from "./screens/catbloqueosColaboradores/CatBloqueoColaboradores";
 import ReporteCifra from "./screens/cifraColaborador/ReporteCifra";
 import ReporteArbol from "./screens/ReporteArbol/ReporteArbol";
+import { Provider } from "react-redux";
+import Example2 from "./screens/EXAMPLE/Example2";
+import { store } from "./screens/EXAMPLE/app/store";
+import { QueryClient, QueryClientProvider } from "react-query";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -371,11 +375,16 @@ const router = createBrowserRouter([
     path: "/ReporteArbol",
     element: <ReporteArbol />,
   },
+  {
+    path: "/Example2",
+    element: <Example2 />,
+  },
 ]);
+const queryClient = new QueryClient();
 
 ReactDOM.render(
-  <>
+  <QueryClientProvider client={queryClient} >
     <RouterProvider router={router} />
-  </>,
+  </QueryClientProvider>,
   document.getElementById("root")
 );
