@@ -284,24 +284,65 @@ function DemoTresTablas() {
       },
       {
         accessorKey: "ventaServicio",
-        header: "ventaServicio",
+        header: "Venta Servicio",
         size: 10,
       },
       {
         accessorKey: "avanceServicio",
-        header: "Sevicios agendados",
+        header: "Avance Sevicios",
         size: 10,
       },
       {
-        accessorKey: "ventaReventa ",
-        header: "ventaReventa ",
+        accessorKey: "ventaReventa",
+        header: "Venta Reventa",
         size: 10,
       },
       {
-        accessorKey: "ventaReventa ",
-        header: "ventaReventa ",
+        accessorKey: "avanceVenta",
+        header: "Avance Reventa ",
         size: 10,
       },
+      {
+        accessorKey: "cantidadColor",
+        header: "Cantida Color",
+        size: 10,
+      },
+      {
+        accessorKey: "cantidadProductos",
+        header: "Cantida Productos",
+        size: 10,
+      },
+      {
+        accessorKey: "cantidadTratamietos",
+        header: "Cantidad Tratamientos",
+        size: 10,
+      },
+      {
+        accessorKey: "total",
+        header: "Total",
+        size: 10,
+      },
+      {
+        accessorKey: "porcentajeTotal",
+        header: "Porcentaje Total",
+        size: 10,
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 10,
+      },
+      {
+        accessorKey: "resta",
+        header: "Resta",
+        size: 10,
+      },
+
+
+
+
+
+
     ],
     []
   );

@@ -29,7 +29,7 @@ import useModalHook from "../../hooks/useModalHook";
 
 import CButton from "../../components/CButton";
 import TableEstilistas from "./Components/TableEstilistas";
-import TableProductos, { InsumoExistencia, ProductoExistencia } from "./Components/TableProductos";
+import TableProductos, { ProductoExistencia } from "./Components/TableProductos";
 import TableClientesProceso from "./Components/TableClientesProceso";
 import TableCliente from "./Components/TableCliente";
 import ModalActualizarLayout from "../../layout/ModalActualizarLayout";
@@ -47,15 +47,18 @@ import { VentaInsumo } from "../../models/VentaInsumo";
 import { useDescuentos } from "../../hooks/getsHooks/useClientesProceso copy";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
+import { GridColDef, DataGrid } from "@mui/x-data-grid";
 import { AnticipoGet } from "../../models/Anticipo";
 import { useAnticipoVentas } from "../../hooks/getsHooks/useAnticipoVentas";
 import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 import { FormaPago } from "../../models/FormaPago";
 import TimeKeeper from "react-timekeeper";
 import { useVentasProceso } from "../../hooks/getsHooks/useVentasProceso";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 import { format } from "date-fns";
+import { LuCalendarSearch } from "react-icons/lu";
 import TableHistorial from "./Components/TableHistorial";
 import TableAnticipos from "./Components/TableAnticipos";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
@@ -64,11 +67,6 @@ import { FaCashRegister } from "react-icons/fa";
 import { BsCashCoin } from "react-icons/bs";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import axios from "axios";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
-import { ALMACEN } from "../../utilities/constsAlmacenes";
-import TableTiendaVirtual from "./Components/TableTiendaVirtual";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -76,6 +74,7 @@ interface TicketPrintProps {
 const Ventas = () => {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
+  // const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -84,6 +83,7 @@ const Ventas = () => {
       setDataUsuarios2(parsedItem);
       console.log({ parsedItem });
 
+      // Llamar a getPermisoPantalla después de que los datos se hayan establecido
       getPermisoPantalla(parsedItem);
     }
   }, []);
@@ -129,17 +129,12 @@ const Ventas = () => {
   const [modalTicket, setModalTicket] = useState<boolean>(false);
   const [modalTicketEstilista, setModalTicketEstilista] = useState<boolean>(false);
   const [modalAnticipo, setModalAnticipo] = useState<boolean>(false);
-  const [modalTiendaVirtual, setModalTiendaVirtual] = useState<boolean>(false);
   const [modalTipoVenta, setModalTipoVenta] = useState<boolean>(false);
   const [modalEstilistaSelector, setModalEstilistaSelector] = useState<boolean>(false);
 
   const [total, setTotal] = useState<number>(0);
   const [tiempo, setTiempo] = useState<number>(0);
   const [hora, setHora] = useState<string>("");
-
-  const [validacion, setValidacion] = useState(false);
-  const [dataVentasValidacion, setDataVentasValidacion] = useState<Venta[]>();
-  const [dataVentasOld, setDataVentasOld] = useState<Venta[]>();
 
   const [visible, setVisible] = useState<boolean>(false);
   const [estilistaProceso, setEstilistaProceso] = useState([
@@ -161,13 +156,16 @@ const Ventas = () => {
 
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 
-  const { dataClientes, fetchClientes } = useClientes();
+  const { dataClientes } = useClientes();
   const { dataTrabajadores } = useNominaTrabajadores();
   const { dataDescuentos } = useDescuentos();
   const [formasPagosFiltradas, setFormasPagosFiltradas] = useState<FormaPago[]>([]);
 
-  const { dataFormasPagos } = useFormasPagos();
-
+  const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
+  useEffect(() => {
+    const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
+    setFormasPagosFiltradas(formasPagosFiltradas);
+  }, [dataFormasPagos]);
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
@@ -196,7 +194,7 @@ const Ventas = () => {
     Costo: 1,
     Cve_cliente: 24,
     Descuento: 0,
-    Fecha: "2023-06-14T00:10:57.817",
+    Fecha: "2023-06-14T08:10:57.817",
     No_venta: 0,
     No_venta_original: 0,
     Observacion: "x",
@@ -211,7 +209,7 @@ const Ventas = () => {
     d_producto: "OXIDANTE CREMA 20 VOL. frasco 1l",
     d_sucursal: "Barrio",
     folio_estilista: "0",
-    hora: "2023-06-14T00:10:57.817",
+    hora: "2023-06-14T08:10:57.817",
     id: 0,
     no_venta2: 0,
     terminado: false,
@@ -227,10 +225,10 @@ const Ventas = () => {
     fechaAlta: "",
     unidadMedida: "",
     d_insumo: "",
-    existencia: 1,
   });
 
   const [selectedID2, setSelectedID] = useState(0);
+  const { datoInsumosProducto, fetchInsumosProducto } = useInsumosProductos({ idVenta: selectedID2 });
 
   const [formPago, setFormPago] = useState({
     efectivo: 0,
@@ -341,7 +339,7 @@ const Ventas = () => {
       cancelada: false,
       folio_estilista: 0,
       // hora: "2023-06-13T00:00:00",
-      hora: new Date(),
+      hora: 8,
       tiempo: 0,
       terminado: false,
       validadoServicio: false,
@@ -376,7 +374,7 @@ const Ventas = () => {
     cancelada: false,
     idEstilista: 0,
     folio_estilista: 1,
-    hora: new Date(),
+    hora: 8,
     tiempo: 1,
     terminado: false,
     validadoServicio: false,
@@ -408,11 +406,8 @@ const Ventas = () => {
     "Importe",
     "Acciones",
   ];
-  const TableDataHeaderInsumo = ["Insumo", "Existencia", "Unidad de medida", "Cantidad", "Acciones"];
+  const TableDataHeaderInsumo = ["Insumo", "Cantidad", "Unidad de medida", "Acciones"];
   const TabñeDataHeaderEstilistaProceso = ["Estilista", ""];
-  const { datoInsumosProductoResumen, fetchInsumosProductoResumen } = useInsumosProductosResumen({
-    idVenta: selectedID2,
-  });
 
   const [descuento, setDescuento] = useState({
     min: 0,
@@ -488,10 +483,6 @@ const Ventas = () => {
       setModalAnticipo(true);
       setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
-    } else if (name === "formaPago" && Number(value) === 100) {
-      setModalTiendaVirtual(true);
-      setAnticipoSelected(true);
-      setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
     } else {
       setAnticipoSelected(false);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
@@ -530,7 +521,7 @@ const Ventas = () => {
       console.log("a");
     }
     console.log({ dataTemporal });
-  }, [dataTemporal?.Descuento]);
+  }, [dataTemporal.Descuento]);
 
   const generarOpcionesDeTiempo = () => {
     const opciones = [];
@@ -615,8 +606,7 @@ const Ventas = () => {
               No_venta_original: 0,
               cancelada: false,
               folio_estilista: 0,
-              // hora: horaDateTime,
-              hora: format(dataTemporal.hora, "HH:mm"),
+              hora: horaDateTime,
               tiempo: dataTemporal.tiempo == 0 ? 0 : dataTemporal.tiempo,
               // tiempo: dataTemporal.tiempo == 0 ? 30 : dataTemporal.tiempo,
               terminado: false,
@@ -697,7 +687,7 @@ const Ventas = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         try {
-          jezaApi.delete(`/VentaInsumo?id=${dato.id}`).then(() => fetchInsumosProductoResumen());
+          jezaApi.delete(`/VentaInsumo?id=${dato.id}`).then(() => fetchInsumosProducto());
         } catch (error) {
           console.log(error);
         }
@@ -725,7 +715,7 @@ const Ventas = () => {
   // };
   const editInsumo = () => {
     // Verificar si los campos están vacíos
-    if (!formInsumo.id || !formInsumo.cantidad || formInsumo.cantidad <= 0) {
+    if (!formInsumo.id || !formInsumo.cantidad) {
       Swal.fire({
         icon: "error",
         text: "Por favor, complete todos los campos.",
@@ -733,40 +723,26 @@ const Ventas = () => {
       });
       return; // Salir de la función si faltan campos
     }
-    if (formInsumo.cantidad > formInsumo?.existencia) {
-      Swal.fire({
-        icon: "error",
-        title: "Alerta",
-        text: `No hay suficientes insumos en sucursal`,
-        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
-      });
-      return;
-    } else {
-      // Si los campos no están vacíos, realizar la solicitud PUT a la API
-      jezaApi
-        .put("/VentaInsumo", null, {
-          params: {
-            id: Number(formInsumo.id),
-            cantidad: Number(formInsumo.cantidad),
-          },
+
+    // Si los campos no están vacíos, realizar la solicitud PUT a la API
+    jezaApi
+      .put("/VentaInsumo", null, {
+        params: {
+          id: Number(formInsumo.id),
+          cantidad: Number(formInsumo.cantidad),
+        },
+      })
+      .then((response) =>
+        Swal.fire({
+          icon: "success",
+          text: "Insumo actualizada con éxito",
+          confirmButtonColor: "#3085d6",
         })
-        .then((response) => {
-          fetchInsumosProductoResumen();
-          Swal.fire({
-            icon: "success",
-            text: "Insumo actualizada con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setTimeout(() => {
-            setModalEditInsumo(false);
-            fetchInsumosProducto();
-          }, 1000);
-        });
-    }
+      );
   };
 
   const { dataVentas, fetchVentas } = useVentasV2({
-    idCliente: dataTemporal?.Cve_cliente,
+    idCliente: dataTemporal.Cve_cliente,
     sucursal: dataUsuarios2[0]?.sucursal,
   });
 
@@ -794,50 +770,15 @@ const Ventas = () => {
   }, []);
 
   useEffect(() => {
-    let totalPorProductoNormal = 0;
-    let totalPorProductoOld = 0;
-    let totalPorProductoValidacion = 0;
-    if (!validacion) {
-      setDataVentasOld(dataVentas);
-    } else {
-      setDataVentasValidacion(dataVentas);
-    }
+    let totalPorProducto = 0;
+
     dataVentas.forEach((producto) => {
-      totalPorProductoNormal += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
+      totalPorProducto += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
     });
 
-    setTotal(Number(totalPorProductoNormal));
+    setTotal(Number(totalPorProducto));
     setTiempo(dataVentas.reduce((total, objeto) => total + (objeto.tiempo ?? 0), 0));
   }, [dataVentas]);
-
-  useEffect(() => {
-    let totalPorProductoOld = 0;
-    let totalPorProductoValidacion = 0;
-    if (dataVentasOld) {
-      dataVentasOld.forEach((producto) => {
-        totalPorProductoOld += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
-      });
-    }
-    if (dataVentasValidacion) {
-      dataVentasValidacion.forEach((producto) => {
-        totalPorProductoValidacion += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
-      });
-    }
-    if (totalPorProductoOld !== totalPorProductoValidacion && validacion) {
-      Swal.fire({
-        icon: "info",
-        text: "Los precios o los servicios de la venta han cambiado, favor de verificar",
-        confirmButtonColor: "#3085d6",
-      }).then((result) => {
-        if (result.isConfirmed) setModalOpenPago(false);
-      });
-
-      setValidacion(false);
-
-      setDataVentasOld(dataVentas);
-      return;
-    }
-  }, [dataVentasValidacion]);
 
   const TicketPrint: React.FC<TicketPrintProps> = ({ children }) => {
     const componentRef = useRef<HTMLDivElement>(null);
@@ -881,29 +822,25 @@ const Ventas = () => {
 
   const postEstilistaTicket = (dato: any) => {
     const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 19);
+
     const sp = `TicketInsumosEstilsta ${dataUsuarios2[0]?.idCia}, ${dataUsuarios2[0]?.sucursal}, ${fechaVieja.replace(
       /-/g,
       ""
     )}, ${fechaVieja.replace(/-/g, "")}, ${dato.User}, ${dato.Cve_cliente}, ${dato.No_venta}`;
     jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
-      .then(() =>
-        Swal.fire({
-          icon: "success",
-          text: "Sucursal actualizada con éxito",
-          confirmButtonColor: "#3085d6",
-        })
-      );
+      .then(() => alert("Ticket Ejecutada" + sp));
     // TICKET DEL ESTILISTA
-    jezaApi
-      .get(
-        `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${fechaVieja}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
-      )
-      .then((response) => {
-        setDatoTicketEstilista(response.data);
-        console.log(response);
-      })
-      .catch((error) => console.log(error));
+    // jezaApi
+    //   .get(
+    //     `/TicketInsumosEstilsta?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0]?.sucursal}&f1=${fechaVieja}&f2=${formattedDate}&estilista=${dato.User}&cte=${dato.Cve_cliente}&noVenta=${dato.No_venta}`
+    //   )
+    //   .then((response) => {
+    //     setDatoTicketEstilista(response.data);
+    //     console.log(response);
+    //   })
+    //   .catch((error) => console.log(error));
   };
 
   const [productoSelected, setProductoSelected] = useState<number[]>([]);
@@ -919,129 +856,38 @@ const Ventas = () => {
     const sp = `TicketVta ${folio},1,${dataUsuarios2[0]?.sucursal},${dataUsuarios2[0]?.id},${formPago.totalPago}`;
     await jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
-      .then(() => {
-        Swal.fire({
-          icon: "success",
-          text: "Ticket ejecutada correctamente",
-          confirmButtonColor: "#3085d6",
-        });
-      })
-      .catch((e) => console.log(e));
+      .then(() => alert("Ticket Ejecutada" + sp));
   };
   // FINALIZACIÓN DE VENTAS
   const [tempFolio, setTempFolio] = useState(0);
 
   const endVenta = () => {
-    // Cierro mi venta y mando response a medioPago
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-      medioPago(Number(response.data.mensaje2)).then(() => {
-        setTempFolio(response.data.mensaje2);
-        const temp = response.data.mensaje2;
-        jezaApi
-          .get(
-            `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${dataUsuarios2[0]?.id
-            }&pago=${Number(formPago.totalPago)}`
-          )
-          .then((response) => {
-            if (dataUsuarios2[0]?.sucursal == 27) {
-            }
-            setDatoTicket(response.data);
-            setTimeout(() => {
-              Swal.fire({
-                title: "ADVERTENCIA",
-                text: `¿Requiere su ticket por correo?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí",
-                cancelButtonText: "No",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
-                  const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-
-                  Swal.fire({
-                    title: "ADVERTENCIA",
-                    text: `¿Su correo es ${correo[0].email}?`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    denyButtonText: `Asignar correo`,
-                    denyButtonColor: "green",
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí",
-                    cancelButtonText: "No, imprimir",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                      const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-                      axios
-                        .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                          // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                          to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
-                          subject: "Ticket",
-                          textTicket: response.data,
-                          text: "...",
-                        })
-                        .then(() => {
-                          Swal.fire({
-                            icon: "success",
-                            text: "Correo enviado con éxito",
-                            confirmButtonColor: "#3085d6",
-                          });
-                        })
-                        .catch((error) => {
-                          alert(error);
-                          console.log(error);
-                        });
-                    } else if (result.isDenied) {
-                      Swal.fire({
-                        title: "Ingrse el correo",
-                        input: "text",
-                        inputAttributes: {
-                          autocapitalize: "off",
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: "Listo",
-                        showLoaderOnConfirm: true,
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
-                          const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                          axios
-                            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                              // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                              to: envioCorreoRem + `,${result.value}`,
-                              subject: "Ticket",
-                              textTicket: response.data,
-                              text: "...",
-                            })
-                            .then(() => {
-                              Swal.fire({
-                                icon: "success",
-                                text: "Correo enviado con éxito",
-                                confirmButtonColor: "#3085d6",
-                              });
-                            })
-                            .catch((error) => {
-                              alert(error);
-                              console.log(error);
-                            });
-                        }
-                      });
-                    }
-                  });
-                } else {
-                  ticketVta({ folio: temp });
-                  setModalTicket(true);
-                }
-              });
+      medioPago(Number(response.data.mensaje2));
+      ticketVta({ folio: response.data.mensaje2 });
+      jezaApi
+        .get(
+          `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
+        )
+        .then((response) => {
+          setDatoTicket(response.data);
+          setModalTicket(true);
+        })
+        .then(() => {
+          console.log(datoTicket);
+          axios
+            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+              to: "luis.sg9915@gmail.com, abi_mh9@gmail.com,abimh09@gmail.com",
+              subject: "Ticket",
+              textTicket: datoTicket,
+              text: "...",
+            })
+            .then(() => alert("Correo enviado correctamente"))
+            .catch((error) => {
+              alert(error);
+              console.log(error);
             });
-          }, 3000)
-          .catch(() => console.log("Error"));
-      });
+        });
       Swal.fire({
         icon: "success",
         text: "Venta finalizada con éxito",
@@ -1083,11 +929,99 @@ const Ventas = () => {
       });
       // anticipoPost(Number(response.data.mensaje2));
     });
-    fetchInsumosProducto();
   };
 
+
+  // const endVenta = () => {
+  //   jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
+  //     medioPago(Number(response.data.mensaje2)).then(() => {
+  //       setTempFolio(response.data.mensaje2);
+  //       jezaApi
+  //         .get(
+  //           `/TicketVta?folio=${response.data.mensaje2}&caja=1&suc=${dataUsuarios2[0]?.sucursal}&usr=${dataUsuarios2[0]?.id}&pago=${formPago.totalPago}`
+  //         )
+  //         .then((response) => {
+  //           setDatoTicket(response.data);
+  //           setTimeout(() => {
+  //             Swal.fire({
+  //               title: "ADVERTENCIA",
+  //               text: `¿Requiere su ticket por correo?`,
+  //               icon: "warning",
+  //               showCancelButton: true,
+  //               confirmButtonColor: "#3085d6",
+  //               cancelButtonColor: "#d33",
+  //               confirmButtonText: "Sí",
+  //             }).then((result) => {
+  //               if (result.isConfirmed) {
+  //                 axios
+  //                   .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+  //                     to: "luis.sg9915@gmail.com,abigailmh9@gmail.com",
+  //                     subject: "Ticket",
+  //                     textTicket: response.data,
+  //                     text: "...",
+  //                   })
+  //                   .then(() => {
+  //                     Swal.fire({
+  //                       icon: "success",
+  //                       text: "Correo enviado con éxito",
+  //                       confirmButtonColor: "#3085d6",
+  //                     });
+  //                   })
+  //                   .catch((error) => {
+  //                     alert(error);
+  //                     console.log(error);
+  //                   });
+  //               } else {
+  //                 ticketVta({ folio: tempFolio });
+  //               }
+  //             });
+  //           });
+  //         }, 3000);
+  //     });
+  //     Swal.fire({
+  //       icon: "success",
+  //       text: "Venta finalizada con éxito",
+  //       confirmButtonColor: "#3085d6",
+  //     });
+  //     setDataTemporal({
+  //       Caja: 1,
+  //       cancelada: false,
+  //       Cant_producto: 0,
+  //       Cia: 0,
+  //       Clave_Descuento: 0,
+  //       Clave_prod: 0,
+  //       Corte: 0,
+  //       Corte_parcial: 0,
+  //       Costo: 0,
+  //       Credito: false,
+  //       Cve_cliente: 0,
+  //       Descuento: 0,
+  //       Fecha: "20230724",
+  //       folio_estilista: 0,
+  //       hora: 0,
+  //       idEstilista: 0,
+  //       ieps: 0,
+  //       No_venta: 0,
+  //       Observacion: "",
+  //       Precio: 0,
+  //       Precio_base: 0,
+  //       Sucursal: 0,
+  //       Tasa_iva: 0,
+  //       terminado: false,
+  //       tiempo: 0,
+  //       Usuario: 0,
+  //       validadoServicio: false,
+  //       cliente: "",
+  //       estilista: "",
+  //       id: 0,
+  //       producto: "",
+  //       User: 0,
+  //     });
+  //     // anticipoPost(Number(response.data.mensaje2));
+  //   });
+  // };
   const { dataAnticipos } = useAnticipoVentas({
-    cliente: Number(dataTemporal?.Cve_cliente),
+    cliente: Number(dataTemporal.Cve_cliente),
     suc: "%",
   });
   const [anticipoId, setAnticipoId] = useState(0);
@@ -1108,7 +1042,6 @@ const Ventas = () => {
     setAnticipoId(Number(params.row.id));
     setAnticipoIdentificador(Number(params.row.id));
     setModalAnticipo(false);
-    setModalTiendaVirtual(false)
   };
 
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1); // Inicialmente, no hay ningún índice seleccionado
@@ -1143,15 +1076,6 @@ const Ventas = () => {
       </div>
     );
   }
-  function DataTableTiendaVirtual() {
-    return (
-      <div className="table-responsive" style={{ height: "59%", overflow: "auto" }}>
-        <div style={{ height: "100%", display: "table", tableLayout: "fixed", width: "100%" }}>
-          <TableTiendaVirtual anticipoSelectedFunction={anticipoSelectedFunction} dataAnticipos={dataAnticipos}></TableTiendaVirtual>
-        </div>
-      </div>
-    );
-  }
 
   const medioPago = async (noVenta: number) => {
     arregloTemporal.forEach(async (elemento) => {
@@ -1165,8 +1089,9 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
+          // Quiero que me valide si formaPago =  100 me ingrese "Anticipo"
           referencia: Number(elemento.formaPago) === 94 ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
-          importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
+          importe: elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
       });
@@ -1184,6 +1109,7 @@ const Ventas = () => {
   const editVenta = () => {
     const today2 = new Date();
     const formattedDate = format(today2, "yyyy-MM-dd");
+    const today = new Date();
     const horaTemporal = dataVentaEdit.hora;
     let horaDateTime; // Declare here
 
@@ -1203,7 +1129,7 @@ const Ventas = () => {
       // Realiza el proceso que necesites para manejar un objeto Date aquí
       horaDateTime = dataVentaEdit.hora;
     }
-    const horaFormateada = format(new Date(dataVentaEdit.hora), "yyyy-MM-dd HH:mm");
+
 
     jezaApi
       .put(
@@ -1211,7 +1137,7 @@ const Ventas = () => {
         }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
         }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
         }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
         }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
         }`
       )
@@ -1220,7 +1146,7 @@ const Ventas = () => {
           icon: "success",
           text: "Venta actualizada con éxito",
           confirmButtonColor: "#3085d6",
-        }).catch((e) => alert(e));
+        });
         setModalOpenVentaEdit(false);
         setDataVentaEdit({
           Caja: 0,
@@ -1255,15 +1181,19 @@ const Ventas = () => {
           idestilistaAux: 0,
           idRecepcionista: 0,
         });
-      })
-      .catch((e) => {
-        console.log(e);
+        fetchVentas();
       });
-    setTimeout(() => {
-      fetchVentas();
-    }, 1000);
   };
 
+  // .put(
+  //   `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+  //   }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+  //   }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+  //   }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+  //   }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaDateTime}&tiempo=${dataVentaEdit.tiempo === 0 ? 30 : dataVentaEdit.tiempo
+  //   }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
+  //   }`
+  // )
   const [time, setTime] = useState("12:34pm");
 
   const [datah, setData] = useState<any[]>([]); // Definir el estado datah
@@ -1287,6 +1217,12 @@ const Ventas = () => {
     setModalOpenH(!modalOpen);
   };
 
+  // const historialCitaFutura = (dato: any) => {
+  //   jezaApi.get(`/sp_detalleCitasFuturasSel?Cliente=${dataTemporal.Cve_cliente}`).then((response) => {
+  //     setData1(response.data);
+  //     toggleModalHistorialFutura(); // Abrir o cerrar el modal cuando los datos se hayan cargado
+  //   });
+  // };
   const { dataProductos4 } = useProductosFiltradoExistenciaProductoAlm({
     descripcion: "%",
     insumo: 2,
@@ -1294,26 +1230,15 @@ const Ventas = () => {
     obsoleto: 2,
     servicio: 2,
     sucursal: dataUsuarios2[0]?.sucursal,
-    almacen: ALMACEN.VENTAS,
+    almacen: 1,
     cia: dataUsuarios2[0]?.idCia,
     idCliente: dataTemporal.Cve_cliente,
   });
-  const [descInsumos, setDescInsumos] = useState("%");
-  const { datoInsumosProducto, fetchInsumosProducto } = useInsumosProductos({
-    descripcion: descInsumos,
-    insumo: 1,
-    inventariable: 1,
-    obsoleto: 0,
-    servicio: 0,
-    sucursal: dataUsuarios2[0]?.sucursal,
-    almacen: 2,
-    cia: dataUsuarios2[0]?.idCia,
-    idCliente: 26307,
-  });
+
   const getExistenciaForeignKey = (idProducto: number) => {
     if (idProducto > 1) {
       const cia = dataProductos4.find((item: any) => item.id === idProducto);
-
+      console.log(idProducto);
       if (cia && cia.existencia > 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
         setDataVentaEdit({ ...dataVentaEdit, existenciaEdit: cia.existencia });
       } else if (cia && cia.existencia === 0 && cia.existencia !== dataVentaEdit.existenciaEdit) {
@@ -1388,110 +1313,12 @@ const Ventas = () => {
   // }, [])
 
   const [flagEstilistas, setFlagEstilistas] = useState(false);
-  useEffect(() => {
-    const formasPagosFiltradas = dataFormasPagos.filter((formaPago) => formaPago.sucursal === dataUsuarios2[0]?.sucursal);
-    const clienteSuc33 = dataClientes.filter(
-      (cliente) => Number(cliente.sucursal_origen) === 33 && Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente)
-    );
-    if (clienteSuc33.length > 0) {
-      setFormasPagosFiltradas(formasPagosFiltradas);
-    } else {
-      const formaPagoNomina = dataFormasPagos.filter((nomina) => nomina.tipo != 110 && nomina.sucursal == dataUsuarios2[0]?.sucursal);
-      setFormasPagosFiltradas(formaPagoNomina);
-    }
-  }, [dataFormasPagos, dataTemporal.Cve_cliente]);
-
-  const cantidadInsumo = (dato: any) => {
-    const cantidadInsumoBusqueda = datoInsumosProducto.find((insumo) => Number(dato) == Number(insumo.id));
-    return cantidadInsumoBusqueda?.existencia ? cantidadInsumoBusqueda?.existencia : 0;
-  };
-
-  function openTicketPreview() {
-    const newWindow = window.open("", "_blank");
-
-    let content = `
-    <html>
-      <head>
-        <style>
-          body {
-            font-family: 'Courier New', monospace;
-            white-space: pre;
-            font-size: 10 px;
-          }
-          strong {
-            font-weight: bold;
-          }
-        </style>
-      </head>
-      <body>
-  `;
-
-    if (datoTicket) {
-      datoTicket.forEach((ticket) => {
-        content += `<strong>${ticket.LINEA}\n</strong>`;
-      });
-    }
-
-    content += `
-      </body>
-       <script>
-        window.onload = () => {
-          window.print();
-        };
-      </script>
-    </html>
-  `;
-
-    newWindow.document.write(content);
-    newWindow.document.close();
-  }
-
-  function openTicketEstilistaPreview() {
-    const newWindow = window.open("", "_blank");
-
-    let content = `
-    <html>
-      <head>
-        <style>
-           body {
-            font-family: 'Courier New', monospace;
-            white-space: pre;
-            font-size: 12 px;
-          }
-          strong {
-            font-weight: bold;
-          }
-        </style>
-      </head>
-      <body>
-  `;
-
-    if (datoTicketEstilista) {
-      datoTicketEstilista.forEach((ticket) => {
-        content += `<strong>${ticket.LINEA}\n</strong>`;
-      });
-    }
-
-    content += `
-      </body>
-       <script>
-        window.onload = () => {
-          window.print();
-        };
-      </script>
-    </html>
-  `;
-
-    newWindow.document.write(content);
-    newWindow.document.close();
-  }
 
   return (
     <>
       <Row>
         <SidebarHorizontal />
       </Row>
-
       <Container>
         <br />
         <h1>
@@ -1525,7 +1352,7 @@ const Ventas = () => {
             onClick={() => {
               if (dataTemporal.cliente) {
                 if (dataVentas.length > 0) {
-                  // setDataTemporal;
+                  setDataTemporal;
                 }
                 setModalOpen(true);
               } else {
@@ -1565,59 +1392,38 @@ const Ventas = () => {
                     <td>{dato.nombreEstilistaAux ? dato.nombreEstilistaAux : "Sin estilista auxilliar"}</td>
                     <td>{dato.d_producto}</td>
                     <td align="center">{dato.Cant_producto}</td>
-                    <td>
-                      {dato.Precio.toLocaleString("es-MX", {
-                        style: "currency",
-                        currency: "MXN", // Código de moneda para el Peso Mexicano
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </td>
-                    <td>
-                      {(dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
-                        style: "currency",
-                        currency: "MXN", // Código de moneda para el Peso Mexicano
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </td>
+                    <td>{"$" + dato.Precio.toFixed(2)}</td>
+                    <td>{"$" + (dato.Precio * dato.Cant_producto).toFixed(2)}</td>
                     {/* IMPORTE */}
-                    <td>
-                      {(dato.Cant_producto * dato.Descuento * dato.Precio).toLocaleString("es-MX", {
-                        style: "currency",
-                        currency: "MXN", // Código de moneda para el Peso Mexicano
-
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </td>
+                    <td>{"$" + (dato.Cant_producto * dato.Descuento * dato.Precio).toFixed(2)}</td>
                     <td>
                       {dato.Descuento === 0
-                        ? (dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
-                          style: "currency",
-                          currency: "MXN", // Código de moneda para el Peso Mexicano
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
-                        : (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toLocaleString("es-MX", {
-                          style: "currency",
-                          currency: "MXN", // Código de moneda para el Peso Mexicano
-
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
+                        ? "$" + (dato.Precio * dato.Cant_producto).toFixed(2)
+                        : "$" + (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toFixed(2)}
                     </td>
+                    {/* <td>{obtenerHoraFormateada(dato.hora)}</td> */}
+                    {/* <td>{dato.tiempo + " min"}</td> */}
                     <td className="gap-5">
                       <AiFillDelete
                         color="lightred"
                         onClick={() => {
                           deleteVenta(dato);
+                          setTimeout(() => {
+                            fetchVentas();
+                          }, 1000);
                         }}
                         size={23}
                       />
                       <AiFillEdit
                         color="lightred"
                         onClick={() => {
+                          console.log(dato);
+                          const dateObject = new Date(dato.hora);
+
+                          const hours = dateObject.getHours();
+                          const minutes = dateObject.getMinutes();
+
+                          const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
                           setDataVentaEdit({
                             ...dataVentaEdit,
                             id: dato.id,
@@ -1627,7 +1433,7 @@ const Ventas = () => {
                             d_estilista: dato.d_estilista,
                             Cant_producto: dato.Cant_producto,
                             Descuento: dato.Descuento,
-                            hora: dato.hora,
+                            hora: formattedTime,
                             Cve_cliente: dato.Cve_cliente,
                             Precio: dato.Precio,
                             Precio_base: dato.Precio_base,
@@ -1682,8 +1488,6 @@ const Ventas = () => {
                   onClick={() => {
                     setModalOpenPago(true);
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
-                    fetchVentas();
-                    setValidacion(true);
                   }}
                 >
                   <MdAttachMoney size={35} />
@@ -1793,22 +1597,12 @@ const Ventas = () => {
               </Row>
             </>
           ) : null}
-          {dataTemporal.Observacion !== "SERV" ? null : <br />}
+          <br />
           <Row>
-            {dataTemporal.Observacion !== "SERV" ? (
-              <Col sm={6} md={6}>
-                <Label>Cantidad en existencia: </Label>
-                <Input
-                  disabled
-                  placeholder="Cantidad en existencia"
-                  onChange={cambios}
-                  name="d_existencia"
-                  defaultValue={dataTemporal.d_existencia}
-                />
-              </Col>
-            ) : (
-              <br />
-            )}
+            <Col sm={6} md={6}>
+              <Label>Cantidad en existencia: </Label>
+              <Input disabled placeholder="Cantidad en existencia" onChange={cambios} name="d_existencia" defaultValue={dataTemporal.d_existencia} />
+            </Col>
             <Col sm={6} md={6}>
               <Label>Precio:</Label>
               <Input
@@ -1845,18 +1639,11 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-          {dataTemporal.Observacion == "SERV" ? (
-            <>
-              <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <TimePicker
-                  label="Seleccione la hora"
-                  value={new Date(dataTemporal.hora)}
-                  onChange={(newValue) => setDataTemporal((prev) => ({ ...prev, hora: newValue }))}
-                />
-              </LocalizationProvider>
-            </>
-          ) : null}
+
+          <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
+          <select id="hora" name="hora" onChange={cambios} defaultValue={dataTemporal.hora}>
+            {generarOpcionesDeTiempo()}
+          </select>
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -1865,7 +1652,6 @@ const Ventas = () => {
               setModalOpen(false);
               setDataTemporal((prevData) => ({
                 ...datosInicialesArreglo[0],
-                Cant_producto: 1,
                 cliente: prevData.cliente,
                 Cve_cliente: prevData.Cve_cliente,
               }));
@@ -1892,7 +1678,7 @@ const Ventas = () => {
                   icon: "info",
                   text: "No ha seleccionado estilista",
                 });
-              } else if (Number(dataTemporal.d_existencia) < Number(dataTemporal.Cant_producto) && dataTemporal.Observacion !== "SERV") {
+              } else if (dataTemporal?.d_existencia < dataTemporal.Cant_producto && dataTemporal.Observacion !== "SERV") {
                 Swal.fire({
                   icon: "info",
                   text: "No hay existencias ",
@@ -1974,13 +1760,13 @@ const Ventas = () => {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalCliente} size="lg">
+      <Modal isOpen={modalCliente} size="md">
         <ModalHeader>
+          {" "}
           <h3>Selección de clientes</h3>{" "}
         </ModalHeader>
         <ModalBody>
           <TableCliente
-            sucursal={dataUsuarios2[0]?.sucursal}
             dataTemporal={dataTemporal}
             setDataTemporal={setDataTemporal}
             data={dataClientes}
@@ -2068,12 +1854,7 @@ const Ventas = () => {
               </Label>
             </Col>
             <Col md="5">
-              <Button
-                onClick={() => {
-                  fetchClientes();
-                  setModalTipoVenta(true);
-                }}
-              >
+              <Button onClick={() => setModalTipoVenta(true)}>
                 {" "}
                 Seleccionar <BsCashCoin size={20} />
               </Button>
@@ -2175,7 +1956,6 @@ const Ventas = () => {
               setModalOpenPago(false);
               setArregloTemporal([]);
               setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
-              setValidacion(false);
             }}
             text="Salir"
           />
@@ -2187,19 +1967,18 @@ const Ventas = () => {
               const cambioCliente = parseFloat(formPago.cambioCliente);
               const efectivo = parseFloat(formPago.efectivo);
               const totalVenta = parseFloat(total); // Asegúrate de que "total" sea un número
+
               // Validar que el cambio no sea mayor al efectivo
+              // if (cambioCliente >= 0 && cambioCliente <= efectivo) {
               if (cambioCliente <= efectivo) {
                 // Validar que el total de pagos sea mayor o igual al total de venta
                 if (parseFloat(formPago.totalPago) >= totalVenta) {
                   // El total de pagos es mayor o igual al total de venta, continuar con el proceso de cobro
-                  setValidacion(true);
-                  fetchVentas();
-
                   setModalOpenPago(false);
                   setDataTemporal({ Cve_cliente: 0 });
                   setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
-                  setArregloTemporal([]);
                   endVenta();
+                  setArregloTemporal([]);
                 } else {
                   // El total de pagos es menor al total de venta, mostrar un mensaje de error
                   Swal.fire({
@@ -2224,19 +2003,12 @@ const Ventas = () => {
         </ModalFooter>
       </Modal>
 
-      <Modal isOpen={modalOpenInsumos} size="xl">
+      <Modal isOpen={modalOpenInsumos} size="md">
         <ModalHeader>Insumos del servicio {datoVentaSeleccionado.d_producto}</ModalHeader>
-
         <ModalBody>
           <Row className="justify-content-end">
             <Col md={6}>
-              <Button
-                onClick={() => {
-                  setModalOpenInsumosSelect(true);
-                  fetchInsumosProductoResumen();
-                  fetchInsumosProducto();
-                }}
-              >
+              <Button color="primary" onClick={() => setModalOpenInsumosSelect(true)}>
                 Agregar insumos +
               </Button>
             </Col>
@@ -2253,50 +2025,37 @@ const Ventas = () => {
               </tr>
             </thead>
             <tbody>
-              {datoInsumosProductoResumen.length > 0
-                ? datoInsumosProductoResumen.map((dato: any) => (
-                  <tr key={dato.id}>
-                    {dato.id ? (
-                      <>
-                        <td>{dato.d_insumo}</td>
-                        <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
-                        <td align="left">{dato.unidadMedida}</td>
-                        <td align="center">{dato.cantidad}</td>
-
-                        <td className="gap-5">
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => {
-                              setModalEditInsumo(true);
-                              setFormInsumo({
-                                cantidad: dato.cantidad,
-                                fechaAlta: dato.fechaAlta,
-                                id: dato.id,
-                                id_insumo: dato.id_insumo,
-                                id_venta: dato.id_venta,
-                                unidadMedida: dato.unidadMedida,
-                                d_insumo: dato.d_insumo,
-                                existencia: cantidadInsumo(dato.id_insumo),
-                              });
-                            }}
-                            size={23}
-                          ></AiFillEdit>
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={() => {
-                              deleteInsumo(dato);
-                              setTimeout(() => {
-                                fetchInsumosProducto();
-                              }, 1000);
-                            }}
-                            size={23}
-                          />
-                        </td>
-                      </>
-                    ) : null}
-                  </tr>
-                ))
-                : null}
+              {datoInsumosProducto.map((dato: VentaInsumo) => (
+                <tr key={dato.id}>
+                  {dato.id ? (
+                    <>
+                      <td>{dato.d_insumo}</td>
+                      <td align="center">{dato.cantidad}</td>
+                      <td align="left">{dato.unidadMedida}</td>
+                      <td className="gap-5">
+                        <AiFillEdit
+                          className="mr-2"
+                          onClick={() => {
+                            setModalEditInsumo(true);
+                            setFormInsumo(dato);
+                          }}
+                          size={23}
+                        ></AiFillEdit>
+                        <AiFillDelete
+                          color="lightred"
+                          onClick={() => {
+                            deleteInsumo(dato);
+                            setTimeout(() => {
+                              fetchInsumosProducto();
+                            }, 1000);
+                          }}
+                          size={23}
+                        />
+                      </td>
+                    </>
+                  ) : null}
+                </tr>
+              ))}
             </tbody>
           </Table>
         </ModalBody>
@@ -2318,11 +2077,8 @@ const Ventas = () => {
             datoVentaSeleccionado={selectedID2}
             data={data}
             setModalOpen2={setModalOpenInsumosSelect}
-            handleGetFetch={fetchInsumosProductoResumen}
+            handleGetFetch={fetchInsumosProducto}
             datoInsumosProducto={datoInsumosProducto}
-            datoInsumosProductoResumen={datoInsumosProductoResumen}
-            setDescInsumos={setDescInsumos}
-            descInsumos={descInsumos}
           ></TableInsumosGenerales>
         </ModalBody>
         <ModalFooter>
@@ -2344,10 +2100,8 @@ const Ventas = () => {
           <Row>
             <Col>
               <Label>
+                {" "}
                 Insumo utilizado: <strong>{formInsumo.d_insumo}</strong>{" "}
-              </Label>
-              <Label>
-                Cantidad de existencia: <strong>{formInsumo.existencia}</strong>{" "}
               </Label>
               <br />
               <br />
@@ -2370,6 +2124,10 @@ const Ventas = () => {
             style={{ width: "34%" }}
             onClick={() => {
               editInsumo();
+              setTimeout(() => {
+                setModalEditInsumo(false);
+                fetchInsumosProducto();
+              }, 1000);
             }}
           >
             Guardar cambios
@@ -2378,41 +2136,25 @@ const Ventas = () => {
       </Modal>
 
       <Modal isOpen={modalTicket} size="sm">
-        <ModalHeader>Preview</ModalHeader>
+        <ModalHeader>Preview de ticket de venta</ModalHeader>
         <ModalBody>
-          {/* <br />
+          <br />
           <Row>
-            <div className="text-left" style={{ fontFamily: "courier new" }}>
-              {datoTicket
-                ? datoTicket.map((ticket) => (
-                    <>
-                      <Label> {ticket.LINEA} </Label>
-                      <br />
-                    </>
-                  ))
-                : null}
-            </div>
-            <br />
+            <TicketPrint>
+              <div className="text-left" style={{ fontFamily: "courier new" }}>
+                {datoTicket.map((ticket) => (
+                  <>
+                    <Label> {ticket.LINEA} </Label>
+                    <br />
+                  </>
+                ))}
+              </div>
+              <br />
+            </TicketPrint>
           </Row>
-          <br /> */}
-          <div style={{ fontFamily: "Courier New", whiteSpace: "pre", fontSize: "12px" }}>
-            {datoTicket &&
-              datoTicket.map((ticket, index) => (
-                <strong key={index}>
-                  {ticket.LINEA}
-                  <br />
-                </strong>
-              ))}
-          </div>
+          <br />
         </ModalBody>
         <ModalFooter>
-          <CButton
-            color="primary"
-            onClick={() => {
-              openTicketPreview();
-            }}
-            text="Imprimir"
-          />
           <CButton
             color="danger"
             onClick={() => {
@@ -2471,16 +2213,7 @@ const Ventas = () => {
       <Modal isOpen={modalTicketEstilista} size="sm">
         <ModalHeader>Preview de ticket del estilista</ModalHeader>
         <ModalBody>
-          <div style={{ fontFamily: "Courier New", whiteSpace: "pre", fontSize: "12px" }}>
-            {datoTicketEstilista &&
-              datoTicketEstilista.map((ticket, index) => (
-                <strong key={index}>
-                  {ticket.LINEA}
-                  <br />
-                </strong>
-              ))}
-          </div>
-          {/* <br />
+          <br />
           <Row>
             <TicketPrint>
               <div className="text-left" style={{ fontFamily: "courier new" }}>
@@ -2498,16 +2231,9 @@ const Ventas = () => {
               <br />
             </TicketPrint>
           </Row>
-          <br /> */}
+          <br />
         </ModalBody>
         <ModalFooter>
-          <CButton
-            color="primary"
-            onClick={() => {
-              openTicketEstilistaPreview();
-            }}
-            text="Imprimir"
-          />
           <CButton
             color="danger"
             onClick={() => {
@@ -2537,30 +2263,6 @@ const Ventas = () => {
             color="danger"
             onClick={() => {
               setModalAnticipo(false);
-            }}
-            text="Salir"
-          />
-        </ModalFooter>
-      </Modal>
-      <Modal isOpen={modalTiendaVirtual} size="xl">
-        <ModalHeader>
-          <h3>Elegir tienda virtual</h3>
-        </ModalHeader>
-        <ModalBody>
-          {dataAnticipos.length === 0 ? <h4> Por el momento el cliente no cuenta con anticipos </h4> : null}
-          <br />
-          <DataTableTiendaVirtual></DataTableTiendaVirtual>
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-        </ModalBody>
-        <ModalFooter>
-          <CButton
-            color="danger"
-            onClick={() => {
-              setModalTiendaVirtual(false);
             }}
             text="Salir"
           />
@@ -2597,7 +2299,6 @@ const Ventas = () => {
             dataArregloTemporal.formaPago == 92 ||
             dataArregloTemporal.formaPago == 100 ||
             dataArregloTemporal.formaPago == 101 ||
-            dataArregloTemporal.formaPago == 110 ||
             dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
@@ -2629,7 +2330,7 @@ const Ventas = () => {
                   text: "Por favor, seleccione una forma de pago.",
                 });
                 return;
-              } else if (dataArregloTemporal.importe < 0) {
+              } else if (!dataArregloTemporal.importe || dataArregloTemporal.importe <= 0) {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
@@ -2655,7 +2356,6 @@ const Ventas = () => {
                     Number(dataArregloTemporal.formaPago) === 92 ||
                     Number(dataArregloTemporal.formaPago) === 100 ||
                     Number(dataArregloTemporal.formaPago) === 101 ||
-                    Number(dataArregloTemporal.formaPago) === 110 ||
                     Number(dataArregloTemporal.formaPago) === 103
                   ) {
                     setFormPago({ ...formPago, tc: Number(formPago.tc) + Number(dataArregloTemporal.importe) });
@@ -2763,14 +2463,13 @@ const Ventas = () => {
               <Label>Cantidad a vender:</Label>
               <Input placeholder="Cantidad" onChange={cambiosEdit} name="Cant_producto" value={dataVentaEdit.Cant_producto} />
             </Col>
-            {dataVentaEdit.Observacion === "SERV" ? (
-              <Col sm="6">
-                <Label>Tiempo:</Label>
-                <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
-              </Col>
-            ) : null}
+            <Col sm="6">
+              <Label>Tiempo:</Label>
+              <Input placeholder="tiempo" onChange={cambiosEdit} name="tiempo" value={dataVentaEdit.tiempo} />
+            </Col>
           </Row>
           <br />
+
           <Label>Tipo de descuento:</Label>
           <Input type="select" name="Clave_Descuento" value={dataVentaEdit.Clave_Descuento} onChange={cambiosEdit}>
             <option value={0}>-Selecciona El tipo de descuento-</option>
@@ -2778,6 +2477,7 @@ const Ventas = () => {
               <option value={descuento.id}>{descuento.descripcion}</option>
             ))}
           </Input>
+
           <br />
           <Label>
             Descuento {descuento.min} - {descuento.max} :{" "}
@@ -2788,19 +2488,11 @@ const Ventas = () => {
             </Col>
           </Row>
           <br />
-          {dataVentaEdit.Observacion === "SERV" ? (
-            <>
-              <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <TimePicker
-                  sx={{ width: 1 / 3, height: 1, paddingBottom: 5 }}
-                  label="Seleccione la hora"
-                  defaultValue={new Date(dataVentaEdit.hora)}
-                  onChange={(newValue) => setDataVentaEdit((prev) => ({ ...prev, hora: newValue }))}
-                />
-              </LocalizationProvider>
-            </>
-          ) : null}
+
+          <Label style={{ marginRight: 10 }}>Hora de servicio:</Label>
+          <select id="hora" name="hora" onChange={cambiosEdit} value={dataVentaEdit.hora}>
+            {generarOpcionesDeTiempo()}
+          </select>
         </ModalBody>
         <ModalFooter>
           <CButton
