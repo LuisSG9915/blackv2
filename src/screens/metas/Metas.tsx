@@ -90,7 +90,6 @@ function Metas() {
     setModalActualizar(true);
   };
 
-
   const [selectedWorkers, setSelectedWorkers] = useState<Trabajador[]>([]);
 
   // const mostrarModalActualizar = (dato: TiposdeBajas) => {
@@ -156,7 +155,6 @@ function Metas() {
   //   }
   // };
 
-
   const insertar = async () => {
     const permiso = await filtroSeguridad("CAT_META_ADD");
     if (permiso === false) {
@@ -166,8 +164,11 @@ function Metas() {
     if (validarCampos() === true) {
       await jezaApi
         .post(
-
-          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0&sucursal=${form.sucursal}`
+          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${
+            form.meta1 ? form.meta1 : 0.0
+          }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${
+            form.meta5 ? form.meta5 : 0
+          }&meta6=0&sucursal=${form.sucursal}`
         )
         .then((response) => {
           Swal.fire({
@@ -191,9 +192,6 @@ function Metas() {
     }
   };
 
-
-
-
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   // const editar = async () => {
   //   if (validarCampos() === true) {
@@ -216,8 +214,6 @@ function Metas() {
   //   } else {
   //   }
   // };
-
-
 
   const editar = async () => {
     const permiso = await filtroSeguridad("CAT_META_UPD");
@@ -251,10 +247,6 @@ function Metas() {
       // Puedes manejar un caso específico si la validación de campos falla
     }
   };
-
-
-
-
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
@@ -321,8 +313,6 @@ function Metas() {
     });
   };
 
-
-
   //AQUI COMIENZA EL MÉTODO GET PARA VISUALIZAR LOS REGISTROS
   const getMetas = () => {
     jezaApi
@@ -336,9 +326,7 @@ function Metas() {
 
   useEffect(() => {
     getMetas();
-
   }, []);
-
 
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
   //   const { name, value } = e.target;
@@ -356,9 +344,9 @@ function Metas() {
     console.log(form);
     // Eliminar espacios iniciales en todos los campos de entrada de texto
     const sanitizedValue = value.trim();
-    if (name === 'meta5' || 'meta3' || 'meta2' || 'año' || 'mes') {
+    if (name === "meta5" || "meta3" || "meta2" || "año" || "mes") {
       // Eliminar caracteres no numéricos
-      const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
+      const numericValue = sanitizedValue.replace(/[^0-9]/g, "");
       setForm({ ...form, [name]: numericValue });
     } else {
       // Actualizar el valor sin validación en otros campos
@@ -373,12 +361,9 @@ function Metas() {
     return !data.some((meta: MetasCol) => meta.idcolabolador === trabajador.id);
   });
 
-
   // Asegúrate de que la función setForm actualiza el estado correctamente
   // Este console.log no reflejará los cambios inmediatamente debido a la naturaleza asincrónica de setForm
   console.log(form);
-
-
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -441,9 +426,7 @@ function Metas() {
       headerName: "Cifra servicios",
       width: 120,
       headerClassName: "custom-header",
-      renderCell: (params) => (
-        <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : '0'}</span>
-      ),
+      renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : "0"}</span>,
     },
     {
       field: "meta4",
@@ -453,10 +436,7 @@ function Metas() {
       // renderCell: (params) => (
       //   <span>{params.value ? `$${parseFloat(params.value).toFixed(2)}` : '0'}</span>
       // ),
-      renderCell: (params) => (
-        <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : '0'}</span>
-      ),
-
+      renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : "0"}</span>,
     },
     {
       field: "meta5",
@@ -478,10 +458,6 @@ function Metas() {
 
       headerClassName: "custom-header",
     },
-
-
-
-
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -515,7 +491,7 @@ function Metas() {
       setForm((prevForm) => ({
         ...prevForm,
         [fieldName]: 0, // Actualizar el valor correspondiente en el estado del formulario
-        [fieldName]: '0', // Actualizar el valor correspondiente en el estado del formulario
+        [fieldName]: "0", // Actualizar el valor correspondiente en el estado del formulario
       }));
     } else {
       if (value.length > maxLength) {
@@ -527,7 +503,6 @@ function Metas() {
       }));
     }
   };
-
 
   function DataTable() {
     const getRowId = (row: MetasCol) => row.id;
@@ -566,8 +541,10 @@ function Metas() {
           <Container>
             <br />
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-
-              <h1> Cifras <HiOutlineTrophy size={30} /></h1>
+              <h1>
+                {" "}
+                Cifras <HiOutlineTrophy size={30} />
+              </h1>
             </div>
             <div className="col align-self-start d-flex justify-content-center "></div>
             <br />
@@ -657,7 +634,6 @@ function Metas() {
                         </option>
                       ))}
                     </Input>
-
                   </Col>
                   {/* 
                   <Col md={"6"} style={{ marginBottom: 10 }}>
@@ -678,7 +654,13 @@ function Metas() {
                   </Col> */}
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
-                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange} disabled={true} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
+                    <Input
+                      type="select"
+                      name="idcolabolador"
+                      id="idcolabolador"
+                      defaultValue={form.idcolabolador}
+                      onChange={handleChange}
+                      disabled={true} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
                     >
                       <option value="">--Selecciona empresa--</option>
                       {dataTrabajadores.map((colaborador: Trabajador) => (
@@ -719,20 +701,36 @@ function Metas() {
                   </Col>
 
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra color:" value={form.meta5} minlength={15} maxlength={15} />
-
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta5"
+                      labelName="Cifra color:"
+                      value={form.meta5}
+                      minlength={15}
+                      maxlength={15}
+                    />
                   </Col>
 
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} minlength={15} maxlength={15} />
-
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta3"
+                      labelName="Cifra productos:"
+                      value={form.meta3}
+                      minlength={15}
+                      maxlength={15}
+                    />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} minlength={15} maxlength={15} />
-
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta2"
+                      labelName="Cifra tratamientos:"
+                      value={form.meta2}
+                      minlength={15}
+                      maxlength={15}
+                    />
                   </Col>
-
-
 
                   {/* <Col md={"6"}>
                     <CFormGroupInput
@@ -828,14 +826,9 @@ function Metas() {
 
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
-                    <Input
-                      type="select"
-                      name="idcolabolador"
-                      id="idcolabolador"
-                      defaultValue={form.idcolabolador}
-                      onChange={handleChange}>
+                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
                       <option value="">--Selecciona trabajador--</option>
-                      {trabajadoresDisponibles.map((colaborador: Trabajador) => (
+                      {dataTrabajadores.map((colaborador: Trabajador) => (
                         <option key={colaborador.id} value={colaborador.id}>
                           {colaborador.nombre}
                         </option>
@@ -870,14 +863,35 @@ function Metas() {
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra color:" value={form.meta5} minlength={15} maxlength={15} />
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta5"
+                      labelName="Cifra color:"
+                      value={form.meta5}
+                      minlength={15}
+                      maxlength={15}
+                    />
                   </Col>
 
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} minlength={15} maxlength={15} />
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta3"
+                      labelName="Cifra productos:"
+                      value={form.meta3}
+                      minlength={15}
+                      maxlength={15}
+                    />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} minlength={15} maxlength={15} />
+                    <CFormGroupInput
+                      handleChange={handleChange}
+                      inputName="meta2"
+                      labelName="Cifra tratamientos:"
+                      value={form.meta2}
+                      minlength={15}
+                      maxlength={15}
+                    />
                   </Col>
                 </Row>
               </FormGroup>
