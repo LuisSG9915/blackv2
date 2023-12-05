@@ -35,7 +35,7 @@ const SidebarHorizontal = () => {
   const { isLoading, error, data, isFetching } = useQuery(
     "repoData",
     () =>
-      axios.get("http://localhost:3003/version").then((res) => {
+      axios.get("http://cbinfo.no-ip.info:9086/version").then((res) => {
         if (res.data.ver > versionSistema) {
           Swal.fire({
             title: "Actualización",
