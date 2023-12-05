@@ -488,7 +488,7 @@ const Ventas = () => {
       setModalAnticipo(true);
       setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));
-    } else if (name === "formaPago" && Number(value) === 100) {
+    } else if (name === "formaPago" && Number(value) === 245) {
       setModalTiendaVirtual(true);
       setAnticipoSelected(true);
       setDataArregloTemporal((prev) => ({ ...prev, [name]: value }));

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
-import { CorteA, CorteB, CorteC, CorteD} from "../../models/CortesEmail";
+import { CorteA, CorteB, CorteC, CorteD, CorteE} from "../../models/CortesEmail";
 import { format } from "date-fns-tz";
 
 interface Props {
@@ -15,11 +15,14 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const [dataCorteEmailB, setDataCorteEmailB] = useState<CorteB[]>([]);
   const [dataCorteEmailC, setDataCorteEmailC] = useState<CorteC[]>([]);
   const [dataCorteEmailD, setDataCorteEmailD] = useState<CorteD[]>([]);
+  const [dataCorteEmailE, setDataCorteEmailE] = useState<CorteE[]>([]);
+
 
   const [ColumnasA, setColumnasA] = useState([]);
   const [ColumnasB, setColumnasB] = useState([]);
   const [ColumnasC, setColumnasC] = useState([]);
   const [ColumnasD, setColumnasD] = useState([]);
+  const [ColumnasE, setColumnasE] = useState([]);
   const currentDate = new Date();
   const zonaHoraria = "America/Mexico_City";
 
@@ -72,6 +75,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
       console.log(error);
     }
   };
+
   const fetchCorteD = async () => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
@@ -94,6 +98,28 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
     }
   };
 
+  const fetchCorteE = async () => {
+    try {
+      const response: AxiosResponse<any[]> = await jezaApi.get(
+        // `/CorteSeccionC?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd", { timeZone: zonaHoraria })}`
+        `/sp_reporteCifrasSucursal?año=${fecha ? format(new Date(fecha),"yyyy") : format(currentDate, "yyyy")}&mes=${fecha ? format(new Date(fecha),"MM") :format(currentDate, "MM", { timeZone: zonaHoraria } )}&suc=${sucursal}`
+        );
+      setDataCorteEmailE(response.data);
+      if (response.data.length > 0) {
+        const columnKeys = Object.keys(response.data[0]);
+        const columns = columnKeys.map((key) => ({
+          accessorKey: key,
+          header: key,
+          flex: 1,
+        }));
+        setColumnasE(columns);
+      }
+    } catch (error) {
+      alert(error);
+      console.log(error);
+    }
+  };
+
 
 
 
@@ -103,8 +129,9 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
       fetchCorteB();
       fetchCorteC();
       fetchCorteD();
+      fetchCorteE();
     }
   }, [sucursal, fecha]);
 
-  return { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, ColumnasA, ColumnasB, ColumnasC, ColumnasD, fetchCorteA };
+  return { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, dataCorteEmailE, ColumnasA, ColumnasB, ColumnasC, ColumnasD, ColumnasE, fetchCorteA };
 };
