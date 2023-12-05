@@ -8,7 +8,7 @@ import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import axios from "axios";
 import { UserResponse } from "../../models/Home";
 import { useCortesEmail } from "../../hooks/getsHooks/useCortesEmail";
-import { CorteA, CorteB, CorteC, CorteD } from "../../models/CortesEmail";
+import { CorteA, CorteB, CorteC, CorteD, CorteE } from "../../models/CortesEmail";
 import { PieChart } from "@mui/x-charts/PieChart";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
@@ -115,6 +115,21 @@ function DemoTresTablas() {
     csvExporter.generateCsv(dataCorteEmailD);
   };
 
+  const handleExportDataCorte5 = () => {
+    const csvOptions = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      useBom: true,
+      useKeysAsHeaders: false,
+      headers: columnsE.map((col) => col.header),
+    };
+
+    const csvExporter = new ExportToCsv(csvOptions);
+    csvExporter.generateCsv(dataCorteEmailE);
+  };
+
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -151,7 +166,7 @@ function DemoTresTablas() {
   };
 
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-  const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, ColumnasA, ColumnasB, ColumnasC } = useCortesEmail({
+  const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, dataCorteEmailE, ColumnasA, ColumnasB, ColumnasC, ColumnasE } = useCortesEmail({
     sucursal: dataUsuarios2[0]?.sucursal,
     fecha: fechaPost,
   });
@@ -338,21 +353,82 @@ function DemoTresTablas() {
         size: 10,
       },
 
+    ],
+    []
+  );
 
+  const columnsE: MRT_ColumnDef<CorteE>[] = useMemo(
+    () => [
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 10,
+      },
+      {
+        accessorKey: "ventaServicio",
+        header: "Venta Servicio",
+        size: 10,
+      },
+      {
+        accessorKey: "avanceServicio",
+        header: "Avance Sevicios",
+        size: 10,
+      },
+      {
+        accessorKey: "ventaReventa",
+        header: "Venta Reventa",
+        size: 10,
+      },
+      {
+        accessorKey: "avanceVenta",
+        header: "Avance Reventa ",
+        size: 10,
+      },
+      {
+        accessorKey: "cantidadColor",
+        header: "Cantida Color",
+        size: 10,
+      },
+      {
+        accessorKey: "cantidadProductos",
+        header: "Cantida Productos",
+        size: 10,
+      },
+      {
+        accessorKey: "cantidadTratamietos",
+        header: "Cantidad Tratamientos",
+        size: 10,
+      },
+      {
+        accessorKey: "total",
+        header: "Total",
+        size: 10,
+      },
+      {
+        accessorKey: "porcentajeTotal",
+        header: "Porcentaje Total",
+        size: 10,
+      },
 
-
-
+      {
+        accessorKey: "resta",
+        header: "Resta",
+        size: 10,
+      },
 
     ],
     []
   );
 
+
+
+
   const arregloConID = dataCorteEmailA
     ? dataCorteEmailA.map((item, index) => ({
-        id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
-        value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
-        label: item.FormadePago,
-      }))
+      id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
+      value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
+      label: item.FormadePago,
+    }))
     : [];
 
   const arregloFormateado = arregloConID.slice(0, -1);
@@ -511,6 +587,34 @@ function DemoTresTablas() {
             />
           ) : null}
         </div>
+
+        <div style={{ width: "400px", overflow: "auto" }}>
+          <div className="juntos"></div>
+          {dataCorteEmailE && dataCorteEmailE.length > 0 ? (
+            <MaterialReactTable
+              columns={columnsE}
+              data={dataCorteEmailE} // Reemplaza "reportes1" con tus datos de la primera tabla
+              enableRowSelection={false}
+              initialState={{ density: "compact" }}
+              renderTopToolbarCustomActions={({ table }) => (
+                <>
+                  <h4>Corte 4 Resumen de cifras sucursal</h4>
+                  <Button
+                    onClick={handleExportDataCorte5}
+                    variant="contained"
+                    color="withe"
+                    style={{ marginLeft: "auto" }}
+                    startIcon={<AiFillFileExcel />}
+                    aria-label="Exportar a Excel"
+                  >
+                    <AiOutlineFileExcel size={20}></AiOutlineFileExcel>
+                  </Button>
+                </>
+              )}
+            />
+          ) : null}
+        </div>
+
 
         <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
