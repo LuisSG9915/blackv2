@@ -59,3 +59,9 @@ export interface CorteE {
   porcentajeTotal : string, 	
   resta : string,
   }
+
+  export interface CorteF {
+    orden : number,
+    anticipos_Futuros : string,
+    importe : number,
+    }
