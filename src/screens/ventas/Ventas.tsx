@@ -237,6 +237,7 @@ const Ventas = () => {
     tc: 0,
     anticipos: 0,
     totalPago: 0,
+    tiendaVirtual: 0,
     cambioCliente: 0,
   });
   const [formAnticipo, setFormAnticipo] = useState<AnticipoGet>({
@@ -401,7 +402,6 @@ const Ventas = () => {
     "Auxiliar",
     "Producto/Servicio",
     "Cantidad",
-    // "Unidad de medida",
     "Precio unitario",
     "Precio total",
     "Descuento autorizado",
@@ -471,6 +471,7 @@ const Ventas = () => {
   };
 
   const [anticipoSelected, setAnticipoSelected] = useState(false);
+  const [tiendaVirtualSelected, setTiendaVirtualSelect] = useState(false);
   const handleFormaPagoTemporal = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
@@ -2653,7 +2654,7 @@ const Ventas = () => {
               } else {
                 // Tarjetas / Movimientos bancarios
                 if (anticipoId > 0) {
-                  let anticipoTemp = (Number(formPago.anticipos) + Number(formAnticipo.importe)) * -1;
+                  let anticipoTemp = (Number(formPago.anticipos) * -1 + Number(formAnticipo.importe)) * -1;
                   setFormPago({ ...formPago, anticipos: anticipoTemp });
                 } else {
                   if (
