@@ -934,6 +934,7 @@ const Ventas = () => {
 
   const endVenta = () => {
     // Cierro mi venta y mando response a medioPago
+
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
       medioPago(Number(response.data.mensaje2)).then(() => {
         setTempFolio(response.data.mensaje2);
@@ -1036,7 +1037,7 @@ const Ventas = () => {
                   });
                 } else {
                   ticketVta({ folio: temp });
-                  // setModalTicket(true);
+                  setModalTicket(true);
                 }
               });
             });
@@ -2202,25 +2203,35 @@ const Ventas = () => {
               // Validar que el cambio no sea mayor al efectivo
               if (cambioCliente <= efectivo) {
                 // Validar que el total de pagos sea mayor o igual al total de venta
-                if (parseFloat(formPago.totalPago) >= totalVenta) {
-                  // El total de pagos es mayor o igual al total de venta, continuar con el proceso de cobro
-                  // setValidacion(true);
-                  // fetchVentas();
-                  setValidacion(false);
-
-                  setModalOpenPago(false);
-                  setDataTemporal({ Cve_cliente: 0 });
-                  setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
-                  setArregloTemporal([]);
-                  endVenta();
-                } else {
-                  // El total de pagos es menor al total de venta, mostrar un mensaje de error
+                if (arregloTemporal.length == 0) {
                   Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: `El total de pagos es menor al total de venta`,
-                    confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+                    title: "ADVERTENCIA",
+                    text: `Favor de ingresar al menos un método de pago`,
+                    icon: "warning",
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
                   });
+                } else {
+                  if (parseFloat(formPago.totalPago) >= totalVenta) {
+                    // El total de pagos es mayor o igual al total de venta, continuar con el proceso de cobro
+                    // setValidacion(true);
+                    // fetchVentas();
+                    setValidacion(false);
+
+                    setModalOpenPago(false);
+                    setDataTemporal({ Cve_cliente: 0 });
+                    setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
+                    setArregloTemporal([]);
+                    endVenta();
+                  } else {
+                    // El total de pagos es menor al total de venta, mostrar un mensaje de error
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: `El total de pagos es menor al total de venta`,
+                      confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+                    });
+                  }
                 }
               } else {
                 // El cambio es mayor al efectivo, mostrar un mensaje de error
