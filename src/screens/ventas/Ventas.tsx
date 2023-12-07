@@ -1037,7 +1037,7 @@ const Ventas = () => {
                   });
                 } else {
                   ticketVta({ folio: temp });
-                  // setModalTicket(true);
+                  setModalTicket(true);
                 }
               });
             });
