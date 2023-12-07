@@ -1,10 +1,9 @@
-
-import React, { useState, useEffect, useMemo,useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import numeral from "numeral";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { DownloadTableExcel } from 'react-export-table-to-excel';
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { DownloadTableExcel } from "react-export-table-to-excel";
 import { CgAdd } from "react-icons/cg";
 import { CgChevronDoubleDown } from "react-icons/cg";
 import {
@@ -49,7 +48,6 @@ import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 
-
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -58,6 +56,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import SvgMore from "@mui/icons-material/ExpandMore";
+import NominaDepartamentos from "../NominaDepartamentos";
 
 export type Person = {
   firstName: string;
@@ -213,10 +212,7 @@ function reporteArbol() {
     navigate("/app"); // Redirige a la ruta "/app"
   };
 
-  const [tablaData, setTablaData] = useState({
-    data: [],
-    columns: [],
-  });
+  const [tablaData, setTablaData] = useState([]);
 
   const [formClase, setClase] = useState<Clase>({
     id: 0,
@@ -330,7 +326,7 @@ function reporteArbol() {
       }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
-    } else if (reporte == "sp_repoComisiones1") {
+    } else if (reporte == "sp_repoComisiones1_Json") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "TicketInsumosEstilsta") {
       //---------------------
@@ -365,12 +361,10 @@ function reporteArbol() {
           setDescripcionReporte("Seleccione un reporte");
         }
         setReportes(responseData);
-        setTablaData({
-          data: responseData,
-          columns: responseData.length > 0 ? Object.keys(responseData[0]) : [],
-        });
+        setTablaData(responseData);
       })
       .catch((error) => console.error("Error al obtener los datos:", error));
+    alert(JSON.stringify(tablaData, null, 2));
   };
 
   const handleExportData = (descripcionReporte: string) => {
@@ -574,7 +568,7 @@ function reporteArbol() {
         setShowMesInput(false);
         setShowAñoInput(false);
         //sp_repoComisiones1
-      } else if (value === "sp_repoComisiones1") {
+      } else if (value === "sp_repoComisiones1_Json") {
         //f1- f2 -suc-estilista
 
         setShowSucursalInput(true);
@@ -683,7 +677,7 @@ function reporteArbol() {
         setShowDeptoInput(false);
         setShowMesInput(false);
         setShowAñoInput(false);
-      } else if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras"|| value=="--" ) {
+      } else if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras" || value == "--") {
         // Mostrar los campos para estos informes
 
         setShowSucursalInput(true);
@@ -878,35 +872,346 @@ function reporteArbol() {
   const [expandedRows, setExpandedRows] = useState([]);
   const tableRef = useRef(null);
 
-  const handleExpand = (date) => {
-    setExpandedRows((prevExpandedRows) => {
-      const newExpandedRows = { ...prevExpandedRows };
-      // Invierte el estado del nivel actual
-      newExpandedRows[date] = !newExpandedRows[date];
-      return newExpandedRows;
-    });
+  // const handleExpand = (colaborador) => {
+  //   setExpandedRows((prevExpandedRows) => {
+  //     const newExpandedRows = { ...prevExpandedRows };
+  //     // Invierte el estado del nivel actual
+  //     newExpandedRows[colaborador] = !newExpandedRows[colaborador];
+  //     return newExpandedRows;
+  //   });
+  // };
+  const nominaaa = [
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-01",
+        cliente: "LUIS CARLOS GONZALEZ (SP)",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "CREMITA DE COLOR INSUMOS",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "140.79",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-01",
+        cliente: "LUSELENA MACIAS  (SP)",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "COLABORACIÓN",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "80.70",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-02",
+        cliente: "ZAZIL AINARA  (SP)",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "PRUEBITA DE MECHON",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "8.00",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-03",
+        cliente: "ILSE MENDEZ ",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "PRUEBITA DE MECHON",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "8.00",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-03",
+        cliente: "JOSELIN BARAJAS JIMENEZ ",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "PRUEBITA DE MECHON",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "8.00",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-03",
+        cliente: "Daniela Esquerra",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "CREMITA DE COLOR INSUMOS",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "17.10",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-04",
+        cliente: "ANAREYA OCAMPO",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "PRUEBITA DE MECHON",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "6.93",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-05",
+        cliente: "BRUSES  (SP)",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "COLABORACIÓN",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "480.15",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2131,
+      nombre: "Barrio",
+      colaborador: "Empresa",
+      puesto: "EMPRESA",
+      ventaServicio: "0.00",
+      descProducto: "757.67",
+      com35Servicio: "0.00",
+      desc5: "0.00",
+      descNominaProducto: "0.00",
+      com10Producto: "0.00",
+      com5Estilista: "0.00",
+      sueldoBase: "0.00",
+      totalPagar: "0.00",
+      cliente: {
+        idempleado: 2131,
+        fecha: "2023-12-05",
+        cliente: "DIEGO DELGADILLO ",
+        venta_Total: "0.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "PRUEBITA DE MECHON",
+          cantidad: "1.0",
+          precio: "0.00",
+          costoInsumos: "8.00",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+    {
+      clave_empleado: 2132,
+      nombre: "Barrio",
+      colaborador: "NEFI ALAN PABLO LÓPEZ",
+      puesto: "GERENTE ADMINISTRATIVO/ESTILISTA",
+      ventaServicio: "9430.00",
+      descProducto: "1614.35",
+      com35Servicio: "-253.25",
+      desc5: "-253.25",
+      descNominaProducto: "0.00",
+      com10Producto: "215.00",
+      com5Estilista: "0.00",
+      sueldoBase: "1000.00",
+      totalPagar: "961.00",
+      cliente: {
+        idempleado: 2132,
+        fecha: "2023-12-02",
+        cliente: "GERARDO HUGHES (B)",
+        venta_Total: "220.00",
+        medioDePago: "Efe",
+        producto: {
+          descripcion: "MANTENIMIENTO CORTE (CABALLERO)",
+          cantidad: "1.0",
+          precio: "220.00",
+          costoInsumos: "0.00",
+          auxiliar: "",
+          promoDescuento: "0.00 %",
+        },
+      },
+    },
+  ];
+
+  const parsedData = tablaData.map((item) => ({
+    id: item.id,
+    json: JSON.parse(item.json),
+  }));
+
+  const handleExpand = (colaborador) => {
+    setExpandedRows((prevExpandedRows) => ({
+      ...prevExpandedRows,
+      [colaborador]: !prevExpandedRows[colaborador],
+    }));
   };
-
-
 
   const handleExportToPDF = () => {
     const input = tableRef.current;
 
     html2canvas(input).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
       const width = pdf.internal.pageSize.getWidth();
       const height = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-      pdf.save('table.pdf');
+      pdf.addImage(imgData, "PNG", 0, 0, width, height);
+      pdf.save("table.pdf");
     });
   };
-
 
   const handleExportDataArbol = (filename: string) => {
     if (sampleData.length > 0) {
       const columnHeaders = Object.keys(sampleData[0]);
-  
+
       const formattedData = sampleData.map((sale, index) => {
         const formattedRow = {};
         columnHeaders.forEach((header) => {
@@ -914,11 +1219,11 @@ function reporteArbol() {
         });
         return formattedRow;
       });
-  
+
       const workbook = XLSX.utils.book_new();
       const sheet = XLSX.utils.json_to_sheet(formattedData);
-      XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
-  
+      XLSX.utils.book_append_sheet(workbook, sheet, "Sheet 1");
+
       // Guardar el archivo Excel
       XLSX.writeFile(workbook, `${filename}.xlsx`);
     } else {
@@ -929,152 +1234,6 @@ function reporteArbol() {
   const exportToExcel = () => {
     handleExportData("mi_archivo");
   };
-
-  const sampleData = [
-    {
-      date: "2023-01-01",
-      client: "John Doe",
-      totalSale: "$100.00",
-      paymentMethod: "Credit Card",
-      expandedData: [
-        {
-          product: "Product 1",
-          quantity: 2,
-          price: "$50.00",
-          priceInsumo: "$10.00",
-          auxiliar: "Aux 1",
-          promoDiscount: "10%",
-        },
-        // Add more entries as needed
-      ],
-      secondLevelData: [
-        {
-          branch: "Branch 1",
-          date: "2023-01-01",
-          client: "Jane Doe",
-          stylist: "Stylist 1",
-          product: "Product 1",
-          quantity: 1,
-          price: "$30.00",
-          priceInsumo: "$5.00",
-          auxiliar: "Aux 2",
-          promoDiscount: "5%",
-        },
-        // Add more entries as needed
-      ],
-      thirdLevelData: [
-        {
-          store: "Store X",
-          date: "2023-01-01",
-          client: "Jane Doe",
-          stylist: "Stylist 1",
-          product: "Product 1",
-          quantity: 1,
-          price: "$30.00",
-          priceInsumo: "$5.00",
-          auxiliar: "Aux 2",
-          promoDiscount: "5%",
-        },
-        // Add more entries as needed
-      ],
-    },
-    {
-      date: "2023-01-02",
-      client: "Alice Smith",
-      totalSale: "$120.00",
-      paymentMethod: "Cash",
-      expandedData: [
-        {
-          product: "Product 2",
-          quantity: 3,
-          price: "$60.00",
-          priceInsumo: "$15.00",
-          auxiliar: "Aux 3",
-          promoDiscount: "15%",
-        },
-        // Add more entries as needed
-      ],
-      secondLevelData: [
-        {
-          branch: "Branch 2",
-          date: "2023-01-02",
-          client: "Bob Johnson",
-          stylist: "Stylist 2",
-          product: "Product 2",
-          quantity: 2,
-          price: "$40.00",
-          priceInsumo: "$8.00",
-          auxiliar: "Aux 4",
-          promoDiscount: "8%",
-        },
-        // Add more entries as needed
-      ],
-      thirdLevelData: [
-        {
-          store: "Store Y",
-          date: "2023-01-02",
-          client: "Charlie Brown",
-          stylist: "Stylist 2",
-          product: "Product 2",
-          quantity: 1,
-          price: "$20.00",
-          priceInsumo: "$4.00",
-          auxiliar: "Aux 5",
-          promoDiscount: "4%",
-        },
-        // Add more entries as needed
-      ],
-    },
-    // Add more elements as needed
-    {
-      date: "2023-01-03",
-      client: "Eva Green",
-      totalSale: "$80.00",
-      paymentMethod: "Debit Card",
-      expandedData: [
-        {
-          product: "Product 3",
-          quantity: 1,
-          price: "$40.00",
-          priceInsumo: "$8.00",
-          auxiliar: "Aux 6",
-          promoDiscount: "20%",
-        },
-        // Add more entries as needed
-      ],
-      secondLevelData: [
-        {
-          branch: "Branch 3",
-          date: "2023-01-03",
-          client: "David White",
-          stylist: "Stylist 3",
-          product: "Product 3",
-          quantity: 3,
-          price: "$30.00",
-          priceInsumo: "$6.00",
-          auxiliar: "Aux 7",
-          promoDiscount: "12%",
-        },
-        // Add more entries as needed
-      ],
-      thirdLevelData: [
-        {
-          store: "Store Z",
-          date: "2023-01-03",
-          client: "Frank Black",
-          stylist: "Stylist 3",
-          product: "Product 3",
-          quantity: 2,
-          price: "$30.00",
-          priceInsumo: "$6.00",
-          auxiliar: "Aux 8",
-          promoDiscount: "8%",
-        },
-        // Add more entries as needed
-      ],
-    },
-    // Add more elements as needed
-  ];
 
   return (
     <>
@@ -1097,7 +1256,7 @@ function reporteArbol() {
                   <Label>Reporte:</Label>
                   <Input type="select" name="reporte" value={formulario.reporte} onChange={handleChange}>
                     <option value="">Seleccione un reporte</option>
-                    <option value="--">Reporte --por llegar--</option>
+                    <option value="sp_repoComisiones1_Json">Reporte Nomina</option>
                     {/* <option value="--">Reporte Avance Mensual</option> */}
 
                     {/* {data.map((item) => (
@@ -1492,7 +1651,7 @@ function reporteArbol() {
                       name="area"
                       id="exampleSelect"
                       value={formClase.area}
-                      onChange={handleChangeAreaDeptoClase}
+                      onChang={handleChangeAreaDeptoClase}
                       bsSize="sm"
                     >
                       <option value={0}>Seleccione un área</option>
@@ -1531,109 +1690,239 @@ function reporteArbol() {
           </AccordionItem>
         </UncontrolledAccordion>
         <button onClick={handleExportToPDF}>Exportar a PDF</button>
-        <DownloadTableExcel
-                    filename="users table"
-                    sheet="users"
-                    currentTableRef={tableRef.current}
-                >
-
-                   <button> Export excel </button>
-
-                </DownloadTableExcel>
-        <table className="table_arbol" border="5" ref={tableRef}>
+        <DownloadTableExcel filename="users table" sheet="users" currentTableRef={tableRef.current}>
+          <button> Export excel </button>
+        </DownloadTableExcel>
+        <table className="table_arbol" border="1.5">
           <thead>
             <tr>
-            <th className="th_arbol"></th>
-              <th className="th_arbol">Fecha</th>
-              <th className="th_arbol">Cliente</th>
-              <th className="th_arbol">Venta Total</th>
-              <th className="th_arbol">Método Pago</th>
-              
+              <th className="th_arbol"></th>
+              <th className="th_arbol">clave_empleado</th>
+              <th className="th_arbol">nombre</th>
+              <th className="th_arbol">colaborador</th>
+              <th className="th_arbol">puesto</th>
+              <th className="th_arbol">ventaServicio</th>
+              <th className="th_arbol">descProducto</th>
+              <th className="th_arbol">com35Servicio</th>
+              <th className="th_arbol">desc5</th>
+              <th className="th_arbol">descNominaProducto</th>
+              <th className="th_arbol">com10Producto</th>
+              <th className="th_arbol">com5Estilista</th>
+              <th className="th_arbol">sueldoBase</th>
+              <th className="th_arbol">totalPagar</th>
+              {/* Agrega aquí más encabezados según sea necesario */}
             </tr>
           </thead>
           <tbody>
-            {sampleData.map((sale, index) => (
-              <React.Fragment key={index}>
+            {parsedData.map((item) => (
+              <React.Fragment key={item.json.nomina[0].colaborador}>
+                {item.json?.nomina?.map((nominaItem, index) => (
+                  <React.Fragment key={index}>
+                    <tr className="expanded-row">
+                      <td className="td_arbol">
+                        <CgChevronDoubleDown onClick={() => handleExpand(nominaItem.colaborador)} />
+                      </td>
+                      <td className="td_arbol">{nominaItem.clave_empleado}</td>
+                      <td className="td_arbol">{nominaItem.nombre}</td>
+                      <td className="td_arbol">{nominaItem.colaborador}</td>
+                      <td className="td_arbol">{nominaItem.puesto}</td>
+                      <td className="td_arbol">{nominaItem.ventaServicio}</td>
+                      <td className="td_arbol">{nominaItem.descProducto}</td>
+                      <td className="td_arbol">{nominaItem.com35Servicio}</td>
+                      <td className="td_arbol">{nominaItem.desc5}</td>
+                      <td className="td_arbol">{nominaItem.descNominaProducto}</td>
+                      <td className="td_arbol">{nominaItem.com10Producto}</td>
+                      <td className="td_arbol">{nominaItem.com5Estilista}</td>
+                      <td className="td_arbol">{nominaItem.sueldoBase}</td>
+                      <td className="td_arbol">{nominaItem.totalPagar}</td>
+                      {/* Agrega aquí más celdas según sea necesario */}
+                    </tr>
+                    {expandedRows[nominaItem.colaborador] && (
+                      <tr>
+                        <td colSpan="14">
+                          <table className="nested-table">
+                            <thead>
+                              <tr>
+                                <th className="th_arbol_lv2"></th>
+                                <th className="th_arbol_lv2">idempleado</th>
+                                <th className="th_arbol_lv2">fecha</th>
+                                <th className="th_arbol_lv2">cliente</th>
+                                <th className="th_arbol_lv2">venta_Total</th>
+                                <th className="th_arbol_lv2">medioDePago</th>
+                                {/* Agrega aquí más encabezados del segundo nivel */}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {nominaItem.cliente && (
+                                <tr>
+                                  <td className="td_arbol_lv2">
+                                    <CgChevronDoubleDown onClick={() => handleExpand(nominaItem.id + "cliente")} />
+                                  </td>
+                                  <td className="td_arbol_lv2">{nominaItem.cliente.idempleado}</td>
+                                  <td className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
+                                  <td className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
+                                  <td className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
+                                  <td className="td_arbol_lv2">{nominaItem.cliente.medioDePago}</td>
+                                  {/* Agrega aquí más celdas del segundo nivel */}
+                                </tr>
+                              )}
+                              {expandedRows[nominaItem.id + "cliente"] &&
+                                nominaItem.cliente &&
+                                nominaItem.cliente.producto && (
+                                  <tr>
+                                    <td colSpan="6">
+                                      <table className="nested-table">
+                                        <thead>
+                                          <tr>
+                                            <th className="th_arbol_lv3"></th>
+                                            <th className="th_arbol_lv3">descripcion</th>
+                                            <th className="th_arbol_lv3">cantidad</th>
+                                            <th className="th_arbol_lv3">precio</th>
+                                            <th className="th_arbol_lv3">costoInsumos</th>
+                                            <th className="th_arbol_lv3">auxiliar</th>
+                                            <th className="th_arbol_lv3">promoDescuento</th>
+                                            {/* Agrega aquí más encabezados del tercer nivel */}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.descripcion}</td>
+                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.cantidad}</td>
+                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.precio}</td>
+                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.costoInsumos}</td>
+                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.auxiliar}</td>
+                                            <td className="td_arbol_lv3">
+                                              {nominaItem.cliente.producto.promoDescuento}
+                                            </td>
+                                            {/* Agrega aquí más celdas del tercer nivel */}
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                )}
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+
+        {/* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
+        <table className="table_arbol" border="1.5">
+          <thead>
+            <tr>
+              <th className="th_arbol"></th>
+              <th className="th_arbol">clave_empleado</th>
+              <th className="th_arbol">nombre</th>
+              <th className="th_arbol">colaborador</th>
+              <th className="th_arbol">puesto</th>
+              <th className="th_arbol">ventaServicio</th>
+              <th className="th_arbol">descProducto</th>
+              <th className="th_arbol">com35Servicio</th>
+              <th className="th_arbol">desc5</th>
+              <th className="th_arbol">descNominaProducto</th>
+              <th className="th_arbol">com10Producto</th>
+              <th className="th_arbol">com5Estilista</th>
+              <th className="th_arbol">sueldoBase</th>
+              <th className="th_arbol">totalPagar</th>
+
+              {/* Agrega aquí más encabezados según sea necesario */}
+            </tr>
+          </thead>
+          <tbody>
+            {parsedData.map((item) => (
+              <React.Fragment key={item.json.nomina[0].colaborador}>
                 <tr className="expanded-row">
-                <td className="td_arbol">
-                
-                    <CgChevronDoubleDown onClick={() => handleExpand(sale.date)} />
+                  <td className="td_arbol">
+                    <CgChevronDoubleDown onClick={() => handleExpand(item.json.nomina[0].colaborador)} />
                   </td>
-                  <td className="td_arbol">{sale.date}</td>
-                  <td className="td_arbol">{sale.client}</td>
-                  <td className="td_arbol">{sale.totalSale}</td>
-                  <td className="td_arbol">{sale.paymentMethod}</td>
-           
+                  <td className="td_arbol">{item.json?.nomina[0]?.clave_empleado}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.nombre}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.colaborador}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.puesto}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.ventaServicio}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.descProducto}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.com35Servicio}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.desc5}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.descNominaProducto}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.com10Producto}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.com5Estilista}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.sueldoBase}</td>
+                  <td className="td_arbol">{item.json?.nomina[0]?.totalPagar}</td>
+                  {/* Agrega aquí más celdas según sea necesario */}
                 </tr>
-                {expandedRows[sale.date] && (
+                {expandedRows[item.json.nomina[0].colaborador] && item.json?.nomina && (
                   <tr>
-                    <td colSpan="4">
+                    <td colSpan="6">
                       <table className="nested-table">
                         <thead>
                           <tr>
                             <th className="th_arbol_lv2"></th>
-                            <th className="th_arbol_lv2">Producto/Servicio</th>
-                            <th className="th_arbol_lv2">Cantidad</th>
-                            <th className="th_arbol_lv2">Precio</th>
-                            <th className="th_arbol_lv2">Precio Insumo</th>
-                            <th className="th_arbol_lv2">Auxiliar</th>
-                            <th className="th_arbol_lv2">Promoción/Descuento</th>
-                            
+                            <th className="th_arbol_lv2">idempleado</th>
+                            <th className="th_arbol_lv2">fecha</th>
+                            <th className="th_arbol_lv2">cliente</th>
+                            <th className="th_arbol_lv2">venta_Total</th>
+                            <th className="th_arbol_lv2">medioDePago</th>
+                            {/* Agrega aquí más encabezados del segundo nivel */}
                           </tr>
                         </thead>
                         <tbody>
-                          {/* Agregar más datos de segundo nivel según sea necesario */}
-                          <tr>
-                          <td className="td_arbol_lv2">
-                           
-                              <CgChevronDoubleDown  onClick={() => handleExpand(index + 1)} />
-                            
-                            </td>
-                            <td className="td_arbol_lv2">Product 1</td>
-                            <td className="td_arbol_lv2">2</td>
-                            <td className="td_arbol_lv2">$50.00</td>
-                            <td className="td_arbol_lv2">$10.00</td>
-                            <td className="td_arbol_lv2">Aux 1</td>
-                            <td className="td_arbol_lv2">10%</td>
-                         
-                          </tr>
-                          {expandedRows[index + 1] && (
-                            <tr>
-                              <td colSpan="6">
-                                <table className="nested-table">
-                                  <thead>
-                                    <tr>
-                                      <th className="th_arbol_lv3">Sucursal</th>
-                                      <th className="th_arbol_lv3">Fecha</th>
-                                      <th className="th_arbol_lv3">Cliente</th>
-                                      <th className="th_arbol_lv3">Estilista</th>
-                                      <th className="th_arbol_lv3">Producto/servicio</th>
-                                      <th className="th_arbol_lv3">Cantidad</th>
-                                      <th className="th_arbol_lv3">Precio</th>
-                                      <th className="th_arbol_lv3">Precio insumo</th>
-                                      <th className="th_arbol_lv3">Auxiliar</th>
-                                      <th className="th_arbol_lv3">Promo/descuento</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {/* Agregar más datos de tercer nivel según sea necesario */}
-                                    <tr>
-                                      <td className="td_arbol_lv3">Store X</td>
-                                      <td className="td_arbol_lv3">2023-01-01</td>
-                                      <td className="td_arbol_lv3">Jane Doe</td>
-                                      <td className="td_arbol_lv3">Stylist 1</td>
-                                      <td className="td_arbol_lv3">Product 1</td>
-                                      <td className="td_arbol_lv3">1</td>
-                                      <td className="td_arbol_lv3">$30.00</td>
-                                      <td className="td_arbol_lv3">$5.00</td>
-                                      <td className="td_arbol_lv3">Aux 2</td>
-                                      <td className="td_arbol_lv3">5%</td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          )}
+                          {item.json?.nomina?.map((nominaItem, clienteIndex) => (
+                            <React.Fragment key={clienteIndex}>
+                              <tr>
+                                <td className="td_arbol_lv2">
+                                  <CgChevronDoubleDown onClick={() => handleExpand(item.id + clienteIndex)} />
+                                </td>
+                                <td className="td_arbol_lv2">{nominaItem.cliente?.idempleado}</td>
+                                <td className="td_arbol_lv2">{nominaItem.cliente?.fecha}</td>
+                                <td className="td_arbol_lv2">{nominaItem.cliente?.cliente}</td>
+                                <td className="td_arbol_lv2">{nominaItem.cliente?.venta_Total}</td>
+                                <td className="td_arbol_lv2">{nominaItem.cliente?.medioDePago}</td>
+                                {/* Agrega aquí más celdas del segundo nivel */}
+                              </tr>
+                              {expandedRows[item.id + clienteIndex] && (
+                                <tr>
+                                  <td colSpan="6">
+                                    <table className="nested-table">
+                                      <thead>
+                                        <tr>
+                                          <th className="th_arbol_lv3"></th>
+                                          <th className="th_arbol_lv3">descripcion</th>
+                                          <th className="th_arbol_lv3">cantidad</th>
+                                          <th className="th_arbol_lv3">precio</th>
+                                          <th className="th_arbol_lv3">costoInsumos</th>
+                                          <th className="th_arbol_lv3">auxiliar</th>
+                                          <th className="th_arbol_lv3">promoDescuento</th>
+
+                                          {/* Agrega aquí más encabezados del tercer nivel */}
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.descripcion}</td>
+                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.cantidad}</td>
+                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.precio}</td>
+                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.costoInsumos}</td>
+                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.auxiliar}</td>
+                                          <td className="td_arbol_lv3">
+                                            {nominaItem.cliente.producto?.promoDescuento}
+                                          </td>
+
+                                          {/* Agrega aquí más celdas del tercer nivel */}
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              )}
+                            </React.Fragment>
+                          ))}
                         </tbody>
                       </table>
                     </td>
