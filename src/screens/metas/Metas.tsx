@@ -164,10 +164,8 @@ function Metas() {
     if (validarCampos() === true) {
       await jezaApi
         .post(
-          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${
-            form.meta1 ? form.meta1 : 0.0
-          }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${
-            form.meta5 ? form.meta5 : 0
+          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.0
+          }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0
           }&meta6=0&sucursal=${form.sucursal}`
         )
         .then((response) => {
@@ -824,7 +822,7 @@ function Metas() {
                   
                   </Col> */}
 
-                  <Col md={"6"}>
+                  {/* <Col md={"6"}>
                     <Label>Trabajadores:</Label>
                     <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
                       <option value="">--Selecciona trabajador--</option>
@@ -834,7 +832,28 @@ function Metas() {
                         </option>
                       ))}
                     </Input>
+                  </Col> */}
+                  <Col md={"6"}>
+                    <Label>Trabajadores:</Label>
+                    <Input
+                      type="select"
+                      name="idcolabolador"
+                      id="idcolabolador"
+                      defaultValue={form.idcolabolador}
+                      onChange={handleChange}
+                      disabled={false} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
+                    >
+                      <option value="">--Selecciona empresa--</option>
+                      {dataTrabajadores.map((colaborador: Trabajador) => (
+                        <option key={colaborador.id} value={colaborador.id}>
+                          {colaborador.nombre}
+                        </option>
+                      ))}
+                    </Input>
+                    <br />
                   </Col>
+                  <br />
+
 
                   <Col md={"6"}>
                     <label> Cifra servicios:</label>

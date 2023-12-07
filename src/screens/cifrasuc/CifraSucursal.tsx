@@ -18,7 +18,7 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-import { MetasCol } from "../../models/MetasCol";
+import { CifrasSucursal } from "../../models/CifrasSucursal";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { Trabajador } from "../../models/Trabajador";
 import { UserResponse } from "../../models/Home";
@@ -45,7 +45,7 @@ function CifraSucursal() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_meta_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_cifrasuc_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -67,25 +67,24 @@ function CifraSucursal() {
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
 
-  const [data, setData] = useState<MetasCol[]>([]);
+  const [data, setData] = useState<CifrasSucursal[]>([]);
   const { dataCias, fetchCias } = useCias();
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
   const { dataSucursales } = useSucursales();
-  const [form, setForm] = useState<MetasCol>({
+  const [form, setForm] = useState<CifrasSucursal>({
     id: 0,
     año: 0,
     mes: 0,
-    idcolabolador: 0,
+    sucursal: 0,
     meta1: 0,
     meta2: 0,
     meta3: 0,
     meta4: 0,
     meta5: 0,
     meta6: 0,
-    sucursal: 0,
   });
 
-  const mostrarModalActualizar = (dato: MetasCol) => {
+  const mostrarModalActualizar = (dato: CifrasSucursal) => {
     setForm(dato);
     setModalActualizar(true);
   };
@@ -102,10 +101,10 @@ function CifraSucursal() {
   const [camposFaltantes, setCamposFaltantes] = useState<Number[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof MetasCol)[] = ["año", "mes", "idcolabolador", "meta1", "meta2", "meta3", "meta4", "meta5", "sucursal"];
+    const camposRequeridos: (keyof CifrasSucursal)[] = ["año", "mes", "meta1", "meta2", "meta3", "meta4", "meta5", "sucursal"];
     const camposVacios: Number[] = [];
 
-    camposRequeridos.forEach((campo: keyof MetasCol) => {
+    camposRequeridos.forEach((campo: keyof CifrasSucursal) => {
       const fieldValue = form[campo];
       if (!fieldValue) {
         camposVacios.push(campo);
@@ -158,7 +157,7 @@ function CifraSucursal() {
 
 
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_META_ADD");
+    const permiso = await filtroSeguridad("CAT_CIFRASUC_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -167,12 +166,13 @@ function CifraSucursal() {
       await jezaApi
         .post(
 
-          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0&sucursal=${form.sucursal}`
+
+          `/sp_cat_ciasMetasAdd?año=${form.año}&mes=${form.mes}&sucursal=${form.sucursal}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0`
         )
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Meta creada con éxito",
+            text: "Cifra creada con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalInsertar(false);
@@ -182,7 +182,7 @@ function CifraSucursal() {
           console.log(error);
           Swal.fire({
             icon: "error",
-            text: "Ocurrió un error al crear la meta, comuniquese con sistemas",
+            text: "Ocurrió un error al crear la cifra, comuniquese con sistemas",
             confirmButtonColor: "#d63031",
           });
         });
@@ -220,7 +220,7 @@ function CifraSucursal() {
 
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_META_UPD");
+    const permiso = await filtroSeguridad("CAT_CIFRASUC_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -228,12 +228,13 @@ function CifraSucursal() {
     if (validarCampos() === true) {
       await jezaApi
         .put(
-          `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0&sucursal=${form.sucursal}`
+
+          `/sp_cat_ciasMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&sucursal=${form.sucursal}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0`
         )
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Meta actualizada con éxito",
+            text: "Cifra actualizada con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalActualizar(false);
@@ -243,7 +244,7 @@ function CifraSucursal() {
           console.log(error);
           Swal.fire({
             icon: "error",
-            text: "Ocurrió un error al actualizar la meta, comuniquese con sistemas",
+            text: "Ocurrió un error al actualizar la cifra, comuniquese con sistemas",
             confirmButtonColor: "#d63031",
           });
         });
@@ -258,8 +259,8 @@ function CifraSucursal() {
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
-  const eliminar1 = async (dato: MetasCol) => {
-    const permiso = await filtroSeguridad("CAT_META_DEL");
+  const eliminar1 = async (dato: CifrasSucursal) => {
+    const permiso = await filtroSeguridad("CAT_CIFRASUC_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -273,7 +274,7 @@ function CifraSucursal() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`).then(() => {
+        jezaApi.delete(`/sp_cat_ciasMetasDel?id=${dato.id}`).then(() => {
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
@@ -285,8 +286,8 @@ function CifraSucursal() {
     });
   };
 
-  const eliminar = async (dato: MetasCol) => {
-    const permiso = await filtroSeguridad("CAT_META_DEL");
+  const eliminar = async (dato: CifrasSucursal) => {
+    const permiso = await filtroSeguridad("CAT_CIFRASUC_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -302,7 +303,7 @@ function CifraSucursal() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`);
+          await jezaApi.delete(`/sp_cat_ciasMetasDel?id=${dato.id}`);
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
@@ -326,7 +327,7 @@ function CifraSucursal() {
   //AQUI COMIENZA EL MÉTODO GET PARA VISUALIZAR LOS REGISTROS
   const getMetas = () => {
     jezaApi
-      .get("/sp_cat_colaboradoresMetasSel?id=0")
+      .get("/sp_cat_ciasMetasSel?id=%")
       .then((response) => {
         setData(response.data);
         console.log(response.data);
@@ -356,7 +357,7 @@ function CifraSucursal() {
     console.log(form);
     // Eliminar espacios iniciales en todos los campos de entrada de texto
     const sanitizedValue = value.trim();
-    if (name === 'meta5' || 'meta3' || 'meta2' || 'año' || 'mes') {
+    if (name === 'meta5' || 'meta3' || 'meta4' || 'año' || 'mes') {
       // Eliminar caracteres no numéricos
       const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
       setForm({ ...form, [name]: numericValue });
@@ -368,10 +369,10 @@ function CifraSucursal() {
     }
   };
 
-  const trabajadoresDisponibles = dataTrabajadores.filter((trabajador: Trabajador) => {
-    // Filtra los trabajadores que no están en las metas existentes
-    return !data.some((meta: MetasCol) => meta.idcolabolador === trabajador.id);
-  });
+  // const trabajadoresDisponibles = dataTrabajadores.filter((trabajador: Trabajador) => {
+  //   // Filtra los trabajadores que no están en las metas existentes
+  //   return !data.some((meta: MetasCol) => meta.idcolabolador === trabajador.id);
+  // });
 
 
   // Asegúrate de que la función setForm actualiza el estado correctamente
@@ -396,7 +397,6 @@ function CifraSucursal() {
       id: 0,
       año: 0,
       mes: 0,
-      idcolabolador: 0,
       meta1: 0,
       meta2: 0,
       meta3: 0,
@@ -426,16 +426,16 @@ function CifraSucursal() {
     { field: "mes", headerName: "Mes", width: 80, headerClassName: "custom-header" },
     {
       field: "nombre",
-      headerName: "Colaborador",
+      headerName: "Sucursal",
       width: 180,
       headerClassName: "custom-header",
     },
-    {
-      field: "Expr1",
-      headerName: "Sucursal",
-      width: 150,
-      headerClassName: "custom-header",
-    },
+    // {
+    //   field: "sucursal",
+    //   headerName: "Sucursal",
+    //   width: 150,
+    //   headerClassName: "custom-header",
+    // },
     {
       field: "meta1",
       headerName: "Cifra servicios",
@@ -446,7 +446,7 @@ function CifraSucursal() {
       ),
     },
     {
-      field: "meta4",
+      field: "meta2",
       headerName: "Cifra reventa",
       width: 150,
       headerClassName: "custom-header",
@@ -459,20 +459,20 @@ function CifraSucursal() {
 
     },
     {
-      field: "meta5",
+      field: "meta3",
       headerName: "Cifra color",
       width: 150,
       headerClassName: "custom-header",
     },
     {
-      field: "meta3",
+      field: "meta4",
       headerName: "Cifra productos",
       width: 150,
       headerClassName: "custom-header",
     },
 
     {
-      field: "meta2",
+      field: "meta5",
       headerName: "Cifra tratamientos",
       width: 120,
 
@@ -530,7 +530,7 @@ function CifraSucursal() {
 
 
   function DataTable() {
-    const getRowId = (row: MetasCol) => row.id;
+    const getRowId = (row: CifrasSucursal) => row.id;
     return (
       <div style={{ overflow: "auto" }}>
         <div style={{ height: "100%", display: "table", tableLayout: "fixed" }}>
@@ -676,7 +676,7 @@ function CifraSucursal() {
                       ))}
                     </select>
                   </Col> */}
-                  <Col md={"6"}>
+                  {/* <Col md={"6"}>
                     <Label>Trabajadores:</Label>
                     <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange} disabled={true} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
                     >
@@ -686,9 +686,9 @@ function CifraSucursal() {
                           {colaborador.nombre}
                         </option>
                       ))}
-                    </Input>
-                    <br />
-                  </Col>
+                    </Input> */}
+                  {/* <br />
+                </Col> */}
                   <br />
                   <Col md={"6"}>
                     <label> Cifra servicios:</label>
@@ -708,27 +708,27 @@ function CifraSucursal() {
                     <CurrencyInput
                       className="custom-currency-input"
                       prefix="$"
-                      name="meta4"
+                      name="meta2"
                       placeholder="Introducir un número"
-                      value={form.meta4 ? form.meta4 : 0}
+                      value={form.meta2 ? form.meta2 : 0}
                       decimalsLimit={2}
-                      onValueChange={(value) => handleValueChange("meta4", value)}
+                      onValueChange={(value) => handleValueChange("meta2", value)}
                     />
 
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
 
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra color:" value={form.meta5} minlength={15} maxlength={15} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra color:" value={form.meta3} minlength={15} maxlength={15} />
 
                   </Col>
 
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} minlength={15} maxlength={15} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Cifra productos:" value={form.meta4} minlength={15} maxlength={15} />
 
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} minlength={15} maxlength={15} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra tratamientos:" value={form.meta5} minlength={15} maxlength={15} />
 
                   </Col>
 
@@ -825,7 +825,7 @@ function CifraSucursal() {
                     </Input>
                   
                   </Col> */}
-
+                  {/* 
                   <Col md={"6"}>
                     <Label>Trabajadores:</Label>
                     <Input
@@ -841,7 +841,7 @@ function CifraSucursal() {
                         </option>
                       ))}
                     </Input>
-                  </Col>
+                  </Col> */}
 
                   <Col md={"6"}>
                     <label> Cifra servicios:</label>
@@ -861,23 +861,23 @@ function CifraSucursal() {
                     <CurrencyInput
                       className="custom-currency-input"
                       prefix="$"
-                      name="meta4"
+                      name="meta2"
                       placeholder="Introducir un número"
-                      value={form.meta4 ? form.meta4 : 0}
+                      value={form.meta2 ? form.meta2 : 0}
                       decimalsLimit={2}
-                      onValueChange={(value) => handleValueChange("meta4", value)}
+                      onValueChange={(value) => handleValueChange("meta2", value)}
                     />
                     {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra color:" value={form.meta5} minlength={15} maxlength={15} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra color:" value={form.meta3} minlength={15} maxlength={15} />
                   </Col>
 
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta3" labelName="Cifra productos:" value={form.meta3} minlength={15} maxlength={15} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta4" labelName="Cifra productos:" value={form.meta4} minlength={15} maxlength={15} />
                   </Col>
                   <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="meta2" labelName="Cifra tratamientos:" value={form.meta2} minlength={15} maxlength={15} />
+                    <CFormGroupInput handleChange={handleChange} inputName="meta5" labelName="Cifra tratamientos:" value={form.meta5} minlength={15} maxlength={15} />
                   </Col>
                 </Row>
               </FormGroup>
@@ -889,7 +889,8 @@ function CifraSucursal() {
             </ModalFooter>
           </Modal>
         </>
-      ) : null}
+      ) : null
+      }
     </>
   );
 }
