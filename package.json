@@ -52,7 +52,8 @@
     "reactstrap": "^9.1.8",
     "sass": "^1.61.0",
     "serialport": "^11.0.0",
-    "sweetalert2": "^11.7.12"
+    "sweetalert2": "^11.7.12",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/escpos": "^2.5.2",

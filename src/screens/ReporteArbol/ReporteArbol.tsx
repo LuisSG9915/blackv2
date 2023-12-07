@@ -48,6 +48,7 @@ import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import * as XLSX from "xlsx";
 
 // const ReporteArbol = () => {
 
@@ -989,59 +990,92 @@ function reporteArbol() {
 
   /* lo chidote */
 
-  const TablaPrincipal = ({ groupedData, handleExpand, expandedRows }) => (
-    <table border="1">
-      <thead>
-        <tr>
-          <th className="th_arbol">Clave Empleado</th>
-          <th className="th_arbol">Nombre</th>
-          <th className="th_arbol">Colaborador</th>
-          <th className="th_arbol">puesto</th>
-          <th className="th_arbol">ventaServicio</th>
-          <th className="th_arbol">descProducto</th>
-          <th className="th_arbol">com35Servicio</th>
-          <th className="th_arbol">desc5</th>
-          <th className="th_arbol">descNominaProducto</th>
-          <th className="th_arbol">com10Producto</th>
-          <th className="th_arbol">com5Estilista</th>
-          <th className="th_arbol">sueldoBase</th>
-          <th className="th_arbol">totalPagar</th>
-        </tr>
-      </thead>
-      <tbody>
-        {groupedData.map((group, index) => (
-          <React.Fragment key={group.key}>
+  const TablaPrincipal = ({ groupedData, handleExpand, expandedRows }) => {
+    const tableRef = useRef(null);
+    const exportToExcel = () => {
+      // Obtener datos de la tabla
+      const data = groupedData.map((group) => ({
+        "Clave Empleado": group.key,
+        Nombre: group.items[0].nombre,
+        Colaborador: group.items[0].colaborador,
+        puesto: group.items[0].puesto,
+        ventaServicio: group.items[0].ventaServicio,
+        descProducto: group.items[0].descProducto,
+        com35Servicio: group.items[0].com35Servicio,
+        desc5: group.items[0].desc5,
+        descNominaProducto: group.items[0].descNominaProducto,
+        com10Producto: group.items[0].com10Producto,
+        com5Estilista: group.items[0].com5Estilista,
+        sueldoBase: group.items[0].sueldoBase,
+        totalPagar: group.items[0].totalPagar,
+      }));
+
+      // Crear un libro de Excel
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Tabla Principal");
+
+      // Guardar el archivo
+      XLSX.writeFile(wb, "tabla_principal.xlsx");
+    };
+
+    return (
+      <div>
+        <Button onClick={exportToExcel}>Exportar a Excel</Button>
+        <table border="1" ref={tableRef}>
+          <thead>
             <tr>
-              <td className="td_arbol">
-                <button onClick={() => handleExpand(group.key, index)}>
-                  {expandedRows[`${group.key}-${index}`] ? "▼" : "▶"} {group.key}
-                </button>
-              </td>
-              <td className="td_arbol">{group.items[0].nombre}</td>
-              <td className="td_arbol">{group.items[0].colaborador}</td>
-              <td className="td_arbol">{group.items[0].puesto}</td>
-              <td className="td_arbol">{group.items[0].ventaServicio}</td>
-              <td className="td_arbol">{group.items[0].descProducto}</td>
-              <td className="td_arbol">{group.items[0].com35Servicio}</td>
-              <td className="td_arbol">{group.items[0].desc5}</td>
-              <td className="td_arbol">{group.items[0].descNominaProducto}</td>
-              <td className="td_arbol">{group.items[0].com10Producto}</td>
-              <td className="td_arbol">{group.items[0].com5Estilista}</td>
-              <td className="td_arbol">{group.items[0].sueldoBase}</td>
-              <td className="td_arbol">{group.items[0].totalPagar}</td>
+              <th className="th_arbol">Clave Empleado</th>
+              <th className="th_arbol">Nombre</th>
+              <th className="th_arbol">Colaborador</th>
+              <th className="th_arbol">puesto</th>
+              <th className="th_arbol">ventaServicio</th>
+              <th className="th_arbol">descProducto</th>
+              <th className="th_arbol">com35Servicio</th>
+              <th className="th_arbol">desc5</th>
+              <th className="th_arbol">descNominaProducto</th>
+              <th className="th_arbol">com10Producto</th>
+              <th className="th_arbol">com5Estilista</th>
+              <th className="th_arbol">sueldoBase</th>
+              <th className="th_arbol">totalPagar</th>
             </tr>
-            {expandedRows[`${group.key}-${index}`] && (
-              <tr>
-                <td colSpan="3">
-                  <TablaAnidada data={group.items} />
-                </td>
-              </tr>
-            )}
-          </React.Fragment>
-        ))}
-      </tbody>
-    </table>
-  );
+          </thead>
+          <tbody>
+            {groupedData.map((group, index) => (
+              <React.Fragment key={group.key}>
+                <tr>
+                  <td className="td_arbol">
+                    <button onClick={() => handleExpand(group.key, index)}>
+                      {expandedRows[`${group.key}-${index}`] ? "▼" : "▶"} {group.key}
+                    </button>
+                  </td>
+                  <td className="td_arbol">{group.items[0].nombre}</td>
+                  <td className="td_arbol">{group.items[0].colaborador}</td>
+                  <td className="td_arbol">{group.items[0].puesto}</td>
+                  <td className="td_arbol">{group.items[0].ventaServicio}</td>
+                  <td className="td_arbol">{group.items[0].descProducto}</td>
+                  <td className="td_arbol">{group.items[0].com35Servicio}</td>
+                  <td className="td_arbol">{group.items[0].desc5}</td>
+                  <td className="td_arbol">{group.items[0].descNominaProducto}</td>
+                  <td className="td_arbol">{group.items[0].com10Producto}</td>
+                  <td className="td_arbol">{group.items[0].com5Estilista}</td>
+                  <td className="td_arbol">{group.items[0].sueldoBase}</td>
+                  <td className="td_arbol">{group.items[0].totalPagar}</td>
+                </tr>
+                {expandedRows[`${group.key}-${index}`] && (
+                  <tr>
+                    <td colSpan="3">
+                      <TablaAnidada data={group.items} />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   const TablaAnidada: React.FC<{ data: NominaItem[] }> = ({ data }) => {
     const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
@@ -1688,10 +1722,6 @@ function reporteArbol() {
             </AccordionBody>
           </AccordionItem>
         </UncontrolledAccordion>
-        <button onClick={handleExportToPDF}>Exportar a PDF</button>
-        <DownloadTableExcel filename="users table" sheet="users" currentTableRef={tableRef.current}>
-          <button> Export excel </button>
-        </DownloadTableExcel>
 
         <TablaPrincipal groupedData={groupedData} handleExpand={handleExpand} expandedRows={expandedRows} />
       </Container>
