@@ -48,43 +48,4884 @@ import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import SvgMore from "@mui/icons-material/ExpandMore";
-import NominaDepartamentos from "../NominaDepartamentos";
 
-export type Person = {
-  firstName: string;
-  lastName: string;
-  address: string;
-  city: string;
-  state: string;
-  subRows?: Person[]; //Each person can have sub rows of more people
+
+const datos = {
+  "nomina": [
+   
+    {
+      "clave_empleado": 2175,
+      "nombre": "Barrio",
+      "colaborador": "REBECCA LILIANNE PEREZ PEREZ",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "483.10",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2783.00",
+      "cliente": {
+          "idempleado": 2175,
+          "fecha": "2023-12-02",
+          "cliente": "ALICIA CALDERON (B)",
+          "venta_Total": "850.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SERUM  250ML",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2175,
+      "nombre": "Barrio",
+      "colaborador": "REBECCA LILIANNE PEREZ PEREZ",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "483.10",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2783.00",
+      "cliente": {
+          "idempleado": 2175,
+          "fecha": "2023-12-02",
+          "cliente": "DIANA CASTILLO MORALES",
+          "venta_Total": "390.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "COAL MINE",
+              "cantidad": "1.0",
+              "precio": "390.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2175,
+      "nombre": "Barrio",
+      "colaborador": "REBECCA LILIANNE PEREZ PEREZ",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "483.10",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2783.00",
+      "cliente": {
+          "idempleado": 2175,
+          "fecha": "2023-12-03",
+          "cliente": "ELISA HERNANDEZ DE LEON (B)",
+          "venta_Total": "720.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "Kola loka",
+              "cantidad": "2.0",
+              "precio": "120.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2175,
+      "nombre": "Barrio",
+      "colaborador": "REBECCA LILIANNE PEREZ PEREZ",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "483.10",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2783.00",
+      "cliente": {
+          "idempleado": 2175,
+          "fecha": "2023-12-03",
+          "cliente": "ELISA HERNANDEZ DE LEON (B)",
+          "venta_Total": "720.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "480.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2175,
+      "nombre": "Barrio",
+      "colaborador": "REBECCA LILIANNE PEREZ PEREZ",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "483.10",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2783.00",
+      "cliente": {
+          "idempleado": 2175,
+          "fecha": "2023-12-04",
+          "cliente": "ZAZIL AINARA  (SP)",
+          "venta_Total": "645.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FRIZZ DISMISS SHAMPOO 300ML",
+              "cantidad": "1.0",
+              "precio": "645.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Abril figueroa",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "KERATINA MEDIANO",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "75.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Abril figueroa",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Abril figueroa",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Abril figueroa",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DECO GLOBAL MEDIANO",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "455.83",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Alex Colab ",
+          "venta_Total": "1460.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BARBA TNB CREW",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "50.70",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Alex Colab ",
+          "venta_Total": "1460.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC ACONDICIONADOR 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Alex Colab ",
+          "venta_Total": "1460.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC  SHAMPOO 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-01",
+          "cliente": "Alex Colab ",
+          "venta_Total": "1460.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "495.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-02",
+          "cliente": "Selene García romero",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DIAGNOSTICO TNB",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "6.21",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-02",
+          "cliente": "Doménica Mendoza ",
+          "venta_Total": "1335.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-02",
+          "cliente": "Doménica Mendoza ",
+          "venta_Total": "1335.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "REBEL TAME CREMA 250ML",
+              "cantidad": "1.0",
+              "precio": "840.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-02",
+          "cliente": "Karla Alondra ",
+          "venta_Total": "2294.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "PROMO KERATINA DICIEMBRE ",
+              "cantidad": "1.0",
+              "precio": "1799.00",
+              "costoInsumos": "114.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-02",
+          "cliente": "Karla Alondra ",
+          "venta_Total": "2294.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DIAGNOSTICO TNB",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ANTI SNAP EXTREME",
+              "cantidad": "1.0",
+              "precio": "710.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX LARGO-EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ILUMINACION EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "4200.00",
+              "costoInsumos": "512.82",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "256.85",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC ACONDICIONADOR 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC  SHAMPOO 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-03",
+          "cliente": "Azucena mendoza",
+          "venta_Total": "8170.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ILUMINACION MEDIANO",
+              "cantidad": "1.0",
+              "precio": "2400.00",
+              "costoInsumos": "287.62",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE THE NEW BLACK",
+              "cantidad": "1.0",
+              "precio": "395.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "COLOR EXTEND MASK 250ML",
+              "cantidad": "1.0",
+              "precio": "840.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DIAGNOSTICO TNB",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "7.20",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2179,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "BERENICE PRADO HERNANDEZ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "12729.00",
+      "descProducto": "1766.23",
+      "com35Servicio": "2740.69",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "576.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "4316.00",
+      "cliente": {
+          "idempleado": 2179,
+          "fecha": "2023-12-04",
+          "cliente": "Anahí casarrubias",
+          "venta_Total": "4735.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "UNBREAK MY BLONDE LEAVE IN 150ML",
+              "cantidad": "1.0",
+              "precio": "450.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "5849.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "PROMO KERATINA DICIEMBRE ",
+              "cantidad": "1.0",
+              "precio": "1799.00",
+              "costoInsumos": "49.50",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "5849.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX LARGO-EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "5849.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DECO GLOBAL MEDIANO",
+              "cantidad": "1.0",
+              "precio": "3200.00",
+              "costoInsumos": "733.56",
+              "auxiliar": "CLAUDIA MARIANA GODINEZ MONROY",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "5849.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MOUSE TEARS ",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "5849.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CREMITA DE COLOR",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-02",
+          "cliente": "Alejandra Reséndiz Trejo ",
+          "venta_Total": "5849.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-03",
+          "cliente": "Luisa Ortega ",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DIAGNOSTICO TNB",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "5.97",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-05",
+          "cliente": "Analy Jiménez ",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DIAGNOSTICO TNB",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "4.14",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2180,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ERENDIRA CASTILLO GUTIERREZ",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "6344.00",
+      "descProducto": "793.17",
+      "com35Servicio": "1227.71",
+      "desc5": "-160.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2227.00",
+      "cliente": {
+          "idempleado": 2180,
+          "fecha": "2023-12-05",
+          "cliente": "Angelica Cuevas ",
+          "venta_Total": "495.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-01",
+          "cliente": "ANDRES MARTINEZ  (SP)",
+          "venta_Total": "785.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "DIAMOND",
+              "cantidad": "1.0",
+              "precio": "390.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-01",
+          "cliente": "ANDRES MARTINEZ  (SP)",
+          "venta_Total": "785.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE THE NEW BLACK",
+              "cantidad": "1.0",
+              "precio": "395.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-01",
+          "cliente": "Alexander Castellanos",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "ISELA WU   (SP)",
+          "venta_Total": "2650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR CORTO",
+              "cantidad": "1.0",
+              "precio": "700.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "ISELA WU   (SP)",
+          "venta_Total": "2650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "RETOQUE 1-2CM",
+              "cantidad": "1.0",
+              "precio": "1950.00",
+              "costoInsumos": "458.80",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Abraham calderon ",
+          "venta_Total": "3300.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Abraham calderon ",
+          "venta_Total": "3300.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR CORTO",
+              "cantidad": "1.0",
+              "precio": "700.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Abraham calderon ",
+          "venta_Total": "3300.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACLARACION GLOBAL CON TINTE",
+              "cantidad": "1.0",
+              "precio": "1950.00",
+              "costoInsumos": "466.81",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Andrea M",
+          "venta_Total": "495.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Fanny monroy",
+          "venta_Total": "3519.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR MEDIANO",
+              "cantidad": "1.0",
+              "precio": "900.00",
+              "costoInsumos": "337.60",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Fanny monroy",
+          "venta_Total": "3519.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "PROMO KERATINA DICIEMBRE ",
+              "cantidad": "1.0",
+              "precio": "1799.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Fanny monroy",
+          "venta_Total": "3519.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CURL EXPRESSION GEL 250ml ",
+              "cantidad": "1.0",
+              "precio": "600.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Fanny monroy",
+          "venta_Total": "3519.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-02",
+          "cliente": "Fanny monroy",
+          "venta_Total": "3519.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "REBECA CUELLAR (B)",
+          "venta_Total": "495.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "7204.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FRIZZ DISMISS ACONDICIONADOR 300ML",
+              "cantidad": "1.0",
+              "precio": "645.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "7204.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC  SHAMPOO 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "7204.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC LEAVE IN 150ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "7204.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "7204.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "PROMO KERATINA DICIEMBRE ",
+              "cantidad": "1.0",
+              "precio": "1799.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "7204.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ILUMINACION LARGO",
+              "cantidad": "1.0",
+              "precio": "3300.00",
+              "costoInsumos": "785.90",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "Tania Vázquez ",
+          "venta_Total": "2350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "Tania Vázquez ",
+          "venta_Total": "2350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR  LEAVE IN 100ML",
+              "cantidad": "1.0",
+              "precio": "700.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "Tania Vázquez ",
+          "venta_Total": "2350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SERUM  250ML",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "Tania Vázquez ",
+          "venta_Total": "2350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "UN SERVICIO QUE ELIMINARON",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-03",
+          "cliente": "Tania Vázquez ",
+          "venta_Total": "2350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SHAMPOO 500ML",
+              "cantidad": "1.0",
+              "precio": "800.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": "ERICK MENDOZA  (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ALL SOFT MEGA CURLS ACONDICIONADOR 300ML",
+              "cantidad": "1.0",
+              "precio": "645.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC  SHAMPOO 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR XL",
+              "cantidad": "1.0",
+              "precio": "1300.00",
+              "costoInsumos": "379.85",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "PROMO KERATINA DICIEMBRE ",
+              "cantidad": "1.0",
+              "precio": "1799.00",
+              "costoInsumos": "136.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC LEAVE IN 150ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2182,
+      "nombre": "San Pedro",
+      "colaborador": "DIANA ALEXIA MORAS DE SANTIAGO",
+      "puesto": "ESTILISTA",
+      "ventaServicio": "19542.00",
+      "descProducto": "2564.96",
+      "com35Servicio": "3701.36",
+      "desc5": "-542.90",
+      "descNominaProducto": "0.00",
+      "com10Producto": "755.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "5456.00",
+      "cliente": {
+          "idempleado": 2182,
+          "fecha": "2023-12-04",
+          "cliente": " Natalia Michel Mata García",
+          "venta_Total": "5854.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ALACIADO CORTO",
+              "cantidad": "1.0",
+              "precio": "1600.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ALACIADO CORTO",
+              "cantidad": "1.0",
+              "precio": "1600.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ALACIADO CORTO",
+              "cantidad": "1.0",
+              "precio": "1600.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORRECCIÓN COLOR",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "TAPA EXTRA DE DECO",
+              "cantidad": "1.0",
+              "precio": "412.50",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "25.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACTIVIDAD 50% CH",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACTIVIDAD 50% CH",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACTIVIDAD 50% XL",
+              "cantidad": "1.0",
+              "precio": "4000.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-04",
+          "cliente": "sistemas",
+          "venta_Total": "16212.50",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACTIVIDAD 50% XL",
+              "cantidad": "1.0",
+              "precio": "4000.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-05",
+          "cliente": "CB",
+          "venta_Total": "1800.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BASE PERMANENTE CORTO",
+              "cantidad": "1.0",
+              "precio": "1800.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BASE PERMANENTE CORTO",
+              "cantidad": "1.0",
+              "precio": "1800.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ALACIADO CORTO",
+              "cantidad": "1.0",
+              "precio": "1600.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "290.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR CORTO",
+              "cantidad": "1.0",
+              "precio": "700.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ILUMINACION MEDIANO",
+              "cantidad": "1.0",
+              "precio": "2400.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACTIVIDAD 50% CH",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACTIVIDAD 50% CH",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "A DOMICILIO",
+              "cantidad": "1.0",
+              "precio": "1200.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "20.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "A DOMICILIO",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "A DOMICILIO",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "A DOMICILIO",
+              "cantidad": "1.0",
+              "precio": "1500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2214,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "SISTEMAS CB ",
+      "puesto": "GERENTE ADMINISTRATIVO\/ESTILISTA",
+      "ventaServicio": "35452.50",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1000.00",
+      "cliente": {
+          "idempleado": 2214,
+          "fecha": "2023-12-06",
+          "cliente": "sistemas",
+          "venta_Total": "17440.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACLARACION GLOBAL CON TINTE",
+              "cantidad": "1.0",
+              "precio": "1950.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "EMILIANO SANCHEZ  (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "ELVIA RODRIGUEZ (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "ALAN SANCHEZ  (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "ALAN GARZA RUIZ   (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "YIZEL RAYNA   (SP)",
+          "venta_Total": "3450.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR  LEAVE IN 100ML",
+              "cantidad": "1.0",
+              "precio": "700.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "YIZEL RAYNA   (SP)",
+          "venta_Total": "3450.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SHAMPOO 500ML",
+              "cantidad": "1.0",
+              "precio": "800.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "YIZEL RAYNA   (SP)",
+          "venta_Total": "3450.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SERUM  250ML",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "YIZEL RAYNA   (SP)",
+          "venta_Total": "3450.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR LARGO",
+              "cantidad": "1.0",
+              "precio": "1100.00",
+              "costoInsumos": "312.26",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "YIZEL RAYNA   (SP)",
+          "venta_Total": "3450.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-01",
+          "cliente": "JAVIER MONSREAL",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-02",
+          "cliente": "SALVADOR CASTILLO (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-02",
+          "cliente": "BERNICE PALAU  (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-02",
+          "cliente": "GABRIELA SALGUERO  (SP)",
+          "venta_Total": "1950.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "RETOQUE 1-2CM",
+              "cantidad": "1.0",
+              "precio": "1950.00",
+              "costoInsumos": "303.47",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-02",
+          "cliente": "LUPITA MEDINA  (SP)",
+          "venta_Total": "2050.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "308.99",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-02",
+          "cliente": "LUPITA MEDINA  (SP)",
+          "venta_Total": "2050.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR LARGO",
+              "cantidad": "1.0",
+              "precio": "1100.00",
+              "costoInsumos": "262.45",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-02",
+          "cliente": "CYNTHIA TAMEZ",
+          "venta_Total": "0.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORRECCIÓN",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "35.60",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-03",
+          "cliente": "CECILIA DIMAS DILEO (SP)",
+          "venta_Total": "1395.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-03",
+          "cliente": "CECILIA DIMAS DILEO (SP)",
+          "venta_Total": "1395.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR MEDIANO",
+              "cantidad": "1.0",
+              "precio": "900.00",
+              "costoInsumos": "123.10",
+              "auxiliar": "FATIMA ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-03",
+          "cliente": "MARCELA JURADO  CASTILLO (SP)",
+          "venta_Total": "3350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ILUMINACION MEDIANO",
+              "cantidad": "1.0",
+              "precio": "2400.00",
+              "costoInsumos": "821.67",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-03",
+          "cliente": "MARCELA JURADO  CASTILLO (SP)",
+          "venta_Total": "3350.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "308.99",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-03",
+          "cliente": "ximena cantu",
+          "venta_Total": "290.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "290.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ANNIE  VILLEGAS  (B)",
+          "venta_Total": "3900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR MEDIANO",
+              "cantidad": "1.0",
+              "precio": "900.00",
+              "costoInsumos": "272.55",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ANNIE  VILLEGAS  (B)",
+          "venta_Total": "3900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SHAMPOO 500ML",
+              "cantidad": "1.0",
+              "precio": "800.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ANNIE  VILLEGAS  (B)",
+          "venta_Total": "3900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR SERUM  250ML",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ANNIE  VILLEGAS  (B)",
+          "venta_Total": "3900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ABSOLUT REPAIR MOLECULAR  LEAVE IN 100ML",
+              "cantidad": "1.0",
+              "precio": "700.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ANNIE  VILLEGAS  (B)",
+          "venta_Total": "3900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ANNIE  VILLEGAS  (B)",
+          "venta_Total": "3900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "VENENO HIDRATANTE",
+              "cantidad": "1.0",
+              "precio": "0.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "100.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "DANIELA GARCIA   (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "TANIA LIHAUT  (SP)",
+          "venta_Total": "900.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "BAÑO DE COLOR MEDIANO",
+              "cantidad": "1.0",
+              "precio": "900.00",
+              "costoInsumos": "162.45",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-04",
+          "cliente": "ALEIDA  SALAZAR ",
+          "venta_Total": "495.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-05",
+          "cliente": "LUIS REYNA  (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "EDUARDO CORTEZ",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-05",
+          "cliente": "JOSE   (SP)",
+          "venta_Total": "220.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "MANTENIMIENTO CORTE (CABALLERO)",
+              "cantidad": "1.0",
+              "precio": "220.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-05",
+          "cliente": "MAIRA RUIZ  (SP)",
+          "venta_Total": "1595.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ELIXIR ORIGINAL 100ML",
+              "cantidad": "1.0",
+              "precio": "1200.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-05",
+          "cliente": "MAIRA RUIZ  (SP)",
+          "venta_Total": "1595.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "YELLOW KILLER ",
+              "cantidad": "1.0",
+              "precio": "395.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-05",
+          "cliente": "RAUL GARZA  (SP)",
+          "venta_Total": "290.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "290.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2218,
+      "nombre": "San Pedro",
+      "colaborador": "LEZRA SALEO ORTEGA PABLO",
+      "puesto": "LÍDER DE ESTILISTA",
+      "ventaServicio": "15860.00",
+      "descProducto": "2911.53",
+      "com35Servicio": "4464.96",
+      "desc5": "-67.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "629.50",
+      "com5Estilista": "0.00",
+      "sueldoBase": "1500.00",
+      "totalPagar": "6594.00",
+      "cliente": {
+          "idempleado": 2218,
+          "fecha": "2023-12-05",
+          "cliente": "THALIA LIZETH JUAREZ",
+          "venta_Total": "290.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "290.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2219,
+      "nombre": "San Pedro",
+      "colaborador": "EDUARDO CORTEZ",
+      "puesto": "ESTILISTA JR",
+      "ventaServicio": "3230.00",
+      "descProducto": "308.99",
+      "com35Servicio": "730.25",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "235.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1965.00",
+      "cliente": {
+          "idempleado": 2219,
+          "fecha": "2023-12-01",
+          "cliente": "CAROLINA SOFIA  (SP)",
+          "venta_Total": "950.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "308.99",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2219,
+      "nombre": "San Pedro",
+      "colaborador": "EDUARDO CORTEZ",
+      "puesto": "ESTILISTA JR",
+      "ventaServicio": "3230.00",
+      "descProducto": "308.99",
+      "com35Servicio": "730.25",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "235.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1965.00",
+      "cliente": {
+          "idempleado": 2219,
+          "fecha": "2023-12-02",
+          "cliente": "KAREN DIAZ  (SP)",
+          "venta_Total": "850.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX LARGO-EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2219,
+      "nombre": "San Pedro",
+      "colaborador": "EDUARDO CORTEZ",
+      "puesto": "ESTILISTA JR",
+      "ventaServicio": "3230.00",
+      "descProducto": "308.99",
+      "com35Servicio": "730.25",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "235.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1965.00",
+      "cliente": {
+          "idempleado": 2219,
+          "fecha": "2023-12-02",
+          "cliente": "ANA CASTILLO  (SP)",
+          "venta_Total": "850.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX LARGO-EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2219,
+      "nombre": "San Pedro",
+      "colaborador": "EDUARDO CORTEZ",
+      "puesto": "ESTILISTA JR",
+      "ventaServicio": "3230.00",
+      "descProducto": "308.99",
+      "com35Servicio": "730.25",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "235.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1965.00",
+      "cliente": {
+          "idempleado": 2219,
+          "fecha": "2023-12-05",
+          "cliente": "IRVIN ALONSO GAONA (SP)",
+          "venta_Total": "290.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "290.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2219,
+      "nombre": "San Pedro",
+      "colaborador": "EDUARDO CORTEZ",
+      "puesto": "ESTILISTA JR",
+      "ventaServicio": "3230.00",
+      "descProducto": "308.99",
+      "com35Servicio": "730.25",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "235.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "1965.00",
+      "cliente": {
+          "idempleado": 2219,
+          "fecha": "2023-12-06",
+          "cliente": " Adrián Molina",
+          "venta_Total": "290.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE CABALLERO TNB CREW",
+              "cantidad": "1.0",
+              "precio": "290.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-01",
+          "cliente": "YIZEL RAYNA   (SP)",
+          "venta_Total": "950.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "308.99",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-02",
+          "cliente": "ISABEL DE LA GARZA (B)",
+          "venta_Total": "495.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE DAMA (SHAMPOO+SECADO)",
+              "cantidad": "1.0",
+              "precio": "495.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-02",
+          "cliente": "GABRIELA SALGUERO  (SP)",
+          "venta_Total": "950.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-02",
+          "cliente": "ISELA WU   (SP)",
+          "venta_Total": "650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-02",
+          "cliente": "Fanny monroy",
+          "venta_Total": "730.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "ACIDIC  SHAMPOO 300ML",
+              "cantidad": "1.0",
+              "precio": "730.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-03",
+          "cliente": "CECILIA DIMAS DILEO (SP)",
+          "venta_Total": "950.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "FUSIO DOSE",
+              "cantidad": "1.0",
+              "precio": "950.00",
+              "costoInsumos": "308.99",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-03",
+          "cliente": "LARISSA SOLIS  (SP)",
+          "venta_Total": "395.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "CORTE THE NEW BLACK",
+              "cantidad": "1.0",
+              "precio": "395.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-03",
+          "cliente": "GREGORIA ESQUIVEL RUIZ",
+          "venta_Total": "650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2220,
+      "nombre": "San Pedro",
+      "colaborador": "FATIMA ",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "5890.00",
+      "descProducto": "617.98",
+      "com35Servicio": "1318.01",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "73.00",
+      "com5Estilista": "648.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "3039.00",
+      "cliente": {
+          "idempleado": 2220,
+          "fecha": "2023-12-06",
+          "cliente": "gaby lozano",
+          "venta_Total": "850.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX LARGO-EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2221,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "NORA FERNANDA NIEBLAS RAMOS",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "108.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2408.00",
+      "cliente": {
+          "idempleado": 2221,
+          "fecha": "2023-12-03",
+          "cliente": "Luisa Ortega ",
+          "venta_Total": "240.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "Kola loka",
+              "cantidad": "2.0",
+              "precio": "120.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2221,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "NORA FERNANDA NIEBLAS RAMOS",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "108.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2408.00",
+      "cliente": {
+          "idempleado": 2221,
+          "fecha": "2023-12-03",
+          "cliente": "Fernanda ramos",
+          "venta_Total": "840.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "EXTREME MASK 250 ML",
+              "cantidad": "1.0",
+              "precio": "840.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2222,
+      "nombre": "Ciudad de méxico",
+      "colaborador": "ISSAC ISRAEL ORTEGA PABLO ",
+      "puesto": "RECEPCIÓN",
+      "ventaServicio": "0.00",
+      "descProducto": "0.00",
+      "com35Servicio": "0.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "39.00",
+      "com5Estilista": "0.00",
+      "sueldoBase": "2300.00",
+      "totalPagar": "2339.00",
+      "cliente": {
+          "idempleado": 2222,
+          "fecha": "2023-12-04",
+          "cliente": "Gonzalo Romero ",
+          "venta_Total": "390.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "GOLD RUSH",
+              "cantidad": "1.0",
+              "precio": "390.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2223,
+      "nombre": "Barrio",
+      "colaborador": "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "3300.00",
+      "descProducto": "0.00",
+      "com35Servicio": "825.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "426.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2251.00",
+      "cliente": {
+          "idempleado": 2223,
+          "fecha": "2023-12-02",
+          "cliente": "MIRANDA QUEZADA (B)",
+          "venta_Total": "650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2223,
+      "nombre": "Barrio",
+      "colaborador": "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "3300.00",
+      "descProducto": "0.00",
+      "com35Servicio": "825.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "426.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2251.00",
+      "cliente": {
+          "idempleado": 2223,
+          "fecha": "2023-12-02",
+          "cliente": "PERLA BRERRONES (B)",
+          "venta_Total": "650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2223,
+      "nombre": "Barrio",
+      "colaborador": "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "3300.00",
+      "descProducto": "0.00",
+      "com35Servicio": "825.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "426.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2251.00",
+      "cliente": {
+          "idempleado": 2223,
+          "fecha": "2023-12-03",
+          "cliente": "ILSE MENDEZ ",
+          "venta_Total": "500.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "SHOT DE KERATINA",
+              "cantidad": "1.0",
+              "precio": "500.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2223,
+      "nombre": "Barrio",
+      "colaborador": "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "3300.00",
+      "descProducto": "0.00",
+      "com35Servicio": "825.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "426.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2251.00",
+      "cliente": {
+          "idempleado": 2223,
+          "fecha": "2023-12-04",
+          "cliente": "ZAZIL AINARA  (SP)",
+          "venta_Total": "650.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX CORTO-MEDIANO",
+              "cantidad": "1.0",
+              "precio": "650.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  },
+  {
+      "clave_empleado": 2223,
+      "nombre": "Barrio",
+      "colaborador": "ALEXA DAYHAN MARTÍNEZ MARAVILLA",
+      "puesto": "APRENDIZ DE COLOR",
+      "ventaServicio": "3300.00",
+      "descProducto": "0.00",
+      "com35Servicio": "825.00",
+      "desc5": "0.00",
+      "descNominaProducto": "0.00",
+      "com10Producto": "0.00",
+      "com5Estilista": "426.00",
+      "sueldoBase": "1000.00",
+      "totalPagar": "2251.00",
+      "cliente": {
+          "idempleado": 2223,
+          "fecha": "2023-12-04",
+          "cliente": "ANAREYA OCAMPO",
+          "venta_Total": "850.00",
+          "medioDePago": "Efe",
+          "producto": {
+              "descripcion": "METAL DETOX LARGO-EXTRA LARGO",
+              "cantidad": "1.0",
+              "precio": "850.00",
+              "costoInsumos": "0.00",
+              "auxiliar": "",
+              "promoDescuento": "0.00 %"
+          }
+      }
+  }
+  
+  ]
 };
 
-export const dataArbol: Person[] = [
-  {
-    nombre: "Alex",
-    genero: "Masculino",
-    edad: 23,
-    escolaridad: {
-      curso: 2,
-      promedio: 8.5,
-      materias: {
-        espanol: 10,
-        matematicas: 9,
-        ciencia: 8,
-      },
-    },
-  },
-];
+
+
+
+
+// const ReporteArbol = () => {
+  
+//   const [expandedRows, setExpandedRows] = useState({});
+//     const [reportes, setReportes] = useState([]);
+//   const [columnas, setColumnas] = useState([]);
+//   const [data, setData] = useState<ReporteTool[]>([]);
+//   const { dataCias, fetchCias } = useCias();
+//   const { dataAreas, fetchAreas1 } = useAreas();
+//   const { dataDeptos, fetchAreas } = useDeptos();
+//   const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
+//   const { dataUsuarios, fetchUsuarios } = useUsuarios();
+
+//   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
+//   const { dataSucursales, fetchSucursales } = useSucursales();
+//   const [modalOpenCli, setModalOpenCli] = useState(false);
+//   const [selectedIdC, setSelectedIdC] = useState("");
+//   const [descuento, setDescuento] = useState("");
+//   const [nprod, setNprod] = useState([]);
+//   const [marca, setMarca] = useState([]);
+//   const [almacen, setAlmacen] = useState([]);
+//   const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
+//   const [trabajador, setTrabajadores] = useState([]);
+
+//   const [showClienteInput, setShowClienteInput] = useState(false);
+//   const [showSucursalInput, setShowSucursalInput] = useState(false);
+//   const [showEstilistaInput, setShowEstilistaInput] = useState(false);
+//   const [showProductoInput, setShowProductoInput] = useState(false);
+//   const [showMarcaInput, setShowMarcaInput] = useState(false);
+//   const [showAlmacenInput, setShowAlmacenInput] = useState(false);
+//   const [showEmpresaInput, setShowEmpresaInput] = useState(false);
+//   const [showSucDesInput, setShowSucDesInput] = useState(false);
+//   const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
+//   const [showAlmDestInput, setShowAlmDestInput] = useState(false);
+//   const [showTipoMovtoInput, setShowTipoMovtoInput] = useState(false);
+//   const [showNoVentaInput, setShowNoVentaInput] = useState(false);
+//   const [showProveedorInput, setShowProveedorInput] = useState(false);
+//   const [showMetodoPagoInput, setShowMetodoPagoInput] = useState(false);
+//   const [showClaveProdInput, setShowClaveProdInput] = useState(false);
+//   const [showPalabraProdInput, setShowPalabraProdInput] = useState(false);
+//   const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
+//   const [showAreaInput, setShowAreaInput] = useState(false);
+//   const [showDeptoInput, setShowDeptoInput] = useState(false);
+//   const [showf1, setShowf1] = useState(false);
+//   const [showf2, setShowf2] = useState(false);
+//   const [showAñoInput, setShowAñoInput] = useState(false);
+//   const [showMesInput, setShowMesInput] = useState(false);
+//   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
+//   const [formulario1, setFormulario1] = useState({
+//     sucursal: "", // El valor inicial de la sucursal
+//     // Otras propiedades de tu formulario
+//   });
+//   const { filtroSeguridad, session } = useSeguridad();
+//   const [showView, setShowView] = useState(true);
+//   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+
+//   const [DatosSumados, setDatosSumados] = useState({});
+//   const [totalSum, setTotalSum] = useState(0);
+
+//   const [columnaSumas, setColumnaSumas] = useState({}); // Estado para las sumas individuales de las columnas
+
+//   // En el useEffect donde calculas la suma de las columnas
+//   useEffect(() => {
+//     const sumatoria = calcularSumatoriaDinamica(reportes);
+//     console.log("Sumatoria dinámica:", sumatoria);
+//     setDatosSumados(sumatoria); // Actualiza el estado DatosSumados
+
+//     // Calcula y actualiza las sumas individuales de las columnas
+//     const nuevasColumnaSumas = {};
+//     Object.entries(sumatoria).forEach(([columna, valor]) => {
+//       nuevasColumnaSumas[columna] = valor;
+//     });
+//     setColumnaSumas(nuevasColumnaSumas);
+//   }, [reportes]);
+
+//   // Función para calcular la sumatoria de manera dinámica
+//   function calcularSumatoriaDinamica(data) {
+//     const sumatoria = {};
+
+//     // Itera sobre las filas de datos
+//     data.forEach((row) => {
+//       // Itera sobre las columnas de cada fila
+//       for (const key in row) {
+//         if (row.hasOwnProperty(key) && typeof row[key] === "number") {
+//           // Verifica si la columna es numérica y suma los valores
+//           if (!sumatoria[key]) {
+//             sumatoria[key] = 0;
+//           }
+//           sumatoria[key] += row[key];
+//         }
+//       }
+//     });
+
+//     return sumatoria;
+//   }
+
+//   useEffect(() => {
+//     const item = localStorage.getItem("userLoggedv2");
+//     if (item !== null) {
+//       const parsedItem = JSON.parse(item);
+//       setDataUsuarios2(parsedItem);
+//       setFormulario1(parsedItem[0]?.sucursal.toString());
+
+//       // Llamar a getPermisoPantalla después de que los datos se hayan establecido
+//       getPermisoPantalla(parsedItem);
+//     }
+//   }, []);
+
+//   const getPermisoPantalla = async (userData) => {
+//     try {
+//       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
+
+//       if (Array.isArray(response.data) && response.data.length > 0) {
+//         if (response.data[0].permiso === false) {
+//           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+//           setShowView(false);
+//           handleRedirect();
+//         } else {
+//           setShowView(true);
+//         }
+//       } else {
+//         // No se encontraron datos válidos en la respuesta.
+//         setShowView(false);
+//       }
+//     } catch (error) {
+//       console.error("Error al obtener el permiso:", error);
+//     }
+//   };
+
+//   const navigate = useNavigate();
+//   const handleRedirect = () => {
+//     navigate("/app"); // Redirige a la ruta "/app"
+//   };
+
+
+
+//   return (
+//     <div>
+      
+//       <SidebarHorizontal/>
+//       <h1>Reporte Nomina</h1>
+//       <TablaPrincipal groupedData={groupedData} handleExpand={handleExpand} expandedRows={expandedRows} />
+//     </div>
+//   );
+// };
+
+// export default ReporteArbol;
+
+
+
+
+
+
 
 function reporteArbol() {
+  const [expandedRows, setExpandedRows] = useState({});
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
   const [data, setData] = useState<ReporteTool[]>([]);
@@ -869,331 +5710,148 @@ function reporteArbol() {
     })),
   ];
 
-  const [expandedRows, setExpandedRows] = useState([]);
+
   const tableRef = useRef(null);
 
-  // const handleExpand = (colaborador) => {
-  //   setExpandedRows((prevExpandedRows) => {
-  //     const newExpandedRows = { ...prevExpandedRows };
-  //     // Invierte el estado del nivel actual
-  //     newExpandedRows[colaborador] = !newExpandedRows[colaborador];
-  //     return newExpandedRows;
-  //   });
-  // };
-  const nominaaa = [
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-01",
-        cliente: "LUIS CARLOS GONZALEZ (SP)",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "CREMITA DE COLOR INSUMOS",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "140.79",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-01",
-        cliente: "LUSELENA MACIAS  (SP)",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "COLABORACIÓN",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "80.70",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-02",
-        cliente: "ZAZIL AINARA  (SP)",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "PRUEBITA DE MECHON",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "8.00",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-03",
-        cliente: "ILSE MENDEZ ",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "PRUEBITA DE MECHON",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "8.00",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-03",
-        cliente: "JOSELIN BARAJAS JIMENEZ ",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "PRUEBITA DE MECHON",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "8.00",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-03",
-        cliente: "Daniela Esquerra",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "CREMITA DE COLOR INSUMOS",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "17.10",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-04",
-        cliente: "ANAREYA OCAMPO",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "PRUEBITA DE MECHON",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "6.93",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-05",
-        cliente: "BRUSES  (SP)",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "COLABORACIÓN",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "480.15",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2131,
-      nombre: "Barrio",
-      colaborador: "Empresa",
-      puesto: "EMPRESA",
-      ventaServicio: "0.00",
-      descProducto: "757.67",
-      com35Servicio: "0.00",
-      desc5: "0.00",
-      descNominaProducto: "0.00",
-      com10Producto: "0.00",
-      com5Estilista: "0.00",
-      sueldoBase: "0.00",
-      totalPagar: "0.00",
-      cliente: {
-        idempleado: 2131,
-        fecha: "2023-12-05",
-        cliente: "DIEGO DELGADILLO ",
-        venta_Total: "0.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "PRUEBITA DE MECHON",
-          cantidad: "1.0",
-          precio: "0.00",
-          costoInsumos: "8.00",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-    {
-      clave_empleado: 2132,
-      nombre: "Barrio",
-      colaborador: "NEFI ALAN PABLO LÓPEZ",
-      puesto: "GERENTE ADMINISTRATIVO/ESTILISTA",
-      ventaServicio: "9430.00",
-      descProducto: "1614.35",
-      com35Servicio: "-253.25",
-      desc5: "-253.25",
-      descNominaProducto: "0.00",
-      com10Producto: "215.00",
-      com5Estilista: "0.00",
-      sueldoBase: "1000.00",
-      totalPagar: "961.00",
-      cliente: {
-        idempleado: 2132,
-        fecha: "2023-12-02",
-        cliente: "GERARDO HUGHES (B)",
-        venta_Total: "220.00",
-        medioDePago: "Efe",
-        producto: {
-          descripcion: "MANTENIMIENTO CORTE (CABALLERO)",
-          cantidad: "1.0",
-          precio: "220.00",
-          costoInsumos: "0.00",
-          auxiliar: "",
-          promoDescuento: "0.00 %",
-        },
-      },
-    },
-  ];
 
-  const parsedData = tablaData.map((item) => ({
+  const parsedData = Object.values(tablaData).map((item) => ({
     id: item.id,
     json: JSON.parse(item.json),
   }));
 
-  const handleExpand = (colaborador) => {
-    setExpandedRows((prevExpandedRows) => ({
-      ...prevExpandedRows,
-      [colaborador]: !prevExpandedRows[colaborador],
-    }));
-  };
+/* lo chidote */
+
+const TablaPrincipal = ({ groupedData, handleExpand, expandedRows }) => (
+  <table className="table_arbol"  border="1">
+    <thead>
+      <tr>
+        <th className="th_arbol">Clave Empleado</th>
+        <th className="th_arbol">Nombre</th>
+        <th className="th_arbol">Colaborador</th>
+      </tr>
+    </thead>
+    <tbody>
+      {groupedData.map((group, index) => (
+        <React.Fragment key={group.key}>
+          <tr>
+            <td className="td_arbol">
+              <button onClick={() => handleExpand(group.key, index)}>
+                {expandedRows[`${group.key}-${index}`] ? '▼' : '▶'} {group.key}
+              </button>
+            </td>
+            <td className="td_arbol">{group.items[0].nombre}</td>
+            <td className="td_arbol">{group.items[0].colaborador}</td>
+          </tr>
+          {expandedRows[`${group.key}-${index}`] && (
+            <tr>
+              <td colSpan="3">
+                <TablaAnidada data={group.items} />
+              </td>
+            </tr>
+          )}
+        </React.Fragment>
+      ))}
+    </tbody>
+  </table>
+);
+
+const TablaAnidada = ({ data }) => (
+  <table border="1">
+    <thead>
+      <tr>
+        <th className="th_arbol_lv2">Fecha</th>
+        <th className="th_arbol_lv2">Cliente</th>
+        <th className="th_arbol_lv2">Venta Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((nominaItem, index) => (
+        <React.Fragment key={index}>
+          <tr>
+            <td  className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
+            <td  className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
+            <td  className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
+          </tr>
+          <tr key={`productos-${index}`}>
+            <td colSpan="3">
+              <TablaProductos productos={nominaItem.cliente.producto} />
+            </td>
+          </tr>
+        </React.Fragment>
+      ))}
+    </tbody>
+  </table>
+);
+
+const TablaProductos = ({ productos }) => {
+  // Verificar si productos es un objeto
+  if (typeof productos !== 'object' || productos === null) {
+    // Manejar el caso en que productos no es un objeto (puedes mostrar un mensaje o realizar otra lógica según tus necesidades)
+    return <p>No hay productos disponibles.</p>;
+  }
+
+  return (
+    <table  border="1">
+      <thead>
+        <tr>
+          <th  className="th_arbol_lv3">Descripción</th>
+          <th  className="th_arbol_lv3">Cantidad</th>
+          <th  className="th_arbol_lv3">Precio</th>
+          <th  className="th_arbol_lv3">Costo de Insumos</th>
+          <th  className="th_arbol_lv3">Auxiliar</th>
+          <th  className="th_arbol_lv3">Promo Descuento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="td_arbol_lv3">{productos.descripcion}</td>
+          <td className="td_arbol_lv3">{productos.cantidad}</td>
+          <td className="td_arbol_lv3">{productos.precio}</td>
+          <td className="td_arbol_lv3">{productos.costoInsumos}</td>
+          <td className="td_arbol_lv3">{productos.auxiliar}</td>
+          <td className="td_arbol_lv3">{productos.promoDescuento}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+};
+
+
+const groupedData = parsedData.reduce((groups, item) => {
+  // Si item.json es un array, puedes hacer un bucle sobre él
+  item.json.nomina.forEach((nominaItem) => {
+    const key = nominaItem.clave_empleado;
+    const existingGroup = groups.find((group) => group.key === key);
+
+    if (existingGroup) {
+      existingGroup.items.push(nominaItem);
+    } else {
+      groups.push({
+        key: key,
+        items: [nominaItem],
+        expanded: false,
+      });
+    }
+  });
+
+  return groups;
+}, []);
+
+
+const handleExpand = (key, index) => {
+  console.log('handleExpand', key, index);
+  const expandedKey = `${key}-${index}`;
+  setExpandedRows((prev) => ({
+    ...prev,
+    [expandedKey]: !prev[expandedKey],
+  }));
+};
+
+
+
+
+
+
 
   const handleExportToPDF = () => {
     const input = tableRef.current;
@@ -1693,245 +6351,8 @@ function reporteArbol() {
         <DownloadTableExcel filename="users table" sheet="users" currentTableRef={tableRef.current}>
           <button> Export excel </button>
         </DownloadTableExcel>
-        <table className="table_arbol" border="1.5">
-          <thead>
-            <tr>
-              <th className="th_arbol"></th>
-              <th className="th_arbol">clave_empleado</th>
-              <th className="th_arbol">nombre</th>
-              <th className="th_arbol">colaborador</th>
-              <th className="th_arbol">puesto</th>
-              <th className="th_arbol">ventaServicio</th>
-              <th className="th_arbol">descProducto</th>
-              <th className="th_arbol">com35Servicio</th>
-              <th className="th_arbol">desc5</th>
-              <th className="th_arbol">descNominaProducto</th>
-              <th className="th_arbol">com10Producto</th>
-              <th className="th_arbol">com5Estilista</th>
-              <th className="th_arbol">sueldoBase</th>
-              <th className="th_arbol">totalPagar</th>
-              {/* Agrega aquí más encabezados según sea necesario */}
-            </tr>
-          </thead>
-          <tbody>
-            {parsedData.map((item) => (
-              <React.Fragment key={item.json.nomina[0].colaborador}>
-                {item.json?.nomina?.map((nominaItem, index) => (
-                  <React.Fragment key={index}>
-                    <tr className="expanded-row">
-                      <td className="td_arbol">
-                        <CgChevronDoubleDown onClick={() => handleExpand(nominaItem.colaborador)} />
-                      </td>
-                      <td className="td_arbol">{nominaItem.clave_empleado}</td>
-                      <td className="td_arbol">{nominaItem.nombre}</td>
-                      <td className="td_arbol">{nominaItem.colaborador}</td>
-                      <td className="td_arbol">{nominaItem.puesto}</td>
-                      <td className="td_arbol">{nominaItem.ventaServicio}</td>
-                      <td className="td_arbol">{nominaItem.descProducto}</td>
-                      <td className="td_arbol">{nominaItem.com35Servicio}</td>
-                      <td className="td_arbol">{nominaItem.desc5}</td>
-                      <td className="td_arbol">{nominaItem.descNominaProducto}</td>
-                      <td className="td_arbol">{nominaItem.com10Producto}</td>
-                      <td className="td_arbol">{nominaItem.com5Estilista}</td>
-                      <td className="td_arbol">{nominaItem.sueldoBase}</td>
-                      <td className="td_arbol">{nominaItem.totalPagar}</td>
-                      {/* Agrega aquí más celdas según sea necesario */}
-                    </tr>
-                    {expandedRows[nominaItem.colaborador] && (
-                      <tr>
-                        <td colSpan="14">
-                          <table className="nested-table">
-                            <thead>
-                              <tr>
-                                <th className="th_arbol_lv2"></th>
-                                <th className="th_arbol_lv2">idempleado</th>
-                                <th className="th_arbol_lv2">fecha</th>
-                                <th className="th_arbol_lv2">cliente</th>
-                                <th className="th_arbol_lv2">venta_Total</th>
-                                <th className="th_arbol_lv2">medioDePago</th>
-                                {/* Agrega aquí más encabezados del segundo nivel */}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {nominaItem.cliente && (
-                                <tr>
-                                  <td className="td_arbol_lv2">
-                                    <CgChevronDoubleDown onClick={() => handleExpand(nominaItem.id + "cliente")} />
-                                  </td>
-                                  <td className="td_arbol_lv2">{nominaItem.cliente.idempleado}</td>
-                                  <td className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
-                                  <td className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
-                                  <td className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
-                                  <td className="td_arbol_lv2">{nominaItem.cliente.medioDePago}</td>
-                                  {/* Agrega aquí más celdas del segundo nivel */}
-                                </tr>
-                              )}
-                              {expandedRows[nominaItem.id + "cliente"] &&
-                                nominaItem.cliente &&
-                                nominaItem.cliente.producto && (
-                                  <tr>
-                                    <td colSpan="6">
-                                      <table className="nested-table">
-                                        <thead>
-                                          <tr>
-                                            <th className="th_arbol_lv3"></th>
-                                            <th className="th_arbol_lv3">descripcion</th>
-                                            <th className="th_arbol_lv3">cantidad</th>
-                                            <th className="th_arbol_lv3">precio</th>
-                                            <th className="th_arbol_lv3">costoInsumos</th>
-                                            <th className="th_arbol_lv3">auxiliar</th>
-                                            <th className="th_arbol_lv3">promoDescuento</th>
-                                            {/* Agrega aquí más encabezados del tercer nivel */}
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <tr>
-                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.descripcion}</td>
-                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.cantidad}</td>
-                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.precio}</td>
-                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.costoInsumos}</td>
-                                            <td className="td_arbol_lv3">{nominaItem.cliente.producto.auxiliar}</td>
-                                            <td className="td_arbol_lv3">
-                                              {nominaItem.cliente.producto.promoDescuento}
-                                            </td>
-                                            {/* Agrega aquí más celdas del tercer nivel */}
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                    </td>
-                                  </tr>
-                                )}
-                            </tbody>
-                          </table>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-
-        {/* aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
-        <table className="table_arbol" border="1.5">
-          <thead>
-            <tr>
-              <th className="th_arbol"></th>
-              <th className="th_arbol">clave_empleado</th>
-              <th className="th_arbol">nombre</th>
-              <th className="th_arbol">colaborador</th>
-              <th className="th_arbol">puesto</th>
-              <th className="th_arbol">ventaServicio</th>
-              <th className="th_arbol">descProducto</th>
-              <th className="th_arbol">com35Servicio</th>
-              <th className="th_arbol">desc5</th>
-              <th className="th_arbol">descNominaProducto</th>
-              <th className="th_arbol">com10Producto</th>
-              <th className="th_arbol">com5Estilista</th>
-              <th className="th_arbol">sueldoBase</th>
-              <th className="th_arbol">totalPagar</th>
-
-              {/* Agrega aquí más encabezados según sea necesario */}
-            </tr>
-          </thead>
-          <tbody>
-            {parsedData.map((item) => (
-              <React.Fragment key={item.json.nomina[0].colaborador}>
-                <tr className="expanded-row">
-                  <td className="td_arbol">
-                    <CgChevronDoubleDown onClick={() => handleExpand(item.json.nomina[0].colaborador)} />
-                  </td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.clave_empleado}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.nombre}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.colaborador}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.puesto}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.ventaServicio}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.descProducto}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.com35Servicio}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.desc5}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.descNominaProducto}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.com10Producto}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.com5Estilista}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.sueldoBase}</td>
-                  <td className="td_arbol">{item.json?.nomina[0]?.totalPagar}</td>
-                  {/* Agrega aquí más celdas según sea necesario */}
-                </tr>
-                {expandedRows[item.json.nomina[0].colaborador] && item.json?.nomina && (
-                  <tr>
-                    <td colSpan="6">
-                      <table className="nested-table">
-                        <thead>
-                          <tr>
-                            <th className="th_arbol_lv2"></th>
-                            <th className="th_arbol_lv2">idempleado</th>
-                            <th className="th_arbol_lv2">fecha</th>
-                            <th className="th_arbol_lv2">cliente</th>
-                            <th className="th_arbol_lv2">venta_Total</th>
-                            <th className="th_arbol_lv2">medioDePago</th>
-                            {/* Agrega aquí más encabezados del segundo nivel */}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {item.json?.nomina?.map((nominaItem, clienteIndex) => (
-                            <React.Fragment key={clienteIndex}>
-                              <tr>
-                                <td className="td_arbol_lv2">
-                                  <CgChevronDoubleDown onClick={() => handleExpand(item.id + clienteIndex)} />
-                                </td>
-                                <td className="td_arbol_lv2">{nominaItem.cliente?.idempleado}</td>
-                                <td className="td_arbol_lv2">{nominaItem.cliente?.fecha}</td>
-                                <td className="td_arbol_lv2">{nominaItem.cliente?.cliente}</td>
-                                <td className="td_arbol_lv2">{nominaItem.cliente?.venta_Total}</td>
-                                <td className="td_arbol_lv2">{nominaItem.cliente?.medioDePago}</td>
-                                {/* Agrega aquí más celdas del segundo nivel */}
-                              </tr>
-                              {expandedRows[item.id + clienteIndex] && (
-                                <tr>
-                                  <td colSpan="6">
-                                    <table className="nested-table">
-                                      <thead>
-                                        <tr>
-                                          <th className="th_arbol_lv3"></th>
-                                          <th className="th_arbol_lv3">descripcion</th>
-                                          <th className="th_arbol_lv3">cantidad</th>
-                                          <th className="th_arbol_lv3">precio</th>
-                                          <th className="th_arbol_lv3">costoInsumos</th>
-                                          <th className="th_arbol_lv3">auxiliar</th>
-                                          <th className="th_arbol_lv3">promoDescuento</th>
-
-                                          {/* Agrega aquí más encabezados del tercer nivel */}
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.descripcion}</td>
-                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.cantidad}</td>
-                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.precio}</td>
-                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.costoInsumos}</td>
-                                          <td className="td_arbol_lv3">{nominaItem.cliente.producto?.auxiliar}</td>
-                                          <td className="td_arbol_lv3">
-                                            {nominaItem.cliente.producto?.promoDescuento}
-                                          </td>
-
-                                          {/* Agrega aquí más celdas del tercer nivel */}
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </td>
-                                </tr>
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
+      
+        <TablaPrincipal groupedData={groupedData} handleExpand={handleExpand} expandedRows={expandedRows} />
       </Container>
     </>
   );
