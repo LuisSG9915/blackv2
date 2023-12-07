@@ -476,7 +476,6 @@ function reporteArbol() {
         setTablaData(responseData);
       })
       .catch((error) => console.error("Error al obtener los datos:", error));
-    alert(JSON.stringify(tablaData, null, 2));
   };
 
   const handleExportData = (descripcionReporte: string) => {
@@ -1079,19 +1078,38 @@ function reporteArbol() {
 
   const TablaAnidada: React.FC<{ data: NominaItem[] }> = ({ data }) => {
     const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
-    const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
-    const handleShowProducts = (producto: any, key: string) => {
-      console.log("Mostrar productos", producto);
-
-      // Cambia el estado para mostrar la tabla de productos de la fila específica.
+    const handleShowProducts = (productos: any[], key: string) => {
       setExpandedRows((prev) => ({
         ...prev,
-        [key]: !prev[key], // Alternar el estado de visibilidad para la fila específica.
+        [key]: !prev[key],
       }));
-
-      setSelectedProduct(producto);
     };
+
+    const exportToExcel = (cliente: string) => {
+      // Implementa la lógica para exportar los productos del cliente a Excel
+      console.log(`Exportando a Excel para el cliente: ${cliente}`);
+    };
+
+    const groupedData = data.reduce((groups, nominaItem) => {
+      const cliente = nominaItem.cliente; // Acceder al objeto cliente directamente
+      const key = cliente.cliente; // Usar el nombre del cliente como clave
+
+      const existingGroup = groups.find((group) => group.key === key);
+
+      if (existingGroup) {
+        existingGroup.items.push(cliente.producto);
+      } else {
+        groups.push({
+          key: key,
+          items: [cliente.producto],
+          expanded: false,
+          cliente: cliente, // Puedes incluir el objeto cliente completo si lo necesitas
+        });
+      }
+
+      return groups;
+    }, []);
 
     return (
       <table border="1">
@@ -1103,27 +1121,52 @@ function reporteArbol() {
             <th className="th_arbol_lv2">cliente</th>
             <th className="th_arbol_lv2">venta_Total</th>
             <th className="th_arbol_lv2">medioDePago</th>
+            {/* Otros campos de cliente que desees mostrar */}
           </tr>
         </thead>
         <tbody>
-          {data.map((nominaItem, index) => (
-            <React.Fragment key={index}>
+          {groupedData.map((group) => (
+            <React.Fragment key={group.key}>
               <tr>
                 <td className="td_arbol_lv2">
-                  <button onClick={() => handleShowProducts(nominaItem.cliente.producto, `${index}`)}>
-                    Mostrar Productos
-                  </button>
+                  <button onClick={() => handleShowProducts(group.items, `${group.key}`)}>Mostrar Productos</button>
                 </td>
-                <td className="td_arbol_lv2">{nominaItem.cliente.idempleado}</td>
-                <td className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
-                <td className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
-                <td className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
-                <td className="td_arbol_lv2">{nominaItem.cliente.medioDePago}</td>
+                <td className="td_arbol_lv2">{group.key}</td>
+                <td className="td_arbol_lv2">{group.cliente.fecha}</td>
+                <td className="td_arbol_lv2">{group.cliente.cliente}</td>
+                <td className="td_arbol_lv2">{group.cliente.venta_Total}</td>
+                <td className="td_arbol_lv2">{group.cliente.medioDePago}</td>
               </tr>
-              {expandedRows[`${index}`] && (
-                <tr key={`productos-${index}`}>
-                  <td colSpan={6}>
-                    <TablaProductos productos={selectedProduct} />
+              {expandedRows[`${group.key}`] && (
+                <tr key={`productos-${group.key}`}>
+                  <td colSpan={10}>
+                    {/* Ajusta según tus necesidades específicas */}
+                    <table border="1">
+                      <thead>
+                        <tr>
+                          <th className="th_arbol_lv3">Descripción</th>
+                          <th className="th_arbol_lv3">Cantidad</th>
+                          <th className="th_arbol_lv3">Precio</th>
+                          <th className="th_arbol_lv3">Costo Insumos</th>
+                          <th className="th_arbol_lv3">Auxiliar</th>
+                          <th className="th_arbol_lv3">Promo Descuento</th>
+                          {/* Otros encabezados de productos según tus necesidades */}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.items.map((producto, index) => (
+                          <tr key={`producto-${index}`}>
+                            <td className="td_arbol_lv3">{producto.descripcion}</td>
+                            <td className="td_arbol_lv3">{producto.cantidad}</td>
+                            <td className="td_arbol_lv3">{producto.precio}</td>
+                            <td className="td_arbol_lv3">{producto.costoInsumos}</td>
+                            <td className="td_arbol_lv3">{producto.auxiliar}</td>
+                            <td className="td_arbol_lv3">{producto.promoDescuento}</td>
+                            {/* Otros datos de productos según tus necesidades */}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </td>
                 </tr>
               )}
@@ -1133,6 +1176,63 @@ function reporteArbol() {
       </table>
     );
   };
+
+  // const TablaAnidada: React.FC<{ data: NominaItem[] }> = ({ data }) => {
+  //   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
+  //   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+
+  //   const handleShowProducts = (producto: any, key: string) => {
+  //     console.log("Mostrar productos", producto);
+
+  //     // Cambia el estado para mostrar la tabla de productos de la fila específica.
+  //     setExpandedRows((prev) => ({
+  //       ...prev,
+  //       [key]: !prev[key], // Alternar el estado de visibilidad para la fila específica.
+  //     }));
+
+  //     setSelectedProduct(producto);
+  //   };
+
+  //   return (
+  //     <table border="1">
+  //       <thead>
+  //         <tr>
+  //           <th className="th_arbol_lv2"></th>
+  //           <th className="th_arbol_lv2">idempleado</th>
+  //           <th className="th_arbol_lv2">fecha</th>
+  //           <th className="th_arbol_lv2">cliente</th>
+  //           <th className="th_arbol_lv2">venta_Total</th>
+  //           <th className="th_arbol_lv2">medioDePago</th>
+  //         </tr>
+  //       </thead>
+  //       <tbody>
+  //         {data.map((nominaItem, index) => (
+  //           <React.Fragment key={index}>
+  //             <tr>
+  //               <td className="td_arbol_lv2">
+  //                 <button onClick={() => handleShowProducts(nominaItem.cliente.producto, `${index}`)}>
+  //                   Mostrar Productos
+  //                 </button>
+  //               </td>
+  //               <td className="td_arbol_lv2">{nominaItem.cliente.idempleado}</td>
+  //               <td className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
+  //               <td className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
+  //               <td className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
+  //               <td className="td_arbol_lv2">{nominaItem.cliente.medioDePago}</td>
+  //             </tr>
+  //             {expandedRows[`${index}`] && (
+  //               <tr key={`productos-${index}`}>
+  //                 <td colSpan={6}>
+  //                   <TablaProductos productos={selectedProduct} />
+  //                 </td>
+  //               </tr>
+  //             )}
+  //           </React.Fragment>
+  //         ))}
+  //       </tbody>
+  //     </table>
+  //   );
+  // };
 
   // const TablaAnidada = ({ data }) => (
   //   <table border="1">
