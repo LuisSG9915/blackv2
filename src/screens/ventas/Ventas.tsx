@@ -921,11 +921,11 @@ const Ventas = () => {
     await jezaApi
       .post(`sp_T_ImpresionesAdd?sp=${sp}&idUsuario=${dataUsuarios2[0]?.id}&idSucursal=${dataUsuarios2[0]?.sucursal}&observaciones=observaciones`)
       .then(() => {
-        Swal.fire({
-          icon: "success",
-          text: "Ticket ejecutada correctamente",
-          confirmButtonColor: "#3085d6",
-        });
+        // Swal.fire({
+        //   icon: "success",
+        //   text: "Ticket ejecutada correctamente",
+        //   confirmButtonColor: "#3085d6",
+        // });
       })
       .catch((e) => console.log(e));
   };
@@ -962,7 +962,6 @@ const Ventas = () => {
                 if (result.isConfirmed) {
                   const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
                   const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-
                   Swal.fire({
                     title: "ADVERTENCIA",
                     text: `¿Su correo es ${correo[0].email}?`,
@@ -1037,7 +1036,7 @@ const Ventas = () => {
                   });
                 } else {
                   ticketVta({ folio: temp });
-                  setModalTicket(true);
+                  // setModalTicket(true);
                 }
               });
             });
@@ -1167,7 +1166,12 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
-          referencia: Number(elemento.formaPago) === 94 || Number(elemento.formaPago) === 245  ? anticipoIdentificador : elemento.referencia ? elemento.referencia : "Efectivo",
+          referencia:
+            Number(elemento.formaPago) === 94 || Number(elemento.formaPago) === 245
+              ? anticipoIdentificador
+              : elemento.referencia
+              ? elemento.referencia
+              : "Efectivo",
           importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
@@ -2200,8 +2204,9 @@ const Ventas = () => {
                 // Validar que el total de pagos sea mayor o igual al total de venta
                 if (parseFloat(formPago.totalPago) >= totalVenta) {
                   // El total de pagos es mayor o igual al total de venta, continuar con el proceso de cobro
-                  setValidacion(true);
-                  fetchVentas();
+                  // setValidacion(true);
+                  // fetchVentas();
+                  setValidacion(false);
 
                   setModalOpenPago(false);
                   setDataTemporal({ Cve_cliente: 0 });
