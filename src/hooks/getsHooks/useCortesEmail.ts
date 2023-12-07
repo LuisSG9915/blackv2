@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
-import { CorteA, CorteB, CorteC, CorteD, CorteE} from "../../models/CortesEmail";
+import { CorteA, CorteB, CorteC, CorteD, CorteE, CorteF} from "../../models/CortesEmail";
 import { format } from "date-fns-tz";
 
 interface Props {
@@ -16,6 +16,8 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const [dataCorteEmailC, setDataCorteEmailC] = useState<CorteC[]>([]);
   const [dataCorteEmailD, setDataCorteEmailD] = useState<CorteD[]>([]);
   const [dataCorteEmailE, setDataCorteEmailE] = useState<CorteE[]>([]);
+  const [dataCorteEmailF, setDataCorteEmailF] = useState<CorteF[]>([]);
+
 
 
   const [ColumnasA, setColumnasA] = useState([]);
@@ -23,6 +25,7 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
   const [ColumnasC, setColumnasC] = useState([]);
   const [ColumnasD, setColumnasD] = useState([]);
   const [ColumnasE, setColumnasE] = useState([]);
+  const [ColumnasF, setColumnasF] = useState([]);
   const currentDate = new Date();
   const zonaHoraria = "America/Mexico_City";
 
@@ -120,8 +123,25 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
     }
   };
 
-
-
+ const fetchCorteF = async () => {
+    try {
+      const response: AxiosResponse<any[]> = await jezaApi.get(
+        `/sp_reporteCorte4?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd", { timeZone: zonaHoraria })}`
+      );
+      setDataCorteEmailF(response.data);
+      if (response.data.length > 0) {
+        const columnKeys = Object.keys(response.data[0]);
+        const columns = columnKeys.map((key) => ({
+          accessorKey: key,
+          header: key,
+          flex: 1,
+        }));
+        setColumnasF(columns);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     if (sucursal > 0) {
@@ -130,8 +150,9 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
       fetchCorteC();
       fetchCorteD();
       fetchCorteE();
+      fetchCorteF();
     }
   }, [sucursal, fecha]);
 
-  return { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, dataCorteEmailE, ColumnasA, ColumnasB, ColumnasC, ColumnasD, ColumnasE, fetchCorteA };
+  return { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, dataCorteEmailE, dataCorteEmailF, ColumnasA, ColumnasB, ColumnasC, ColumnasD, ColumnasE,  ColumnasF, fetchCorteA };
 };

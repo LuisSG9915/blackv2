@@ -79,6 +79,7 @@ import { Provider } from "react-redux";
 import Example2 from "./screens/EXAMPLE/Example2";
 import { store } from "./screens/EXAMPLE/app/store";
 import { QueryClient, QueryClientProvider } from "react-query";
+import CifraSucursal from "./screens/cifrasuc/CifraSucursal";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -345,6 +346,10 @@ const router = createBrowserRouter([
   {
     path: "/Metas",
     element: <Metas />,
+  },
+  {
+    path: "/CifraSucursal",
+    element: <CifraSucursal />,
   },
   {
     path: "/BluetoothPrint",
