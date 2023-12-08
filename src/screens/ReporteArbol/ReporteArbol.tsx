@@ -1048,18 +1048,18 @@ function reporteArbol() {
                       {expandedRows[`${group.key}-${index}`] ? "▼" : "▶"} {group.key}
                     </button>
                   </td>
-                  <td className="td_arbol">{group.items[0].nombre}</td>
-                  <td className="td_arbol">{group.items[0].colaborador}</td>
-                  <td className="td_arbol">{group.items[0].puesto}</td>
-                  <td className="td_arbol">{group.items[0].ventaServicio}</td>
-                  <td className="td_arbol">{group.items[0].descProducto}</td>
-                  <td className="td_arbol">{group.items[0].com35Servicio}</td>
-                  <td className="td_arbol">{group.items[0].desc5}</td>
-                  <td className="td_arbol">{group.items[0].descNominaProducto}</td>
-                  <td className="td_arbol">{group.items[0].com10Producto}</td>
-                  <td className="td_arbol">{group.items[0].com5Estilista}</td>
-                  <td className="td_arbol">{group.items[0].sueldoBase}</td>
-                  <td className="td_arbol">{group.items[0].totalPagar}</td>
+                  <td className="td_arbol">{group.items[0]?.nombre}</td>
+                  <td className="td_arbol">{group.items[0]?.colaborador}</td>
+                  <td className="td_arbol">{group.items[0]?.puesto}</td>
+                  <td className="td_arbol">{group.items[0]?.ventaServicio}</td>
+                  <td className="td_arbol">{group.items[0]?.descProducto}</td>
+                  <td className="td_arbol">{group.items[0]?.com35Servicio}</td>
+                  <td className="td_arbol">{group.items[0]?.desc5}</td>
+                  <td className="td_arbol">{group.items[0]?.descNominaProducto}</td>
+                  <td className="td_arbol">{group.items[0]?.com10Producto}</td>
+                  <td className="td_arbol">{group.items[0]?.com5Estilista}</td>
+                  <td className="td_arbol">{group.items[0]?.sueldoBase}</td>
+                  <td className="td_arbol">{group.items[0]?.totalPagar}</td>
                 </tr>
                 {expandedRows[`${group.key}-${index}`] && (
                   <tr>
@@ -1131,11 +1131,12 @@ function reporteArbol() {
                 <td className="td_arbol_lv2">
                   <button onClick={() => handleShowProducts(group.items, `${group.key}`)}>Mostrar Productos</button>
                 </td>
-                <td className="td_arbol_lv2">{group.key}</td>
-                <td className="td_arbol_lv2">{group.cliente.fecha}</td>
-                <td className="td_arbol_lv2">{group.cliente.cliente}</td>
-                <td className="td_arbol_lv2">{group.cliente.venta_Total}</td>
-                <td className="td_arbol_lv2">{group.cliente.medioDePago}</td>
+
+                <td className="td_arbol_lv2">{group.cliente?.idempleado}</td>
+                <td className="td_arbol_lv2">{group.cliente?.fecha}</td>
+                <td className="td_arbol_lv2">{group.cliente?.cliente}</td>
+                <td className="td_arbol_lv2">{group.cliente?.venta_Total}</td>
+                <td className="td_arbol_lv2">{group.cliente?.medioDePago}</td>
               </tr>
               {expandedRows[`${group.key}`] && (
                 <tr key={`productos-${group.key}`}>
@@ -1156,12 +1157,12 @@ function reporteArbol() {
                       <tbody>
                         {group.items.map((producto, index) => (
                           <tr key={`producto-${index}`}>
-                            <td className="td_arbol_lv3">{producto.descripcion}</td>
-                            <td className="td_arbol_lv3">{producto.cantidad}</td>
-                            <td className="td_arbol_lv3">{producto.precio}</td>
-                            <td className="td_arbol_lv3">{producto.costoInsumos}</td>
-                            <td className="td_arbol_lv3">{producto.auxiliar}</td>
-                            <td className="td_arbol_lv3">{producto.promoDescuento}</td>
+                            <td className="td_arbol_lv3">{producto?.descripcion}</td>
+                            <td className="td_arbol_lv3">{producto?.cantidad}</td>
+                            <td className="td_arbol_lv3">{producto?.precio}</td>
+                            <td className="td_arbol_lv3">{producto?.costoInsumos}</td>
+                            <td className="td_arbol_lv3">{producto?.auxiliar}</td>
+                            <td className="td_arbol_lv3">{producto?.promoDescuento}</td>
                             {/* Otros datos de productos según tus necesidades */}
                           </tr>
                         ))}
