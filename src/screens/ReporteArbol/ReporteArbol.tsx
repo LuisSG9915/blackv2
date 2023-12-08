@@ -300,7 +300,7 @@ function reporteArbol() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepNom_view`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -1093,16 +1093,16 @@ function reporteArbol() {
 
     const groupedData = data.reduce((groups, nominaItem) => {
       const cliente = nominaItem.cliente; // Acceder al objeto cliente directamente
-      const key = cliente.cliente; // Usar el nombre del cliente como clave
+      const key = cliente?.cliente; // Usar el nombre del cliente como clave
 
       const existingGroup = groups.find((group) => group.key === key);
 
       if (existingGroup) {
-        existingGroup.items.push(cliente.producto);
+        existingGroup.items.push(cliente?.producto);
       } else {
         groups.push({
           key: key,
-          items: [cliente.producto],
+          items: [cliente?.producto],
           expanded: false,
           cliente: cliente, // Puedes incluir el objeto cliente completo si lo necesitas
         });
