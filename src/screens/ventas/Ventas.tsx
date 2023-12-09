@@ -1103,7 +1103,8 @@ const Ventas = () => {
     setDataArregloTemporal({
       ...dataArregloTemporal,
       importe: params.row.importe * -1,
-      referencia: params.row.referencia ? params.row.referencia.toString() : ".",
+      // referencia: params.row.referencia ? params.row.referencia.toString() : ".",
+      referencia: params.row.id,
     });
     setAnticipoId(Number(params.row.id));
     setAnticipoIdentificador(Number(params.row.id));
@@ -1165,13 +1166,13 @@ const Ventas = () => {
           fecha: new Date(),
           sucursal: dataUsuarios2[0]?.sucursal,
           tipo_pago: tempIdPago,
-          referencia:
-            Number(elemento.formaPago) === 94 || Number(elemento.formaPago) === 245
-              ? anticipoIdentificador
-              : elemento.referencia
-              ? elemento.referencia
-              : "Efectivo",
-          // referencia: elemento.referencia,
+          // referencia:
+          // Number(elemento.formaPago) === 94 || Number(elemento.formaPago) === 245
+          //   ? anticipoIdentificador
+          //   : elemento.referencia
+          //   ? elemento.referencia
+          //   : "Efectivo",
+          referencia: elemento.referencia,
           importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
