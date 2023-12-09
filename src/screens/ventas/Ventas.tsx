@@ -508,11 +508,11 @@ const Ventas = () => {
   // SUMATORIAS
   useEffect(() => {
     const totalCobro = Number(formPago.anticipos) + Number(formPago.efectivo) + Number(formPago.tc);
-    const totalCambio = Number(totalCobro.toLocaleString(2)) - Number(total.toLocaleString(2));
+    const totalCambio = Number(totalCobro) - Number(total);
     setFormPago((prev) => ({
       ...prev,
-      totalPago: totalCobro,
-      cambioCliente: Number(totalCambio),
+      totalPago: totalCobro.toFixed(2),
+      cambioCliente: Number(totalCambio.toFixed(2)),
     }));
     console.log({ formPago });
   }, [formPago.anticipos, formPago.efectivo, formPago.tc]);
@@ -796,8 +796,6 @@ const Ventas = () => {
 
   useEffect(() => {
     let totalPorProductoNormal = 0;
-    let totalPorProductoOld = 0;
-    let totalPorProductoValidacion = 0;
     if (!validacion) {
       setDataVentasOld(dataVentas);
     } else {
@@ -807,7 +805,7 @@ const Ventas = () => {
       totalPorProductoNormal += producto.Precio * producto.Cant_producto - producto.Precio * producto.Cant_producto * producto.Descuento;
     });
 
-    setTotal(Number(totalPorProductoNormal.toLocaleString(2)));
+    setTotal(Number(totalPorProductoNormal.toFixed(2)));
     setTiempo(dataVentas.reduce((total, objeto) => total + (objeto.tiempo ?? 0), 0));
   }, [dataVentas]);
 
@@ -1173,6 +1171,7 @@ const Ventas = () => {
               : elemento.referencia
               ? elemento.referencia
               : "Efectivo",
+          // referencia: elemento.referencia,
           importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
