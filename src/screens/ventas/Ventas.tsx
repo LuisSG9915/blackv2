@@ -1172,7 +1172,7 @@ const Ventas = () => {
           //   : elemento.referencia
           //   ? elemento.referencia
           //   : "Efectivo",
-          referencia: elemento.referencia,
+          referencia: elemento.referencia ? elemento.referencia : "Efectivo",
           importe: elemento.formaPago == 1 ? elemento.importe - formPago.cambioCliente : elemento.importe,
           usuario: dataUsuarios2[0]?.id,
         },
