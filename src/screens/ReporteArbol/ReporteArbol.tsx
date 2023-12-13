@@ -237,6 +237,7 @@ function reporteArbol() {
   const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
   const [showAreaInput, setShowAreaInput] = useState(false);
   const [showDeptoInput, setShowDeptoInput] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showf1, setShowf1] = useState(false);
   const [showf2, setShowf2] = useState(false);
   const [showAñoInput, setShowAñoInput] = useState(false);
@@ -462,7 +463,9 @@ function reporteArbol() {
 
       .get(queryString)
       .then((response) => response.data)
+
       .then((responseData) => {
+        setLoading(true);
         // Buscar el objeto que corresponde al valor seleccionado en el input select
         const selectedReporte = data.find((item) => item.metodoApi === reporte);
 
@@ -475,8 +478,10 @@ function reporteArbol() {
         }
         setReportes(responseData);
         setTablaData(responseData);
+        setLoading(false);
       })
       .catch((error) => console.error("Error al obtener los datos:", error));
+    setLoading(false);
   };
 
   const handleExportData = (descripcionReporte: string) => {
@@ -1043,6 +1048,13 @@ function reporteArbol() {
               </tr>
             </thead>
             <tbody>
+              {groupedData.length === 0 ? (
+                <tr>
+                  <td className="td1 centro" colSpan="13">
+                    No hay datos para mostrar
+                  </td>
+                </tr>
+              ) : null}
               {groupedData.map((group, index) => (
                 <React.Fragment key={group.key}>
                   <tr>
@@ -1054,16 +1066,17 @@ function reporteArbol() {
                     <td className="td1">{group.items[0]?.nombre}</td>
                     <td className="td1">{group.items[0]?.colaborador}</td>
                     <td className="td1">{group.items[0]?.puesto}</td>
-                    <td className="td1">${group.items[0]?.ventaServicio}</td>
-                    <td className="td1">${group.items[0]?.descProducto}</td>
-                    <td className="td1">${group.items[0]?.com35Servicio}</td>
-                    <td className="td1">${group.items[0]?.desc5}</td>
-                    <td className="td1">${group.items[0]?.descNominaProducto}</td>
-                    <td className="td1">${group.items[0]?.com10Producto}</td>
-                    <td className="td1">${group.items[0]?.com5Estilista}</td>
-                    <td className="td1">${group.items[0]?.sueldoBase}</td>
-                    <td className="td1">${group.items[0]?.totalPagar}</td>
+                    <td className="td1 derecha">${group.items[0]?.ventaServicio}</td>
+                    <td className="td1 derecha">${group.items[0]?.descProducto}</td>
+                    <td className="td1 derecha">${group.items[0]?.com35Servicio}</td>
+                    <td className="td1 derecha">${group.items[0]?.desc5}</td>
+                    <td className="td1 derecha">${group.items[0]?.descNominaProducto}</td>
+                    <td className="td1 derecha">${group.items[0]?.com10Producto}</td>
+                    <td className="td1 derecha">${group.items[0]?.com5Estilista}</td>
+                    <td className="td1 derecha">${group.items[0]?.sueldoBase}</td>
+                    <td className="td1 derecha">${group.items[0]?.totalPagar}</td>
                   </tr>
+
                   {expandedRows[`${group.key}-${index}`] && (
                     <tr>
                       <td colSpan="4">
@@ -1139,7 +1152,7 @@ function reporteArbol() {
                 <td className="td2">{group.cliente?.idempleado}</td>
                 <td className="td2">{group.cliente?.fecha}</td>
                 <td className="td2">{group.cliente?.cliente}</td>
-                <td className="td2">{group.cliente?.venta_Total}</td>
+                <td className="td2 derecha">${group.cliente?.venta_Total}</td>
                 <td className="td2">{group.cliente?.medioDePago}</td>
               </tr>
               {expandedRows[`${group.key}`] && (
@@ -1163,8 +1176,8 @@ function reporteArbol() {
                           <tr key={`producto-${index}`}>
                             <td className="td3">{producto?.descripcion}</td>
                             <td className="td3">{producto?.cantidad}</td>
-                            <td className="td3">{producto?.precio}</td>
-                            <td className="td3">{producto?.costoInsumos}</td>
+                            <td className="td3 derecha">${producto?.precio}</td>
+                            <td className="td3 derecha">${producto?.costoInsumos}</td>
                             <td className="td3">{producto?.auxiliar}</td>
                             <td className="td3">{producto?.promoDescuento}</td>
                             {/* Otros datos de productos según tus necesidades */}
@@ -1704,8 +1717,12 @@ function reporteArbol() {
             </AccordionBody>
           </AccordionItem>
         </UncontrolledAccordion>
-
-        <TablaPrincipal groupedData={groupedData} handleExpand={handleExpand} expandedRows={expandedRows} />
+        {loading ? (
+          // Mostrar el loader mientras se carga la información
+          <div className="loader">Cargando...</div>
+        ) : (
+          <TablaPrincipal groupedData={groupedData} handleExpand={handleExpand} expandedRows={expandedRows} />
+        )}
       </Container>
     </>
   );

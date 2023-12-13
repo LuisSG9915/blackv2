@@ -4,7 +4,7 @@ td {
   font-size: small;
   border: 1px solid rgb(255, 255, 255);
     padding: 1px;
-    text-align: right;
+   
     
   /* o el ancho que desees */
   /* ... otros estilos */
@@ -75,4 +75,10 @@ background-color: #cbe2f3cd;
   /* Ejemplo de tono claro para el encabezado terciario */
   color: #000;
   /* Texto oscuro para un contraste adecuado */
+}
+.derecha{
+  text-align: right;
+}
+.centro{
+  text-align: center;
 }
