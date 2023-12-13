@@ -1,92 +1,78 @@
-
-.table_arbol {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 200px;
+th,
+td {
+  width: 90px;
+  font-size: small;
+  border: 1px solid rgb(255, 255, 255);
+    padding: 1px;
+    text-align: right;
+    
+  /* o el ancho que desees */
+  /* ... otros estilos */
 }
 
-.th_arbol,
-.td_arbol {
-  border: 1px solid #dddddd;
-  padding: 4px;
-  text-align: left;
-}
-.th_arbol_lv2,
-.td_arbol_lv2 {
-  border: 1px solid #dddddd;
-  padding: 4px;
-  text-align: left;
-}
-.th_arbol_lv3,
-.td_arbol_lv3 {
-  border: 1px solid #dddddd;
-  padding: 4px;
-  text-align: left;
+
+
+.td2,
+.th2 {
+
 }
 
-.th_arbol {
-  background-color: #404358;
-  font-size: 12px;
-  color: white;
-}
-.th_arbol_lv2 {
-  background-color: #404358;
-  font-size: 12px;
-  color: white;
-}
-.th_arbol_lv3 {
-  background-color: #404358;
-  font-size: 10px;
-  color: white;
+
+.table-container {
+  max-height: 400px;
+  /* Ajusta la altura máxima según tus necesidades */
+  overflow-y: auto;
 }
 
-.td_arbol{
-  font-size: 15px;
-  font-weight: bold;
-  background-color: #6db388;
-}
-.td_arbol_lv2{
-  font-size: 12px;
-  font-weight: bold;
-  background-color: #f7f2c9;
-}
-.td_arbol_lv3{
-  font-size: 10px;
-  font-weight: bold;
-  background-color: #ffffff;
+/* Asegura que el encabezado permanezca fijo */
+.table-container table {
+  table-layout: fixed;
 }
 
-/* Estilos para botones y filas expandidas */
-.button_arbol {
-  width: 100%;
-  padding: 0px;
-  cursor: pointer;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
+/* Asegura que el encabezado sea visible al hacer scroll */
+/* Asegura que el encabezado principal sea visible al hacer scroll */
+.thPrincipal {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background-color: #35424a;
+  color: #fff;
 }
 
-.expanded-row {
-  background-color: #c8def7;
+.thSecundario {
+  position: sticky;
+  top: 40px;
+  z-index: 2;
+  background-color: #778899;
+  color: #fff;
 }
 
-/* Consulta de medios para responsividad */
-/* @media only screen and (max-width: 600px) { */
+.thTerciario {
+  position: sticky;
+  top: 60px;
+  /* Ajusta según sea necesario, asegúrate de que sea menor que 40px */
+  z-index: 1;
+  background-color: #d3d3d3;
+  color: #000;
+}
 
-  /* Oculta la cabecera de la tabla en dispositivos móviles */
-  /* .th_arbol { */
-    /* display: none; */
-  /* } */
+.td1 {
+  background-color: #8bb0bd;
+  /* Ejemplo de tono más oscuro que el encabezado principal */
+  color: #000000;
+  /* Texto en blanco para un contraste adecuado */
+}
 
-  /* Ajustes para filas en dispositivos móviles */
-  /* .td_arbol{ */
-    /* display: block; */
-    /* margin-bottom: 8px; */
-  /* } */
 
-  /* Estilos adicionales para botones en dispositivos móviles */
-  /* .button_arbol { */
-    /* padding: 10px; */
-  /* } */
-/* }  */
+.td2 {
+  background-color: #99aabb;
+  /* Ejemplo de tono más claro que el encabezado secundario */
+  color: #000;
+  /* Texto oscuro para un contraste adecuado */
+}
+.td3{
+background-color: #cbe2f3cd;
+  /* Ejemplo de tono claro para el encabezado terciario */
+  color: #000;
+  /* Texto oscuro para un contraste adecuado */
+}

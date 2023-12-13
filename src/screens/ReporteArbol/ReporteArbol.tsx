@@ -21,6 +21,7 @@ import {
   ModalFooter,
   ModalHeader,
   Row,
+  Table,
   UncontrolledAccordion,
 } from "reactstrap";
 import { AiFillFileExcel, AiOutlineFileExcel, AiOutlineFileText } from "react-icons/ai";
@@ -1019,60 +1020,63 @@ function reporteArbol() {
     };
 
     return (
-      <div>
+      <>
         <Button onClick={exportToExcel}>Exportar a Excel</Button>
-        <table border="1" ref={tableRef}>
-          <thead>
-            <tr>
-              <th className="th_arbol">Clave Empleado</th>
-              <th className="th_arbol">Nombre</th>
-              <th className="th_arbol">Colaborador</th>
-              <th className="th_arbol">puesto</th>
-              <th className="th_arbol">ventaServicio</th>
-              <th className="th_arbol">descProducto</th>
-              <th className="th_arbol">com35Servicio</th>
-              <th className="th_arbol">desc5</th>
-              <th className="th_arbol">descNominaProducto</th>
-              <th className="th_arbol">com10Producto</th>
-              <th className="th_arbol">com5Estilista</th>
-              <th className="th_arbol">sueldoBase</th>
-              <th className="th_arbol">totalPagar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groupedData.map((group, index) => (
-              <React.Fragment key={group.key}>
-                <tr>
-                  <td className="td_arbol">
-                    <button onClick={() => handleExpand(group.key, index)}>
-                      {expandedRows[`${group.key}-${index}`] ? "▼" : "▶"} {group.key}
-                    </button>
-                  </td>
-                  <td className="td_arbol">{group.items[0]?.nombre}</td>
-                  <td className="td_arbol">{group.items[0]?.colaborador}</td>
-                  <td className="td_arbol">{group.items[0]?.puesto}</td>
-                  <td className="td_arbol">{group.items[0]?.ventaServicio}</td>
-                  <td className="td_arbol">{group.items[0]?.descProducto}</td>
-                  <td className="td_arbol">{group.items[0]?.com35Servicio}</td>
-                  <td className="td_arbol">{group.items[0]?.desc5}</td>
-                  <td className="td_arbol">{group.items[0]?.descNominaProducto}</td>
-                  <td className="td_arbol">{group.items[0]?.com10Producto}</td>
-                  <td className="td_arbol">{group.items[0]?.com5Estilista}</td>
-                  <td className="td_arbol">{group.items[0]?.sueldoBase}</td>
-                  <td className="td_arbol">{group.items[0]?.totalPagar}</td>
-                </tr>
-                {expandedRows[`${group.key}-${index}`] && (
+        <div className="table-container">
+          <table ref={tableRef}>
+            {/* border="1" */}
+            <thead className="thPrincipal">
+              <tr>
+                <th></th>
+                <th>Nombre</th>
+                <th>Colaborador</th>
+                <th>puesto</th>
+                <th>venta Servicio</th>
+                <th>desc Producto</th>
+                <th>com35 Servicio</th>
+                <th>desc5</th>
+                <th>descNomina Producto</th>
+                <th>com10 Producto</th>
+                <th>com5 Estilista</th>
+                <th>sueldo Base</th>
+                <th>totalPagar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {groupedData.map((group, index) => (
+                <React.Fragment key={group.key}>
                   <tr>
-                    <td colSpan="3">
-                      <TablaAnidada data={group.items} />
+                    <td className="td1">
+                      <button onClick={() => handleExpand(group.key, index)}>
+                        {expandedRows[`${group.key}-${index}`] ? "▼" : "▶"} {group.key}
+                      </button>
                     </td>
+                    <td className="td1">{group.items[0]?.nombre}</td>
+                    <td className="td1">{group.items[0]?.colaborador}</td>
+                    <td className="td1">{group.items[0]?.puesto}</td>
+                    <td className="td1">${group.items[0]?.ventaServicio}</td>
+                    <td className="td1">${group.items[0]?.descProducto}</td>
+                    <td className="td1">${group.items[0]?.com35Servicio}</td>
+                    <td className="td1">${group.items[0]?.desc5}</td>
+                    <td className="td1">${group.items[0]?.descNominaProducto}</td>
+                    <td className="td1">${group.items[0]?.com10Producto}</td>
+                    <td className="td1">${group.items[0]?.com5Estilista}</td>
+                    <td className="td1">${group.items[0]?.sueldoBase}</td>
+                    <td className="td1">${group.items[0]?.totalPagar}</td>
                   </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  {expandedRows[`${group.key}-${index}`] && (
+                    <tr>
+                      <td colSpan="4">
+                        <TablaAnidada data={group.items} />
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
     );
   };
 
@@ -1112,15 +1116,15 @@ function reporteArbol() {
     }, []);
 
     return (
-      <table border="1">
-        <thead>
+      <table>
+        <thead className="thSecundario">
           <tr>
-            <th className="th_arbol_lv2"></th>
-            <th className="th_arbol_lv2">idempleado</th>
-            <th className="th_arbol_lv2">fecha</th>
-            <th className="th_arbol_lv2">cliente</th>
-            <th className="th_arbol_lv2">venta_Total</th>
-            <th className="th_arbol_lv2">medioDePago</th>
+            <th></th>
+            <th className="th2">idempleado</th>
+            <th className="th2">fecha</th>
+            <th className="th2">cliente</th>
+            <th className="th2">venta_Total</th>
+            <th className="th2">medioDePago</th>
             {/* Otros campos de cliente que desees mostrar */}
           </tr>
         </thead>
@@ -1128,41 +1132,41 @@ function reporteArbol() {
           {groupedData.map((group) => (
             <React.Fragment key={group.key}>
               <tr>
-                <td className="td_arbol_lv2">
-                  <button onClick={() => handleShowProducts(group.items, `${group.key}`)}>Mostrar Productos</button>
+                <td className="td2">
+                  <button onClick={() => handleShowProducts(group.items, `${group.key}`)}>detalles</button>
                 </td>
 
-                <td className="td_arbol_lv2">{group.cliente?.idempleado}</td>
-                <td className="td_arbol_lv2">{group.cliente?.fecha}</td>
-                <td className="td_arbol_lv2">{group.cliente?.cliente}</td>
-                <td className="td_arbol_lv2">{group.cliente?.venta_Total}</td>
-                <td className="td_arbol_lv2">{group.cliente?.medioDePago}</td>
+                <td className="td2">{group.cliente?.idempleado}</td>
+                <td className="td2">{group.cliente?.fecha}</td>
+                <td className="td2">{group.cliente?.cliente}</td>
+                <td className="td2">{group.cliente?.venta_Total}</td>
+                <td className="td2">{group.cliente?.medioDePago}</td>
               </tr>
               {expandedRows[`${group.key}`] && (
                 <tr key={`productos-${group.key}`}>
                   <td colSpan={10}>
                     {/* Ajusta según tus necesidades específicas */}
-                    <table border="1">
-                      <thead>
+                    <table>
+                      <thead className="thTerciario">
                         <tr>
-                          <th className="th_arbol_lv3">Descripción</th>
-                          <th className="th_arbol_lv3">Cantidad</th>
-                          <th className="th_arbol_lv3">Precio</th>
-                          <th className="th_arbol_lv3">Costo Insumos</th>
-                          <th className="th_arbol_lv3">Auxiliar</th>
-                          <th className="th_arbol_lv3">Promo Descuento</th>
+                          <th>Descripción</th>
+                          <th>Cantidad</th>
+                          <th>Precio</th>
+                          <th>Costo Insumos</th>
+                          <th>Auxiliar</th>
+                          <th>Promo Descuento</th>
                           {/* Otros encabezados de productos según tus necesidades */}
                         </tr>
                       </thead>
                       <tbody>
                         {group.items.map((producto, index) => (
                           <tr key={`producto-${index}`}>
-                            <td className="td_arbol_lv3">{producto?.descripcion}</td>
-                            <td className="td_arbol_lv3">{producto?.cantidad}</td>
-                            <td className="td_arbol_lv3">{producto?.precio}</td>
-                            <td className="td_arbol_lv3">{producto?.costoInsumos}</td>
-                            <td className="td_arbol_lv3">{producto?.auxiliar}</td>
-                            <td className="td_arbol_lv3">{producto?.promoDescuento}</td>
+                            <td className="td3">{producto?.descripcion}</td>
+                            <td className="td3">{producto?.cantidad}</td>
+                            <td className="td3">{producto?.precio}</td>
+                            <td className="td3">{producto?.costoInsumos}</td>
+                            <td className="td3">{producto?.auxiliar}</td>
+                            <td className="td3">{producto?.promoDescuento}</td>
                             {/* Otros datos de productos según tus necesidades */}
                           </tr>
                         ))}
@@ -1173,128 +1177,6 @@ function reporteArbol() {
               )}
             </React.Fragment>
           ))}
-        </tbody>
-      </table>
-    );
-  };
-
-  // const TablaAnidada: React.FC<{ data: NominaItem[] }> = ({ data }) => {
-  //   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
-  //   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
-
-  //   const handleShowProducts = (producto: any, key: string) => {
-  //     console.log("Mostrar productos", producto);
-
-  //     // Cambia el estado para mostrar la tabla de productos de la fila específica.
-  //     setExpandedRows((prev) => ({
-  //       ...prev,
-  //       [key]: !prev[key], // Alternar el estado de visibilidad para la fila específica.
-  //     }));
-
-  //     setSelectedProduct(producto);
-  //   };
-
-  //   return (
-  //     <table border="1">
-  //       <thead>
-  //         <tr>
-  //           <th className="th_arbol_lv2"></th>
-  //           <th className="th_arbol_lv2">idempleado</th>
-  //           <th className="th_arbol_lv2">fecha</th>
-  //           <th className="th_arbol_lv2">cliente</th>
-  //           <th className="th_arbol_lv2">venta_Total</th>
-  //           <th className="th_arbol_lv2">medioDePago</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {data.map((nominaItem, index) => (
-  //           <React.Fragment key={index}>
-  //             <tr>
-  //               <td className="td_arbol_lv2">
-  //                 <button onClick={() => handleShowProducts(nominaItem.cliente.producto, `${index}`)}>
-  //                   Mostrar Productos
-  //                 </button>
-  //               </td>
-  //               <td className="td_arbol_lv2">{nominaItem.cliente.idempleado}</td>
-  //               <td className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
-  //               <td className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
-  //               <td className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
-  //               <td className="td_arbol_lv2">{nominaItem.cliente.medioDePago}</td>
-  //             </tr>
-  //             {expandedRows[`${index}`] && (
-  //               <tr key={`productos-${index}`}>
-  //                 <td colSpan={6}>
-  //                   <TablaProductos productos={selectedProduct} />
-  //                 </td>
-  //               </tr>
-  //             )}
-  //           </React.Fragment>
-  //         ))}
-  //       </tbody>
-  //     </table>
-  //   );
-  // };
-
-  // const TablaAnidada = ({ data }) => (
-  //   <table border="1">
-  //     <thead>
-  //       <tr>
-  //         <th className="th_arbol_lv2">idempleado</th>
-  //         <th className="th_arbol_lv2">fecha</th>
-  //         <th className="th_arbol_lv2">cliente</th>
-  //         <th className="th_arbol_lv2">venta_Total</th>
-  //         <th className="th_arbol_lv2">medioDePago</th>
-  //       </tr>
-  //     </thead>
-  //     <tbody>
-  //       {data.map((nominaItem, index) => (
-  //         <React.Fragment key={index}>
-  //           <tr>
-  //             <td className="td_arbol_lv2">{nominaItem.cliente.idempleado}</td>
-  //             <td className="td_arbol_lv2">{nominaItem.cliente.fecha}</td>
-  //             <td className="td_arbol_lv2">{nominaItem.cliente.cliente}</td>
-  //             <td className="td_arbol_lv2">{nominaItem.cliente.venta_Total}</td>
-  //             <td className="td_arbol_lv2">{nominaItem.cliente.medioDePago}</td>
-  //           </tr>
-  //           <tr key={`productos-${index}`}>
-  //             <td colSpan="3">
-  //               <TablaProductos productos={nominaItem.cliente.producto} />
-  //             </td>
-  //           </tr>
-  //         </React.Fragment>
-  //       ))}
-  //     </tbody>
-  //   </table>
-  // );
-
-  const TablaProductos = ({ productos }) => {
-    // Verificar si productos es un objeto
-    if (typeof productos !== "object" || productos === null) {
-      // Manejar el caso en que productos no es un objeto (puedes mostrar un mensaje o realizar otra lógica según tus necesidades)
-      return <p>No hay productos disponibles.</p>;
-    }
-
-    return (
-      <table border="1">
-        <thead>
-          <tr>
-            <th className="th_arbol_lv3">Descripción</th>
-            <th className="th_arbol_lv3">Cantidad</th>
-            <th className="th_arbol_lv3">Precio</th>
-            <th className="th_arbol_lv3">Costo de Insumos</th>
-            <th className="th_arbol_lv3">Auxiliar</th>
-            <th className="th_arbol_lv3">Promo Descuento</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="td_arbol_lv3">{productos.descripcion}</td>
-            <td className="td_arbol_lv3">{productos.cantidad}</td>
-            <td className="td_arbol_lv3">{productos.precio}</td>
-            <td className="td_arbol_lv3">{productos.costoInsumos}</td>
-            <td className="td_arbol_lv3">{productos.auxiliar}</td>
-            <td className="td_arbol_lv3">{productos.promoDescuento}</td>
-          </tr>
         </tbody>
       </table>
     );
@@ -1375,17 +1257,16 @@ function reporteArbol() {
         <SidebarHorizontal />
       </Row>
       <Container>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 2 }}>
           <h1>
             Reportes <AiOutlineFileText size={30} />
           </h1>
         </div>
-        <br />
         <UncontrolledAccordion defaultOpen="1">
           <AccordionItem>
             <AccordionHeader targetId="1">Filtros</AccordionHeader>
             <AccordionBody accordionId="1">
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                 <div>
                   <Label>Reporte:</Label>
                   <Input type="select" name="reporte" value={formulario.reporte} onChange={handleChange}>
