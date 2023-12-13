@@ -1096,7 +1096,7 @@ function reporteArbol() {
     };
 
     const groupedData = data.reduce((groups, nominaItem) => {
-      const cliente = nominaItem.cliente; // Acceder al objeto cliente directamente
+      const cliente = nominaItem?.cliente; // Acceder al objeto cliente directamente
       const key = cliente?.cliente; // Usar el nombre del cliente como clave
 
       const existingGroup = groups.find((group) => group.key === key);
@@ -1184,7 +1184,7 @@ function reporteArbol() {
 
   const groupedData = parsedData.reduce((groups, item) => {
     // Si item.json es un array, puedes hacer un bucle sobre él
-    item.json.nomina.forEach((nominaItem) => {
+    item?.json?.nomina?.forEach((nominaItem) => {
       const key = nominaItem.clave_empleado;
       const existingGroup = groups.find((group) => group.key === key);
 
