@@ -529,11 +529,32 @@ function CifraSucursal() {
   };
 
 
+  // function DataTable() {
+  //   const getRowId = (row: CifrasSucursal) => row.id;
+  //   return (
+  //     <div style={{ overflow: "auto" }}>
+  //       <div style={{ height: "100%", display: "table", tableLayout: "fixed" }}>
+  //         <DataGrid
+  //           rows={data}
+  //           columns={columns}
+  //           hideFooter={false}
+  //           initialState={{
+  //             pagination: {
+  //               paginationModel: { page: 0, pageSize: 15 },
+  //             },
+  //           }}
+  //           pageSizeOptions={[5, 10]}
+  //           getRowId={getRowId}
+  //         />
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   function DataTable() {
-    const getRowId = (row: CifrasSucursal) => row.id;
     return (
-      <div style={{ overflow: "auto" }}>
-        <div style={{ height: "100%", display: "table", tableLayout: "fixed" }}>
+      <div style={{ height: 600, width: "90%" }}>
+        <div style={{ height: "100%", width: "80vw" }}>
           <DataGrid
             rows={data}
             columns={columns}
@@ -544,12 +565,14 @@ function CifraSucursal() {
               },
             }}
             pageSizeOptions={[5, 10]}
-            getRowId={getRowId}
           />
         </div>
       </div>
     );
   }
+
+
+
 
   // const getCiaForeignKey = (idTableCia: number) => {
   //   const cia = dataCias.find((cia: Cia) => cia.id === idTableCia);
