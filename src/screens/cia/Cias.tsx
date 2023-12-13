@@ -20,6 +20,7 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { UserResponse } from "../../models/Home";
 // sssss
 function Cias() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -165,6 +166,11 @@ function Cias() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Ocurrió un error al crear la empresa, comuniquese con sistemas",
+            confirmButtonColor: "#d63031",
+          });
         });
     } else {
     }
@@ -198,6 +204,11 @@ function Cias() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Ocurrió un error al actualizar la empresa, comuniquese con sistemas",
+            confirmButtonColor: "#d63031",
+          });
         });
     } else {
     }
@@ -275,11 +286,19 @@ function Cias() {
     setForm({ id: 1, nombre: "", rfc: "", domicilio: "", regimenFiscal: "", cpFiscal: "" });
   };
 
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: any) => ({ ...prevState, [name]: value }));
+  //   console.log(form);
+  // };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: any) => ({ ...prevState, [name]: value }));
-    console.log(form);
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
   };
+
   // Crear empresa
   // const handleNavs = () => {
   //   navigate("/CiasCrear");
@@ -461,19 +480,19 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={100} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
+                <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} minlength={1} maxlength={50} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} minlength={1} maxlength={50} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
+                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} minlength={1} maxlength={50} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
+                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} minlength={1} maxlength={50} />
               </Col>
             </Row>
           </FormGroup>
@@ -497,19 +516,19 @@ function Cias() {
           <FormGroup>
             <Row>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} />
+                <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={100} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} />
+                <CFormGroupInput handleChange={handleChange} inputName="rfc" labelName="RFC:" value={form.rfc} minlength={1} maxlength={50} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} />
+                <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} minlength={1} maxlength={50} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} />
+                <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Régimen fiscal:" value={form.regimenFiscal} minlength={1} maxlength={50} />
               </Col>
               <Col md="6">
-                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} />
+                <CFormGroupInput handleChange={handleChange} inputName="cpFiscal" labelName="Código postal:" value={form.cpFiscal} minlength={1} maxlength={50} />
               </Col>
             </Row>
           </FormGroup>

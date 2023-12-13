@@ -36,6 +36,7 @@ import { VscTypeHierarchy } from "react-icons/vsc";
 import { useAreas } from "../../hooks/getsHooks/useAreas";
 import { useDeptos } from "../../hooks/getsHooks/useDeptos";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { UserResponse } from "../../models/Home";
 
 function AreaDeptoClases() {
   const [showView, setShowView] = useState(true);
@@ -161,8 +162,10 @@ function AreaDeptoClases() {
     if (name === "area" && value === "") {
       setClase({ ...formClase, area: "", depto: "" });
     } else {
-      // Si no, actualiza el estado formClase con el nuevo valor del campo
-      setClase({ ...formClase, [name]: value });
+      // Si no, actualiza el estado formClase con el nuevo valor del campo}
+      const trimmedValue = value.replace(/^\s+/g, "");
+      //setClase({ ...formClase, [name]: value });
+      setClase((prevState) => ({ ...prevState, [name]: trimmedValue }));
     }
   };
 
@@ -292,6 +295,14 @@ function AreaDeptoClases() {
         })
         .catch((error) => {
           console.log(error);
+          // Muestra una alerta de error al usuario
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al crear el área. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
+
         });
     } else {
     }
@@ -322,6 +333,12 @@ function AreaDeptoClases() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al crear el departamento. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -353,6 +370,12 @@ function AreaDeptoClases() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al crear la clase. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -385,6 +408,12 @@ function AreaDeptoClases() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al actualizar el área. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -409,6 +438,12 @@ function AreaDeptoClases() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al actualizar el departamento. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -441,19 +476,54 @@ function AreaDeptoClases() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al actualizar el departamento. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
+
         });
     } else {
     }
   };
+
+  // const eliminar1 = async (dato: Area) => {
+  //   const permiso = await filtroSeguridad("CAT_AREA_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar la el área: ${dato.descripcion}?`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/Area?area=${dato.area}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getAreas();
+  //       });
+  //     }
+  //   });
+  // };
 
   const eliminar1 = async (dato: Area) => {
     const permiso = await filtroSeguridad("CAT_AREA_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+
     Swal.fire({
       title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar la el área: ${dato.descripcion}?`,
+      text: `¿Está seguro que desea eliminar el área: ${dato.descripcion}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -461,23 +531,63 @@ function AreaDeptoClases() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/Area?area=${dato.area}`).then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Registro eliminado con éxito",
-            confirmButtonColor: "#3085d6",
+        jezaApi.delete(`/Area?area=${dato.area}`)
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Registro eliminado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            getAreas();
+          })
+          .catch((error) => {
+            console.error(error); // Imprime el error en la consola para fines de depuración
+
+            // Muestra una alerta de error al usuario
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Hubo un problema al eliminar el área. Por favor, intenta nuevamente.",
+              confirmButtonColor: "#d33",
+            });
           });
-          getAreas();
-        });
       }
     });
   };
+
+  // const eliminar2 = async (dato: Clase) => {
+  //   const permiso = await filtroSeguridad("CAT_CLASES_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar la clase: ${dato.descripcion}?`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getClases();
+  //       });
+  //     }
+  //   });
+  // };
 
   const eliminar2 = async (dato: Clase) => {
     const permiso = await filtroSeguridad("CAT_CLASES_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+
     Swal.fire({
       title: "ADVERTENCIA",
       text: `¿Está seguro que desea eliminar la clase: ${dato.descripcion}?`,
@@ -488,27 +598,68 @@ function AreaDeptoClases() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`).then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Registro eliminado con éxito",
-            confirmButtonColor: "#3085d6",
+        jezaApi.delete(`/Clase?area=${dato.area}&depto=${dato.depto}&id=${dato.clase}`)
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Registro eliminado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            getClases();
+          })
+          .catch((error) => {
+            console.error(error); // Imprime el error en la consola para fines de depuración
+
+            // Muestra una alerta de error al usuario
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Hubo un problema al eliminar la clase. Por favor, intenta nuevamente.",
+              confirmButtonColor: "#d33",
+            });
           });
-          getClases();
-        });
       }
     });
   };
 
+
   // ELIMINAR DEPARTAMENTO
+  // const eliminar3 = async (dato: Departamento) => {
+  //   const permiso = await filtroSeguridad("CAT_DEPTOS_DEL");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   Swal.fire({
+  //     title: "ADVERTENCIA",
+  //     text: `¿Está seguro que desea eliminar la el departamento: ${dato.descripcion}?`,
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Sí, eliminar",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       jezaApi.delete(`/Depto?area=${dato.area}&id=${dato.depto}`).then(() => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Registro eliminado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         getDepartamentos();
+  //       });
+  //     }
+  //   });
+  // };
+
   const eliminar3 = async (dato: Departamento) => {
     const permiso = await filtroSeguridad("CAT_DEPTOS_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+
     Swal.fire({
       title: "ADVERTENCIA",
-      text: `¿Está seguro que desea eliminar la el departamento: ${dato.descripcion}?`,
+      text: `¿Está seguro que desea eliminar el departamento: ${dato.descripcion}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -516,17 +667,31 @@ function AreaDeptoClases() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/Depto?area=${dato.area}&id=${dato.depto}`).then(() => {
-          Swal.fire({
-            icon: "success",
-            text: "Registro eliminado con éxito",
-            confirmButtonColor: "#3085d6",
+        jezaApi.delete(`/Depto?area=${dato.area}&id=${dato.depto}`)
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "Registro eliminado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            getDepartamentos();
+          })
+          .catch((error) => {
+            console.error(error); // Imprime el error en la consola para fines de depuración
+
+            // Muestra una alerta de error al usuario
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Hubo un problema al eliminar el departamento. Por favor, intenta nuevamente.",
+              confirmButtonColor: "#d33",
+            });
           });
-          getDepartamentos();
-        });
       }
     });
   };
+
+
 
   const getAreas = () => {
     jezaApi.get("/Area?area=0").then((response) => {
@@ -838,7 +1003,7 @@ function AreaDeptoClases() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <CFormGroupInput handleChange={handleChangeArea} inputName="descripcion" labelName="descripción de área:" value={formArea.descripcion} />
+          <CFormGroupInput handleChange={handleChangeArea} inputName="descripcion" labelName="descripción de área:" value={formArea.descripcion} minlength={1} maxlength={35} />
         </ModalBody>
         <ModalFooter>
           <CButton color="primary" onClick={editArea} text="Actualizar" />
@@ -854,7 +1019,7 @@ function AreaDeptoClases() {
         </ModalHeader>
         <ModalBody>
           <Label>Área:</Label>
-          <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formDepto.area}>
+          <Input type="select" name="area" id="area" onChange={handleChangeAreaDepto} value={formDepto.area} >
             <option value="">--Seleccione área--</option>
             {areasGet.map((option) => (
               <option key={option.area} value={option.area}>
@@ -911,7 +1076,7 @@ function AreaDeptoClases() {
             </Input>
           </FormGroup>
           <br />
-          <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} />
+          <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} minlength={1} maxlength={35} />
         </ModalBody>
         <ModalFooter>
           <CButton color="primary" onClick={editClase} text="Actualizar" />
@@ -927,7 +1092,7 @@ function AreaDeptoClases() {
           </div>
         </ModalHeader>
         <ModalBody>
-          <CFormGroupInput handleChange={handleChangeArea} inputName="descripcion" labelName="Descripción de área:" value={formArea.descripcion} />
+          <CFormGroupInput handleChange={handleChangeArea} inputName="descripcion" labelName="Descripción de área:" value={formArea.descripcion} minlength={1} maxlength={35} />
         </ModalBody>
         <ModalFooter>
           <CButton color="success" onClick={insertar1} text="Guardar área" />
@@ -953,7 +1118,7 @@ function AreaDeptoClases() {
             ))}
           </Input>
           <br />
-          <CFormGroupInput handleChange={handleChangeAreaDepto} inputName="descripcion" labelName="Descripción:" value={formDepto.descripcion} />
+          <CFormGroupInput handleChange={handleChangeAreaDepto} inputName="descripcion" labelName="Descripción:" value={formDepto.descripcion} minlength={1} maxlength={35} />
           <br />
         </ModalBody>
         <ModalFooter>
@@ -992,7 +1157,7 @@ function AreaDeptoClases() {
             </Input>
           </FormGroup>
           <br />
-          <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} />
+          <CFormGroupInput handleChange={handleChangeAreaDeptoClase} inputName="descripcion" labelName="Descripción:" value={formClase.descripcion} minlength={1} maxlength={35} />
         </ModalBody>
         <ModalFooter>
           <CButton color="success" onClick={insertar3} text="Guardar clase" />

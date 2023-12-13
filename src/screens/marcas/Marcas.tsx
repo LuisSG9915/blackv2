@@ -20,7 +20,6 @@ import {
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
-import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import { Marca } from "../../models/Marca";
@@ -35,6 +34,8 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { AiFillTags } from "react-icons/ai";
+import { UserResponse } from "../../models/Home";
+import CFormGroupInput from "../../components/CFormGroupInput";
 
 function Marcas() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -80,7 +81,7 @@ function Marcas() {
     useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [form, setForm] = useState<Marca>({
-    id: 1,
+    id: 0,
     marca: "",
     descripcion: "",
   });
@@ -97,6 +98,13 @@ function Marcas() {
     console.log(dato);
     setModalActualizar(true);
   };
+
+
+  // const mostrarModalActualizar = (dato: Marca) => {
+  //   setForm(dato);
+  //   setModalActualizar(true);
+  // };
+
 
   //VALIDACIÓN---->
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
@@ -130,7 +138,7 @@ function Marcas() {
 
   //AQUI COMIENZA MÉTODO AGREGAR SUCURSAL
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_ADD");
+    const permiso = await filtroSeguridad("CAT_MARCA_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -154,6 +162,12 @@ function Marcas() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al actualizar la marca. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -163,7 +177,7 @@ function Marcas() {
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_SUC_UPD");
+    const permiso = await filtroSeguridad("CAT_MARCA_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -186,6 +200,12 @@ function Marcas() {
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema al actualizar la marca. Por favor, intenta nuevamente.",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
@@ -194,7 +214,7 @@ function Marcas() {
   //AQUÍ COMIENZA EL MÉTODO ELIMINAR
 
   const eliminar = async (dato: Marca) => {
-    const permiso = await filtroSeguridad("CAT_SUC_DEL");
+    const permiso = await filtroSeguridad("CAT_MARCA_DEL");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -230,20 +250,19 @@ function Marcas() {
     getMarca();
   }, []);
 
-  // const filtroEmail = (datoMedico: string) => {
-  //   var resultado = datos.filter((elemento: Marca) => {
-  //     // Aplica la lógica del filtro solo si hay valores en los inputs
-  //     if (elemento.descripcion && (datoMedico === "" || elemento.descripcion.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.descripcion.length > 1) {
-  //       return elemento;
-  //     }
-  //   });
-  //   setData(resultado);
+
+
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   setForm((prevState: Marca) => ({ ...prevState, [name]: value }));
+  //   console.log(form);
   // };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prevState: Marca) => ({ ...prevState, [name]: value }));
-    console.log(form);
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
   };
 
   // Redirige a la ruta "/app"
@@ -376,7 +395,7 @@ function Marcas() {
         </ModalHeader>
         <ModalBody>
           <Container>
-            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Marca descripción:" />
+            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Marca descripción:" value={form.descripcion} minlength={1} maxlength={50} />
           </Container>
         </ModalBody>
         <ModalFooter>
@@ -394,8 +413,7 @@ function Marcas() {
         </ModalHeader>
         <ModalBody>
           <Container>
-            <Label>Marca descripción: </Label>
-            <Input onChange={handleChange} name="descripcion" defaultValue={form.descripcion}></Input>
+            <CFormGroupInput handleChange={handleChange} inputName="descripcion" labelName="Marca descripción:" value={form.descripcion} minlength={1} maxlength={50} />
           </Container>
         </ModalBody>
         <ModalFooter>
