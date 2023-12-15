@@ -319,30 +319,28 @@ function ReporteTool() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
-        formData.tipoPago
-      }`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago
+        }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else if (reporte == "sp_repoComisiones1") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "TicketInsumosEstilsta") {
       //---------------------
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
-        formData.fechaFinal
-      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal
+        }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
     } else if (reporte == "sp_reporteinventario") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else if (reporte == "sp_reporteCifrasEmpleado") {
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     } else if (reporte == "sp_reporteCifras") {
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
+    } else if (reporte == "sp_reporteCifrasEmpleado_2Extendido") {
+      queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}&estilista=${formData.estilista}`;
     } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
 
     jezaApi
@@ -793,6 +791,33 @@ function ReporteTool() {
         setShowDeptoInput(false);
         setShowMesInput(false);
         setShowAñoInput(false);
+      } else if (value === "sp_reporteCifrasEmpleado_2Extendido") {
+        setShowSucursalInput(true);
+        setShowMesInput(true);
+        setShowAñoInput(true);
+        setShowEstilistaInput(true);
+
+        //------------------------------------
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+        setShowMarcaInput(false);
+        setShowProductoInput(false);
+        setShowAlmacenInput(false);
+        setShowPalabraProdInput(false);
+        setShowNoVentaInput(false);
+        setShowEmpresaInput(false);
+        setShowClienteInput(false);
+
+        setShowf1(false);
+        setShowf2(false);
       } else if (value === "sp_reporteCifrasEmpleado" || value === "sp_reporteCifras") {
         // Mostrar los campos para estos informes
 
@@ -846,6 +871,7 @@ function ReporteTool() {
         setShowf1(false);
         setShowf2(false);
       }
+
       // Agrega lógica similar para otros campos según sea necesario
     }
   };
