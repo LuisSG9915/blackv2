@@ -36,7 +36,7 @@ function ShopifySinc() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -55,6 +55,10 @@ function ShopifySinc() {
   const [error, setError] = useState(null);
 
   const fetchClientes = async () => {
+    const permiso = await filtroSeguridad("SINCRO_SHOPIFY_CLIENTES");
+    if (permiso === false) {
+      return;
+    }
     try {
       // Mostrar SweetAlert de carga
       const loadingAlert = Swal.fire({
@@ -89,10 +93,10 @@ function ShopifySinc() {
   };
 
   const fetchOrdenes = async () => {
-    // const permiso = await filtroSeguridad("sinc_orden");
-    // if (permiso === false) {
-    //   return;
-    // }
+    const permiso = await filtroSeguridad("SINCRO_SHOPIFY_ORDEN");
+    if (permiso === false) {
+      return;
+    }
     try {
       // Mostrar SweetAlert de carga
       const loadingAlert = Swal.fire({
@@ -136,6 +140,7 @@ function ShopifySinc() {
           <Button color="primary" onClick={() => fetchOrdenes()}>
             Órdenes
           </Button>
+
           <Button color="primary" onClick={() => fetchClientes()}>
             Clientes
           </Button>

@@ -127,7 +127,11 @@ function Horarios() {
     }
   };
 
-  const handleEditSubmit = () => {
+  const handleEditSubmit = async () => {
+    const permiso = await filtroSeguridad("EDITAR_HORARIO");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     if (selectedHorario) {
       // Realiza la solicitud PUT con los datos actualizados del horario
       const { id, id_empleado, fecha, h1, h2, h3, h4, descanso } = selectedHorario;
@@ -463,7 +467,11 @@ function Horarios() {
     []
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const permiso = await filtroSeguridad("CREAR_HORARIO");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     // Verifica si todos los campos h1 a h4 están llenos en al menos un día
     const allFieldsFilled = formData.some((dayData) => {
       return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4;
@@ -746,7 +754,9 @@ function Horarios() {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={handleSubmit}>
+          <Button color="primary"
+
+            onClick={handleSubmit}>
             Actualizar horario
           </Button>{" "}
           <Button color="danger" onClick={toggleModalCrear}>
