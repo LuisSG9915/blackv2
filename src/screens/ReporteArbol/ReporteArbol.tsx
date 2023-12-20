@@ -994,35 +994,85 @@ function reporteArbol() {
   }));
 
   /* lo chidote */
-
   const TablaPrincipal = ({ groupedData, handleExpand, expandedRows }) => {
     const tableRef = useRef(null);
     const exportToExcel = () => {
-      // Obtener datos de la tabla
-      const data = groupedData.map((group) => ({
-        "Clave Empleado": group.key,
-        Nombre: group.items[0].nombre,
-        Colaborador: group.items[0].colaborador,
-        puesto: group.items[0].puesto,
-        ventaServicio: group.items[0].ventaServicio,
-        descProducto: group.items[0].descProducto,
-        com35Servicio: group.items[0].com35Servicio,
-        desc5: group.items[0].desc5,
-        descNominaProducto: group.items[0].descNominaProducto,
-        com10Producto: group.items[0].com10Producto,
-        com5Estilista: group.items[0].com5Estilista,
-        sueldoBase: group.items[0].sueldoBase,
-        totalPagar: group.items[0].totalPagar,
-      }));
+      const allData = [];
 
-      // Crear un libro de Excel
-      const ws = XLSX.utils.json_to_sheet(data);
+      groupedData.forEach((group, index) => {
+        const mainRow = {
+          "Clave Empleado  ": group.key,
+          "Nombre  ": group.items[0].nombre,
+          "Colaborador  ": group.items[0].colaborador,
+          "Puesto  ": group.items[0].puesto,
+          "Venta de Servicio  ": group.items[0].ventaServicio,
+          "Desc. Producto  ": group.items[0].descProducto,
+          "Com. 35 Servicio  ": group.items[0].com35Servicio,
+          "Desc. 5  ": group.items[0].desc5,
+          "Desc. Nomina Producto  ": group.items[0].descNominaProducto,
+          "Com. 10 Producto  ": group.items[0].com10Producto,
+          "Com. 5 Estilista  ": group.items[0].com5Estilista,
+          "Sueldo Base  ": group.items[0].sueldoBase,
+          "Total Pagar  ": group.items[0].totalPagar,
+        };
+
+        allData.push(mainRow);
+
+        if (expandedRows[`${group.key}-${index}`]) {
+          group.items.forEach((item) => {
+            const nestedRow = {
+              "ID Empleado ": item.cliente?.idempleado,
+              "Fecha ": item.cliente?.fecha,
+              "Cliente ": item.cliente?.cliente,
+              "Venta Total ": item.cliente?.venta_Total,
+              "Medio de Pago ": item.cliente?.medioDePago,
+              "Descripción ": item.cliente?.producto?.descripcion,
+              "Cantidad ": item.cliente?.producto?.cantidad,
+              "Precio ": item.cliente?.producto?.precio,
+              "Costo Insumos ": item.cliente?.producto?.costoInsumos,
+              "Auxiliar ": item.cliente?.producto?.auxiliar,
+              "Promo Descuento ": item.cliente?.producto?.promoDescuento,
+            };
+            allData.push(nestedRow);
+          });
+        }
+      });
+
+      const ws = XLSX.utils.json_to_sheet(allData);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Tabla Principal");
+      XLSX.utils.book_append_sheet(wb, ws, "Tabla Completa");
 
-      // Guardar el archivo
-      XLSX.writeFile(wb, "tabla_principal.xlsx");
+      XLSX.writeFile(wb, "tabla_completa.xlsx");
     };
+
+    // Resto del código del componente
+
+    // const exportToExcel = () => {
+    //   // Obtener datos de la tabla
+    //   const data = groupedData.map((group) => ({
+    //     "Clave Empleado": group.key,
+    //     Nombre: group.items[0].nombre,
+    //     Colaborador: group.items[0].colaborador,
+    //     puesto: group.items[0].puesto,
+    //     ventaServicio: group.items[0].ventaServicio,
+    //     descProducto: group.items[0].descProducto,
+    //     com35Servicio: group.items[0].com35Servicio,
+    //     desc5: group.items[0].desc5,
+    //     descNominaProducto: group.items[0].descNominaProducto,
+    //     com10Producto: group.items[0].com10Producto,
+    //     com5Estilista: group.items[0].com5Estilista,
+    //     sueldoBase: group.items[0].sueldoBase,
+    //     totalPagar: group.items[0].totalPagar,
+    //   }));
+
+    //   // Crear un libro de Excel
+    //   const ws = XLSX.utils.json_to_sheet(data);
+    //   const wb = XLSX.utils.book_new();
+    //   XLSX.utils.book_append_sheet(wb, ws, "Tabla Principal");
+
+    //   // Guardar el archivo
+    //   XLSX.writeFile(wb, "tabla_principal.xlsx");
+    // };
 
     return (
       <>
