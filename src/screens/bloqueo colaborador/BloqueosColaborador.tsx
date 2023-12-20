@@ -22,10 +22,12 @@ import { jezaApi } from "../../api/jezaApi";
 import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
 import { useParams } from "react-router-dom";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 
 // const [showView, setShowView] = useState(true);
 
 function BloqueosColaborador() {
+  const { filtroSeguridad, session } = useSeguridad();
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [showView, setShowView] = useState(true);
   const { dataTrabajadores } = useNominaTrabajadores();
@@ -94,7 +96,12 @@ function BloqueosColaborador() {
   const [modalActualizar, setmodalActualizar] = useState(false);
   const [modalInsertar, setmodalInsertar] = useState(false);
 
-  const { dataBloqueos, fetchBloqueos } = useBloqueosColaboradores({ estilista: "%", f1: form.f1, f2: form.f2, tipoBloqueo: "%" });
+  const { dataBloqueos, fetchBloqueos } = useBloqueosColaboradores({
+    estilista: "%",
+    f1: form.f1,
+    f2: form.f2,
+    tipoBloqueo: "%",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -105,7 +112,9 @@ function BloqueosColaborador() {
   const mostrarModalActualizar = (param) => {
     setmodalActualizar(!modalActualizar);
     const idColaborador = dataTrabajadores.find((trabajador) => trabajador.nombre == param.estilista);
-    const idTipoBloqueo = dataTipoBloqueoColaborador.find((tipoBloqueo) => tipoBloqueo.descripcion == param.descripcionBloqueo);
+    const idTipoBloqueo = dataTipoBloqueoColaborador.find(
+      (tipoBloqueo) => tipoBloqueo.descripcion == param.descripcionBloqueo
+    );
     setForm({
       ...form,
       descripcionBloqueo: param.descripcionBloqueo,
@@ -148,15 +157,19 @@ function BloqueosColaborador() {
           <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(params.row)} size={23}></AiFillEdit>
           <AiFillDelete
             color="lightred"
-            onClick={() =>
-              deleteBloqueoColab(Number(params.row.id), params.row.estilista, params.row.fecha.split("T")[0]).then(() => {
+            onClick={async () => {
+              const permiso = await filtroSeguridad("aaaaaaaaaaa");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+              } else {
+                await deleteBloqueoColab(Number(params.row.id), params.row.estilista, params.row.fecha.split("T")[0]);
                 setTimeout(() => {
                   fetchBloqueos();
                 }, 1111);
-              })
-            }
+              }
+            }}
             size={23}
-          ></AiFillDelete>
+          />
         </>
       ),
     },
@@ -312,15 +325,20 @@ function BloqueosColaborador() {
         <ModalFooter>
           <CButton
             color="success"
-            onClick={() =>
-              postBloqueoColaborador(form, dataUsuarios2[0].id).then((response) => {
-                if ((response.data.codigo = 1)) {
-                  fetchBloqueos();
-                  setmodalInsertar(false);
-                  limpiarDatos();
-                }
-              })
-            }
+            onClick={async () => {
+              const permiso = await filtroSeguridad("aaaaaaaaaaa");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+              } else {
+                postBloqueoColaborador(form, dataUsuarios2[0].id).then((response) => {
+                  if ((response.data.codigo = 1)) {
+                    fetchBloqueos();
+                    setmodalInsertar(false);
+                    limpiarDatos();
+                  }
+                });
+              }
+            }}
             text="Guardar"
           ></CButton>
           {/* <CButton color="success" onClick={() => console.log(dataUsuarios2[0]?.sucursal)} text="Guardar"></CButton> */}
@@ -338,7 +356,13 @@ function BloqueosColaborador() {
         <ModalBody>
           <Container>
             {/* <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" value={form.fecha} /> */}
-            <CFormGroupInput handleChange={handleChange} inputName="fecha" labelName=" Fecha:" type="date" value={form.fecha.split("T")[0]} />
+            <CFormGroupInput
+              handleChange={handleChange}
+              inputName="fecha"
+              labelName=" Fecha:"
+              type="date"
+              value={form.fecha.split("T")[0]}
+            />
             <FormGroup>
               <Label>Colaborador</Label>
               <Input type="select" value={form.idColaborador} name={"idColaborador"} onChange={handleChange}>
@@ -393,9 +417,14 @@ function BloqueosColaborador() {
         <ModalFooter>
           <CButton
             color="success"
-            onClick={() => {
-              putBloqueoColaborador(form, dataUsuarios2[0]?.id).then(() => fetchBloqueos());
-              setmodalActualizar(false);
+            onClick={async () => {
+              const permiso = await filtroSeguridad("aaaaaaaaaaa");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+              } else {
+                putBloqueoColaborador(form, dataUsuarios2[0]?.id).then(() => fetchBloqueos());
+                setmodalActualizar(false);
+              }
             }}
             text="Actualizar"
           />
