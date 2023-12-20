@@ -162,7 +162,11 @@ function HorariosSuc() {
   //       });
   //   }
   // };
-  const handleEditSubmit = () => {
+  const handleEditSubmit = async () => {
+    const permiso = await filtroSeguridad("CAMBIO_SUC_EDIT");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     if (selectedHorario) {
       // Verifica si los campos requeridos están llenos
       const { id, id_empleado, fecha, h1, h2, h3, h4, sucursal } = selectedHorario;
@@ -505,7 +509,11 @@ function HorariosSuc() {
     ],
     []
   );
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const permiso = await filtroSeguridad("CAMBIO_SUC_CREAR");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     // Verifica si todos los campos h1 a h4 están llenos en al menos un día
     const allFieldsFilled = formData.some((dayData) => {
       return dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4 && dayData.sucursal;
