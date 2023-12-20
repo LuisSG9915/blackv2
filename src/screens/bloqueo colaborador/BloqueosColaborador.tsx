@@ -158,7 +158,7 @@ function BloqueosColaborador() {
           <AiFillDelete
             color="lightred"
             onClick={async () => {
-              const permiso = await filtroSeguridad("aaaaaaaaaaa");
+              const permiso = await filtroSeguridad("ELIMINAR_BLOQUEO");
               if (permiso === false) {
                 return; // Si el permiso es falso o los campos no son válidos, se sale de la función
               } else {
@@ -326,7 +326,7 @@ function BloqueosColaborador() {
           <CButton
             color="success"
             onClick={async () => {
-              const permiso = await filtroSeguridad("aaaaaaaaaaa");
+              const permiso = await filtroSeguridad("CREAR_BLOQUEO");
               if (permiso === false) {
                 return; // Si el permiso es falso o los campos no son válidos, se sale de la función
               } else {
@@ -418,7 +418,7 @@ function BloqueosColaborador() {
           <CButton
             color="success"
             onClick={async () => {
-              const permiso = await filtroSeguridad("aaaaaaaaaaa");
+              const permiso = await filtroSeguridad("EDITAR_BLOQUEO");
               if (permiso === false) {
                 return; // Si el permiso es falso o los campos no son válidos, se sale de la función
               } else {
