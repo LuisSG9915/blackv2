@@ -7,7 +7,7 @@ import { useUnidadMedida } from "../../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../../models/UnidadMedidaModel";
 import { VentaInsumo } from "../../../models/VentaInsumo";
 import { AiOutlineBarcode } from "react-icons/ai";
-
+import useSeguridad from "../../../hooks/getsHooks/useSeguridad";
 import { Box } from "@mui/material";
 import { InsumoExistencia } from "./TableProductos";
 
@@ -30,7 +30,14 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     id_insumo: 0,
   });
 
-  const createInsumoTrue = (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
+
+  const { filtroSeguridad, session } = useSeguridad();
+
+  const createInsumoTrue = async (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
+    // const permiso = await filtroSeguridad("AGREGAR_INSUMO");
+    // if (permiso === false) {
+    //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    // }
     jezaApi
       .post("/VentaInsumo", null, {
         params: {
@@ -57,7 +64,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   const handleInsumoSelection = (id: InsumoExistencia) => {
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
-   
+
     const validarInsumoProducto = datoInsumosProductoResumen?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id.id));
     if (validarInsumoProducto) {
       Swal.fire({
