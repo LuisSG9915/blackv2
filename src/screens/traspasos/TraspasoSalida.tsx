@@ -166,10 +166,10 @@ function TraspasoSalida() {
   });
 
   const postTraspasoSalida = async () => {
-    const permiso = await filtroSeguridad("TRASP_SALIDA_ADD");
-    if (permiso === false) {
-      return;
-    }
+    // const permiso = await filtroSeguridad("TRASP_SALIDA_ADD");
+    // if (permiso === false) {
+    //   return;
+    // }
     jezaApi
       .post("/Traspaso", null, {
         params: {
@@ -223,10 +223,10 @@ function TraspasoSalida() {
   };
 
   const putFinalizaTraspasoSalida = async () => {
-    const permiso = await filtroSeguridad("TRASP_SALIDA_FIN");
-    if (permiso === false) {
-      return;
-    }
+    // const permiso = await filtroSeguridad("TRASP_SALIDA_FIN");
+    // if (permiso === false) {
+    //   return;
+    // }
     jezaApi
       .put(
         `/TraspasoFinaliza?sucursal_origen=${dataUsuarios2[0].sucursal}&sucursal_destino=${form.suc_destino}&usuario=${dataUsuarios2[0].id}`
@@ -266,10 +266,8 @@ function TraspasoSalida() {
     }
     jezaApi
       .get(
-        `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&sucursal_destino=${fechaSeleccionada.suc_destino === 0 ? "%" : fechaSeleccionada.suc_destino}&f1=${
-          fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230701"
+        `/TraspasoBusqueda?folio=${!fechaSeleccionada.folio ? "%" : fechaSeleccionada.folio}&sucursal=${dataUsuarios2[0]?.sucursal
+        }&sucursal_destino=${fechaSeleccionada.suc_destino === 0 ? "%" : fechaSeleccionada.suc_destino}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230701"
         }&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20301212"}`
       )
       .then((response) => setDataTraspasoBusqueda2(response.data));
@@ -472,8 +470,8 @@ function TraspasoSalida() {
           {Number(form.folio) > 0
             ? "Traspaso finalizado"
             : Number(form.folio) === 0 && dataTraspasos && dataTraspasos.length > 0
-            ? "Traspaso en proceso"
-            : ""}
+              ? "Traspaso en proceso"
+              : ""}
         </h4>
 
         <br />
@@ -490,42 +488,42 @@ function TraspasoSalida() {
           <tbody>
             {dataTraspasos && dataTraspasos.length > 0
               ? dataTraspasos.map((dato: TraspasoGet, index) => (
-                  <tr key={dato.id + index}>
-                    <td>{dato.clave_prod}</td>
-                    <td>{dato.d_producto}</td>
-                    <td align="center">{dato.cantidad}</td>
-                    <td align="center">{dato.d_unidadmedida}</td>
-                    <td>{dato.usuarioTraspaso}</td>
-                    <td style={{ width: 20 }} align="center">
-                      {dato.folio > 0 ? (
-                        <>
-                          <AiFillEdit color="grey" className="mr-2" onClick={() => null} size={23}></AiFillEdit>
-                          <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
-                        </>
-                      ) : (
-                        <>
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => mostrarModalActualizar(dato)}
-                            size={23}
-                          ></AiFillEdit>
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={async () => {
-                              const permiso = await filtroSeguridad("ELIMINAR_TRASPASO_201223");
-                              if (permiso === false) {
-                                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-                              } else {
-                                eliminar(dato.id, dato.d_producto);
-                              }
-                            }}
-                            size={23}
-                          ></AiFillDelete>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))
+                <tr key={dato.id + index}>
+                  <td>{dato.clave_prod}</td>
+                  <td>{dato.d_producto}</td>
+                  <td align="center">{dato.cantidad}</td>
+                  <td align="center">{dato.d_unidadmedida}</td>
+                  <td>{dato.usuarioTraspaso}</td>
+                  <td style={{ width: 20 }} align="center">
+                    {dato.folio > 0 ? (
+                      <>
+                        <AiFillEdit color="grey" className="mr-2" onClick={() => null} size={23}></AiFillEdit>
+                        <AiFillDelete color="grey" onClick={() => null} size={23}></AiFillDelete>
+                      </>
+                    ) : (
+                      <>
+                        <AiFillEdit
+                          className="mr-2"
+                          onClick={() => mostrarModalActualizar(dato)}
+                          size={23}
+                        ></AiFillEdit>
+                        <AiFillDelete
+                          color="lightred"
+                          onClick={async () => {
+                            const permiso = await filtroSeguridad("ELIMINAR_TRASPASO_201223");
+                            if (permiso === false) {
+                              return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                            } else {
+                              eliminar(dato.id, dato.d_producto);
+                            }
+                          }}
+                          size={23}
+                        ></AiFillDelete>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))
               : null}
           </tbody>
         </Table>

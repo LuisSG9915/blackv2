@@ -851,28 +851,28 @@ function MovimientoDiversos() {
                 <tbody>
                   {dataAjustesBusquedas
                     ? dataAjustesBusquedas.map((ajuste) => (
-                        <tr>
-                          <td>
-                            <AiOutlineSelect
-                              onClick={() => {
-                                setform({
-                                  ...form,
-                                  folio: Number(ajuste.folio),
-                                  tipo_movto: ajuste.tipo_movto,
-                                  fecha: ajuste.fecha.split("T")[0],
-                                });
-                                setModalBusqueda(false);
-                                console.log(ajuste);
-                              }}
-                            ></AiOutlineSelect>
-                          </td>
-                          <td>{ajuste.folio}</td>
-                          <td>{ajuste.descripcion}</td>
-                          <td>{ajuste.items}</td>
-                          <td>{ajuste.nombreUsuario}</td>
-                          <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                        </tr>
-                      ))
+                      <tr>
+                        <td>
+                          <AiOutlineSelect
+                            onClick={() => {
+                              setform({
+                                ...form,
+                                folio: Number(ajuste.folio),
+                                tipo_movto: ajuste.tipo_movto,
+                                fecha: ajuste.fecha.split("T")[0],
+                              });
+                              setModalBusqueda(false);
+                              console.log(ajuste);
+                            }}
+                          ></AiOutlineSelect>
+                        </td>
+                        <td>{ajuste.folio}</td>
+                        <td>{ajuste.descripcion}</td>
+                        <td>{ajuste.items}</td>
+                        <td>{ajuste.nombreUsuario}</td>
+                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                      </tr>
+                    ))
                     : null}
                 </tbody>
               </Table>
@@ -959,7 +959,7 @@ function MovimientoDiversos() {
           </Container>
         </ModalBody>
         <ModalFooter>
-          <Button
+          {/* <Button
             color="success"
             onClick={() => {
               if (form.cantidad_salida > form.d_existencia) {
@@ -982,7 +982,23 @@ function MovimientoDiversos() {
             }}
           >
             Agregar
+          </Button> */}
+          <Button
+            color="success"
+            onClick={() => {
+              setModalResumenEditar(false);
+              putMovimiento();
+              clean();
+            }}
+          >
+            Agregar
           </Button>
+
+
+
+
+
+
           <Button
             color="danger"
             onClick={() => {

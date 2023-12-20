@@ -32,6 +32,10 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   });
 
   const createInsumoTrue = (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
+    const permiso = await filtroSeguridad("AGREGAR_INSUMO");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
     jezaApi
       .post("/VentaInsumo", null, {
         params: {

@@ -2262,7 +2262,7 @@ const Ventas = () => {
         <ModalBody>
           <Row className="justify-content-end">
             <Col md={6}>
-              <Button
+              {/* <Button
                 onClick={() => {
                   setModalOpenInsumosSelect(true);
                   fetchInsumosProductoResumen();
@@ -2270,7 +2270,23 @@ const Ventas = () => {
                 }}
               >
                 Agregar insumos +
+              </Button> */}
+
+              <Button
+                onClick={async () => {
+                  const permiso = await filtroSeguridad("AGREGA_INSUMO");
+                  if (permiso === false) {
+                    return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                  } else {
+                    setModalOpenInsumosSelect(true);
+                    fetchInsumosProductoResumen();
+                    fetchInsumosProducto();
+                  }
+                }}
+              >
+                Agregar insumos +
               </Button>
+
             </Col>
             <Col md={6}></Col>
           </Row>
@@ -2313,7 +2329,7 @@ const Ventas = () => {
                             }}
                             size={23}
                           ></AiFillEdit>
-                          <AiFillDelete
+                          {/* <AiFillDelete
                             color="lightred"
                             onClick={() => {
                               deleteInsumo(dato);
@@ -2322,7 +2338,23 @@ const Ventas = () => {
                               }, 1000);
                             }}
                             size={23}
+                          /> */}
+                          <AiFillDelete
+                            color="lightred"
+                            onClick={async () => {
+                              const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
+                              if (permiso === false) {
+                                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                              } else {
+                                deleteInsumo(dato);
+                                setTimeout(() => {
+                                  fetchInsumosProducto();
+                                }, 1000);
+                              }
+                            }}
+                            size={23}
                           />
+
                         </td>
                       </>
                     ) : null}
@@ -2397,7 +2429,7 @@ const Ventas = () => {
             }}
             text="Cancelar"
           />
-          <Button
+          {/* <Button
             color="success"
             style={{ width: "34%" }}
             onClick={() => {
@@ -2405,7 +2437,27 @@ const Ventas = () => {
             }}
           >
             Guardar cambios
+          </Button> */}
+
+          <Button
+            color="success"
+            onClick={async () => {
+              const permiso = await filtroSeguridad("EDITAR_INSUMO ");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+              } else {
+                editInsumo();
+              }
+            }}
+          >
+            Guardar cambios
           </Button>
+
+
+
+
+
+
         </ModalFooter>
       </Modal>
 

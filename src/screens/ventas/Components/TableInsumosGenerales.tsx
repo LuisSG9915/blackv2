@@ -61,7 +61,8 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
     console.log(datoInsumosProducto);
   }, [datoVentaSeleccionado]);
 
-  const handleInsumoSelection = (id: InsumoExistencia) => {
+  const handleInsumoSelection = async (id: InsumoExistencia) => {
+
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
 

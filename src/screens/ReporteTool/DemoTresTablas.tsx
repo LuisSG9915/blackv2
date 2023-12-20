@@ -516,7 +516,23 @@ function DemoTresTablas() {
             />
           </Col>
           <Col xs={3}>
-            <Button onClick={() => sendEmail()}>Enviar correo</Button>
+            {/* <Button onClick={() => sendEmail()}>Enviar correo</Button> */}
+
+            <Button
+              onClick={async () => {
+                const permiso = await filtroSeguridad("ENVIO_CORREO_CORTES");
+                if (permiso === false) {
+                  return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                } else {
+                  sendEmail()
+                }
+              }}
+            >
+              Enviar correo
+            </Button>
+
+
+
           </Col>
         </Row>
         <br />
