@@ -118,7 +118,10 @@ function MovimientoDiversos() {
     d_existencia: 0,
   });
 
-  const { dataAjustes, fetchAjustes, setAjustes } = useAjuste({ folio: form.folio, sucursal: dataUsuarios2[0]?.sucursal });
+  const { dataAjustes, fetchAjustes, setAjustes } = useAjuste({
+    folio: form.folio,
+    sucursal: dataUsuarios2[0]?.sucursal,
+  });
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -163,7 +166,14 @@ function MovimientoDiversos() {
   const [modalResumenEditar, setModalResumenEditar] = useState<boolean>(false);
   const [modalProductos, setModalProductos] = useState<boolean>(false);
   const [modalBusqueda, setModalBusqueda] = useState<boolean>(false);
-  const DataTableHeader = ["Acción", "Folio", "Tipo de movimiento", "Número de items", "Responsable de ajuste", "Estado"];
+  const DataTableHeader = [
+    "Acción",
+    "Folio",
+    "Tipo de movimiento",
+    "Número de items",
+    "Responsable de ajuste",
+    "Estado",
+  ];
   const [filtradoAlmacenFormateada, setFiltradoAlmacenFormateada] = useState([]);
 
   useEffect(() => {
@@ -254,7 +264,9 @@ function MovimientoDiversos() {
     }
 
     jezaApi
-      .put(`/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`)
+      .put(
+        `/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`
+      )
       .then((response) => {
         Swal.fire("¡Ajuste finalizado!", `Finalizado`, "success");
         fetchAjustes();
@@ -315,11 +327,15 @@ function MovimientoDiversos() {
   const [validaciónAlmacen, setValidaciónAlmacen] = useState(false);
   useEffect(() => {
     const ultimoAlmacen = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].almacen : 0;
-    const ultimoObservación = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
-    const ultimoMovimiento = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].tipo_movto : "";
-    const ultimaFecha = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].fecha.split("T")[0] : "";
+    const ultimoObservación =
+      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].observaciones : "";
+    const ultimoMovimiento =
+      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].tipo_movto : "";
+    const ultimaFecha =
+      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].fecha.split("T")[0] : "";
     const ultimoEstado = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].finalizado : false;
-    const ultimoResponsable = dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].nombreUsuario : "";
+    const ultimoResponsable =
+      dataAjustes && dataAjustes.length > 0 ? dataAjustes[dataAjustes.length - 1].nombreUsuario : "";
     setUsuarioResponsable(ultimoResponsable);
     setEstados(ultimoEstado);
     if (dataAjustes.length > 0) {
@@ -485,12 +501,27 @@ function MovimientoDiversos() {
 
                   <Col md="3">
                     <Label>Fecha:</Label>
-                    <Input disabled={true} type="date" onChange={handleChange} name="fecha" value={form.fecha} bsSize="sm" />
+                    <Input
+                      disabled={true}
+                      type="date"
+                      onChange={handleChange}
+                      name="fecha"
+                      value={form.fecha}
+                      bsSize="sm"
+                    />
                     <br />
                   </Col>
                   <Col md="3">
                     <Label>Folio:</Label>
-                    <Input disabled type="text" name="folio" id="folio" value={form.folio} onChange={handleChange} bsSize="sm"></Input>
+                    <Input
+                      disabled
+                      type="text"
+                      name="folio"
+                      id="folio"
+                      value={form.folio}
+                      onChange={handleChange}
+                      bsSize="sm"
+                    ></Input>
                     <br />
                   </Col>
                   <Col md="6">
@@ -529,7 +560,11 @@ function MovimientoDiversos() {
                       color="success"
                       disabled={estados}
                       onClick={() => {
-                        if (form.tipo_movto.toString() === "0" || form.almacen.toString() === "0" || form.observacion === "") {
+                        if (
+                          form.tipo_movto.toString() === "0" ||
+                          form.almacen.toString() === "0" ||
+                          form.observacion === ""
+                        ) {
                           Swal.fire({
                             icon: "info",
                             title: "Atención",
@@ -651,7 +686,12 @@ function MovimientoDiversos() {
             <br />
           </Container>
           <Container>
-            <Button style={{ marginRight: 5 }} onClick={putFinalizado} color="success" disabled={dataAjustes.length === 0 || estados}>
+            <Button
+              style={{ marginRight: 5 }}
+              onClick={putFinalizado}
+              color="success"
+              disabled={dataAjustes.length === 0 || estados}
+            >
               <CgPlayListCheck size={30} />
               Finalizar
             </Button>
@@ -693,11 +733,23 @@ function MovimientoDiversos() {
               </Col>
               <Col>
                 <Label>Cantidad entrada:</Label>
-                <Input type="number" disabled={deshabiliteadoExistencia} onChange={handleChange} name="cantidad_entrada" placeholder="Cantidad" />
+                <Input
+                  type="number"
+                  disabled={deshabiliteadoExistencia}
+                  onChange={handleChange}
+                  name="cantidad_entrada"
+                  placeholder="Cantidad"
+                />
               </Col>
               <Col>
                 <Label>Cantidad salida: </Label>
-                <Input type="number" disabled={deshabiliteadoSalida} onChange={handleChange} name="cantidad_salida" placeholder="Cantidad salida" />
+                <Input
+                  type="number"
+                  disabled={deshabiliteadoSalida}
+                  onChange={handleChange}
+                  name="cantidad_salida"
+                  placeholder="Cantidad salida"
+                />
               </Col>
             </Row>
             <br />
@@ -706,38 +758,43 @@ function MovimientoDiversos() {
         <ModalFooter>
           <Button
             color="success"
-            onClick={() => {
-              const cantidadSalida = form.cantidad_salida ? form.cantidad_salida : 0;
-              const cantidadEntrada = form.cantidad_entrada ? form.cantidad_entrada : 0;
-              if ((!form.cantidad_entrada && !form.cantidad_salida) || !form.clave_prod || !form.d_producto) {
-                Swal.fire({
-                  icon: "info",
-                  title: "Atención",
-                  text: "Debe completar el formulario para realizar la función",
-                });
+            onClick={async () => {
+              const permiso = await filtroSeguridad("AGREGAR_AJUSTE_DIVERSO");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
               } else {
-                if (Number(form.d_existencia) + Number(cantidadEntrada) <= 0 && cantidadEntrada > 0) {
+                const cantidadSalida = form.cantidad_salida ? form.cantidad_salida : 0;
+                const cantidadEntrada = form.cantidad_entrada ? form.cantidad_entrada : 0;
+                if ((!form.cantidad_entrada && !form.cantidad_salida) || !form.clave_prod || !form.d_producto) {
                   Swal.fire({
                     icon: "info",
                     title: "Atención",
-                    text: "La cantidad en existencias no alcanza",
-                  });
-                } else if (Number(form?.d_existencia) - cantidadSalida < 0 && cantidadSalida > 0) {
-                  Swal.fire({
-                    icon: "info",
-                    title: "Atención",
-                    text: "La cantidad en existencias no alcanza",
-                  });
-                } else if (cantidadSalida < 0 || cantidadEntrada < 0) {
-                  Swal.fire({
-                    icon: "info",
-                    title: "Atención",
-                    text: "No se pueden ingresar valores negativos en los campos, favor de verificar",
+                    text: "Debe completar el formulario para realizar la función",
                   });
                 } else {
-                  setModalResumen(false);
-                  postMovimiento();
-                  clean();
+                  if (Number(form.d_existencia) + Number(cantidadEntrada) <= 0 && cantidadEntrada > 0) {
+                    Swal.fire({
+                      icon: "info",
+                      title: "Atención",
+                      text: "La cantidad en existencias no alcanza",
+                    });
+                  } else if (Number(form?.d_existencia) - cantidadSalida < 0 && cantidadSalida > 0) {
+                    Swal.fire({
+                      icon: "info",
+                      title: "Atención",
+                      text: "La cantidad en existencias no alcanza",
+                    });
+                  } else if (cantidadSalida < 0 || cantidadEntrada < 0) {
+                    Swal.fire({
+                      icon: "info",
+                      title: "Atención",
+                      text: "No se pueden ingresar valores negativos en los campos, favor de verificar",
+                    });
+                  } else {
+                    setModalResumen(false);
+                    postMovimiento();
+                    clean();
+                  }
                 }
               }
             }}
@@ -794,28 +851,28 @@ function MovimientoDiversos() {
                 <tbody>
                   {dataAjustesBusquedas
                     ? dataAjustesBusquedas.map((ajuste) => (
-                      <tr>
-                        <td>
-                          <AiOutlineSelect
-                            onClick={() => {
-                              setform({
-                                ...form,
-                                folio: Number(ajuste.folio),
-                                tipo_movto: ajuste.tipo_movto,
-                                fecha: ajuste.fecha.split("T")[0],
-                              });
-                              setModalBusqueda(false);
-                              console.log(ajuste);
-                            }}
-                          ></AiOutlineSelect>
-                        </td>
-                        <td>{ajuste.folio}</td>
-                        <td>{ajuste.descripcion}</td>
-                        <td>{ajuste.items}</td>
-                        <td>{ajuste.nombreUsuario}</td>
-                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                      </tr>
-                    ))
+                        <tr>
+                          <td>
+                            <AiOutlineSelect
+                              onClick={() => {
+                                setform({
+                                  ...form,
+                                  folio: Number(ajuste.folio),
+                                  tipo_movto: ajuste.tipo_movto,
+                                  fecha: ajuste.fecha.split("T")[0],
+                                });
+                                setModalBusqueda(false);
+                                console.log(ajuste);
+                              }}
+                            ></AiOutlineSelect>
+                          </td>
+                          <td>{ajuste.folio}</td>
+                          <td>{ajuste.descripcion}</td>
+                          <td>{ajuste.items}</td>
+                          <td>{ajuste.nombreUsuario}</td>
+                          <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                        </tr>
+                      ))
                     : null}
                 </tbody>
               </Table>
@@ -936,7 +993,7 @@ function MovimientoDiversos() {
             Cancelar
           </Button>
         </ModalFooter>
-      </Modal >
+      </Modal>
     </>
   );
 }

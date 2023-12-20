@@ -112,7 +112,16 @@ function Compras() {
     "Bonificación",
     "Acciones",
   ];
-  const TableDataHeaderComprasSeleccion = ["Acción", "Folio compra", "Proveedor", "Items", "Importe", "Estado", "Fecha", "Nombre del encargado"];
+  const TableDataHeaderComprasSeleccion = [
+    "Acción",
+    "Folio compra",
+    "Proveedor",
+    "Items",
+    "Importe",
+    "Estado",
+    "Fecha",
+    "Nombre del encargado",
+  ];
 
   const { dataProductos, setDataProductos, fetchProduct } = useProductos();
 
@@ -418,12 +427,19 @@ function Compras() {
   const [productoSelected, setProductoSelected] = useState<Number[]>([]);
 
   useEffect(() => {
-    setSetsumaTotalCompras(dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16);
-    const ultimoFolio = dataComprasGeneral && dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento : "";
+    setSetsumaTotalCompras(
+      dataComprasGeneral.reduce((total, objeto) => total + (objeto.costoCompra * objeto.cantidad ?? 0), 0) * 1.16
+    );
+    const ultimoFolio =
+      dataComprasGeneral && dataComprasGeneral.length > 0
+        ? dataComprasGeneral[dataComprasGeneral.length - 1].folioDocumento
+        : "";
     const ultiFecha = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fecha : "";
-    const ultiFechaDocumento = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fechaDocumento : "";
+    const ultiFechaDocumento =
+      dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].fechaDocumento : "";
     const ultiCompra = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].id_compra : 0;
-    const ultiResposable = dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].usuario : 0;
+    const ultiResposable =
+      dataComprasGeneral.length > 0 ? dataComprasGeneral[dataComprasGeneral.length - 1].usuario : 0;
 
     if (ultiCompra > 0) {
       setDisabledFecha(true);
@@ -711,7 +727,12 @@ function Compras() {
       </Container>
       <Container>
         <div className="alineación-derecha">
-          <Button style={{ marginRight: 5 }} disabled={Number(dataCompras?.id_compra) > 0} color="success" onClick={toggleCrearModal}>
+          <Button
+            style={{ marginRight: 5 }}
+            disabled={Number(dataCompras?.id_compra) > 0}
+            color="success"
+            onClick={toggleCrearModal}
+          >
             <BiAddToQueue size={30} />
             Agregar
           </Button>
@@ -802,7 +823,11 @@ function Compras() {
                           onClick={() => {
                             setModalEdit(true);
                             console.log({ dato });
-                            setDataCompras({ ...dato, fechaDocumento: dataCompras.fecha, d_Encargado: dataCompras.d_Encargado });
+                            setDataCompras({
+                              ...dato,
+                              fechaDocumento: dataCompras.fecha,
+                              d_Encargado: dataCompras.d_Encargado,
+                            });
                           }}
                           size={23}
                         ></AiFillEdit>
@@ -864,7 +889,9 @@ function Compras() {
                         })}
                     </td>
                     <td style={{ fontSize: "13px" }} align="right">
-                      {dataComprasGeneral.reduce((total, dato) => total + dato.costoCompra, 0).toLocaleString("en-US", options)}
+                      {dataComprasGeneral
+                        .reduce((total, dato) => total + dato.costoCompra, 0)
+                        .toLocaleString("en-US", options)}
                     </td>
                     <td style={{ fontSize: "13px" }} align="right">
                       {dataComprasGeneral
@@ -939,7 +966,6 @@ function Compras() {
                   Elegir
                 </Button>
               </InputGroup>
-
             </Col>
           </Row>
           <br />
@@ -957,7 +983,7 @@ function Compras() {
                 onValueChange={(value) => handleValueChange("costoUnitario", value)}
               />
             </Col>
-      
+
             <Col md={4} xs={4}>
               <Label>Unidad paquete:</Label>
               <CurrencyInput
@@ -1046,9 +1072,19 @@ function Compras() {
           </Button>
           <Button
             color="success"
-            onClick={() =>
-              postCompra({ dataCompras: dataCompras, dataUsuarios2: dataUsuarios2, setDataCompras: setDataCompras, fetchCompras: fetchCompras })
-            }
+            onClick={async () => {
+              const permiso = await filtroSeguridad("AGREGA_COMPRA");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+              } else {
+                postCompra({
+                  dataCompras: dataCompras,
+                  dataUsuarios2: dataUsuarios2,
+                  setDataCompras: setDataCompras,
+                  fetchCompras: fetchCompras,
+                });
+              }
+            }}
           >
             Guardar
           </Button>
