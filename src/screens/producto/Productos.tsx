@@ -1023,6 +1023,7 @@ function Productos() {
     });
     setDataProductos(resultado);
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
@@ -1044,26 +1045,74 @@ function Productos() {
     console.log(form);
   };
 
+  // const handleChange1 = (e) => {
+  //   const { name, value } = e.target;
+  //   // Eliminar espacios en blanco al principio de la cadena
+  //   const trimmedValue = value.replace(/^\s+/g, "");
+  //   setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+  //   console.log(form);
+  //   // Eliminar espacios iniciales en todos los campos de entrada de texto
+  //   const sanitizedValue = value.trim();
+  //   if (name === 'precio' || 'costo_unitario' || 'comision' || 'tasa_iva' || 'tiempo' || 'tasa_ieps' || 'unidad_paq' || 'unidad_paq_traspaso' || 'precio_promocion' || 'porcentaje_promocion') {
+  //     // Eliminar caracteres no numéricos
+  //     const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
+  //     setForm({ ...form, [name]: numericValue });
+  //   }
+  //   // else {
+  //   //   // Actualizar el valor sin validación en otros campos
+  //   //   const trimmedValue = value.replace(/^\s+/g, "");
+  //   //   setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+  //   //   console.log(form);
+  //   // }
+  // };
+
   const handleChange1 = (e) => {
     const { name, value } = e.target;
-    // Eliminar espacios en blanco al principio de la cadena
-    const trimmedValue = value.replace(/^\s+/g, "");
-    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
-    console.log(form);
+
+    // Verificar si el campo es 'min_descto' o 'max_descto'
+    if (
+      name === 'precio' ||
+      name === 'costo_unitario' ||
+      name === 'tasa_ieps' ||
+      name === 'comision' ||
+      name === 'tasa_iva' ||
+      name === 'precio_promocion' ||
+      name === 'porcentaje_promocion') {
+      // Restricciones para 'min_descto' y 'max_descto'
+      const numericValue = value.replace(/[^0-9.]/g, '');
+
+      // Verificar si ya hay un punto en el valor
+      if (numericValue.indexOf('.') === -1 || numericValue.lastIndexOf('.') === numericValue.indexOf('.')) {
+        setForm((prevState) => ({ ...prevState, [name]: numericValue }));
+      }
+    } else {
+      // Permitir la entrada de espacios solo después de que se haya ingresado al menos un carácter
+      if (value.length === 0 || /^\s*$/.test(value)) {
+        setForm((prevState) => ({ ...prevState, [name]: '' }));
+      } else {
+        setForm((prevState) => ({ ...prevState, [name]: value }));
+      }
+    }
+  };
+
+  const handleChange3 = (e) => {
+    const { name, value } = e.target;
+
     // Eliminar espacios iniciales en todos los campos de entrada de texto
     const sanitizedValue = value.trim();
-    if (name === 'precio' || 'costo_unitario' || 'comision' || 'tasa_iva' || 'tiempo' || 'tasa_ieps' || 'unidad_paq' || 'unidad_paq_traspaso' || 'precio_promocion' || 'porcentaje_promocion') {
+
+    if (name === 'tiempo' || name === 'unidad_paq' || name === 'unidad_paq_traspaso') {
       // Eliminar caracteres no numéricos
       const numericValue = sanitizedValue.replace(/[^0-9]/g, '');
       setForm({ ...form, [name]: numericValue });
+    } else {
+      // Actualizar el valor sin validación en otros campos
+      const trimmedValue = value.replace(/^\s+/g, "");
+      setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+      console.log(form);
     }
-    // else {
-    //   // Actualizar el valor sin validación en otros campos
-    //   const trimmedValue = value.replace(/^\s+/g, "");
-    //   setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
-    //   console.log(form);
-    // }
   };
+
   const handleNav = () => {
     navigate("/ProductosCrear");
   };
@@ -1372,7 +1421,7 @@ function Productos() {
                     </Col>
                     <Col>
                       <CFormGroupInput
-                        handleChange={handleChange1}
+                        handleChange={handleChange3}
                         inputName="tiempo"
                         labelName="Tiempo:"
                         type="number"
@@ -1587,7 +1636,7 @@ function Productos() {
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange1}
+                        handleChange={handleChange3}
                         inputName="unidad_paq"
                         labelName="Unidad paquete compra:"
                         value={form.unidad_paq}
@@ -1595,7 +1644,7 @@ function Productos() {
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange1}
+                        handleChange={handleChange3}
                         inputName="unidad_paq_traspaso"
                         labelName="Unidad paquete traspaso:"
                         minlength={1} maxlength={100}
@@ -1742,7 +1791,7 @@ function Productos() {
                         minlength={1} maxlength={30}
                       />
                       <CFormGroupInput
-                        handleChange={handleChange1}
+                        handleChange={handleChange3}
                         inputName="tiempo"
                         labelName="Tiempo:"
                         value={form.tiempo}
@@ -1975,14 +2024,14 @@ function Productos() {
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange1}
+                        handleChange={handleChange3}
                         inputName="unidad_paq"
                         labelName="Unidad paquete compra:"
                         value={form.unidad_paq}
                       />
                       <CFormGroupInput
                         type="number"
-                        handleChange={handleChange1}
+                        handleChange={handleChange3}
                         inputName="unidad_paq_traspaso"
                         labelName="Unidad paquete traspaso:"
                         value={form.unidad_paq_traspaso}
