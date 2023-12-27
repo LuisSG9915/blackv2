@@ -373,11 +373,21 @@ function ReporteTool() {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}&estilista=${formData.estilista}`;
-    } else if (reporte == "RepVtaSucEstilista") {
+    } else if (reporte == "RepVtaSucEstilista" || "RepVtaDetalle") {
       const permiso = await filtroSeguridad("REP_VTA_SUC_ESTILISTA");
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
+
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    } else if ("RepVtaDetalle") {
+      const permiso = await filtroSeguridad("REP_VTA_DETALLE");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
         formData.sucursal
       }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
