@@ -282,7 +282,7 @@ function ReporteTool() {
 
   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
 
-  const ejecutaReporte = (reporte) => {
+  const ejecutaReporte = async (reporte) => {
     // Copiamos el formulario actual para no modificar el estado original
 
     const formData = { ...formulario };
@@ -319,28 +319,68 @@ function ReporteTool() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
-        }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago
-        }`;
+      const permiso = await filtroSeguridad("REP_VENTAS");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
+        formData.tipoPago
+      }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
+      const permiso = await filtroSeguridad("REP_ESTILISTAS");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else if (reporte == "sp_repoComisiones1") {
+      const permiso = await filtroSeguridad("REP_COMISIONES1");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "TicketInsumosEstilsta") {
-      //---------------------
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal
-        }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+      const permiso = await filtroSeguridad("REP_TICKET_INSUMOS_ESTILISTA");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
+        formData.fechaFinal
+      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
     } else if (reporte == "sp_reporteinventario") {
+      const permiso = await filtroSeguridad("REP_INVENTARIO");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else if (reporte == "sp_reporteCifrasEmpleado") {
+      const permiso = await filtroSeguridad("REP_CIFRAS_EMPLEADO");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     } else if (reporte == "sp_reporteCifras") {
+      const permiso = await filtroSeguridad("REP_CIFRAS");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     } else if (reporte == "sp_reporteCifrasEmpleado_2Extendido") {
+      const permiso = await filtroSeguridad("REP_CIFRAS_EXTENDIDO");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}&estilista=${formData.estilista}`;
-    } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
-        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    } else if (reporte == "RepVtaSucEstilista") {
+      const permiso = await filtroSeguridad("REP_VTA_SUC_ESTILISTA");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
 
     jezaApi
