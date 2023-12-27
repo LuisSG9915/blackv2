@@ -373,7 +373,7 @@ function ReporteTool() {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}&estilista=${formData.estilista}`;
-    } else if (reporte == "RepVtaSucEstilista" || "RepVtaDetalle") {
+    } else if (reporte == "RepVtaSucEstilista") {
       const permiso = await filtroSeguridad("REP_VTA_SUC_ESTILISTA");
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
