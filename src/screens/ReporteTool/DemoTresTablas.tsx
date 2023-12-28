@@ -676,7 +676,7 @@ function DemoTresTablas() {
           ) : null}
         </div>
 
-        <div style={{ width: "1000px", overflow: "auto" }}>
+        {/* <div style={{ width: "1000px", overflow: "auto" }}>
           <div className="juntos"></div>
           {dataCorteEmailE && dataCorteEmailE.length > 0 ? (
             <MaterialReactTable
@@ -701,7 +701,7 @@ function DemoTresTablas() {
               )}
             />
           ) : null}
-        </div>
+        </div> */}
 
 
         <div style={{ width: "400px", overflow: "auto" }}>
