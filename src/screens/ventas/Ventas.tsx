@@ -689,7 +689,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) { }
+        } catch (error) {}
       }
     });
   };
@@ -945,153 +945,159 @@ const Ventas = () => {
       return;
     }
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
-      medioPago(Number(response.data.mensaje2)).then(() => {
-        setTempFolio(response.data.mensaje2);
-        const temp = response.data.mensaje2;
-        jezaApi
-          .get(
-            `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${dataUsuarios2[0]?.id
-            }&pago=${Number(formPago.totalPago)}`
-          )
-          .then((response) => {
-            if (dataUsuarios2[0]?.sucursal == 27) {
-            }
-            setDatoTicket(response.data);
-            setTimeout(() => {
-              Swal.fire({
-                title: "ADVERTENCIA",
-                text: `¿Requiere su ticket por correo?`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí",
-                cancelButtonText: "No",
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
-                  const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-                  Swal.fire({
-                    title: "ADVERTENCIA",
-                    text: `¿Su correo es ${correo[0].email}?`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    denyButtonText: `Asignar correo`,
-                    denyButtonColor: "green",
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí",
-                    cancelButtonText: "No, imprimir",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                      const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-                      axios
-                        .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                          // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                          to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
-                          subject: "Ticket",
-                          textTicket: response.data,
-                          text: "...",
-                        })
-                        .then(() => {
-                          Swal.fire({
-                            icon: "success",
-                            text: "Correo enviado con éxito",
-                            confirmButtonColor: "#3085d6",
-                          });
-                        })
-                        .catch((error) => {
-                          alert(error);
-                          console.log(error);
-                        });
-                    } else if (result.isDenied) {
-                      Swal.fire({
-                        title: "Ingrse el correo",
-                        input: "text",
-                        inputAttributes: {
-                          autocapitalize: "off",
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: "Listo",
-                        showLoaderOnConfirm: true,
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
-                          const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                          axios
-                            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                              // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                              to: envioCorreoRem + `,${result.value}`,
-                              subject: "Ticket",
-                              textTicket: response.data,
-                              text: "...",
-                            })
-                            .then(() => {
-                              Swal.fire({
-                                icon: "success",
-                                text: "Correo enviado con éxito",
-                                confirmButtonColor: "#3085d6",
-                              });
-                            })
-                            .catch((error) => {
-                              alert(error);
-                              console.log(error);
+      if (response.data.codigo == 0) {
+        alert("ESTAMOS MAL");
+        return;
+      } else {
+        medioPago(Number(response.data.mensaje2)).then(() => {
+          setTempFolio(response.data.mensaje2);
+          const temp = response.data.mensaje2;
+          jezaApi
+            .get(
+              `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${
+                dataUsuarios2[0]?.id
+              }&pago=${Number(formPago.totalPago)}`
+            )
+            .then((response) => {
+              if (dataUsuarios2[0]?.sucursal == 27) {
+              }
+              setDatoTicket(response.data);
+              setTimeout(() => {
+                Swal.fire({
+                  title: "ADVERTENCIA",
+                  text: `¿Requiere su ticket por correo?`,
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Sí",
+                  cancelButtonText: "No",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
+                    const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+                    Swal.fire({
+                      title: "ADVERTENCIA",
+                      text: `¿Su correo es ${correo[0].email}?`,
+                      icon: "warning",
+                      showCancelButton: true,
+                      showDenyButton: true,
+                      denyButtonText: `Asignar correo`,
+                      denyButtonColor: "green",
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Sí",
+                      cancelButtonText: "No, imprimir",
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                        const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+                        axios
+                          .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                            // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                            to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                            subject: "Ticket",
+                            textTicket: response.data,
+                            text: "...",
+                          })
+                          .then(() => {
+                            Swal.fire({
+                              icon: "success",
+                              text: "Correo enviado con éxito",
+                              confirmButtonColor: "#3085d6",
                             });
-                        }
-                      });
-                    }
-                  });
-                } else {
-                  ticketVta({ folio: temp });
-                  setModalTicket(true);
-                }
+                          })
+                          .catch((error) => {
+                            alert(error);
+                            console.log(error);
+                          });
+                      } else if (result.isDenied) {
+                        Swal.fire({
+                          title: "Ingrse el correo",
+                          input: "text",
+                          inputAttributes: {
+                            autocapitalize: "off",
+                          },
+                          showCancelButton: true,
+                          confirmButtonText: "Listo",
+                          showLoaderOnConfirm: true,
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
+                            const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                            axios
+                              .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                                // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                                to: envioCorreoRem + `,${result.value}`,
+                                subject: "Ticket",
+                                textTicket: response.data,
+                                text: "...",
+                              })
+                              .then(() => {
+                                Swal.fire({
+                                  icon: "success",
+                                  text: "Correo enviado con éxito",
+                                  confirmButtonColor: "#3085d6",
+                                });
+                              })
+                              .catch((error) => {
+                                alert(error);
+                                console.log(error);
+                              });
+                          }
+                        });
+                      }
+                    });
+                  } else {
+                    ticketVta({ folio: temp });
+                    setModalTicket(true);
+                  }
+                });
               });
-            });
-          }, 3000)
-          .catch(() => console.log("Error"));
-      });
-      Swal.fire({
-        icon: "success",
-        text: "Venta finalizada con éxito",
-        confirmButtonColor: "#3085d6",
-      });
-      setDataTemporal({
-        Caja: 1,
-        cancelada: false,
-        Cant_producto: 0,
-        Cia: 0,
-        Clave_Descuento: 0,
-        Clave_prod: 0,
-        Corte: 0,
-        Corte_parcial: 0,
-        Costo: 0,
-        Credito: false,
-        Cve_cliente: 0,
-        Descuento: 0,
-        Fecha: "20230724",
-        folio_estilista: 0,
-        hora: 0,
-        idEstilista: 0,
-        ieps: 0,
-        No_venta: 0,
-        Observacion: "",
-        Precio: 0,
-        Precio_base: 0,
-        Sucursal: 0,
-        Tasa_iva: 0,
-        terminado: false,
-        tiempo: 0,
-        Usuario: 0,
-        validadoServicio: false,
-        cliente: "",
-        estilista: "",
-        id: 0,
-        producto: "",
-        User: 0,
-      });
-      // anticipoPost(Number(response.data.mensaje2));
+            }, 3000)
+            .catch(() => console.log("Error"));
+        });
+        Swal.fire({
+          icon: "success",
+          text: "Venta finalizada con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+        setDataTemporal({
+          Caja: 1,
+          cancelada: false,
+          Cant_producto: 0,
+          Cia: 0,
+          Clave_Descuento: 0,
+          Clave_prod: 0,
+          Corte: 0,
+          Corte_parcial: 0,
+          Costo: 0,
+          Credito: false,
+          Cve_cliente: 0,
+          Descuento: 0,
+          Fecha: "20230724",
+          folio_estilista: 0,
+          hora: 0,
+          idEstilista: 0,
+          ieps: 0,
+          No_venta: 0,
+          Observacion: "",
+          Precio: 0,
+          Precio_base: 0,
+          Sucursal: 0,
+          Tasa_iva: 0,
+          terminado: false,
+          tiempo: 0,
+          Usuario: 0,
+          validadoServicio: false,
+          cliente: "",
+          estilista: "",
+          id: 0,
+          producto: "",
+          User: 0,
+        });
+        // anticipoPost(Number(response.data.mensaje2));
+      }
     });
     fetchInsumosProducto();
   };
@@ -1228,12 +1234,18 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
+          dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
+          dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
+          dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
+          dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${
+          dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
+          dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1615,18 +1627,18 @@ const Ventas = () => {
                     <td>
                       {dato.Descuento === 0
                         ? (dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
-                          style: "currency",
-                          currency: "MXN", // Código de moneda para el Peso Mexicano
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
+                            style: "currency",
+                            currency: "MXN", // Código de moneda para el Peso Mexicano
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
                         : (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toLocaleString("es-MX", {
-                          style: "currency",
-                          currency: "MXN", // Código de moneda para el Peso Mexicano
+                            style: "currency",
+                            currency: "MXN", // Código de moneda para el Peso Mexicano
 
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                     </td>
                     <td className="gap-5">
                       <AiFillDelete
@@ -2286,7 +2298,6 @@ const Ventas = () => {
               >
                 Agregar insumos +
               </Button>
-
             </Col>
             <Col md={6}></Col>
           </Row>
@@ -2303,33 +2314,33 @@ const Ventas = () => {
             <tbody>
               {datoInsumosProductoResumen.length > 0
                 ? datoInsumosProductoResumen.map((dato: any) => (
-                  <tr key={dato.id}>
-                    {dato.id ? (
-                      <>
-                        <td>{dato.d_insumo}</td>
-                        <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
-                        <td align="left">{dato.unidadMedida}</td>
-                        <td align="center">{dato.cantidad}</td>
+                    <tr key={dato.id}>
+                      {dato.id ? (
+                        <>
+                          <td>{dato.d_insumo}</td>
+                          <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
+                          <td align="left">{dato.unidadMedida}</td>
+                          <td align="center">{dato.cantidad}</td>
 
-                        <td className="gap-5">
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => {
-                              setModalEditInsumo(true);
-                              setFormInsumo({
-                                cantidad: dato.cantidad,
-                                fechaAlta: dato.fechaAlta,
-                                id: dato.id,
-                                id_insumo: dato.id_insumo,
-                                id_venta: dato.id_venta,
-                                unidadMedida: dato.unidadMedida,
-                                d_insumo: dato.d_insumo,
-                                existencia: cantidadInsumo(dato.id_insumo),
-                              });
-                            }}
-                            size={23}
-                          ></AiFillEdit>
-                          {/* <AiFillDelete
+                          <td className="gap-5">
+                            <AiFillEdit
+                              className="mr-2"
+                              onClick={() => {
+                                setModalEditInsumo(true);
+                                setFormInsumo({
+                                  cantidad: dato.cantidad,
+                                  fechaAlta: dato.fechaAlta,
+                                  id: dato.id,
+                                  id_insumo: dato.id_insumo,
+                                  id_venta: dato.id_venta,
+                                  unidadMedida: dato.unidadMedida,
+                                  d_insumo: dato.d_insumo,
+                                  existencia: cantidadInsumo(dato.id_insumo),
+                                });
+                              }}
+                              size={23}
+                            ></AiFillEdit>
+                            {/* <AiFillDelete
                             color="lightred"
                             onClick={() => {
                               deleteInsumo(dato);
@@ -2339,27 +2350,26 @@ const Ventas = () => {
                             }}
                             size={23}
                           /> */}
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={async () => {
-                              const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
-                              if (permiso === false) {
-                                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-                              } else {
-                                deleteInsumo(dato);
-                                setTimeout(() => {
-                                  fetchInsumosProducto();
-                                }, 1000);
-                              }
-                            }}
-                            size={23}
-                          />
-
-                        </td>
-                      </>
-                    ) : null}
-                  </tr>
-                ))
+                            <AiFillDelete
+                              color="lightred"
+                              onClick={async () => {
+                                const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
+                                if (permiso === false) {
+                                  return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                                } else {
+                                  deleteInsumo(dato);
+                                  setTimeout(() => {
+                                    fetchInsumosProducto();
+                                  }, 1000);
+                                }
+                              }}
+                              size={23}
+                            />
+                          </td>
+                        </>
+                      ) : null}
+                    </tr>
+                  ))
                 : null}
             </tbody>
           </Table>
@@ -2452,12 +2462,6 @@ const Ventas = () => {
           >
             Guardar cambios
           </Button>
-
-
-
-
-
-
         </ModalFooter>
       </Modal>
 
@@ -2676,13 +2680,13 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-            dataArregloTemporal.formaPago == 91 ||
-            dataArregloTemporal.formaPago == 80 ||
-            dataArregloTemporal.formaPago == 92 ||
-            dataArregloTemporal.formaPago == 100 ||
-            dataArregloTemporal.formaPago == 101 ||
-            dataArregloTemporal.formaPago == 110 ||
-            dataArregloTemporal.formaPago == 103 ? (
+          dataArregloTemporal.formaPago == 91 ||
+          dataArregloTemporal.formaPago == 80 ||
+          dataArregloTemporal.formaPago == 92 ||
+          dataArregloTemporal.formaPago == 100 ||
+          dataArregloTemporal.formaPago == 101 ||
+          dataArregloTemporal.formaPago == 110 ||
+          dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>
