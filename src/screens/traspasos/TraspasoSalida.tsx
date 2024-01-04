@@ -232,6 +232,15 @@ function TraspasoSalida() {
         `/TraspasoFinaliza?sucursal_origen=${dataUsuarios2[0].sucursal}&sucursal_destino=${form.suc_destino}&usuario=${dataUsuarios2[0].id}`
       )
       .then((response) => {
+        if(response.data.codigo == 0) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: `${response.data.mensaje1}}`,
+            confirmButtonColor: "#d33",
+          });
+          return
+        }
         fetchTraspasos();
         Swal.fire({
           icon: "success",
