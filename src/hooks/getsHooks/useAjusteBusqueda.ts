@@ -13,7 +13,7 @@ export const useAjusteBusqueda = ({ f1, f2, sucursal }: Props) => {
   const fetchAjustesBusquedas = async () => {
     try {
       const response: AxiosResponse<MovimientoBusqueda[]> = await jezaApi.get(
-        `/AjusteDialogo?f1=${f1 ? f1.replaceAll("-", "") : "20230101"}&f2=${f2 ? f2.replaceAll("-", "") : "20231212"}&suc=${sucursal}`
+        `/AjusteDialogo?f1=${f1 ? f1.replaceAll("-", "") : "20230101"}&f2=${f2 ? f2.replaceAll("-", "") : "20301212"}&suc=${sucursal}`
       );
       setAjustesBusquedas(response.data);
       console.log(response);

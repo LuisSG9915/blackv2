@@ -689,7 +689,7 @@ const Ventas = () => {
               });
               fetchVentas();
             });
-        } catch (error) {}
+        } catch (error) { }
       }
     });
   };
@@ -946,7 +946,12 @@ const Ventas = () => {
     }
     jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
       if (response.data.codigo == 0) {
-        alert("ESTAMOS MAL");
+        // alert("ESTAMOS MAL");
+        Swal.fire({
+          icon: "error",
+          text: response.data.mensaje1,
+          confirmButtonColor: "#3085d6",
+        });
         return;
       } else {
         medioPago(Number(response.data.mensaje2)).then(() => {
@@ -954,8 +959,7 @@ const Ventas = () => {
           const temp = response.data.mensaje2;
           jezaApi
             .get(
-              `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${
-                dataUsuarios2[0]?.id
+              `/TicketVta?folio=${Number(response.data.mensaje2)}&caja=1&suc=${Number(dataUsuarios2[0]?.sucursal)}&usr=${dataUsuarios2[0]?.id
               }&pago=${Number(formPago.totalPago)}`
             )
             .then((response) => {
@@ -1234,18 +1238,12 @@ const Ventas = () => {
 
     jezaApi
       .put(
-        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${
-          dataUsuarios2[0]?.sucursal
-        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${
-          dataVentaEdit.Cant_producto
-        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${
-          dataVentaEdit.Descuento
-        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${
-          dataVentaEdit.Costo
-        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${
-          dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
-        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${
-          dataUsuarios2[0]?.id
+        `/Venta?id=${dataVentaEdit.id}&Cia=${dataUsuarios2[0]?.idCia}&Sucursal=${dataUsuarios2[0]?.sucursal
+        }&Fecha=${formattedDate}&Caja=1&No_venta=0&no_venta2=0&Clave_prod=${dataVentaEdit.Clave_prod}&Cant_producto=${dataVentaEdit.Cant_producto
+        }&Precio=${dataVentaEdit.Precio}&Cve_cliente=${dataVentaEdit.Cve_cliente}&Tasa_iva=0.16&Observacion=${dataVentaEdit.Observacion}&Descuento=${dataVentaEdit.Descuento
+        }&Clave_Descuento=${dataVentaEdit.Clave_Descuento}&usuario=${dataVentaEdit.idEstilista}&Corte=1&Corte_parcial=1&Costo=${dataVentaEdit.Costo
+        }&Precio_base=${dataVentaEdit.Precio_base}&No_venta_original=0&cancelada=false&folio_estilista=${0}&hora=${horaFormateada}&tiempo=${dataVentaEdit.tiempo === 0 ? 0 : dataVentaEdit.tiempo
+        }&terminado=false&validadoServicio=false&idestilistaAux=${dataVentaEdit.idestilistaAux ? dataVentaEdit.idestilistaAux : 0}&idRecepcionista=${dataUsuarios2[0]?.id
         }`
       )
       .then(() => {
@@ -1627,18 +1625,18 @@ const Ventas = () => {
                     <td>
                       {dato.Descuento === 0
                         ? (dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
-                            style: "currency",
-                            currency: "MXN", // Código de moneda para el Peso Mexicano
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
+                          style: "currency",
+                          currency: "MXN", // Código de moneda para el Peso Mexicano
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
                         : (dato.Precio * dato.Cant_producto - dato.Precio * dato.Cant_producto * dato.Descuento).toLocaleString("es-MX", {
-                            style: "currency",
-                            currency: "MXN", // Código de moneda para el Peso Mexicano
+                          style: "currency",
+                          currency: "MXN", // Código de moneda para el Peso Mexicano
 
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                     </td>
                     <td className="gap-5">
                       <AiFillDelete
@@ -2314,33 +2312,33 @@ const Ventas = () => {
             <tbody>
               {datoInsumosProductoResumen.length > 0
                 ? datoInsumosProductoResumen.map((dato: any) => (
-                    <tr key={dato.id}>
-                      {dato.id ? (
-                        <>
-                          <td>{dato.d_insumo}</td>
-                          <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
-                          <td align="left">{dato.unidadMedida}</td>
-                          <td align="center">{dato.cantidad}</td>
+                  <tr key={dato.id}>
+                    {dato.id ? (
+                      <>
+                        <td>{dato.d_insumo}</td>
+                        <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
+                        <td align="left">{dato.unidadMedida}</td>
+                        <td align="center">{dato.cantidad}</td>
 
-                          <td className="gap-5">
-                            <AiFillEdit
-                              className="mr-2"
-                              onClick={() => {
-                                setModalEditInsumo(true);
-                                setFormInsumo({
-                                  cantidad: dato.cantidad,
-                                  fechaAlta: dato.fechaAlta,
-                                  id: dato.id,
-                                  id_insumo: dato.id_insumo,
-                                  id_venta: dato.id_venta,
-                                  unidadMedida: dato.unidadMedida,
-                                  d_insumo: dato.d_insumo,
-                                  existencia: cantidadInsumo(dato.id_insumo),
-                                });
-                              }}
-                              size={23}
-                            ></AiFillEdit>
-                            {/* <AiFillDelete
+                        <td className="gap-5">
+                          <AiFillEdit
+                            className="mr-2"
+                            onClick={() => {
+                              setModalEditInsumo(true);
+                              setFormInsumo({
+                                cantidad: dato.cantidad,
+                                fechaAlta: dato.fechaAlta,
+                                id: dato.id,
+                                id_insumo: dato.id_insumo,
+                                id_venta: dato.id_venta,
+                                unidadMedida: dato.unidadMedida,
+                                d_insumo: dato.d_insumo,
+                                existencia: cantidadInsumo(dato.id_insumo),
+                              });
+                            }}
+                            size={23}
+                          ></AiFillEdit>
+                          {/* <AiFillDelete
                             color="lightred"
                             onClick={() => {
                               deleteInsumo(dato);
@@ -2350,26 +2348,26 @@ const Ventas = () => {
                             }}
                             size={23}
                           /> */}
-                            <AiFillDelete
-                              color="lightred"
-                              onClick={async () => {
-                                const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
-                                if (permiso === false) {
-                                  return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-                                } else {
-                                  deleteInsumo(dato);
-                                  setTimeout(() => {
-                                    fetchInsumosProducto();
-                                  }, 1000);
-                                }
-                              }}
-                              size={23}
-                            />
-                          </td>
-                        </>
-                      ) : null}
-                    </tr>
-                  ))
+                          <AiFillDelete
+                            color="lightred"
+                            onClick={async () => {
+                              const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
+                              if (permiso === false) {
+                                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                              } else {
+                                deleteInsumo(dato);
+                                setTimeout(() => {
+                                  fetchInsumosProducto();
+                                }, 1000);
+                              }
+                            }}
+                            size={23}
+                          />
+                        </td>
+                      </>
+                    ) : null}
+                  </tr>
+                ))
                 : null}
             </tbody>
           </Table>
@@ -2680,13 +2678,13 @@ const Ventas = () => {
           ></Input>
           <br />
           {dataArregloTemporal.formaPago == 90 ||
-          dataArregloTemporal.formaPago == 91 ||
-          dataArregloTemporal.formaPago == 80 ||
-          dataArregloTemporal.formaPago == 92 ||
-          dataArregloTemporal.formaPago == 100 ||
-          dataArregloTemporal.formaPago == 101 ||
-          dataArregloTemporal.formaPago == 110 ||
-          dataArregloTemporal.formaPago == 103 ? (
+            dataArregloTemporal.formaPago == 91 ||
+            dataArregloTemporal.formaPago == 80 ||
+            dataArregloTemporal.formaPago == 92 ||
+            dataArregloTemporal.formaPago == 100 ||
+            dataArregloTemporal.formaPago == 101 ||
+            dataArregloTemporal.formaPago == 110 ||
+            dataArregloTemporal.formaPago == 103 ? (
             <>
               <Label> Referencia: </Label>
               <Input onChange={handleFormaPagoTemporal} value={dataArregloTemporal.referencia} name={"referencia"}></Input>

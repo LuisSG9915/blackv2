@@ -257,6 +257,26 @@ function MovimientoDiversos() {
       })
       .catch((e) => console.log(e));
   };
+  // const putFinalizado = async () => {
+  //   const permiso = await filtroSeguridad("AJUSTE_FIN");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+
+  //   jezaApi
+  //     .put(
+  //       `/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`
+  //     )
+  //     .then((response) => {
+  //       Swal.fire("¡Ajuste finalizado!", `Finalizado`, "success");
+  //       fetchAjustes();
+  //     })
+  //     .catch(() => {
+  //       Swal.fire("Error!", "No puede finalizar una venta sin registros", "error");
+  //       fetchAjustes();
+  //     });
+  // };
+
   const putFinalizado = async () => {
     const permiso = await filtroSeguridad("AJUSTE_FIN");
     if (permiso === false) {
@@ -264,18 +284,28 @@ function MovimientoDiversos() {
     }
 
     jezaApi
-      .put(
-        `/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`
-      )
+      .put(`/AjusteFinaliza?suc=${dataUsuarios2[0].sucursal}&tipo_movto=${form.tipo_movto}&usuario=${dataUsuarios2[0].id}`)
       .then((response) => {
+        if (response.data.codigo == 0) {
+          // alert("ESTAMOS MAL");
+          Swal.fire({
+            icon: "error",
+            text: response.data.mensaje1,
+            confirmButtonColor: "#3085d6",
+          });
+          return;
+        }
+        // else {
         Swal.fire("¡Ajuste finalizado!", `Finalizado`, "success");
         fetchAjustes();
+        // }
       })
       .catch(() => {
         Swal.fire("Error!", "No puede finalizar una venta sin registros", "error");
         fetchAjustes();
       });
   };
+
 
   const clean = () => {
     setform({ ...form, d_producto: "", cantidad_entrada: 0, cantidad_salida: 0, d_existencia: 0 });

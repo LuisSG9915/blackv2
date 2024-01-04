@@ -145,20 +145,27 @@ function MovimientoDiversos() {
     setform((prevState: any) => ({ ...prevState, [name]: value }));
     console.log(form);
   };
+  // const handleChangeFecha = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   if (name === "f2") {
+  //     let [year2, month2, day2] = value.split("-");
+  //     month2 = String(Number(month2) + 1).padStart(2, "0");
+  //     let f2_modificada = [year2, month2, day2].join("-");
+
+  //     console.log("Fecha 1 modificada:", f2_modificada);
+  //     setFormFechas((prevState: any) => ({ ...prevState, ["f2"]: f2_modificada }));
+  //   } else {
+  //     setFormFechas((prevState: any) => ({ ...prevState, [name]: value }));
+  //   }
+  //   console.log(formFechas);
+  // };
+
   const handleChangeFecha = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (name === "f2") {
-      let [year2, month2, day2] = value.split("-");
-      month2 = String(Number(month2) + 1).padStart(2, "0");
-      let f2_modificada = [year2, month2, day2].join("-");
-
-      console.log("Fecha 1 modificada:", f2_modificada);
-      setFormFechas((prevState: any) => ({ ...prevState, ["f2"]: f2_modificada }));
-    } else {
-      setFormFechas((prevState: any) => ({ ...prevState, [name]: value }));
-    }
-    console.log(formFechas);
+    setFormFechas((prevState: any) => ({ ...prevState, [name]: value }));
   };
+
+
 
   const [modalResumen, setModalResumen] = useState<boolean>(false);
   const [modalResumenEditar, setModalResumenEditar] = useState<boolean>(false);
@@ -741,28 +748,28 @@ function MovimientoDiversos() {
               <tbody>
                 {dataAjustesBusquedas
                   ? dataAjustesBusquedas.map((ajuste) => (
-                      <tr>
-                        <td>
-                          <AiOutlineSelect
-                            onClick={() => {
-                              setform({
-                                ...form,
-                                folio: Number(ajuste.folio),
-                                tipo_movto: ajuste.tipo_movto,
-                                fecha: ajuste.fecha.split("T")[0],
-                              });
-                              setModalBusqueda(false);
-                              console.log(ajuste);
-                            }}
-                          ></AiOutlineSelect>
-                        </td>
-                        <td>{ajuste.folio}</td>
-                        <td>{ajuste.descripcion}</td>
-                        <td>{ajuste.items}</td>
-                        <td>{ajuste.nombreUsuario}</td>
-                        <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
-                      </tr>
-                    ))
+                    <tr>
+                      <td>
+                        <AiOutlineSelect
+                          onClick={() => {
+                            setform({
+                              ...form,
+                              folio: Number(ajuste.folio),
+                              tipo_movto: ajuste.tipo_movto,
+                              fecha: ajuste.fecha.split("T")[0],
+                            });
+                            setModalBusqueda(false);
+                            console.log(ajuste);
+                          }}
+                        ></AiOutlineSelect>
+                      </td>
+                      <td>{ajuste.folio}</td>
+                      <td>{ajuste.descripcion}</td>
+                      <td>{ajuste.items}</td>
+                      <td>{ajuste.nombreUsuario}</td>
+                      <td>{ajuste.finalizado == true ? "Finalizado" : "En proceso"}</td>
+                    </tr>
+                  ))
                   : null}
               </tbody>
             </Table>
