@@ -44,6 +44,7 @@ import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Venta } from "../../models/Venta";
 
 import { FaShoppingCart, FaUser } from "react-icons/fa";
+// import { Cliente } from "../ventas/Components/TableClientesProceso";
 
 function Clientes() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -359,7 +360,7 @@ function Clientes() {
             telefono: form.telefono,
             email: form.email,
             nombre_fiscal: form.nombre_fiscal,
-            suspendido: false,
+            suspendido: form.suspendido,
             sucursal_origen: dataUsuarios2[0]?.sucursal,
             num_plastico: form.num_plastico ? form.num_plastico : "...",
             suc_asig_plast: form.suc_asig_plast ? form.suc_asig_plast : 0,
@@ -542,6 +543,17 @@ function Clientes() {
     console.log(form.fecha_nac);
     console.log(form);
   };
+
+  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    if (name === "suspendido") {
+      setForm((prevState) => ({ ...prevState, [name]: checked }));
+    } else {
+      setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
+    }
+  };
+
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
@@ -1161,6 +1173,16 @@ function Clientes() {
                     <Col sm="6">
                       <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} minlength={1} maxlength={199} />
                     </Col>
+
+                    <Col sm="6">
+                      <label className="checkbox-container">
+                        <input type="checkbox" checked={form.suspendido} onChange={handleChange1} name="suspendido" />
+                        <span className="checkmark"></span>
+                        Suspendido
+                      </label>
+                    </Col>
+                    <br />
+
 
                     {/* <Col sm="6">
                       <Label>Sucursal origen:</Label>

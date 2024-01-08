@@ -74,7 +74,8 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
         setColumnasC(columns);
       }
     } catch (error) {
-      alert(error);
+      // alert(error);
+      
       console.log(error);
     }
   };

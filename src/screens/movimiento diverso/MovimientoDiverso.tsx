@@ -290,8 +290,9 @@ function MovimientoDiversos() {
           // alert("ESTAMOS MAL");
           Swal.fire({
             icon: "error",
+            title: "Error",
             text: response.data.mensaje1,
-            confirmButtonColor: "#3085d6",
+            confirmButtonColor: "#d33",
           });
           return;
         }
