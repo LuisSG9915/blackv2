@@ -44,6 +44,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { UserResponse } from "../../models/Home";
 
 function Almacenes() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -88,11 +89,12 @@ function Almacenes() {
     useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [data, setData] = useState<Almacen[]>([]);
-  const [dataCia, setDataCia] = useState<Cia[]>([]);
-  const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
+  // const [dataCia, setDataCia] = useState<Cia[]>([]);
+  // const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
 
   const { dataCias } = useCias();
   const { dataSucursales } = useSucursales();
+  const { dataAlmacenes } = useAlmacen();
 
   const [form, setForm] = useState<Almacen>({
     id: 0,

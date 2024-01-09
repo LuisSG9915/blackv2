@@ -3,6 +3,7 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { CorteA, CorteB, CorteC, CorteD, CorteE, CorteF} from "../../models/CortesEmail";
 import { format } from "date-fns-tz";
+import JezaApiService from "../../api/jezaApi2";
 
 interface Props {
   sucursal: number;
@@ -11,6 +12,7 @@ interface Props {
 
 }
 export const useCortesEmail = ({ sucursal, fecha }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataCorteEmailA, setDataCorteEmailA] = useState<CorteA[]>([]);
   const [dataCorteEmailB, setDataCorteEmailB] = useState<CorteB[]>([]);
   const [dataCorteEmailC, setDataCorteEmailC] = useState<CorteC[]>([]);

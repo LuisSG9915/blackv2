@@ -5,8 +5,10 @@ import { jezaApi } from "../../api/jezaApi";
 import { FormaPago } from "../../models/FormaPago";
 import useSeguridad from "./useSeguridad";
 import { Usuario } from "../../models/Usuario";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useFormasPagos = () => {
+  const { jezaApi } = JezaApiService();
   const [dataFormasPagos, setFormasPagos] = useState<FormaPago[]>([]);
   // const { filtroSeguridad, session } = useSeguridad();
   useEffect(() => {

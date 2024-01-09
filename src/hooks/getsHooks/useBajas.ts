@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { TiposdeBajas } from "../../models/TiposdeBajas";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useBajas = () => {
+  const { jezaApi } = JezaApiService();
   const [dataBajas, setBajas] = useState<TiposdeBajas[]>([]);
 
   const fetchBajas = async () => {

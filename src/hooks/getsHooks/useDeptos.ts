@@ -3,8 +3,10 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Area } from "../../models/Area";
 import { Departamento } from "../../models/Departamento";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useDeptos = () => {
+  const { jezaApi } = JezaApiService();
   const [dataDeptos, setDeptos] = useState<Departamento[]>([]);
 
   const fetchAreas = async () => {

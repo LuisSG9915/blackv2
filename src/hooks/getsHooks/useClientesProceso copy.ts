@@ -3,8 +3,10 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Marca } from "../../models/Marca";
 import { Descuento } from "../../models/Descuento";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useDescuentos = () => {
+  const { jezaApi } = JezaApiService();
   const [dataDescuentos, setDataDescuentos] = useState<Descuento[]>([]);
 
   const fetchDescuentos = async () => {

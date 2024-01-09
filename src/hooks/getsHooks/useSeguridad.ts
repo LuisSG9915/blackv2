@@ -26,8 +26,10 @@ import { useEffect, useState } from "react";
 import { Usuario } from "../../models/Usuario";
 import { jezaApi } from "../../api/jezaApi";
 import Swal from "sweetalert2";
+import JezaApiService from "../../api/jezaApi2";
 
 const useSeguridad = () => {
+  const { jezaApi } = JezaApiService();
   const [session, setSession] = useState<Usuario[]>([]);
   // const filtroSeguridad = async (modulo: string): Promise<boolean> => {
   //   console.log(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);

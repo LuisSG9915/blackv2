@@ -3,8 +3,11 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Area } from "../../models/Area";
 import { Clase } from "../../models/Clase";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useClases = () => {
+  const { jezaApi } = JezaApiService();
+
   const [dataClases, setClases] = useState<Clase[]>([]);
 
   const fetchClases = async () => {

@@ -3,6 +3,7 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { CompraProveedor } from "../../models/CompraProveedor";
 import { CompraSeleccion } from "../../models/CompraSeleccion";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   fecha1: string;
   fecha2: string;
@@ -10,6 +11,7 @@ interface Props {
   cia: number;
 }
 export const useComprasSeleccion = ({ fecha1, fecha2, sucursal, cia }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataComprasSeleccion, setDataComprasSeleccion] = useState<CompraSeleccion[]>([]);
 
   const fetchComprasSeleccion = async () => {

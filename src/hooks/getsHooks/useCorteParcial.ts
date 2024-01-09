@@ -3,12 +3,15 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { CompraProveedor } from "../../models/CompraProveedor";
 import { CompraSeleccion } from "../../models/CompraSeleccion";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   sucursal: number;
   corte: number;
   corteParcial: number;
 }
 export const useCorteParcial = ({ sucursal, corte, corteParcial }: Props) => {
+  const { jezaApi } = JezaApiService();
+
   const [dataCorteParcial, setDataCorteParcial] = useState<CompraSeleccion[]>([]);
 
   const fetchCorteParcial = async () => {

@@ -3,8 +3,11 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Area } from "../../models/Area";
 import { Proveedor } from "../../models/Proveedor";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useProveedor = () => {
+  
+const { jezaApi } = JezaApiService();
   const [dataProveedores, setProveedores] = useState<Proveedor[]>([]);
 
   const fetchProveedores = async () => {

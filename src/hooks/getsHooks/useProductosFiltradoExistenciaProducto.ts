@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { Producto, ProductoExistencia } from "../../models/Producto";
 import { jezaApi } from "../../api/jezaApi";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   descripcion: string;
   inventariable: number;
@@ -11,6 +12,7 @@ interface Props {
   sucursal: number;
 }
 export const useProductosFiltradoExistenciaProducto = ({ descripcion, insumo, inventariable, obsoleto, servicio, sucursal }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataProductos4, setDataProductos4] = useState<ProductoExistencia[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const fetchProduct4 = async () => {

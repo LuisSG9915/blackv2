@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
+import JezaApiService from "../../api/jezaApi2";
 
 export interface Props {
   f1: string;
@@ -9,6 +10,7 @@ export interface Props {
   tipoBloqueo: string;
 }
 export const useBloqueosColaboradores = ({ estilista, f1, f2, tipoBloqueo }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataBloqueos, setDataBloqueos] = useState<any[]>([]);
 
   const fetchBloqueos = async () => {

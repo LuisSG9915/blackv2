@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { TraspasoGet } from "../../models/Traspaso";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   sucursal: number | string;
   folio: number | string;
   sucursal_origen: number;
 }
 export const useTraspaso = ({ sucursal, folio, sucursal_origen }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataTraspasos, setDataTraspasos] = useState<TraspasoGet[]>([]);
 
   const fetchTraspasos = async () => {

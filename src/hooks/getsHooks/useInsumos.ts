@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Venta } from "../../models/Venta";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useInsumos = () => {
+  const { jezaApi } = JezaApiService();
   const [dataVentas, setDataVentas] = useState<Venta[]>([]);
 
   const fetchVentas = async () => {

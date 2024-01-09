@@ -3,8 +3,11 @@ import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { TiposdeBajas } from "../../models/TiposdeBajas";
 import { TipoBloqueoColaborador } from "../../models/TipoBloqueoColaborador";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useTipoBloqueoColaborador = () => {
+  const { jezaApi } = JezaApiService();
+
   const [dataTipoBloqueoColaborador, setTipoBloqueoColaborador] = useState<TipoBloqueoColaborador[]>([]);
 
   const fetchTipoBloqueoColaborador = async () => {

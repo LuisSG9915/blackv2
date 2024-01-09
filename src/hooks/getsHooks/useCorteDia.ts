@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { CompraSeleccion } from "../../models/CompraSeleccion";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   sucursal: number;
   corte: number;
   cia: number;
 }
 export const useCorteDia = ({ sucursal, corte, cia }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataCorteDia, setDataCorteDia] = useState<CompraSeleccion[]>([]);
 
   const fetchCorteDia = async () => {

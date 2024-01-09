@@ -4,6 +4,7 @@ import { jezaApi } from "../../api/jezaApi";
 import { Area } from "../../models/Area";
 import { Almacen } from "../../models/Almacen";
 import { MovimientoResponse } from "../../models/MovimientoDiversoModel";
+import JezaApiService from "../../api/jezaApi2";
 
 interface Props {
   folio: string | number;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export const useAjuste = ({ folio = "0", sucursal }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataAjustes, setAjustes] = useState<MovimientoResponse[]>([]);
 
   const fetchAjustes = async () => {

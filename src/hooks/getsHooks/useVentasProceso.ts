@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Venta } from "../../models/Venta";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   idSucursal: any;
 }
@@ -11,6 +12,7 @@ interface Proceso {
 }
 
 export const useVentasProceso = ({ idSucursal }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataVentasProcesos, setDataVentasProcesos] = useState<any[]>([]);
   const fetchVentasProcesos = async () => {
     try {
