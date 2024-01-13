@@ -8,7 +8,7 @@ import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import { useCias } from "../../hooks/getsHooks/useCias";
-
+import { useMetasCol } from "../../hooks/getsHooks/useMetasCol";
 import { useReactToPrint } from "react-to-print";
 //NUEVAS IMPOTACIONES
 import Swal from "sweetalert2";
@@ -66,11 +66,11 @@ function Metas() {
 
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
-
   const [data, setData] = useState<MetasCol[]>([]);
   const { dataCias, fetchCias } = useCias();
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
   const { dataSucursales } = useSucursales();
+  const { dataMetasCol } = useMetasCol();
   const [form, setForm] = useState<MetasCol>({
     id: 0,
     año: 0,
@@ -127,7 +127,7 @@ function Metas() {
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
 
-  //AQUI COMIENZA MÉTODO AGREGAR SUCURSAL
+
   // const insertar = async () => {
   //   const permiso = await filtroSeguridad("CAT_META_ADD");
   //   if (permiso === false) {
@@ -137,7 +137,9 @@ function Metas() {
   //   if (validarCampos() === true) {
   //     await jezaApi
   //       .post(
-  //         `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0`
+  //         `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.0
+  //         }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0
+  //         }&meta6=0&sucursal=${form.sucursal}`
   //       )
   //       .then((response) => {
   //         Swal.fire({
@@ -150,45 +152,68 @@ function Metas() {
   //       })
   //       .catch((error) => {
   //         console.log(error);
+  //         Swal.fire({
+  //           icon: "error",
+  //           text: "Ocurrió un error al crear la meta, comuniquese con sistemas",
+  //           confirmButtonColor: "#d63031",
+  //         });
   //       });
   //   } else {
+  //     // Puedes manejar un caso específico si la validación de campos falla
   //   }
   // };
 
   const insertar = async () => {
     const permiso = await filtroSeguridad("CAT_META_ADD");
     if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      return;
     }
 
     if (validarCampos() === true) {
-      await jezaApi
-        .post(
-          `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.0
-          }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0
-          }&meta6=0&sucursal=${form.sucursal}`
-        )
-        .then((response) => {
+      // Verificar si ya existe una meta para el colaborador en el mismo mes y año
+      const metaExistente = data.find(
+        (meta) =>
+          meta.idcolabolador === Number(form.idcolabolador) &&
+          meta.año === Number(form.año) &&
+          meta.mes === Number(form.mes)
+      );
+
+      if (metaExistente) {
+        Swal.fire({
+          icon: "error",
+          text: "Ya existe una meta para este colaborador en el mismo mes y año",
+          confirmButtonColor: "#d63031",
+        });
+      } else {
+        // Continuar con la inserción si no hay conflictos
+        try {
+          await jezaApi.post(`/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.0
+            }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0
+            }&meta6=0&sucursal=${form.sucursal}`);
+
           Swal.fire({
             icon: "success",
             text: "Meta creada con éxito",
             confirmButtonColor: "#3085d6",
           });
-          setModalInsertar(false);
+
+          // Actualizar la lista de metas después de la inserción
           getMetas();
-        })
-        .catch((error) => {
-          console.log(error);
+          setModalInsertar(false);
+        } catch (error) {
+          console.error(error);
           Swal.fire({
             icon: "error",
-            text: "Ocurrió un error al crear la meta, comuniquese con sistemas",
+            text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
             confirmButtonColor: "#d63031",
           });
-        });
+        }
+      }
     } else {
       // Puedes manejar un caso específico si la validación de campos falla
     }
   };
+
 
   ///AQUI COMIENZA EL MÉTODO PUT PARA ACTUALIZACIÓN DE CAMPOS
   // const editar = async () => {
@@ -219,28 +244,59 @@ function Metas() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
 
-    if (validarCampos() === true) {
-      await jezaApi
-        .put(
-          `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0&sucursal=${form.sucursal}`
-        )
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Meta actualizada con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalActualizar(false);
-          getMetas();
-        })
-        .catch((error) => {
-          console.log(error);
-          Swal.fire({
-            icon: "error",
-            text: "Ocurrió un error al actualizar la meta, comuniquese con sistemas",
-            confirmButtonColor: "#d63031",
-          });
+    if (validarCampos()) {
+      const nuevaMeta = {
+        idcolabolador: Number(form.idcolabolador),
+        año: Number(form.año),
+        mes: Number(form.mes),
+        meta1: Number(form.meta1),
+        meta2: Number(form.meta2),
+        meta3: Number(form.meta3),
+        meta4: Number(form.meta4),
+        meta5: Number(form.meta5),
+        meta6: Number(form.meta6),
+        sucursal: Number(form.sucursal),
+      };
+
+      // Verificar si ya existe una meta en el mismo mes y año para el mismo usuario
+      const metaExistenteEnMismoMesAño = data.find(
+        (meta) =>
+          meta.idcolabolador === nuevaMeta.idcolabolador &&
+          meta.año === nuevaMeta.año &&
+          meta.mes === nuevaMeta.mes
+      );
+
+      if (metaExistenteEnMismoMesAño && metaExistenteEnMismoMesAño.id !== form.id) {
+        // Ya existe una meta para el mismo usuario en el mismo mes y año (y no es la misma que estamos editando)
+        Swal.fire({
+          icon: "error",
+          text: "Ya existe una meta para este colaborador en el mismo mes y año",
+          confirmButtonColor: "#d63031",
         });
+      } else {
+        // No hay duplicados, proceder con la actualización
+        await jezaApi
+          .put(
+            `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0&sucursal=${form.sucursal}`
+          )
+          .then((response) => {
+            Swal.fire({
+              icon: "success",
+              text: "Meta actualizada con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            setModalActualizar(false);
+            getMetas();
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              text: "Ocurrió un error al actualizar la meta, comuníquese con sistemas",
+              confirmButtonColor: "#d63031",
+            });
+          });
+      }
     } else {
       // Puedes manejar un caso específico si la validación de campos falla
     }
@@ -624,7 +680,7 @@ function Metas() {
                       <option value={2026}>2026</option>
                       <option value={2027}>2027</option>
                       <option value={2028}>2028</option>
-                      <option value={2029}>2028</option>
+                      <option value={2029}>2029</option>
                       <option value={2030}>2030</option>
                     </Input>
                   </Col>
@@ -801,7 +857,7 @@ function Metas() {
                       <option value={2026}>2026</option>
                       <option value={2027}>2027</option>
                       <option value={2028}>2028</option>
-                      <option value={2029}>2028</option>
+                      <option value={2029}>2029</option>
                       <option value={2030}>2030</option>
                     </Input>
                   </Col>

@@ -155,8 +155,57 @@ function CifraSucursal() {
   //   }
   // };
 
-
   const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_CIFRASUC_ADD");
+    if (permiso === false) {
+      return;
+    }
+
+    if (validarCampos() === true) {
+      // Verificar si ya existe una meta para el colaborador en el mismo mes y año
+      const metaExistente = data.find(
+        (meta) =>
+          meta.sucursal === Number(form.sucursal) &&
+          meta.año === Number(form.año) &&
+          meta.mes === Number(form.mes)
+      );
+
+      if (metaExistente) {
+        Swal.fire({
+          icon: "error",
+          text: "Ya existe una cifra para esta sucursal en el mismo mes y año",
+          confirmButtonColor: "#d63031",
+        });
+      } else {
+        // Continuar con la inserción si no hay conflictos
+        try {
+          await jezaApi.post(`/sp_cat_ciasMetasAdd?año=${form.año}&mes=${form.mes}&sucursal=${form.sucursal}&meta1=${form.meta1 ? form.meta1 : 0.00}&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0}&meta6=0`);
+
+          Swal.fire({
+            icon: "success",
+            text: "Cifra creada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+
+          // Actualizar la lista de metas después de la inserción
+          getMetas();
+          setModalInsertar(false);
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            icon: "error",
+            text: "Ocurrió un error al actualizar la cifra; comuníquese con sistemas.",
+            confirmButtonColor: "#d63031",
+          });
+        }
+      }
+    } else {
+      // Puedes manejar un caso específico si la validación de campos falla
+    }
+  };
+
+
+  const insertar2 = async () => {
     const permiso = await filtroSeguridad("CAT_CIFRASUC_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -182,7 +231,7 @@ function CifraSucursal() {
           console.log(error);
           Swal.fire({
             icon: "error",
-            text: "Ocurrió un error al crear la cifra, comuniquese con sistemas",
+            text: "Ocurrió un error al actualizar la cifra; comuníquese con sistemas.",
             confirmButtonColor: "#d63031",
           });
         });
@@ -216,10 +265,71 @@ function CifraSucursal() {
   //   } else {
   //   }
   // };
-
-
-
   const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_CIFRASUC_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+
+    if (validarCampos()) {
+      const nuevaMeta = {
+        sucursal: Number(form.sucursal),
+        año: Number(form.año),
+        mes: Number(form.mes),
+        meta1: Number(form.meta1),
+        meta2: Number(form.meta2),
+        meta3: Number(form.meta3),
+        meta4: Number(form.meta4),
+        meta5: Number(form.meta5),
+        meta6: Number(form.meta6),
+      };
+
+      // Verificar si ya existe una meta en el mismo mes y año para el mismo usuario
+      const metaExistenteEnMismoMesAño = data.find(
+        (meta) =>
+          meta.sucursal === nuevaMeta.sucursal &&
+          meta.año === nuevaMeta.año &&
+          meta.mes === nuevaMeta.mes
+      );
+
+      if (metaExistenteEnMismoMesAño && metaExistenteEnMismoMesAño.id !== form.id) {
+        // Ya existe una meta para el mismo usuario en el mismo mes y año (y no es la misma que estamos editando)
+        Swal.fire({
+          icon: "error",
+          text: "Ya existe una cifra para esta sucursal en el mismo mes y año",
+          confirmButtonColor: "#d63031",
+        });
+      } else {
+        // No hay duplicados, proceder con la actualización
+        await jezaApi
+          .put(
+            `/sp_cat_ciasMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&sucursal=${form.sucursal}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0`
+          )
+          .then((response) => {
+            Swal.fire({
+              icon: "success",
+              text: "Cifra actualizada con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            setModalActualizar(false);
+            getMetas();
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              text: "Ocurrió un error al actualizar la cifra; comuníquese con sistemas.",
+              confirmButtonColor: "#d63031",
+            });
+          });
+      }
+    } else {
+      // Puedes manejar un caso específico si la validación de campos falla
+    }
+  };
+
+
+  const editar2 = async () => {
     const permiso = await filtroSeguridad("CAT_CIFRASUC_UPD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -647,7 +757,7 @@ function CifraSucursal() {
                       <option value={2026}>2026</option>
                       <option value={2027}>2027</option>
                       <option value={2028}>2028</option>
-                      <option value={2029}>2028</option>
+                      <option value={2029}>2029</option>
                       <option value={2030}>2030</option>
                     </Input>
                   </Col>
@@ -803,7 +913,7 @@ function CifraSucursal() {
                       <option value={2026}>2026</option>
                       <option value={2027}>2027</option>
                       <option value={2028}>2028</option>
-                      <option value={2029}>2028</option>
+                      <option value={2029}>2029</option>
                       <option value={2030}>2030</option>
                     </Input>
                   </Col>
