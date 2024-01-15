@@ -38,12 +38,13 @@ import useModalHook from "../../hooks/useModalHook";
 import { UserResponse } from "../../models/Home";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
-
+import { useCitaFutura } from "../../hooks/getsHooks/useCitaFutura";
+import { useAnticipoValidar } from "../../hooks/getsHooks/useAnticipoValidar";
 import { LuCalendarSearch } from "react-icons/lu";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Venta } from "../../models/Venta";
-
 import { FaShoppingCart, FaUser } from "react-icons/fa";
+
 // import { Cliente } from "../ventas/Components/TableClientesProceso";
 
 function Clientes() {
@@ -96,6 +97,8 @@ function Clientes() {
 
   const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
   const { dataSucursales } = useSucursales();
+  const { dataCitaFutura } = useCitaFutura();
+  const { dataAnticiposVal } = useAnticipoValidar();
   const [data, setData] = useState<Cliente[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [form, setForm] = useState<Cliente>({
@@ -346,6 +349,22 @@ function Clientes() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
     if (validarCampos1() === true) {
+      const estatusSuspendido = form.suspendido === true;
+
+      // Verifica si el trabajador tiene citas futuras
+      const clienteSuspAnticipo = dataAnticiposVal.some(suspendido => Number(suspendido.idCliente) === Number(form.id_cliente));
+
+      const clienteCitafutura = dataCitaFutura.some(cita => Number(cita.idCliente) === Number(form.id_cliente));
+      // Si el estatus está cambiando a 2 y hay citas futuras, muestra un mensaje de error
+      // if (estatusSuspendido && clienteSuspAnticipo) {
+      if (estatusSuspendido && (clienteSuspAnticipo || clienteCitafutura)) {
+        Swal.fire({
+          icon: 'error',
+          text: 'No se puede cambiar el estatus a suspendido, el cliente cuenta con anticipos o citas futuras.',
+          confirmButtonColor: '#d33',
+        });
+        return;
+      }
       await jezaApi
         .put(`/Cliente`, null, {
           params: {
@@ -463,7 +482,7 @@ function Clientes() {
 
   /* get */
   const getCliente = () => {
-    jezaApi.get("/Cliente?id=0").then((response) => {
+    jezaApi.get("/Cliente2?id=0").then((response) => {
       setData(response.data);
     });
   };
