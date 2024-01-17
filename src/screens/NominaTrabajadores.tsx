@@ -52,6 +52,7 @@ import { useCitaFutura } from "../hooks/getsHooks/useCitaFutura";
 import { useRepoComision } from "../hooks/getsHooks/useRepoComision";
 import { UserResponse } from "../models/Home";
 import { RecursosDepartamento } from "../models/RecursosDepartamento";
+import { ComisionRepo } from "../models/ComisionRepo";
 function NominaTrabajadores() {
   const { filtroSeguridad, session } = useSeguridad();
 
@@ -159,9 +160,12 @@ function NominaTrabajadores() {
       setData(response.data);
     });
   };
+
+
   useEffect(() => {
     getTrabajador();
     getinfo();
+
   }, []);
 
   // Read --->  GET
@@ -439,6 +443,13 @@ function NominaTrabajadores() {
   //     });
   // };
 
+  // Formatea la fecha como "YYYYMMDD"
+  const anio = fechaHoy.getFullYear();
+  const mes = (fechaHoy.getMonth() + 1).toString().padStart(2, '0'); // Suma 1 ya que los meses van de 0 a 11
+  const dia = fechaHoy.getDate().toString().padStart(2, '0');
+
+  const fechaFormateada = `${anio}${mes}${dia}`;
+
   // Redirige a la ruta "/app"
   const editar = async () => {
     const fechaHoy = new Date();
@@ -448,109 +459,45 @@ function NominaTrabajadores() {
     }
     if (validarCampos() === true) {
       const estatusCambiandoA2 = Number(form.status) === 2;
-
       // Verifica si el trabajador tiene citas futuras
       const estilistaTieneCitasFuturas = dataCitaFutura.some(cita => cita.Estilista === form.nombre);
-
       // Si el estatus está cambiando a 2 y hay citas futuras, muestra un mensaje de error
       if (estatusCambiandoA2 && estilistaTieneCitasFuturas) {
         Swal.fire({
           icon: 'error',
-          text: 'No se puede cambiar el estatus a 2, hay citas futuras programadas para este estilista o tiene descuentos en nómina asociados.',
+          text: 'No se puede cambiar el estatus a Baja, hay citas futuras programadas para este estilista.',
           confirmButtonColor: '#d33',
         });
         return;
       }
+      const responseNomina = await jezaApi.get(`/sp_repoComisiones1?suc=%&f1=${fechaFormateada}&f2=20700130&estilista=${form.id}`);
+      // Verifica si el colaborador específico está en la respuesta
+      const colaboradorEspecifico = responseNomina.data.find(colaborador => colaborador.colaborador === form.nombre);
+      // Si el colaborador específico no está en la respuesta, muestra un mensaje de error
 
-      try {
+      // if (!colaboradorEspecifico) {
+      //   Swal.fire({
+      //     icon: 'error',
+      //     text: 'No se encontró información para el colaborador específico.',
+      //     confirmButtonColor: '#d33',
+      //   });
+      //   return;
+      // }
+      // Verifica si hay un descuento a nómina
+      // const tieneDescuentoNomina = colaboradorEspecifico.descNominaProducto !== 0;
+      const tieneDescuentoNomina = colaboradorEspecifico ? (colaboradorEspecifico.descNominaProducto !== 0) : false;
 
-        await jezaApi
-          .put(`/Trabajador`, null, {
-            params: {
-              id: form.id,
-              clave_empleado: form.clave_empleado,
-              status: form.status,
-              nombre: form.nombre,
-              fecha_nacimiento: form.fecha_nacimiento,
-              sexo: form.sexo,
-              RFC: form.RFC,
-              CURP: form.CURP,
-              imss: form.imss,
-              domicilio: form.domicilio,
-              colonia: form.colonia,
-              poblacion: form.poblacion,
-              estado: form.estado,
-              lugar_nacimiento: form.lugar_nacimiento,
-              codigo_postal: form.codigo_postal,
-              telefono1: form.telefono1,
-              telefono2: form.telefono2,
-              email: form.email,
-              idDepartamento: form.idDepartamento,
-              idPuesto: form.idPuesto,
-              observaciones: form.observaciones,
-              nivel_escolaridad: form.nivel_escolaridad,
-              fecha_baja: form.fecha_baja ? form.fecha_baja : "2023-08-12",
-              motivo_baja: form.motivo_baja ? form.motivo_baja : 0,
-              motivo_baja_especificacion: form.motivo_baja_especificacion ? form.motivo_baja_especificacion : "...",
-              fecha_alta: form.fecha_alta,
-              fecha_cambio: fechaHoy,
-              clave_perfil: form.clave_perfil,
-              password: form.password,
-              nombreAgenda: form.nombreAgenda,
-              aliasTickets: form.aliasTickets,
-            },
-          })
-
-        Swal.fire({
-          icon: "success",
-          text: "Trabajador actualizado con éxito",
-          confirmButtonColor: "#3085d6",
-        });
-        setModalActualizar(false);
-        getTrabajador();
-
-      } catch (error) {
-        console.log(error);
-        Swal.fire({
-          icon: "error",
-          text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
-          confirmButtonColor: "#d33",
-        });
-      }
-
-    } else {
-    }
-  };
-  //---------------------------------
-  const editar44 = async () => {
-    const fechaHoy = new Date();
-    const permiso = await filtroSeguridad("CAT_TRABAJADORES_UPD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-    }
-    if (validarCampos() === true) {
-      const estatusCambiandoA2 = Number(form.status) === 2;
-
-      // Verifica si el trabajador tiene citas futuras
-      const estilistaTieneCitasFuturas = dataCitaFutura.some(cita => cita.Estilista === form.nombre);
-
-      const trabajadorTieneDescNominaProducto = dataRepoComi.some(
-        comision => comision.colaborador === form.nombre && Number(comision.descNominaProducto) > 0
-      );
-
-      // Si el estatus está cambiando a 2 y hay citas futuras, muestra un mensaje de error
-      // if (estatusCambiandoA2 && estilistaTieneCitasFuturas) {
-      if (estatusCambiandoA2 && (estilistaTieneCitasFuturas || trabajadorTieneDescNominaProducto)) {
+      // Si tiene descuento a nómina y el estatus se está cambiando a 2, muestra un mensaje de error
+      if (tieneDescuentoNomina && Number(form.status) === 2) {
         Swal.fire({
           icon: 'error',
-          text: 'No se puede cambiar el estatus a 2, hay citas futuras programadas para este estilista o tiene descuentos en nómina asociados.',
+          text: 'No se puede cambiar el estatus a Baja, el trabajador tiene descuentos en nómina asociados.',
           confirmButtonColor: '#d33',
         });
         return;
       }
 
       try {
-
         await jezaApi
           .put(`/Trabajador`, null, {
             params: {
@@ -608,6 +555,95 @@ function NominaTrabajadores() {
     } else {
     }
   };
+
+
+  //---------------------------------
+  // const editar44 = async () => {
+  //   const fechaHoy = new Date();
+  //   const permiso = await filtroSeguridad("CAT_TRABAJADORES_UPD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   if (validarCampos() === true) {
+  //     const estatusCambiandoA2 = Number(form.status) === 2;
+
+  //     // Verifica si el trabajador tiene citas futuras
+  //     const estilistaTieneCitasFuturas = dataCitaFutura.some(cita => cita.Estilista === form.nombre);
+
+  //     const trabajadorTieneDescNominaProducto = dataRepoComi.some(
+  //       comision => comision.colaborador === form.nombre && Number(comision.descNominaProducto) > 0
+  //     );
+
+  //     // Si el estatus está cambiando a 2 y hay citas futuras, muestra un mensaje de error
+  //     // if (estatusCambiandoA2 && estilistaTieneCitasFuturas) {
+  //     if (estatusCambiandoA2 && (estilistaTieneCitasFuturas || trabajadorTieneDescNominaProducto)) {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         text: 'No se puede cambiar el estatus a 2, hay citas futuras programadas para este estilista o tiene descuentos en nómina asociados.',
+  //         confirmButtonColor: '#d33',
+  //       });
+  //       return;
+  //     }
+
+  //     try {
+
+  //       await jezaApi
+  //         .put(`/Trabajador`, null, {
+  //           params: {
+  //             id: form.id,
+  //             clave_empleado: form.clave_empleado,
+  //             status: form.status,
+  //             nombre: form.nombre,
+  //             fecha_nacimiento: form.fecha_nacimiento,
+  //             sexo: form.sexo,
+  //             RFC: form.RFC,
+  //             CURP: form.CURP,
+  //             imss: form.imss,
+  //             domicilio: form.domicilio,
+  //             colonia: form.colonia,
+  //             poblacion: form.poblacion,
+  //             estado: form.estado,
+  //             lugar_nacimiento: form.lugar_nacimiento,
+  //             codigo_postal: form.codigo_postal,
+  //             telefono1: form.telefono1,
+  //             telefono2: form.telefono2,
+  //             email: form.email,
+  //             idDepartamento: form.idDepartamento,
+  //             idPuesto: form.idPuesto,
+  //             observaciones: form.observaciones,
+  //             nivel_escolaridad: form.nivel_escolaridad,
+  //             fecha_baja: form.fecha_baja ? form.fecha_baja : "2023-08-12",
+  //             motivo_baja: form.motivo_baja ? form.motivo_baja : 0,
+  //             motivo_baja_especificacion: form.motivo_baja_especificacion ? form.motivo_baja_especificacion : "...",
+  //             fecha_alta: form.fecha_alta,
+  //             fecha_cambio: fechaHoy,
+  //             clave_perfil: form.clave_perfil,
+  //             password: form.password,
+  //             nombreAgenda: form.nombreAgenda,
+  //             aliasTickets: form.aliasTickets,
+  //           },
+  //         })
+
+  //       Swal.fire({
+  //         icon: "success",
+  //         text: "Trabajador actualizado con éxito",
+  //         confirmButtonColor: "#3085d6",
+  //       });
+  //       setModalActualizar(false);
+  //       getTrabajador();
+
+  //     } catch (error) {
+  //       console.log(error);
+  //       Swal.fire({
+  //         icon: "error",
+  //         text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+  //         confirmButtonColor: "#d33",
+  //       });
+  //     }
+
+  //   } else {
+  //   }
+  // };
 
 
 

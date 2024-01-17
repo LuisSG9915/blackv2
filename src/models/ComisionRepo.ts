@@ -11,5 +11,8 @@ export interface ComisionRepo {
     com5Estilista:Number;
     sueldoBase:Number;
     totalPagar:Number;
+    f2: string;
+    f1: string;
+
 
 }
