@@ -382,17 +382,16 @@ function ReporteTool() {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
         formData.sucursal
       }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
-    } else if ("RepVtaDetalle") {
+    } else if (reporte == "RepVtaDetalle") {
       const permiso = await filtroSeguridad("REP_VTA_DETALLE");
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
-
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
         formData.sucursal
       }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
-    } else if ("sp_repoComisionesHoja") {
-      const permiso = await filtroSeguridad("REP_COMISIONES1");
+    } else if (reporte == "sp_repoComisionesHoja") {
+      const permiso = await filtroSeguridad("RECOMISIONES1");
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
