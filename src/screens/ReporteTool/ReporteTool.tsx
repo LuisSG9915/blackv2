@@ -323,9 +323,11 @@ function ReporteTool() {
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
-        }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago
-        }`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
+        formData.tipoPago
+      }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       const permiso = await filtroSeguridad("REP_ESTILISTAS");
       if (permiso === false) {
@@ -343,8 +345,9 @@ function ReporteTool() {
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal
-        }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
+        formData.fechaFinal
+      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
     } else if (reporte == "sp_reporteinventario") {
       const permiso = await filtroSeguridad("REP_INVENTARIO");
       if (permiso === false) {
@@ -376,16 +379,24 @@ function ReporteTool() {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
 
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
-        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     } else if ("RepVtaDetalle") {
       const permiso = await filtroSeguridad("REP_VTA_DETALLE");
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
 
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
-        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
+        formData.sucursal
+      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+    } else if ("sp_repoComisionesHoja") {
+      const permiso = await filtroSeguridad("REP_COMISIONES1");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
+      queryString = `/${reporte}?suc=${formData.sucursal}f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     }
 
     jezaApi
@@ -891,6 +902,34 @@ function ReporteTool() {
         setShowEstilistaInput(false);
         setShowf1(false);
         setShowf2(false);
+      } else if (value === "sp_repoComisionesHoja") {
+        // Mostrar los campos para estos informes
+
+        setShowSucursalInput(true);
+        setShowf1(true);
+        setShowf2(true);
+        setShowEstilistaInput(true);
+        //------------------------------------
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMetodoPagoInput(false);
+        setShowClaveProdInput(false);
+        setShowTipoDescuentoInput(false);
+        setShowAreaInput(false);
+        setShowDeptoInput(false);
+        setShowMarcaInput(false);
+        setShowProductoInput(false);
+        setShowAlmacenInput(false);
+        setShowPalabraProdInput(false);
+        setShowNoVentaInput(false);
+        setShowEmpresaInput(false);
+        setShowClienteInput(false);
+
+        setShowMesInput(false);
+        setShowAñoInput(false);
       } else {
         setShowClienteInput(false);
         setShowSucursalInput(false);
