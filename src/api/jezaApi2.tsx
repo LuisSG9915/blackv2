@@ -14,7 +14,9 @@ const JezaApiService = () => {
 
   // Crea una instancia de Axios
   const jezaApi = axios.create({
-    baseURL: "http://localhost:61118",
+    //baseURL: "http://localhost:61118",
+    baseURL: " http://cbinfo.no-ip.info:9083",
+
     headers: {
       "Content-Type": "application/json",
     },
