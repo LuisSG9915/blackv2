@@ -920,6 +920,9 @@ function Clientes() {
     ],
     [session]
   );
+
+
+
   const columnsclientes: MRT_ColumnDef<Cliente>[] = useMemo(
     () => [
       {
@@ -966,6 +969,19 @@ function Clientes() {
         accessorKey: "email",
         header: "Email",
         size: 100,
+      },
+      {
+        accessorKey: "suspendido",
+        header: "Vigencia",
+        size: 50,
+        Cell: ({ row }) => {
+          if (row.original.suspendido === true) {
+            return <span>SUSPENDIDO</span>
+          } else {
+            return <span>VIGENTE</span>
+          }
+        },
+        accessorFn: (row) => row.supendido,
       },
       {
         accessorKey: "redSocial1",

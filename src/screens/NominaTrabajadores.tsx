@@ -814,6 +814,7 @@ function NominaTrabajadores() {
     },
 
     { field: "nombre", headerName: "Nombre", flex: 3, headerClassName: "custom-header" },
+    { field: "d_estatus", headerName: "Vingencia", flex: 1, headerClassName: "custom-header" },
     { field: "telefono1", headerName: "Teléfono", flex: 1, headerClassName: "custom-header" },
     { field: "telefono2", headerName: "Celular", flex: 1, headerClassName: "custom-header" },
     { field: "email", headerName: "Email", flex: 1, headerClassName: "custom-header" },
