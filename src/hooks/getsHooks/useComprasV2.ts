@@ -4,8 +4,10 @@ import { jezaApi } from "../../api/jezaApi";
 import { Marca } from "../../models/Marca";
 import { Descuento } from "../../models/Descuento";
 import { CompraProveedor } from "../../models/CompraProveedor";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useComprasV2 = (proveedor: number) => {
+  const { jezaApi } = JezaApiService();
   const [dataComprasGeneral, setDataComprasGeneral] = useState<CompraProveedor[]>([]);
 
   const fetchCompras = async () => {
