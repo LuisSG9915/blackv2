@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { AnticipoGet } from "../../models/Anticipo";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   cia: number;
 }
 export const useAnticipos = ({ cia }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataAnticipos, setAnticipos] = useState<AnticipoGet[]>([]);
 
   const fetchAnticipos = async () => {

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { GastoCategoriaSub } from "../../models/GastoCategoriaSub";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useCategoriasSub = () => {
+  const { jezaApi } = JezaApiService();
   const [dataSub, setDataSub] = useState<GastoCategoriaSub[]>([]);
 
   const getCategoriaGastoSub = async () => {

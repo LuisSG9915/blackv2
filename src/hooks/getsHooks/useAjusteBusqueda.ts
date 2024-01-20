@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { MovimientoBusqueda, MovimientoResponse } from "../../models/MovimientoDiversoModel";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   f1: string;
   f2: string;
@@ -9,7 +10,7 @@ interface Props {
 }
 export const useAjusteBusqueda = ({ f1, f2, sucursal }: Props) => {
   const [dataAjustesBusquedas, setAjustesBusquedas] = useState<MovimientoBusqueda[]>([]);
-
+  const { jezaApi } = JezaApiService();
   const fetchAjustesBusquedas = async () => {
     try {
       const response: AxiosResponse<MovimientoBusqueda[]> = await jezaApi.get(

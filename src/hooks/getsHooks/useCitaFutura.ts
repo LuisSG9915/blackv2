@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { Citafutura } from "../../models/Citafutura";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useCitaFutura = () => {
+
+  const { jezaApi } = JezaApiService();
   const [dataCitaFutura, setDataCitaFutura] = useState<Citafutura[]>([]);
 
   const fetchClientes = async () => {

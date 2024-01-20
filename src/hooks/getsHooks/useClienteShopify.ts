@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
 import { jezaApi } from "../../api/jezaApi";
 import { ShopifyCliente } from "../../models/ShopifyCliente";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useClienteShopify = () => {
+  const { jezaApi } = JezaApiService();
   const [dataClieSho, setDataClieSho] = useState<ShopifyCliente[]>([]);
 
   const fetchClieSho = async () => {
