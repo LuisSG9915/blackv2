@@ -223,10 +223,10 @@ function TraspasoSalida() {
   };
 
   const putFinalizaTraspasoSalida = async () => {
-    // const permiso = await filtroSeguridad("TRASP_SALIDA_FIN");
-    // if (permiso === false) {
-    //   return;
-    // }
+    const permiso = await filtroSeguridad("TRASP_SALIDA_FIN");
+    if (permiso === false) {
+      return;
+    }
     jezaApi
       .put(
         `/TraspasoFinaliza?sucursal_origen=${dataUsuarios2[0].sucursal}&sucursal_destino=${form.suc_destino}&usuario=${dataUsuarios2[0].id}`
