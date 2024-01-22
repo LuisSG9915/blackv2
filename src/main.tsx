@@ -80,6 +80,7 @@ import Example2 from "./screens/EXAMPLE/Example2";
 import { store } from "./screens/EXAMPLE/app/store";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CifraSucursal from "./screens/cifrasuc/CifraSucursal";
+import { AuthProvider } from "./context/AuthContext";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -388,8 +389,10 @@ const router = createBrowserRouter([
 const queryClient = new QueryClient();
 
 ReactDOM.render(
-  <QueryClientProvider client={queryClient} >
-    <RouterProvider router={router} />
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </QueryClientProvider>,
   document.getElementById("root")
 );

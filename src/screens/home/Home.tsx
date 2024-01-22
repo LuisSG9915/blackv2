@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Container, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import AlertComponent from "../../components/AlertComponent";
-import { jezaApi } from "../../api/jezaApi";
+import JezaApiService from "../../api/jezaApi2";
 
 import "../../../css/home.css";
 import logoImage from "../../assets/Logo.png";
@@ -11,13 +11,19 @@ import CFormGroupInput from "../../components/CFormGroupInput";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
 import Swal from "sweetalert2";
+import { useAuth } from "../../context/AuthContext";
 
 function Home() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [contraseña, setContraseña] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { setAuthToken } = useAuth();
+  const { jezaApi } = JezaApiService();
+
   const handleUsernameChange = (event: { target: { value: React.SetStateAction<string> } }) => {
     setUsername(event.target.value);
   };
@@ -33,9 +39,16 @@ function Home() {
     return cia;
   };
 
+  const datas = {
+    Usuario: "1",
+    Contraseña: "2",
+  };
   const handleNavigation = async () => {
     setLoading(true);
     try {
+      const response2 = await jezaApi.post(`/tokenLogin`, datas);
+      localStorage.setItem("token", JSON.stringify(response2.data.token));
+      setAuthToken("a");
       const response = await jezaApi.get(`/UsuarioPass?usuario=${username}&pass=${password}`);
       const sucursalArray = getSucursalForeignKey(response.data[0].sucursal);
       const nuevoResponse = response.data.map((item) => {
