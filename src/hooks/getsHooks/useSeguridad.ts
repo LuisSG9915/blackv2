@@ -80,7 +80,7 @@ const useSeguridad = () => {
     }
 
     // Ahora, session tiene elementos, puedes usar session.map
-    console.log(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);
+    //console.log(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);
 
     const response = await jezaApi.get(`/Permiso?usuario=${session.map((usuario) => usuario.id)}&modulo=${modulo}`);
     // if(session){

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 interface AuthContextProps {
   token: string | null;
   setAuthToken: (newToken: string | null) => void;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 interface AuthProviderProps {
@@ -21,6 +22,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const contextValue: AuthContextProps = {
     token,
     setAuthToken,
+    setToken,
   };
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
