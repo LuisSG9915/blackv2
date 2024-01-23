@@ -6,9 +6,11 @@ import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useReadHook, { Forma } from "../../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
-import { jezaApi } from "../../api/jezaApi";
+// import JezaApiService, { jezaApi } from "../../api/jezaApi2";
 import { MdInventory } from "react-icons/md";
+import JezaApiService from "../../api/jezaApi2";
 function InventariosAjustes() {
+  const { jezaApi } = JezaApiService();
   const { data: data1, llamada: llamada1, setdata } = useReadHook({ url: "Medico" });
   const { data: data2 } = useReadHook({ url: "Clinica" });
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =

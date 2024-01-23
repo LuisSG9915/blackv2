@@ -7,12 +7,14 @@ import useModalHook from "../hooks/useModalHook";
 
 import CFormGroupInput from "../components/CFormGroupInput";
 import CButton from "../components/CButton";
-import { jezaApi } from "../api/jezaApi";
+import JezaApiService from "../api/jezaApi2";
 import SidebarHorizontal from "../components/SidebarHorizontal";
 import TabPrueba from "./TabPrueba";
 import { Dots } from "react-activity";
 import "react-activity/dist/library.css";
 function Menu() {
+  const { jezaApi } = JezaApiService();
+
   const { data: data1, llamada: llamada1, setdata } = useReadHook({ url: "Clinica" });
   const { modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
   const Data = ["ID", "Clinica", "Acciones"];

@@ -21,7 +21,7 @@ import {
   Card,
   CardBody,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { Cliente } from "../../models/Cliente";
@@ -44,10 +44,12 @@ import { LuCalendarSearch } from "react-icons/lu";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Venta } from "../../models/Venta";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
+import JezaApiService from "../../api/jezaApi2";
 
 // import { Cliente } from "../ventas/Components/TableClientesProceso";
 
 function Clientes() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 

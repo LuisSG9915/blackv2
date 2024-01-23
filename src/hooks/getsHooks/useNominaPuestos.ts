@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Puesto } from "../../models/Puesto";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useNominaPuestos = () => {
+  const { jezaApi } = JezaApiService();
   const [dataNominaPuestos, setDataNominaPuestos] = useState<Puesto[]>([]);
 
   const fetchNominaPuestos = async () => {

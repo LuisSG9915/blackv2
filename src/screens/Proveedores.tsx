@@ -28,7 +28,7 @@ import {
 import CButton from "../components/CButton";
 import SidebarHorizontal from "../components/SidebarHorizontal";
 import { useNavigate } from "react-router-dom";
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import useModalHook from "../hooks/useModalHook";
 import CFormGroupInput from "../components/CFormGroupInput";
 import { useProveedor } from "../hooks/getsHooks/useProveedor";
@@ -41,8 +41,11 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
+import JezaApiService from "../api/jezaApi2";
+import { UserResponse } from "../models/Home";
 
 function Proveedores() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);

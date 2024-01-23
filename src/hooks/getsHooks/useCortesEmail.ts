@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { CorteA, CorteB, CorteC, CorteD, CorteE, CorteF} from "../../models/CortesEmail";
 import { format } from "date-fns-tz";
 import JezaApiService from "../../api/jezaApi2";

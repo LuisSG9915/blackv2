@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane, Row, Col, Input, Label, Container, Button, FormGroup } from "reactstrap";
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import CFormGroupInput from "../components/CFormGroupInput";
 import { Trabajador } from "../models/Trabajador";
 import AlertComponent from "../components/AlertComponent";
@@ -8,6 +8,7 @@ import useAlerts from "../hooks/useAlerts";
 import { useNominaPuestos } from "../hooks/getsHooks/useNominaPuestos";
 import { useNominaDepartamentos } from "../hooks/getsHooks/useNominaDepartamentos";
 import { useNominaEscolaridad } from "../hooks/getsHooks/useNominaEscolaridad";
+import JezaApiService from "../api/jezaApi2";
 
 interface props {
   form2?: Trabajador;
@@ -16,6 +17,8 @@ interface props {
 }
 
 function TabPrueba({ form2, getTrabajador }: props) {
+  const { jezaApi } = JezaApiService();
+
   const [visible, setVisible] = useState(false);
 
   const [error, setError] = useState(false);

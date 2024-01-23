@@ -1,1 +1,1 @@
-export const versionSistema = 2.7;
+export const versionSistema = 2.8;

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
 import { Marca } from "../../models/Marca";
 import { Sucursal } from "../../models/Sucursal";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useSucursales = () => {
   const [dataSucursales, setDataSucursales] = useState<Sucursal[]>([]);
+  const { jezaApi } = JezaApiService();
 
   const fetchSucursales = async () => {
     try {

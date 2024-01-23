@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Cliente } from "../../models/Cliente";
 import JezaApiService from "../../api/jezaApi2";
 

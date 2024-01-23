@@ -19,7 +19,6 @@ import {
   AccordionItem,
   UncontrolledAccordion,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { Usuario } from "../../models/Usuario";
@@ -42,8 +41,10 @@ import { BiAddToQueue } from "react-icons/bi";
 import { CgPlayListCheck } from "react-icons/cg";
 import { BiSearchAlt } from "react-icons/bi";
 import { BiExit } from "react-icons/bi";
+import JezaApiService from "../../api/jezaApi2";
 
 function TraspasoSalida() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   useEffect(() => {

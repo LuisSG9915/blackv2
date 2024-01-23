@@ -20,7 +20,7 @@ import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useReadHook, { DataClinica } from "../../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi2";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import TabPerfil from "../TabPerfil";
@@ -37,8 +37,10 @@ import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { BsPersonVcard } from "react-icons/bs";
 import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 function Perfiles() {
   const { filtroSeguridad, session } = useSeguridad();
+  const { jezaApi } = JezaApiService();
 
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

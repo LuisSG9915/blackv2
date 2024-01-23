@@ -27,7 +27,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -54,8 +54,10 @@ import Swal from "sweetalert2";
 import { useUnidadMedida } from "../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../models/UnidadMedidaModel";
 import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function Productos() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

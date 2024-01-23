@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import useReadHook, { Forma } from "../../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Row, FormGroup, Col, Button, Alert, Container, Card, Modal, ModalHeader, ModalBody, Input, Table, ModalFooter, Label } from "reactstrap";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import TabPrueba from "../TabPrueba";
+import JezaApiService from "../../api/jezaApi2";
 
 function CrearInventario() {
+  const { jezaApi } = JezaApiService();
   const { data: data1, llamada: llamada1, setdata } = useReadHook({ url: "Clinica" });
   const { modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
   const Data = ["ID", "Clinica", "Acciones"];

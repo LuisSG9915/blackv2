@@ -27,7 +27,7 @@ import CButton from "../components/CButton";
 import SidebarHorizontal from "../components/SideBarHorizontal";
 import useReadHook, { DataClinica } from "../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import useModalHook from "../hooks/useModalHook";
 import CFormGroupInput from "../components/CFormGroupInput";
 import TabPrueba from "./TabPrueba";
@@ -53,7 +53,9 @@ import { useRepoComision } from "../hooks/getsHooks/useRepoComision";
 import { UserResponse } from "../models/Home";
 import { RecursosDepartamento } from "../models/RecursosDepartamento";
 import { ComisionRepo } from "../models/ComisionRepo";
+import JezaApiService from "../api/jezaApi2";
 function NominaTrabajadores() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);

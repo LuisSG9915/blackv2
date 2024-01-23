@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useEstilistas = () => {
+  const { jezaApi } = JezaApiService();
   const [dataEstilistas, setDataEstilistas] = useState<any[]>([]);
 
   const fetchEstilistas = async () => {

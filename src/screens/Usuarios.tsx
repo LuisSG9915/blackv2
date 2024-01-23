@@ -23,7 +23,6 @@ import CFormGroupInput from "../components/CFormGroupInput";
 import SidebarHorizontal from "../components/SidebarHorizontal";
 import useReadHook, { DataClinica } from "../hooks/useReadHook";
 import { useNavigate } from "react-router-dom";
-import { jezaApi } from "../api/jezaApi";
 import useModalHook from "../hooks/useModalHook";
 import { Usuario } from "../models/Usuario";
 import AlertComponent from "../components/AlertComponent";
@@ -37,8 +36,11 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
+import JezaApiService from "../api/jezaApi2";
+
 
 function Usuarios() {
+  const { jezaApi } = JezaApiService();
 
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

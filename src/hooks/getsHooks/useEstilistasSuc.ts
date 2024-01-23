@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
+import JezaApiService from "../../api/jezaApi2";
 
 interface Props {
   sucursal: number;
 }
 export const useEstilistasSuc = ({ sucursal }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataEstilistasSuc, setDataEstilistasSuc] = useState<any[]>([]);
 
   const fetchEstilistasSuc = async () => {

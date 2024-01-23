@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { NivelEscolaridad } from "../../models/NivelEscolaridad";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useNominaEscolaridad = () => {
+  const { jezaApi } = JezaApiService();
   const [dataNominaNivel, setDataNominaNivel] = useState<NivelEscolaridad[]>([]);
 
   const fetchNominaNivel = async () => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Marca } from "../../models/Marca";
 import { Descuento } from "../../models/Descuento";
 import { CompraProveedor } from "../../models/CompraProveedor";

@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane, Row, Col, Input, Label, Container, Button } from "reactstrap";
 import CFormGroupInput from "../components/CFormGroupInput";
 import AlertComponent from "../components/AlertComponent";
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import { Proveedor } from "../models/Proveedor";
+import JezaApiService from "../api/jezaApi2";
 interface Props {
   estado: string;
   actualizarModalEstado: () => void;
   form?: any;
 }
 function TabPruebaProveedor({ estado, actualizarModalEstado, form }: Props) {
+  const { jezaApi } = JezaApiService();
   const [form2, setForm2] = useState<Proveedor>({
     id: 1,
     nombre: "",
@@ -74,7 +76,7 @@ function TabPruebaProveedor({ estado, actualizarModalEstado, form }: Props) {
       .post("/Proveedor", null, {
         params: {},
       })
-      .then(() => {});
+      .then(() => { });
   };
 
   const [visible, setVisible] = useState(false);

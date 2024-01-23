@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { jezaApi } from "../api/jezaApi";
 import { Medico } from "../models/Medico";
+import JezaApiService from "../api/jezaApi2";
 
 interface Props {
   url: string;
@@ -14,6 +14,8 @@ export interface DataClinica {
 type FormUnion = Medico | DataClinica;
 
 function useReadHook({ url }: Props) {
+  const { jezaApi } = JezaApiService();
+
   const [data, setdata] = useState<FormUnion[]>([]);
   const [loading, setloading] = useState(true);
   const [error, seterror] = useState("");

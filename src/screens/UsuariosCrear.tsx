@@ -3,7 +3,7 @@ import { Alert, Button, Col, Container, FormGroup, Input, Label, Modal, ModalBod
 import SidebarHorizontal from "../components/SidebarHorizontal";
 import CButton from "../components/CButton";
 import useReadHook from "../hooks/useReadHook";
-import { jezaApi } from "../api/jezaApi";
+import JezaApiService from "../api/jezaApi2";
 import { useNavigate } from "react-router-dom";
 import useModalHook from "../hooks/useModalHook";
 import CFormGroupInput from "../components/CFormGroupInput";
@@ -11,6 +11,8 @@ import { Usuario } from "../models/Usuario";
 import { Perfil } from "../models/Perfil";
 
 function UsuariosCrear() {
+  const { jezaApi } = JezaApiService();
+
   const { modalInsertar, setModalActualizar, cerrarModalInsertar } = useModalHook();
   const Data = ["ID", "Clinica", "Acciones"];
 
