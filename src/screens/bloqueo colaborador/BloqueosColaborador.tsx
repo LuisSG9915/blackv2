@@ -18,15 +18,18 @@ import Swal from "sweetalert2";
 import { format } from "date-fns";
 import { useTipoBloqueoColaborador } from "../../hooks/getsHooks/useTipoBloqueoColaborador";
 import { useNavigate } from "react-router";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import Button from "@mui/material/Button";
 import { TbLockCancel } from "react-icons/tb";
 import { useParams } from "react-router-dom";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-
+import JezaApiService from "../../api/jezaApi2";
 // const [showView, setShowView] = useState(true);
 
 function BloqueosColaborador() {
+
+
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const [showView, setShowView] = useState(true);

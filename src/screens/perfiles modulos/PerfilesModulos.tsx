@@ -19,7 +19,7 @@ import {
   ModalHeader,
   Label,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -46,7 +46,10 @@ import { MaterialReactTable, MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
 import Select from "react-select";
 import { GrSecure } from "react-icons/gr";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 function PerfilesModulos() {
+  const { jezaApi } = JezaApiService();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 

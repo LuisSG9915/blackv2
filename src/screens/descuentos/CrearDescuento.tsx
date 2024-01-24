@@ -3,12 +3,14 @@ import { Button, Col, Container, FormGroup, Input, Label, Row } from "reactstrap
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Cia } from "../../models/Cia";
 import { Perfil } from "../../models/Perfil";
 import { Descuento } from "../../models/Descuento";
+import JezaApiService from "../../api/jezaApi2";
 
 function CrearDescuento() {
+  const { jezaApi } = JezaApiService();
   const { modalInsertar, setModalInsertar } = useModalHook();
 
   const [form, setForm] = useState<Descuento>({
@@ -16,6 +18,7 @@ function CrearDescuento() {
     descripcion: "",
     min_descto: 0.0,
     max_descto: 0.0,
+    activo: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {

@@ -18,7 +18,7 @@ import {
   ModalHeader,
   Label,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -26,8 +26,10 @@ import useModalHook from "../../hooks/useModalHook";
 import useReadHook, { Forma } from "../../hooks/useReadHook";
 import TabPerfil from "../TabPerfil";
 import { Puesto } from "../../models/Puesto";
+import JezaApiService from "../../api/jezaApi2";
 
 function Puestos() {
+  const { jezaApi } = JezaApiService();
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
@@ -82,7 +84,7 @@ function Puestos() {
   };
 
   const insertar = () => {
-    jezaApi.post("/Medico", {}).then(() => {});
+    jezaApi.post("/Medico", {}).then(() => { });
     setModalInsertar(false);
   };
 

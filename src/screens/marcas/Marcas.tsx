@@ -18,7 +18,7 @@ import {
   ModalHeader,
   Label,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
@@ -36,8 +36,10 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { AiFillTags } from "react-icons/ai";
 import { UserResponse } from "../../models/Home";
 import CFormGroupInput from "../../components/CFormGroupInput";
+import JezaApiService from "../../api/jezaApi2";
 
 function Marcas() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

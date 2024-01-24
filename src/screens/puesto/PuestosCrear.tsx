@@ -20,15 +20,17 @@ import {
   Row,
   Table,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useReadHook from "../../hooks/useReadHook";
 import useModalHook from "../../hooks/useModalHook";
 import { Puesto } from "../../models/Puesto";
+import JezaApiService from "../../api/jezaApi2";
 
 function PuestosCrear() {
+  const { jezaApi } = JezaApiService();
   const { setModalInsertar, setModalActualizar } = useModalHook();
   const [dataClinica, setDataClinica] = useState<undefined | string>("");
   const [isClicked, setIsClicked] = useState<boolean>(false);
@@ -60,8 +62,8 @@ function PuestosCrear() {
           descripcion: puesto.descripcion,
         },
       })
-      .then(() => {})
-      .catch((e) => {});
+      .then(() => { })
+      .catch((e) => { });
     setModalInsertar(false);
   };
 
@@ -91,7 +93,7 @@ function PuestosCrear() {
                   handleChange={handleChange}
                   inputName="descripcion"
                   labelName="Puestos:"
-                  // value={}
+                // value={}
                 />
               </Col>
             </Row>

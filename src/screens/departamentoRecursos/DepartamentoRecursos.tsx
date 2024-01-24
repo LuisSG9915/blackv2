@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { RecursosDepartamento } from "../../models/RecursosDepartamento";
 //NUEVAS IMPOTACIONES
 import Swal from "sweetalert2";
@@ -35,7 +35,9 @@ import { Md6FtApart } from "react-icons/md";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 function DepartamentoRecursos() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

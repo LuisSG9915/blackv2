@@ -15,7 +15,7 @@ import {
   ModalHeader,
   Label,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -37,8 +37,11 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useUnidadMedida } from "../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../models/UnidadMedidaModel";
 import { TbAngle } from "react-icons/tb";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function UnidadMedida() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

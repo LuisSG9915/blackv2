@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { UnidadMedidaModel } from "../../models/UnidadMedidaModel";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useUnidadMedida = () => {
+  const { jezaApi } = JezaApiService();
   const [dataUnidadMedida, setDataUnidadMedida] = useState<UnidadMedidaModel[]>([]);
 
   const fetchUnidadMedida = async () => {

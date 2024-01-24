@@ -28,7 +28,7 @@ import { ImMoveDown } from "react-icons/im";
 import { useTraspasoEntrada } from "../../hooks/getsHooks/useTraspasoEntrada";
 import { TraspasoBusqueda, TraspasoGet } from "../../models/Traspaso";
 import { useReactToPrint } from "react-to-print";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Sucursal } from "../../models/Sucursal";
 import { useTraspasoBusqueda } from "../../hooks/getsHooks/useTraspasoBusqueda";
 import { AiOutlineSelect } from "react-icons/ai";
@@ -41,8 +41,10 @@ import { useNavigate } from "react-router-dom";
 
 import { BsDownload } from "react-icons/bs";
 import { BiSearchAlt } from "react-icons/bi";
+import JezaApiService from "../../api/jezaApi2";
 
 function TraspasosEntrada() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);
@@ -435,10 +437,8 @@ function TraspasosEntrada() {
 
     jezaApi
       .get(
-        `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${
-          fechaSeleccionada.suc_destino
-        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"}&f2=${
-          fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"
+        `/TraspasoBusqueda?folio=${Number(fechaSeleccionada.folio) === 0 ? "%" : fechaSeleccionada.folio}&sucursal=${fechaSeleccionada.suc_destino
+        }&sucursal_destino=${dataUsuarios2[0]?.sucursal}&f1=${fechaSeleccionada.f1 ? fechaSeleccionada.f1 : "20230101"}&f2=${fechaSeleccionada.f2 ? fechaSeleccionada.f2 : "20231212"
         }`
       )
       .then((response) => {

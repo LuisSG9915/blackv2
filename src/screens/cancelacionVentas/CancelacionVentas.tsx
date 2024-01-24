@@ -22,7 +22,7 @@ import {
   Button,
   Spinner,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -38,7 +38,9 @@ import { Box } from "@mui/material";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import JezaApiService from "../../api/jezaApi2";
 function CancelacionVentas() {
+  const { jezaApi } = JezaApiService();
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   const { filtroSeguridad, session } = useSeguridad();
   useEffect(() => {

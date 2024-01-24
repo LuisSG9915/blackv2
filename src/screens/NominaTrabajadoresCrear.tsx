@@ -23,12 +23,14 @@ import SidebarHorizontal from "../components/SidebarHorizontal";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import CButton from "../components/CButton";
 import useReadHook from "../hooks/useReadHook";
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import { useNavigate } from "react-router-dom";
 import useModalHook from "../hooks/useModalHook";
 import CFormGroupInput from "../components/CFormGroupInput";
 import TabPrueba from "./TabPrueba";
+import JezaApiService from "../api/jezaApi2";
 function NominaTrabajadoresCrear() {
+  const { jezaApi } = JezaApiService();
   const { data: data1, llamada: llamada1, setdata } = useReadHook({ url: "Clinica" });
   const { modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
   const Data = ["ID", "Clinica", "Acciones"];

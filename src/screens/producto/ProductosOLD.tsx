@@ -27,7 +27,7 @@ import {
   PaginationItem,
   PaginationLink,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -47,8 +47,10 @@ import { MdProductionQuantityLimits } from "react-icons/md";
 import { useProveedor } from "../../hooks/getsHooks/useProveedor";
 import { Proveedor } from "../../models/Proveedor";
 import { useUnidadMedida } from "../../hooks/getsHooks/useUnidadMedida";
+import JezaApiService from "../../api/jezaApi2";
 
 function Productos() {
+  const { jezaApi } = JezaApiService();
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar } = useModalHook();
   const { dataProductos, fetchProduct, setDataProductos } = useProductos();
 
@@ -216,7 +218,7 @@ function Productos() {
   };
 
   const insertar = () => {
-    jezaApi.post("/Medico", {}).then(() => {});
+    jezaApi.post("/Medico", {}).then(() => { });
     setModalInsertar(false);
   };
 

@@ -21,7 +21,7 @@ import {
   Col,
   Button,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -34,7 +34,9 @@ import { TiCancel } from "react-icons/ti";
 import { Usuario } from "../../models/Usuario";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { Box } from "@mui/material";
+import JezaApiService from "../../api/jezaApi2";
 function CancelacionVentas() {
+  const { jezaApi } = JezaApiService();
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const [filtroValorMedico, setFiltroValorMedico] = useState("");

@@ -20,7 +20,7 @@ import {
   Col,
   Card,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import { Cliente } from "../../models/Cliente";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
@@ -43,8 +43,10 @@ import { FaShopify } from "react-icons/fa";
 
 import { useClienteShopify } from "../../hooks/getsHooks/useClienteShopify";
 import { ShopifyCliente } from "../../models/ShopifyCliente";
+import JezaApiService from "../../api/jezaApi2";
 
 function ClientesShopify() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 

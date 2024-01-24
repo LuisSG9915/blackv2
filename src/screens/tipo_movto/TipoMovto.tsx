@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Row, Container, Col, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -23,8 +23,11 @@ import { useUnidadMedida } from "../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../models/UnidadMedidaModel";
 import { useTipoMovto } from "../../hooks/getsHooks/useTipoMovto";
 import { TipoMovtoModel } from "../../models/TipoMovtoModel";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function TipoMovto() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

@@ -1,9 +1,11 @@
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
+import JezaApiService from "../api/jezaApi2";
 import { Medico } from "../models/Medico";
 import { Venta } from "../models/Venta";
 
 
 export const editarMedico = (dato: any) => {
+  const { jezaApi } = JezaApiService();
   jezaApi
     .put(`/Medico`, {
       id: dato.id,
@@ -19,6 +21,7 @@ export const editarMedico = (dato: any) => {
 };
 
 export const eliminarMedico = async (dato: Venta): Promise<void> => {
+  const { jezaApi } = JezaApiService();
       const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento ${dato.id}`);
     if (opcion) {
 
@@ -31,6 +34,7 @@ export const eliminarMedico = async (dato: Venta): Promise<void> => {
 };
 
 export const insertarMedico = async (form: Medico) => {
+  const { jezaApi } = JezaApiService();
   await jezaApi
     .post("/Medico", {
       nombre: form.nombre,
@@ -42,6 +46,7 @@ export const insertarMedico = async (form: Medico) => {
 };
 
 export const getMedico = async () => {
+  const { jezaApi } = JezaApiService();
   try {
     const response = await jezaApi.get("Medico");
     return response;

@@ -20,7 +20,7 @@ import {
   ModalHeader,
   Label,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -39,8 +39,11 @@ import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import "../../../css/tablaestilos.css";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { GrCreditCard } from "react-icons/gr";
+import JezaApiService from "../../api/jezaApi2";
+import { UserResponse } from "../../models/Home";
 
 function TipoFormasPago() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);

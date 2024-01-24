@@ -42,8 +42,11 @@ import Select from "react-select";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
+import JezaApiService from "../../api/jezaApi2";
 
 function ReporteCifra() {
+
+  const { jezaApi } = JezaApiService();
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
   const [data, setData] = useState<ReporteTool[]>([]);

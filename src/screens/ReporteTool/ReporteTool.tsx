@@ -23,7 +23,7 @@ import "../../../css/reportes.css";
 import { ExportToCsv } from "export-to-csv";
 import { MaterialReactTable, MRT_ColumnDef, MRT_Row } from "material-react-table";
 import { Padding } from "@mui/icons-material";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { useCias } from "../../hooks/getsHooks/useCias";
 import { useClientes } from "../../hooks/getsHooks/useClientes";
 import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
@@ -42,8 +42,10 @@ import Select from "react-select";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
+import JezaApiService from "../../api/jezaApi2";
 
 function ReporteTool() {
+  const { jezaApi } = JezaApiService();
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
   const [data, setData] = useState<ReporteTool[]>([]);
@@ -323,11 +325,9 @@ function ReporteTool() {
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
-        formData.tipoPago
-      }`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago
+        }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       const permiso = await filtroSeguridad("REP_ESTILISTAS");
       if (permiso === false) {
@@ -345,9 +345,8 @@ function ReporteTool() {
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
-        formData.fechaFinal
-      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal
+        }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
     } else if (reporte == "sp_reporteinventario") {
       const permiso = await filtroSeguridad("REP_INVENTARIO");
       if (permiso === false) {
@@ -379,17 +378,15 @@ function ReporteTool() {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
 
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     } else if (reporte == "RepVtaDetalle") {
       const permiso = await filtroSeguridad("REP_VTA_DETALLE");
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     } else if (reporte == "sp_repoComisionesHoja") {
       const permiso = await filtroSeguridad("RECOMISIONES1");
       if (permiso === false) {

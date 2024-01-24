@@ -20,7 +20,7 @@ import {
   Row,
   Table,
 } from "reactstrap";
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import CFormGroupInput from "../components/CFormGroupInput";
 import SidebarHorizontal from "../components/SidebarHorizontal";
 import useModalHook from "../hooks/useModalHook";
@@ -30,8 +30,10 @@ import axios from "axios";
 import { FormaPago } from "../models/FormaPago";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../models/Sucursal";
+import JezaApiService from "../api/jezaApi2";
 
 function FormasPago() {
+  const { jezaApi } = JezaApiService();
   const { data: data1, llamada: llamada1, setdata } = useReadHook({ url: "Clinica" });
   const { setModalActualizar } = useModalHook();
 

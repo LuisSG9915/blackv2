@@ -20,7 +20,7 @@ import {
   Row,
   Table,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import useReadHook from "../../hooks/useReadHook";
@@ -30,8 +30,10 @@ import CButton from "../../components/CButton";
 import { Area } from "../../models/Area";
 import { Departamento } from "../../models/Departamento";
 import { Clase } from "../../models/Clase";
+import JezaApiService from "../../api/jezaApi2";
 
 function AreaDeptoClasesCrear() {
+  const { jezaApi } = JezaApiService();
   const { data: data1, llamada: llamada1, setdata } = useReadHook({ url: "Clinica" });
   const { modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
   const Data = ["ID", "Clinica", "Acciones"];

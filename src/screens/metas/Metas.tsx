@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Row, Container, Col, Input, InputGroup, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader, Label } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -26,7 +26,9 @@ import CurrencyInput from "react-currency-input-field";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+import JezaApiService from "../../api/jezaApi2";
 function Metas() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

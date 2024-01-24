@@ -7,10 +7,11 @@ import { useClientes } from "../../../hooks/getsHooks/useClientes";
 import { Box } from "@mui/material";
 import CButton from "../../../components/CButton";
 import Swal from "sweetalert2";
-import { jezaApi } from "../../../api/jezaApi";
+// import { jezaApi } from "../../../api/jezaApi";
 import useSeguridad from "../../../hooks/getsHooks/useSeguridad";
 import { Venta } from "../../../models/Venta";
-import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../../api/jezaApi2";
+import { UserResponse } from "../../../models/Home";
 // interface Venta {
 //   id?: number;
 //   estilista: string;
@@ -30,6 +31,7 @@ interface Props {
 }
 
 const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, sucursal }: Props) => {
+  const { jezaApi } = JezaApiService();
   const { dataClientes, setDataClientes } = useClientes();
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
 
@@ -314,7 +316,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           </Box>
         )}
 
-        //customize built-in buttons in the top-right of top toolbar
+      //customize built-in buttons in the top-right of top toolbar
       >
         <thead>
           <tr>

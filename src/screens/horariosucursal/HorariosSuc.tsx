@@ -18,7 +18,7 @@ import {
   Label,
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Trabajador } from "../../models/Trabajador";
 import { HorarioSucursal } from "../../models/HorarioSucursal";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
@@ -32,8 +32,10 @@ import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
 import { useNavigate } from "react-router";
 import { FaBuildingCircleArrowRight } from "react-icons/fa6";
+import JezaApiService from "../../api/jezaApi2";
 
 function HorariosSuc() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

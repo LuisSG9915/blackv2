@@ -18,7 +18,7 @@ import {
   Col,
   FormGroup,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -37,8 +37,10 @@ import { useAreas } from "../../hooks/getsHooks/useAreas";
 import { useDeptos } from "../../hooks/getsHooks/useDeptos";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function AreaDeptoClases() {
+  const { jezaApi } = JezaApiService();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 

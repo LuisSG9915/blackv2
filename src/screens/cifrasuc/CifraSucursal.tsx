@@ -26,7 +26,10 @@ import CurrencyInput from "react-currency-input-field";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
 import { Sucursal } from "../../models/Sucursal";
+import JezaApiService from "../../api/jezaApi2";
 function CifraSucursal() {
+
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

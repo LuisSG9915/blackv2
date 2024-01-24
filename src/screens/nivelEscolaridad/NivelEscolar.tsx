@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { NivelEscolaridad } from "../../models/NivelEscolaridad";
 import Swal from "sweetalert2";
 import { BsBuildingAdd } from "react-icons/bs";
@@ -32,8 +32,11 @@ import useModalHook from "../../hooks/useModalHook";
 import CButton from "../../components/CButton";
 import { TbSchool } from "react-icons/tb";
 import CFormGroupInput from "../../components/CFormGroupInput";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function NivelEscolar() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

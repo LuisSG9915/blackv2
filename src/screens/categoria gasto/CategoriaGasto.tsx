@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Container, Modal, ModalHeader, ModalBody, ModalFooter, Label, Input, Table, Alert } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { GastoCategoria } from "../../models/GastoCategoria";
 import useModalHook from "../../hooks/useModalHook";
 import { GiReceiveMoney, GiPayMoney } from "react-icons/gi";
@@ -22,9 +22,11 @@ import { Cia } from "../../models/Cia";
 import AlertComponent from "../../components/AlertComponent";
 import { useCias } from "../../hooks/getsHooks/useCias";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 function CategoriaGastos() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
-
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
 

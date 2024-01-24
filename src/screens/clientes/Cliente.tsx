@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete, AiFillEye } from "react-icons/ai";
 import { Row, Container, Input, Table, Modal, ModalBody, ModalFooter, ModalHeader, Alert, Label, InputGroup } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 
 import { Cliente } from "../../models/Cliente";
@@ -14,8 +14,10 @@ import { Button, ButtonGroup } from "@mui/material";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import { BsPersonBoundingBox } from "react-icons/bs";
 import Swal from "sweetalert2";
+import JezaApiService from "../../api/jezaApi2";
 
 function Clientes() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [filtroValorMedico, setFiltroValorMedico] = useState("");

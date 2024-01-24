@@ -29,7 +29,7 @@ import "../../../css/reportesArbol.css";
 import { ExportToCsv } from "export-to-csv";
 import { MaterialReactTable, MRT_ColumnDef, MRT_Row } from "material-react-table";
 import { Padding } from "@mui/icons-material";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { useCias } from "../../hooks/getsHooks/useCias";
 import { useClientes } from "../../hooks/getsHooks/useClientes";
 import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
@@ -48,155 +48,13 @@ import Select from "react-select";
 import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks/useProductosFiltradoExistenciaProductoAlm";
 import { UserResponse } from "../../models/Home";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import * as XLSX from "xlsx";
-
-// const ReporteArbol = () => {
-
-//   const [expandedRows, setExpandedRows] = useState({});
-//     const [reportes, setReportes] = useState([]);
-//   const [columnas, setColumnas] = useState([]);
-//   const [data, setData] = useState<ReporteTool[]>([]);
-//   const { dataCias, fetchCias } = useCias();
-//   const { dataAreas, fetchAreas1 } = useAreas();
-//   const { dataDeptos, fetchAreas } = useDeptos();
-//   const { dataFormasPagos, fetchFormasPagos } = useFormasPagos();
-//   const { dataUsuarios, fetchUsuarios } = useUsuarios();
-
-//   const { dataClientes, fetchClientes, setDataClientes } = useClientes();
-//   const { dataSucursales, fetchSucursales } = useSucursales();
-//   const [modalOpenCli, setModalOpenCli] = useState(false);
-//   const [selectedIdC, setSelectedIdC] = useState("");
-//   const [descuento, setDescuento] = useState("");
-//   const [nprod, setNprod] = useState([]);
-//   const [marca, setMarca] = useState([]);
-//   const [almacen, setAlmacen] = useState([]);
-//   const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
-//   const [trabajador, setTrabajadores] = useState([]);
-
-//   const [showClienteInput, setShowClienteInput] = useState(false);
-//   const [showSucursalInput, setShowSucursalInput] = useState(false);
-//   const [showEstilistaInput, setShowEstilistaInput] = useState(false);
-//   const [showProductoInput, setShowProductoInput] = useState(false);
-//   const [showMarcaInput, setShowMarcaInput] = useState(false);
-//   const [showAlmacenInput, setShowAlmacenInput] = useState(false);
-//   const [showEmpresaInput, setShowEmpresaInput] = useState(false);
-//   const [showSucDesInput, setShowSucDesInput] = useState(false);
-//   const [showAlmOrigenInput, setShowAlmOrigenInput] = useState(false);
-//   const [showAlmDestInput, setShowAlmDestInput] = useState(false);
-//   const [showTipoMovtoInput, setShowTipoMovtoInput] = useState(false);
-//   const [showNoVentaInput, setShowNoVentaInput] = useState(false);
-//   const [showProveedorInput, setShowProveedorInput] = useState(false);
-//   const [showMetodoPagoInput, setShowMetodoPagoInput] = useState(false);
-//   const [showClaveProdInput, setShowClaveProdInput] = useState(false);
-//   const [showPalabraProdInput, setShowPalabraProdInput] = useState(false);
-//   const [showTipoDescuentoInput, setShowTipoDescuentoInput] = useState(false);
-//   const [showAreaInput, setShowAreaInput] = useState(false);
-//   const [showDeptoInput, setShowDeptoInput] = useState(false);
-//   const [showf1, setShowf1] = useState(false);
-//   const [showf2, setShowf2] = useState(false);
-//   const [showAñoInput, setShowAñoInput] = useState(false);
-//   const [showMesInput, setShowMesInput] = useState(false);
-//   const [dataDeptosFiltrado, setDataDeptosFiltrado] = useState<Departamento[]>([]);
-//   const [formulario1, setFormulario1] = useState({
-//     sucursal: "", // El valor inicial de la sucursal
-//     // Otras propiedades de tu formulario
-//   });
-//   const { filtroSeguridad, session } = useSeguridad();
-//   const [showView, setShowView] = useState(true);
-//   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
-
-//   const [DatosSumados, setDatosSumados] = useState({});
-//   const [totalSum, setTotalSum] = useState(0);
-
-//   const [columnaSumas, setColumnaSumas] = useState({}); // Estado para las sumas individuales de las columnas
-
-//   // En el useEffect donde calculas la suma de las columnas
-//   useEffect(() => {
-//     const sumatoria = calcularSumatoriaDinamica(reportes);
-//     console.log("Sumatoria dinámica:", sumatoria);
-//     setDatosSumados(sumatoria); // Actualiza el estado DatosSumados
-
-//     // Calcula y actualiza las sumas individuales de las columnas
-//     const nuevasColumnaSumas = {};
-//     Object.entries(sumatoria).forEach(([columna, valor]) => {
-//       nuevasColumnaSumas[columna] = valor;
-//     });
-//     setColumnaSumas(nuevasColumnaSumas);
-//   }, [reportes]);
-
-//   // Función para calcular la sumatoria de manera dinámica
-//   function calcularSumatoriaDinamica(data) {
-//     const sumatoria = {};
-
-//     // Itera sobre las filas de datos
-//     data.forEach((row) => {
-//       // Itera sobre las columnas de cada fila
-//       for (const key in row) {
-//         if (row.hasOwnProperty(key) && typeof row[key] === "number") {
-//           // Verifica si la columna es numérica y suma los valores
-//           if (!sumatoria[key]) {
-//             sumatoria[key] = 0;
-//           }
-//           sumatoria[key] += row[key];
-//         }
-//       }
-//     });
-
-//     return sumatoria;
-//   }
-
-//   useEffect(() => {
-//     const item = localStorage.getItem("userLoggedv2");
-//     if (item !== null) {
-//       const parsedItem = JSON.parse(item);
-//       setDataUsuarios2(parsedItem);
-//       setFormulario1(parsedItem[0]?.sucursal.toString());
-
-//       // Llamar a getPermisoPantalla después de que los datos se hayan establecido
-//       getPermisoPantalla(parsedItem);
-//     }
-//   }, []);
-
-//   const getPermisoPantalla = async (userData) => {
-//     try {
-//       const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_RepTool_view`);
-
-//       if (Array.isArray(response.data) && response.data.length > 0) {
-//         if (response.data[0].permiso === false) {
-//           Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
-//           setShowView(false);
-//           handleRedirect();
-//         } else {
-//           setShowView(true);
-//         }
-//       } else {
-//         // No se encontraron datos válidos en la respuesta.
-//         setShowView(false);
-//       }
-//     } catch (error) {
-//       console.error("Error al obtener el permiso:", error);
-//     }
-//   };
-
-//   const navigate = useNavigate();
-//   const handleRedirect = () => {
-//     navigate("/app"); // Redirige a la ruta "/app"
-//   };
-
-//   return (
-//     <div>
-
-//       <SidebarHorizontal/>
-//       <h1>Reporte Nomina</h1>
-//       <TablaPrincipal groupedData={groupedData} handleExpand={handleExpand} expandedRows={expandedRows} />
-//     </div>
-//   );
-// };
-
-// export default ReporteArbol;
+import JezaApiService from "../../api/jezaApi2";
 
 function reporteArbol() {
+
+
+  const { jezaApi } = JezaApiService();
   const [expandedRows, setExpandedRows] = useState({});
   const [reportes, setReportes] = useState([]);
   const [columnas, setColumnas] = useState([]);
@@ -433,20 +291,17 @@ function reporteArbol() {
 
     let queryString = "";
     if (reporte == "sp_reporte5_Ventas") {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${
-        formData.tipoPago
-      }`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&clave_prod=${formClase.area}&tipoDescuento=${formData.tipoDescuento}&estilista=${formData.estilista}&tipoPago=${formData.tipoPago
+        }`;
     } else if (reporte == "sp_reporte4_Estilistas") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}&area=${formClase.area}&depto=${formClase.depto}`;
     } else if (reporte == "sp_repoComisiones1_Json") {
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "TicketInsumosEstilsta") {
       //---------------------
-      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${
-        formData.fechaFinal
-      }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
+      queryString = `/${reporte}?cia=${26}&sucursal=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal
+        }&estilista=${formData.estilista}&cte=${formData.cliente}&noVenta=${formData.noVenta}`;
     } else if (reporte == "sp_reporteinventario") {
       queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&suc=${formData.sucursal}&almacen=${formData.almacen}&marca=${formData.marca}&tipoProducto=%&palabra=%&claveProd=${formData.clave_prod}`;
     } else if (reporte == "sp_reporteCifrasEmpleado") {
@@ -454,9 +309,8 @@ function reporteArbol() {
     } else if (reporte == "--") {
       queryString = `/${reporte}?año=${formData.año}&mes=${formData.mes}&sucursal=${formData.sucursal}`;
     } else {
-      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${
-        formData.sucursal
-      }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&cia=${26}&suc=${formData.sucursal
+        }&cliente=${formData.cliente}&estilista=${formData.estilista}`;
     }
 
     jezaApi

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { ComisionRepo } from "../../models/ComisionRepo";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useRepoComision = () => {
+  const { jezaApi } = JezaApiService();
   const [dataRepoComi, setDataRepoComi] = useState<ComisionRepo[]>([]);
 
   const fetchRepCom = async () => {

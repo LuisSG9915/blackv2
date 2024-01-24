@@ -69,11 +69,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 import TableTiendaVirtual from "./Components/TableTiendaVirtual";
+import JezaApiService from "../../api/jezaApi2";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
 const Ventas = () => {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 

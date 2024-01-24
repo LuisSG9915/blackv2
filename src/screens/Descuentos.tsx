@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { Row, Container, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import CButton from "../../components/CButton";
+import CButton from "../components/CButton";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
 import { useNavigate } from "react-router-dom";
-import { jezaApi } from "../../api/jezaApi";
-import useModalHook from "../../hooks/useModalHook";
-import CFormGroupInput from "../../components/CFormGroupInput";
-import { Descuento } from "../../models/Descuento";
+// import { jezaApi } from "../../api/jezaApi";
+
+// import CFormGroupInput from "../../components/CFormGroupInput";
+import { Descuento } from "../models/Descuento";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { Button, ButtonGroup } from "@mui/material";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Swal from "sweetalert2";
-import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import JezaApiService from "../api/jezaApi2";
+import useSeguridad from "../hooks/getsHooks/useSeguridad";
+import useModalHook from "../hooks/useModalHook";
+import CFormGroupInput from "../components/CFormGroupInput";
 
 function Descuentos() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad } = useSeguridad();
-  
+
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
   const [data, setData] = useState([]);
@@ -26,6 +30,7 @@ function Descuentos() {
     descripcion: "",
     min_descto: 0.0,
     max_descto: 0.0,
+    activo: true,
   });
 
   const validarCampos = () => {
@@ -172,6 +177,7 @@ function Descuentos() {
     descripcion: dato.descripcion,
     min_descto: dato.min_descto,
     max_descto: dato.max_descto,
+    activo: dato.activo,
   }));
 
   // Redirige a la ruta "/app"

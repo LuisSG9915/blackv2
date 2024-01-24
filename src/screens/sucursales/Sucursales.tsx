@@ -22,7 +22,7 @@ import {
   ModalHeader,
   Label,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -46,8 +46,11 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function Sucursales() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);
@@ -76,7 +79,7 @@ function Sucursales() {
           handleRedirect();
         } else {
           setShowView(true);
-     
+
         }
       } else {
         // No se encontraron datos válidos en la respuesta.

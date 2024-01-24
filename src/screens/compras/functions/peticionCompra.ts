@@ -1,7 +1,8 @@
 import Swal from "sweetalert2";
-import { jezaApi } from "../../../api/jezaApi";
+// import { jezaApi } from "../../../api/jezaApi";
 import { CompraProveedor } from "../../../models/CompraProveedor";
 import { UserResponse } from "../../../models/Home";
+import JezaApiService from "../../../api/jezaApi2";
 interface Props {
   dataUsuarios2: UserResponse[];
   dataCompras: CompraProveedor;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export const postCompra = async ({ dataUsuarios2, dataCompras, setDataCompras, fetchCompras }: Props) => {
+  const { jezaApi } = JezaApiService();
   if (!dataCompras.idProveedor || !dataCompras.clave_prod || dataCompras.cantidadFactura <= 0 || dataCompras.costoCompra <= 0) {
     // alert("Por favor, complete los campos obligatorios.");
     Swal.fire("", "Por favor, complete los campos obligatorios.", "info");

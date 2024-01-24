@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { TraspasoGet } from "../../models/Traspaso";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   sucursal: string | number;
 }
 export const useTraspasoEntrada = ({ sucursal }: Props) => {
+  const { jezaApi } = JezaApiService();
   const [dataTraspasosEntradas, setDataTraspasosEntradas] = useState<TraspasoGet[]>([]);
 
   const fetchTraspasosEntradas = async () => {

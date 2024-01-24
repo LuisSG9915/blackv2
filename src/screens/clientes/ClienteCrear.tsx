@@ -20,7 +20,7 @@ import {
   Row,
   Table,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -28,8 +28,10 @@ import useReadHook from "../../hooks/useReadHook";
 import useModalHook from "../../hooks/useModalHook";
 import { Marca } from "../../models/Marca";
 import { Cliente } from "../../models/Cliente";
+import JezaApiService from "../../api/jezaApi2";
 
 function ClienteCrear() {
+  const { jezaApi } = JezaApiService();
   const { modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
   const Data = ["ID", "Clinica", "Acciones"];
   const [dataClinica, setDataClinica] = useState<undefined | string>("");
@@ -62,6 +64,9 @@ function ClienteCrear() {
     claveRegistroMovil: "",
     fecha_alta: "",
     fecha_act: "",
+    redsocial1: "",
+    redsocial2: "",
+    redsocial3: "",
   });
 
   const insertCliente = () => {

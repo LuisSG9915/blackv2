@@ -19,7 +19,7 @@ import {
 import CButton from "../components/CButton";
 import CFormGroupInput from "../components/CFormGroupInput";
 
-import { jezaApi } from "../api/jezaApi";
+// import { jezaApi } from "../api/jezaApi";
 import { Producto } from "../models/Producto";
 import { useMarcas } from "../hooks/getsHooks/useMarcas";
 import { useAreas } from "../hooks/getsHooks/useAreas";
@@ -31,8 +31,10 @@ import AlertComponent from "../components/AlertComponent";
 import { useProveedor } from "../hooks/getsHooks/useProveedor";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import JezaApiService from "../api/jezaApi2";
 
 function TabPrueba() {
+  const { jezaApi } = JezaApiService();
   const [activeTab, setActiveTab] = useState("1");
   const [filteredDeptos, setFilteredDeptos] = useState([]);
   const [filteredClases, setFilteredClases] = useState([]);

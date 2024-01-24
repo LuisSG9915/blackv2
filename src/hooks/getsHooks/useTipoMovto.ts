@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { TipoMovtoModel } from "../../models/TipoMovtoModel";
+import JezaApiService from "../../api/jezaApi2";
 
 export const useTipoMovto = () => {
+  const { jezaApi } = JezaApiService();
   const [dataTipoMovto, setDataTipoMovto] = useState<TipoMovtoModel[]>([]);
 
   const fetchTipoMovto = async () => {

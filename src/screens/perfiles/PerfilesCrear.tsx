@@ -3,12 +3,14 @@ import { Button, Col, Container, FormGroup, Input, Label, Row } from "reactstrap
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Cia } from "../../models/Cia";
 import { Perfil } from "../../models/Perfil";
 import AlertComponent from "../../components/AlertComponent";
+import JezaApiService from "../../api/jezaApi2";
 
 function PerfilesCrear() {
+  const { jezaApi } = JezaApiService();
   const { modalInsertar, setModalInsertar } = useModalHook();
 
   const [form, setForm] = useState<Perfil>({

@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { TiposdeBajas } from "../../models/TiposdeBajas";
 //NUEVAS IMPOTACIONES
 import Swal from "sweetalert2";
@@ -33,8 +33,11 @@ import useModalHook from "../../hooks/useModalHook";
 import CButton from "../../components/CButton";
 import { RiUserUnfollowLine } from "react-icons/ri";
 import CFormGroupInput from "../../components/CFormGroupInput";
+import JezaApiService from "../../api/jezaApi2";
+import { UserResponse } from "../../models/Home";
 
 function TipoBajas() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

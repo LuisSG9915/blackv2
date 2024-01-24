@@ -20,15 +20,17 @@ import {
   Row,
   Table,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useReadHook from "../../hooks/useReadHook";
 import useModalHook from "../../hooks/useModalHook";
 import { Marca } from "../../models/Marca";
+import JezaApiService from "../../api/jezaApi2";
 
 function MarcasCrear() {
+  const { jezaApi } = JezaApiService();
   const { modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } = useModalHook();
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [marca, setMarca] = useState<Marca>({

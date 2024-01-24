@@ -1,9 +1,11 @@
 import Swal from "sweetalert2";
-import { jezaApi } from "../../../api/jezaApi";
+// import { jezaApi } from "../../../api/jezaApi";
 import { BloqueoColab } from "../../../models/BloqueoColaborador";
 import { format } from "date-fns";
+import JezaApiService from "../../../api/jezaApi2";
 
 export const postBloqueoColaborador = async (form, idUsuario) => {
+  const { jezaApi } = JezaApiService();
   const { fecha, idColaborador, idTipoBloqueo, h1, h2, observaciones } = form;
   if (form.fecha.length && form.idColaborador > 0 && idTipoBloqueo > 0) {
     const newH1 = format(new Date(h1), "yyyy-MM-dd HH:mm");

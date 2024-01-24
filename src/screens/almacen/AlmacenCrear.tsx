@@ -3,7 +3,7 @@ import { Button, Col, Container, FormGroup, Input, Label, Row } from "reactstrap
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { useNavigate } from "react-router-dom";
 import { Almacen } from "../../models/Almacen";
 import { Cia } from "../../models/Cia";
@@ -11,8 +11,10 @@ import { Sucursal } from "../../models/Sucursal";
 import AlertComponent from "../../components/AlertComponent";
 import { useCias } from "../../hooks/getsHooks/useCias";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import JezaApiService from "../../api/jezaApi2";
 
 function AlmacenCrear() {
+  const { jezaApi } = JezaApiService();
   const { dataCias } = useCias();
   const { dataSucursales } = useSucursales();
   const [form, setForm] = useState<Almacen>({

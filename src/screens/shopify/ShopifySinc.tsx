@@ -3,12 +3,15 @@ import SidebarHorizontal from "../../components/SidebarHorizontal";
 import "./shopify.css";
 import { Button, Container } from "reactstrap";
 import axios from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function ShopifySinc() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

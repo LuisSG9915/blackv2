@@ -5,8 +5,9 @@ import CurrencyInput from "react-currency-input-field";
 import { ImCancelCircle } from "react-icons/im";
 import { useCorteParcial } from "../../hooks/getsHooks/useCorteParcial";
 import { UserResponse } from "../../models/Home";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import Swal from "sweetalert2";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   efectivo: number;
   credito: number;
@@ -25,6 +26,7 @@ interface Props {
 }
 
 function CorteCajaParcial() {
+  const { jezaApi } = JezaApiService();
   const [form, setForm] = useState<Props>({
     efectivo: 0,
     credito: 0,
@@ -140,14 +142,10 @@ function CorteCajaParcial() {
 
     jezaApi
       .post(
-        `/Corte?cia=${dataUsuarios2[0]?.idCia}&sucursal=${
-          dataUsuarios2[0].sucursal
-        }&fecha=${fechaFormateada}&caja=${1}&corte=${1}&corteParcial=${1}&corteFinal=${1}&totalEfectivo=${
-          dataCorteParcial[0]?.importe ? dataCorteParcial[0]?.importe : 0
-        }&totalTC=${
-          dataCorteParcial[1]?.importe ? dataCorteParcial[1]?.importe : 0
-        }&totalAnticiposAplicados=${0}&totalOtros=${0}&totalGastos=${0}&id_usuario=${dataUsuarios2[0]?.id}&totalEfectivoEntregado=${
-          form.efectivo
+        `/Corte?cia=${dataUsuarios2[0]?.idCia}&sucursal=${dataUsuarios2[0].sucursal
+        }&fecha=${fechaFormateada}&caja=${1}&corte=${1}&corteParcial=${1}&corteFinal=${1}&totalEfectivo=${dataCorteParcial[0]?.importe ? dataCorteParcial[0]?.importe : 0
+        }&totalTC=${dataCorteParcial[1]?.importe ? dataCorteParcial[1]?.importe : 0
+        }&totalAnticiposAplicados=${0}&totalOtros=${0}&totalGastos=${0}&id_usuario=${dataUsuarios2[0]?.id}&totalEfectivoEntregado=${form.efectivo
         }&totalTCEntregado=${form.credito}&totalAnticiposAplicadosEntregado=${0}&totalOtrosEntregado=${0}`
       )
       .then(() => {

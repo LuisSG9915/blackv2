@@ -17,7 +17,7 @@ import {
   Label,
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Trabajador } from "../../models/Trabajador";
 import { Horario } from "../../models/Horario";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
@@ -27,7 +27,9 @@ import Swal from "sweetalert2";
 import { MdEditCalendar, MdHistoryToggleOff, MdSchedule } from "react-icons/md";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 function Horarios() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

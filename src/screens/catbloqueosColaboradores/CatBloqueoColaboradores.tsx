@@ -17,7 +17,7 @@ import {
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { AiFillDelete, AiFillEdit, AiFillEye } from "react-icons/ai";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { TipoBloqueoColaborador } from "../../models/TipoBloqueoColaborador";
 import { RecursosHumanosPuesto } from "../../models/RecursosHumanosPuesto";
 //NUEVAS IMPOTACIONES
@@ -35,8 +35,9 @@ import { useNavigate } from "react-router-dom";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { UserResponse } from "../../models/Home";
-
+import JezaApiService from "../../api/jezaApi2";
 function CatBloqueoColaboradores() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

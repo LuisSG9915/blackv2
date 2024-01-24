@@ -4,7 +4,7 @@ import { Button } from "reactstrap";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import { ImGift } from "react-icons/im";
 import { Row, Container, Input, Table, Modal, ModalBody, ModalFooter, ModalHeader, Label, Col } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SideBarHorizontal";
@@ -22,8 +22,11 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function KitPaquete() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

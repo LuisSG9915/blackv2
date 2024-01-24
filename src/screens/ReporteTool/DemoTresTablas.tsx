@@ -13,10 +13,11 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { format } from "date-fns-tz";
 
 function DemoTresTablas() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 

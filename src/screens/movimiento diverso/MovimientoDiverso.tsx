@@ -33,7 +33,7 @@ import { useAlmacen } from "../../hooks/getsHooks/useAlmacen";
 import { useMovimientos } from "../../hooks/getsHooks/useMovimientos";
 import { Movimiento } from "../../models/Movimiento";
 import { useAjuste } from "../../hooks/getsHooks/useAjuste";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { useAjusteBusqueda } from "../../hooks/getsHooks/useAjusteBusqueda";
 import { UserResponse } from "../../models/Home";
 import Swal from "sweetalert2";
@@ -43,10 +43,12 @@ import { CgPlayListCheck } from "react-icons/cg"; //PARA BOTÓN FINALIZAR
 import { BiTag } from "react-icons/bi"; //PARA BOTÓN NUEVO
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useNavigate } from "react-router-dom";
+import JezaApiService from "../../api/jezaApi2";
 
 // VscNewFile
 
 function MovimientoDiversos() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);

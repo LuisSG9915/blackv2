@@ -4,14 +4,16 @@ import SidebarHorizontal from "../../components/SidebarHorizontal";
 import CButton from "../../components/CButton";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { useNavigate } from "react-router-dom";
 import { Sucursal } from "../../models/Sucursal";
 import { Cia } from "../../models/Cia";
 import AlertComponent from "../../components/AlertComponent";
 import { useCias } from "../../hooks/getsHooks/useCias";
+import JezaApiService from "../../api/jezaApi2";
 
 function SucursalesCrear() {
+  const { jezaApi } = JezaApiService();
   const { modalInsertar, setModalInsertar } = useModalHook();
   const [dataCia, setDataCia] = useState([]);
   const navigate = useNavigate();

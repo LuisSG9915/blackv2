@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 
 function Home() {
+
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

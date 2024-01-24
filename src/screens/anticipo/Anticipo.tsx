@@ -21,7 +21,7 @@ import {
   UncontrolledAccordion,
   InputGroup,
 } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -50,7 +50,9 @@ import { useFormasPagos } from "../../hooks/getsHooks/useFormasPagos";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
+import JezaApiService from "../../api/jezaApi2";
 function Anticipo() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
 

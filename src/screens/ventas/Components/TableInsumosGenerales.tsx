@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button, Input } from "reactstrap";
-import { jezaApi } from "../../../api/jezaApi";
+// import { jezaApi } from "../../../api/jezaApi";
 import Swal from "sweetalert2";
 import MaterialReactTable, { MRT_ColumnDef } from "material-react-table";
 import { useUnidadMedida } from "../../../hooks/getsHooks/useUnidadMedida";
@@ -10,6 +10,7 @@ import { AiOutlineBarcode } from "react-icons/ai";
 import useSeguridad from "../../../hooks/getsHooks/useSeguridad";
 import { Box } from "@mui/material";
 import { InsumoExistencia } from "./TableProductos";
+import JezaApiService from "../../../api/jezaApi2";
 
 interface Props {
   data: Estilistas[];
@@ -24,6 +25,8 @@ export interface Estilistas {
   estilista: string;
 }
 const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFetch, datoInsumosProducto, datoInsumosProductoResumen }: Props) => {
+  const { jezaApi } = JezaApiService();
+
   const [form, setForm] = useState({
     marca: "",
     cantidad: "",

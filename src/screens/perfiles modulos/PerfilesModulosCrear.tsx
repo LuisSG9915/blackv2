@@ -3,7 +3,7 @@ import { Button, Col, Container, FormGroup, Input, Label, Row } from "reactstrap
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import CFormGroupInput from "../../components/CFormGroupInput";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Cia } from "../../models/Cia";
 import { Perfil_Modulo } from "../../models/Perfil_Modulo";
 import { Perfil } from "../../models/Perfil";
@@ -11,14 +11,20 @@ import AlertComponent from "../../components/AlertComponent";
 import { usePerfiles } from "../../hooks/getsHooks/useClavePerfil";
 import { useModulos } from "../../hooks/getsHooks/useModulos";
 import { Modulo } from "../../models/Modulo";
+import JezaApiService from "../../api/jezaApi2";
 
 function PerfilesModulosCrear() {
+  const { jezaApi } = JezaApiService();
   const { modalInsertar, setModalInsertar } = useModalHook();
 
   const [form, setForm] = useState<Perfil_Modulo>({
+    id: 0,
     clave_perfil: 1,
     modulo: 1,
     permiso: true,
+    d_perfil: "",
+    d_modulo: "",
+    descripcion: "",
   });
   const [data, setData] = useState<Perfil_Modulo[]>([]);
   const { dataPerfiles } = usePerfiles();

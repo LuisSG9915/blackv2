@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { AxiosResponse } from "axios";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { TraspasoGet } from "../../models/Traspaso";
+import JezaApiService from "../../api/jezaApi2";
 interface Props {
   sucursal: number | string;
   folio: number | string;
@@ -11,6 +12,7 @@ export const useTraspaso = ({ sucursal, folio, sucursal_origen }: Props) => {
   const [dataTraspasos, setDataTraspasos] = useState<TraspasoGet[]>([]);
 
   const fetchTraspasos = async () => {
+    const { jezaApi } = JezaApiService();
     try {
       const response: AxiosResponse<TraspasoGet[]> = await jezaApi.get(
         `/Traspaso?id=%&folio=${

@@ -15,11 +15,13 @@ import TableCliente from "./Components/TableCliente";
 import ModalActualizarLayout from "../../layout/ModalActualizarLayout";
 import { useClientes } from "../../hooks/getsHooks/useClientes";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import { Usuario } from "../../models/Usuario";
 import { Venta } from "../../models/Venta";
+import JezaApiService from "../../api/jezaApi2";
 
 const VentasP = () => {
+  const { jezaApi } = JezaApiService();
   const { modalActualizar, setModalActualizar, cerrarModalActualizar } = useModalHook();
   const [modalOpenVenta, setModalOpen] = useState<boolean>(false);
   const [modalOpen2, setModalOpen2] = useState<boolean>(false);

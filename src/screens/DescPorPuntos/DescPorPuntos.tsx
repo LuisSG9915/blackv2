@@ -20,7 +20,7 @@ import {
 import CButton from "../../components/CButton";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { useNavigate } from "react-router-dom";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import useModalHook from "../../hooks/useModalHook";
 import { DescPorPunto } from "../../models/DescPorPunto";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
@@ -43,8 +43,11 @@ import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { ImGift } from "react-icons/im";
 import { Cia } from "../../models/Cia";
+import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 
 function DescPorPuntos() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);

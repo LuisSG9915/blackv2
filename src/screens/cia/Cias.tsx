@@ -3,7 +3,7 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MdInventory } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { Row, Container, Col, Card, InputGroup, Alert, Input, FormGroup, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
@@ -21,8 +21,10 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { UserResponse } from "../../models/Home";
+import JezaApiService from "../../api/jezaApi2";
 // sssss
 function Cias() {
+  const { jezaApi } = JezaApiService();
   const { filtroSeguridad, session } = useSeguridad();
 
   const [showView, setShowView] = useState(true);

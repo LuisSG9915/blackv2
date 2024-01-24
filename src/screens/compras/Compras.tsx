@@ -22,7 +22,7 @@ import {
   InputGroup,
 } from "reactstrap";
 import { CompraProveedor } from "../../models/CompraProveedor";
-import { jezaApi } from "../../api/jezaApi";
+// import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
 import { useProductos } from "../../hooks/getsHooks/useProductos";
 import { Producto, ProductoExistencia } from "../../models/Producto";
@@ -48,8 +48,10 @@ import { BsCartPlus } from "react-icons/bs";
 import { Trabajador } from "../../models/Trabajador";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { postCompra } from "./functions/peticionCompra";
+import JezaApiService from "../../api/jezaApi2";
 
 function Compras() {
+  const { jezaApi } = JezaApiService();
   const [showView, setShowView] = useState(true);
 
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
