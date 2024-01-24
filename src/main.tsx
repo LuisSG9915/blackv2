@@ -80,6 +80,7 @@ import Example2 from "./screens/EXAMPLE/Example2";
 import { store } from "./screens/EXAMPLE/app/store";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CifraSucursal from "./screens/cifrasuc/CifraSucursal";
+import ReporteToolARBOL_C from "./screens/ReporteTool/ReporteToolARBOL_C";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -336,6 +337,10 @@ const router = createBrowserRouter([
     element: <ReporteTool />,
   },
   {
+    path: "/ReporteToolARBOL_C",
+    element: <ReporteToolARBOL_C />,
+  },
+  {
     path: "/DemoTresTablas",
     element: <DemoTresTablas />,
   },
@@ -388,7 +393,7 @@ const router = createBrowserRouter([
 const queryClient = new QueryClient();
 
 ReactDOM.render(
-  <QueryClientProvider client={queryClient} >
+  <QueryClientProvider client={queryClient}>
     <RouterProvider router={router} />
   </QueryClientProvider>,
   document.getElementById("root")
