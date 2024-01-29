@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
 const JezaApiService = () => {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   // Separate initialization code for tokenTemp
   const getInitialTokenTemp = () => {
@@ -26,14 +26,18 @@ const JezaApiService = () => {
     console.log("New token:", newToken);
   };
 
+
+
   const jezaApi = axios.create({
     baseURL: "http://cbinfo.no-ip.info:9083",
     headers: {
       "Content-Type": "application/json",
     },
-    timeout: 25000,
+    timeout: 10000,
   });
 
+//25000,
+  
   jezaApi.interceptors.request.use(
     (config) => {
       const authToken = tokenTemp;
