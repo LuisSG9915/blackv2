@@ -648,7 +648,7 @@ const SidebarHorizontal = () => {
 
                     <DropdownItem
                       onClick={async () => {
-                        const permiso = await filtroSeguridad("sb_deptosrecursos_view");
+                        const permiso = await filtroSeguridad("sb_nivelescolar_view");
                         if (permiso === false) {
                           return;
                         }
@@ -657,17 +657,90 @@ const SidebarHorizontal = () => {
                     >
                       Niveles de escolaridad
                     </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_estatuscolab_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Estatuscolaborador");
+                      }}
+                    >
+                      Estatus colaboradores
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_horarioscolab_view ");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Horarios");
+                      }}
+                    >
+                      Horarios
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_catcolaboradores_view ");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/NominaTrabajadores");
+                      }}
+                    >
+                      Catálogo trabajadores
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cifrascolaborador_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Metas");
+                      }}
+                    >
+                      Cifras
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cifrasucursal_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/CifraSucursal");
+                      }}
+                    >
+                      Cifras sucursal
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_tipobloqueo_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/CatBloqueoColaboradores");
+                      }}
+                    >
+                      Tipo de bloqueos
+                    </DropdownItem>
+
                     {/* <DropdownItem header>Recursos Humanos</DropdownItem> */}
                     {/* <DropdownItem onClick={() => navigate("/PuestoRecursosHumanos")}>Puestos RH</DropdownItem> */}
                     {/* <DropdownItem onClick={() => navigate("/DepartamentoRecursos")}>Departamentos</DropdownItem> */}
                     {/* <DropdownItem onClick={() => navigate("/TipoBajas")}>Tipo de bajas</DropdownItem> */}
-                    <DropdownItem onClick={() => navigate("/NivelEscolar")}>Niveles de escolaridad</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Estatuscolaborador")}>Estatus colaboradores</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Metas")}>Cifras</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/CifraSucursal")}>Cifras sucursal</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/CatBloqueoColaboradores")}>Tipo de bloqueos</DropdownItem>
+                    {/* <DropdownItem onClick={() => navigate("/NivelEscolar")}>Niveles de escolaridad</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/Estatuscolaborador")}>Estatus colaboradores</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/Metas")}>Cifras</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/CifraSucursal")}>Cifras sucursal</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/CatBloqueoColaboradores")}>Tipo de bloqueos</DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
 

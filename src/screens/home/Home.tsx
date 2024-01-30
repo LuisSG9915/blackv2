@@ -41,6 +41,7 @@ function Home() {
     Usuario: "1",
     Contraseña: "2",
   };
+
   const handleNavigation = async () => {
     setLoading(true);
     try {
