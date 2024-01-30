@@ -30,6 +30,9 @@ import useSeguridad from "../hooks/getsHooks/useSeguridad";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { versionSistema } from "../utilities/constGenerales";
+import JezaApiService from "../api/jezaApi2";
+import { useAuth } from "../context/AuthContext";
+ // Asegúrate de importar useHistory si estás utilizando React Router
 
 const SidebarHorizontal = () => {
   const { isLoading, error, data, isFetching } = useQuery(
@@ -70,6 +73,45 @@ const SidebarHorizontal = () => {
     setIsOpen(!isOpen);
   };
 
+  const { jezaApi } = JezaApiService();
+  const { logout } = useAuth();
+  const history = useNavigate();
+
+  useEffect(() => {
+    const interceptor = jezaApi.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          // Si el servidor responde con 401 (No autorizado), se asume que el token ha expirado
+          Swal.fire({
+            icon: "error",
+            title: "Tiempo de sesión expirado",
+            text: "Favor de ingresar sesión nuevamente",
+            confirmButtonColor: "#3085d6",
+            showCancelButton: true, // Mostrar botón de cancelar
+            cancelButtonText: "Cancelar",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Si el usuario confirma, redirige a la página de inicio de sesión
+              navigate("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
+            } else {
+              // Si el usuario cancela, ejecuta la función de cierre de sesión
+              logout();
+            }
+          });
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      // Eliminar el interceptor cuando el componente se desmonte
+      jezaApi.interceptors.response.eject(interceptor);
+    };
+  }, [jezaApi, logout, history]);
+
+
+
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -96,6 +138,9 @@ const SidebarHorizontal = () => {
     }
   }, []);
 
+
+
+  
   const handleTimerUpdate = (timeLeft: number, userLogged: Usuario[]) => {
     const expirationTime = Date.now() + timeLeft;
     localStorage.setItem("timerExpiration", String(expirationTime));

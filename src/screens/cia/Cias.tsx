@@ -8,7 +8,7 @@ import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
-import TableCias from "./Components/TableCias";
+// import TableCias from "./Components/TableCias";
 import { Cia } from "../../models/Cia";
 import AlertComponent from "../../components/AlertComponent";
 import { Link } from "react-router-dom"; // Si estás utilizando React Router

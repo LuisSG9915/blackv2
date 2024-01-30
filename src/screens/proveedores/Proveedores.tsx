@@ -25,24 +25,22 @@ import {
   TabContent,
   TabPane,
 } from "reactstrap";
-import CButton from "../components/CButton";
-import SidebarHorizontal from "../components/SidebarHorizontal";
+import CButton from "../../components/CButton";
+import SidebarHorizontal from "../../components/SidebarHorizontal";
 import { useNavigate } from "react-router-dom";
-// import { jezaApi } from "../api/jezaApi";
-import useModalHook from "../hooks/useModalHook";
-import CFormGroupInput from "../components/CFormGroupInput";
-import { useProveedor } from "../hooks/getsHooks/useProveedor";
-import { Proveedor } from "../models/Proveedor";
-import AlertComponent from "../components/AlertComponent";
+import useModalHook from "../../hooks/useModalHook";
+import CFormGroupInput from "../../components/CFormGroupInput";
+import { useProveedor } from "../../hooks/getsHooks/useProveedor";
+import { Proveedor } from "../../models/Proveedor";
+import AlertComponent from "../../components/AlertComponent";
 //NUEVAS IMPORTACIONES
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import "../../css/tablaestilos.css";
 import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import useSeguridad from "../hooks/getsHooks/useSeguridad";
-import JezaApiService from "../api/jezaApi2";
-import { UserResponse } from "../models/Home";
+import useSeguridad from "../../hooks/getsHooks/useSeguridad";
+import JezaApiService from "../../api/jezaApi2";
+import { UserResponse } from "../../models/Home";
 
 function Proveedores() {
   const { jezaApi } = JezaApiService();
@@ -284,40 +282,6 @@ function Proveedores() {
     }
   };
 
-  // const editar = () => {
-  //   jezaApi
-  //     .put(`/Proveedor`, null, {
-  //       params: {
-  //         id: form.id,
-  //         nombre: form.nombre,
-  //         rfc: form.rfc,
-  //         calle: form.calle,
-  //         colonia: form.colonia,
-  //         telefono: form.telefono,
-  //         ciudad: form.ciudad,
-  //         estado: form.estado,
-  //         cp: form.cp,
-  //         contacto: form.contacto,
-  //         email: form.email,
-  //         observaciones: form.observaciones,
-  //         nombrefiscal: form.nombre_fiscal,
-  //         dias_financiamiento: form.dias_financiamiento,
-  //         fecha_alta: form.fecha_alta,
-  //         fecha_act: form.fecha_act,
-  //       },
-  //     })
-  //     .then(() => {
-  //       setVisible2(false);
-  //       fetchProveedores()
-  //       setTimeout(() => {
-  //         setVisible2(false);
-  //       }, 3000);
-  //       // Cerrar modal después de guardar
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   const filtroEmail = (datoMedico: string) => {
     var resultado = dataProveedores.filter((elemento: any) => {
@@ -468,7 +432,7 @@ function Proveedores() {
       </Row>
       <Container>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h1> Proveedores  <AiOutlineUser size={30}></AiOutlineUser></h1>
+          <h1> Proveedores <AiOutlineUser size={30}></AiOutlineUser></h1>
 
         </div>
         <div className="col align-self-start d-flex justify-content-center "></div>

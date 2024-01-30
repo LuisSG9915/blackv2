@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 
 const JezaApiService = () => {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
 
   // Separate initialization code for tokenTemp
   const getInitialTokenTemp = () => {
@@ -26,29 +26,25 @@ const JezaApiService = () => {
     console.log("New token:", newToken);
   };
 
+
+
   const jezaApi = axios.create({
     baseURL: "http://cbinfo.no-ip.info:9083",
     headers: {
       "Content-Type": "application/json",
     },
-    timeout: 25000,
+    timeout: 10000,
   });
 
+//25000,
+  
   jezaApi.interceptors.request.use(
-    async (config) => {
+    (config) => {
       const authToken = tokenTemp;
       if (authToken) {
         config.headers.Authorization = `Bearer ${authToken}`;
       }
       config.headers["Cache-Control"] = "no-cache";
-
-      // Verificar si la solicitud es de tipo POST
-      if (config.method === "post" && config.params) {
-        // Agregar los datos de config.parameters al cuerpo de la solicitud POST
-        config.data = config.params;
-        console.log(config.data);
-      }
-
       return config;
     },
     (error) => {

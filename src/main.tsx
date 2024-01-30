@@ -9,21 +9,18 @@ import UsuariosCrear from "./screens/UsuariosCrear";
 import UsuariosPrueba from "./screens/UsuariosPrueba";
 import InventariosAjustes from "./screens/inventarios/InventariosAjustes";
 import CrearInventario from "./screens/inventarios/CrearInventario";
-import Proveedores from "./screens/Proveedores";
-import ProveedoresCrear from "./screens/ProveedoresCrear";
+import Proveedores from "./screens/proveedores/Proveedores";
 import NominaTrabajadores from "./screens/NominaTrabajadores";
 import NominaTrabajadoresCrear from "./screens/NominaTrabajadoresCrear";
 import NominaTrabajadorBaja from "./screens/NominaTrabajadorBaja";
 import Productos from "./screens/producto/Productos";
 import ProductosCrear from "./screens/producto/ProductosCrear";
 import NominaDepartamentos from "./screens/NominaDepartamentos";
-import SucursalesCrear from "./screens/sucursales/SucursalesCrear";
 import AreaDeptoClases from "./screens/areadeptoclases/AreaDeptoClases";
 import AreaDeptoClasesCrear from "./screens/areadeptoclases/AreaDeptoClasesCrear";
 import Marcas from "./screens/marcas/Marcas";
 import Puestos from "./screens/puesto/Puestos";
 import PuestosCrear from "./screens/puesto/PuestosCrear";
-import MarcasCrear from "./screens/marcas/MarcasCrear";
 import TipoFormasPago from "./screens/tipoPago/TipoFormasPago";
 import Home from "./screens/home/Home";
 import Ventas from "./screens/ventas/Ventas";
@@ -32,9 +29,7 @@ import FormasPago from "./screens/FormasPagos";
 import ClienteCrear from "./screens/clientes/ClienteCrear";
 import Sucursales from "./screens/sucursales/Sucursales";
 import Almacenes from "./screens/almacen/Almacenes";
-import AlmacenCrear from "./screens/almacen/AlmacenCrear";
 import Cias from "./screens/cia/Cias";
-import CiasCrear from "./screens/cia/CiasCrear";
 import PerfilesModulos from "./screens/perfiles modulos/PerfilesModulos";
 import PerfilesModulosCrear from "./screens/perfiles modulos/PerfilesModulosCrear";
 import PerfilesCrear from "./screens/perfiles/PerfilesCrear";
@@ -77,7 +72,6 @@ import ReporteCifra from "./screens/cifraColaborador/ReporteCifra";
 import ReporteArbol from "./screens/ReporteArbol/ReporteArbol";
 import { Provider } from "react-redux";
 import Example2 from "./screens/EXAMPLE/Example2";
-import { store } from "./screens/EXAMPLE/app/store";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CifraSucursal from "./screens/cifrasuc/CifraSucursal";
 import { AuthProvider } from "./context/AuthContext";
@@ -117,20 +111,12 @@ const router = createBrowserRouter([
     element: <Sucursales />,
   },
   {
-    path: "/SucursalesCrear",
-    element: <SucursalesCrear />,
-  },
-  {
     path: "/CrearInventario",
     element: <CrearInventario />,
   },
   {
     path: "/Proveedores",
     element: <Proveedores />,
-  },
-  {
-    path: "/ProveedoresCrear",
-    element: <ProveedoresCrear />,
   },
   {
     path: "/NominaTrabajadores",
@@ -165,16 +151,8 @@ const router = createBrowserRouter([
     element: <AreaDeptoClases />,
   },
   {
-    path: "/AreaDeptoClasesCrear",
-    element: <AreaDeptoClasesCrear />,
-  },
-  {
     path: "/Marcas",
     element: <Marcas />,
-  },
-  {
-    path: "/MarcasCrear",
-    element: <MarcasCrear />,
   },
   {
     path: "/Puestos",
@@ -205,24 +183,12 @@ const router = createBrowserRouter([
     element: <ClientesShopify />,
   },
   {
-    path: "/ClienteCrear",
-    element: <ClienteCrear />,
-  },
-  {
     path: "/Almacenes",
     element: <Almacenes />,
   },
   {
-    path: "/AlmacenCrear",
-    element: <AlmacenCrear />,
-  },
-  {
     path: "/Cias",
     element: <Cias />,
-  },
-  {
-    path: "/CiasCrear",
-    element: <CiasCrear />,
   },
   {
     path: "/PerfilesModulos",

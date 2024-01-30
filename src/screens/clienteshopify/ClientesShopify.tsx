@@ -83,8 +83,8 @@ function ClientesShopify() {
     }
   };
 
-  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
-    useModalHook();
+  // const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+  //   useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -105,20 +105,12 @@ function ClientesShopify() {
     window.location.reload();
   };
 
-  const [datah, setData1] = useState<any[]>([]); // Definir el estado datah
-  const historial = (id) => {
-    jezaApi.get(`/Historial?cliente=${id}`).then((response) => {
-      setData1(response.data);
-      // Abrir o cerrar el modal cuando los datos se hayan cargado
-    });
-  };
 
-  const [dataSucursal, setDataSucursal] = useState<Sucursal[]>([]);
-  const { dataSucursales } = useSucursales();
+  const { dataClieSho, fetchClieSho } = useClienteShopify();
   const [data, setData] = useState<Cliente[]>([]);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
   ///Cliente SHOPIFY
-  const [dataClieSho, setDataClieSho] = useState<ShopifyCliente[]>([]);
+
 
   /* fin de las cosas que hizo abigail */
   /* inicia alex */
@@ -144,30 +136,7 @@ function ClientesShopify() {
     setModalvinculoOpen(false);
   };
 
-  // const vinculo = (idCliente: any, nombreCliente: any, shopId: any, shopName: any) => {
-  //   Swal.fire({
-  //     text: `¿Desea asignar el cliente ${nombreCliente} al usuario Shopify ${shopName}?`, // Utiliza shopName aquí
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonColor: "#3085d6",
-  //     cancelButtonColor: "#d33",
-  //     confirmButtonText: "Yes, Agregar!",
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       jezaApi
-  //         .put(`sp_ShopifyClientesUpd?id=${shopId}&idCliente=${idCliente}`)
-  //         .then(() => {
-  //           Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
-  //           cerrarModalvinculo();
-  //           setModalOpen(!modalOpen);
-  //           consulta();
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error al realizar la actualización:", error);
-  //         });
-  //     }
-  //   });
-  // };
+
   const vinculo = async (idCliente: any, nombreCliente: any, shopId: any, shopName: any) => {
     // Verificar el permiso antes de continuar
 
@@ -191,7 +160,8 @@ function ClientesShopify() {
             Swal.fire("Registro Exitoso!", "El usuario ha sido asignado.", "success");
             cerrarModalvinculo();
             setModalOpen(!modalOpen);
-            consulta();
+            // consulta();
+            fetchClieSho();
           })
           .catch((error) => {
             console.error("Error al realizar la actualización:", error);
@@ -202,37 +172,42 @@ function ClientesShopify() {
     setSelectedId("");
   };
 
-  const consulta = () => {
-    fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
-      .then((response) => response.json())
-      .then((responseData) => {
-        setReportesTabla2(responseData);
+  // const consulta = () => {
+  //   fetch("http://cbinfo.no-ip.info:9083/sp_ShopifyClientesSel")
 
-        // Construye las columnas dinámicamente a partir de la primera entrada de reportes
-        // if (responseData.length > 0) {
-        //   const columnKeys = Object.keys(responseData[0]);
-        //   const columns = columnKeys.map((key) => ({
-        //     accessorKey: key,
-        //     header: key,
-        //     flex: 1,
-        //   }));
-        //   setColumnasTabla2(columns);
-        // }
-      })
-      .catch((error) => console.error("Error al obtener los datos:", error));
-  };
-  //TABLA 2
+  //     .then((response) => response.json())
+  //     .then((responseData) => {
+  //       setReportesTabla2(responseData);
+
+  //       // Construye las columnas dinámicamente a partir de la primera entrada de reportes
+  //       // if (responseData.length > 0) {
+  //       //   const columnKeys = Object.keys(responseData[0]);
+  //       //   const columns = columnKeys.map((key) => ({
+  //       //     accessorKey: key,
+  //       //     header: key,
+  //       //     flex: 1,
+  //       //   }));
+  //       //   setColumnasTabla2(columns);
+  //       // }
+  //     })
+  //     .catch((error) => console.error("Error al obtener los datos:", error));
+  // };
+  // //TABLA 2
+  // useEffect(() => {
+  //   consulta();
+  // }, []);
+
   useEffect(() => {
-    consulta();
+    fetchClieSho();
   }, []);
 
-  const setIdShopify = (shopID: number, shopNAME: string) => {
+  const setIdShopify = (shopID: number, shopNAME: String) => {
     setSelectedIdShop(shopID);
     setSelectedNameShop(shopNAME);
     setModalOpen(true);
   };
 
-  const columnsA: MRT_ColumnDef<CorteA>[] = useMemo(
+  const columnsA: MRT_ColumnDef<ShopifyCliente>[] = useMemo(
     () => [
       {
         accessorKey: "acciones",
@@ -305,7 +280,7 @@ function ClientesShopify() {
         size: 5,
       },
     ],
-    []
+    [dataClieSho]
   );
 
   useEffect(() => {
@@ -426,7 +401,7 @@ function ClientesShopify() {
 
                 <MaterialReactTable
                   columns={columnsA}
-                  data={reportesTabla2} // Reemplaza "reportes1" con tus datos de la primera tabla
+                  data={dataClieSho} // Reemplaza "reportes1" con tus datos de la primera tabla
                   enableRowSelection={false}
                   rowSelectionCheckboxes={false}
                   initialState={{
