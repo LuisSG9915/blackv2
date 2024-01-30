@@ -14,12 +14,9 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 
 function Home() {
-
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [usuario, setUsuario] = useState("");
-  const [contraseña, setContraseña] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setAuthToken } = useAuth();
@@ -47,9 +44,11 @@ function Home() {
   const handleNavigation = async () => {
     setLoading(true);
     try {
+      fetchSucursales();
       const response2 = await jezaApi.post(`/tokenLogin`, datas);
       localStorage.setItem("token", JSON.stringify(response2.data.token));
-      setAuthToken("a");
+      setAuthToken("REALIZADO");
+
       const response = await jezaApi.get(`/UsuarioPass?usuario=${username}&pass=${password}`);
       const sucursalArray = getSucursalForeignKey(response.data[0].sucursal);
       const nuevoResponse = response.data.map((item) => {
@@ -67,6 +66,8 @@ function Home() {
           navigate("/app");
         }
       } else {
+        setUsername("");
+        setPassword("");
         setError(true);
         setVisible(true);
         setTimeout(() => {
@@ -90,7 +91,7 @@ function Home() {
   const [visible, setVisible] = useState(false);
   const [sucData, setSucData] = useState({ idSuc: 0, dSuc: "" });
   const onDismiss = () => setVisible(false);
-  const { dataSucursales } = useSucursales();
+  const { dataSucursales, fetchSucursales } = useSucursales();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
