@@ -37,6 +37,7 @@ import { AiFillTags } from "react-icons/ai";
 import { UserResponse } from "../../models/Home";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import JezaApiService from "../../api/jezaApi2";
+import axios from 'axios';
 
 function Marcas() {
   const { jezaApi } = JezaApiService();
@@ -282,6 +283,7 @@ function Marcas() {
     setForm({ id: 0, marca: "", descripcion: "" });
   };
 
+
   // AQUÍ COMIENZA MI COMPONNTE DE GRIDTABLE
   const columns: GridColDef[] = [
     {
@@ -306,6 +308,36 @@ function Marcas() {
   };
 
   function DataTable() {
+
+    // const [data, setData] = React.useState([]);
+    // const [errorMessage, setErrorMessage] = React.useState('');
+
+    // React.useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+    //       const response = await axios.get('/Marca?id=0');
+
+    //       // Verificar si la respuesta tiene el código de estado 401
+    //       if (response.status === 401) {
+    //         setErrorMessage('¡Error de autorización! Por favor, inicia sesión.');
+    //       } else {
+    //         // Establecer los datos en el estado si la respuesta es exitosa
+    //         setData(response.data);
+    //       }
+    //     } catch (error) {
+    //       // Manejar otros errores aquí si es necesario
+    //       setErrorMessage('¡Ocurrió un error al obtener los datos!');
+    //     }
+    //   };
+
+    //   // Llamar a la función para obtener los datos
+    //   fetchData();
+    // }, []); // Asegúrate de ajustar las dependencias según tus necesidades
+
+    const customLocaleText = {
+      noRowsLabel: '¡No hay datos disponibles!',
+    };
+
     return (
       <div style={{ height: 600, width: "90%" }}>
         <div style={{ height: "100%", width: "80vw" }}>
@@ -319,6 +351,7 @@ function Marcas() {
               },
             }}
             pageSizeOptions={[5, 10]}
+            localeText={customLocaleText}
           />
         </div>
       </div>

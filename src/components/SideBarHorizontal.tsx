@@ -749,9 +749,45 @@ const SidebarHorizontal = () => {
                     Ventas
                   </DropdownToggle>
                   <DropdownMenu dark>
-                    <DropdownItem onClick={() => navigate("/Ventas")}>Ventas</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/CancelacionVentas")}> Cancelaciones</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DemoTresTablas")}>Reporte de cortes</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_ventas_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Ventas");
+                      }}
+                    >
+                      Ventas
+                    </DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cancelaciones_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/CancelacionVentas");
+                      }}
+                    >
+                      Cancelaciones
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cortes_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/DemoTresTablas");
+                      }}
+                    >
+                      Reporte de cortes
+                    </DropdownItem>
+                    {/* <DropdownItem onClick={() => navigate("/Ventas")}>Ventas</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/CancelacionVentas")}> Cancelaciones</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/DemoTresTablas")}>Reporte de cortes</DropdownItem> */}
+
+                    {/* ------------------------------------------------------------------------------------------- */}
                     {/* <DropdownItem onClick={() => navigate("/CorteCajaParcial")}>Corte parcial</DropdownItem>
                     <DropdownItem onClick={() => navigate("/CorteCaja")}>Corte final del día</DropdownItem> */}
                   </DropdownMenu>
@@ -781,8 +817,32 @@ const SidebarHorizontal = () => {
                     >
                       Visor de citas
                     </DropdownItem>
-                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/HorariosSuc")}>Cambio sucursal</DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_bloqueos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/BloqueosColaborador");
+                      }}
+                    >
+                      Bloqueos de colaborador
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cambiosuc_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/HorariosSuc");
+                      }}
+                    >
+                      Cambio sucursal
+                    </DropdownItem>
+                    {/* <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/HorariosSuc")}>Cambio sucursal</DropdownItem> */}
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
@@ -793,12 +853,58 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
 
                   <DropdownMenu dark>
-                    <DropdownItem onClick={() => navigate("/Compras")}>Compras</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_comprasinventario_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Compras");
+                      }}
+                    >
+                      Compras
+                    </DropdownItem>
 
-                    <DropdownItem onClick={() => navigate("/TraspasosEntrada")}>Traspaso de entrada</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/TraspasoSalida")}>Traspaso de salida</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_traspasoentrada_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/TraspasosEntrada");
+                      }}
+                    >
+                      Traspaso de entrada
+                    </DropdownItem>
 
-                    <DropdownItem onClick={() => navigate("/MovimientoDiversos")}>Ajustes Diversos</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_traspasosalida_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/TraspasoSalida");
+                      }}
+                    >
+                      Traspaso de salida
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_ajustesdiversos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/MovimientoDiversos");
+                      }}
+                    >
+                      Ajustes Diversos
+                    </DropdownItem>
+
+                    {/* <DropdownItem onClick={() => navigate("/Compras")}>Compras</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/TraspasosEntrada")}>Traspaso de entrada</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/TraspasoSalida")}>Traspaso de salida</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/MovimientoDiversos")}>Ajustes Diversos</DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
@@ -806,9 +912,44 @@ const SidebarHorizontal = () => {
                     Reportes
                   </DropdownToggle>
                   <DropdownMenu dark>
-                    <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/ReporteCifra")}>Reporte cifra empleado</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/ReporteArbol")}>Reporte nómina</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_reportes_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/ReporteTool");
+                      }}
+                    >
+                      Reportes
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_cifraempleado_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/ReporteCifra");
+                      }}
+                    >
+                      Reporte cifra empleado
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_nominadetalle_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/ReporteArbol");
+                      }}
+                    >
+                      Reporte nómina
+                    </DropdownItem>
+                    {/* <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/ReporteCifra")}>Reporte cifra empleado</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/ReporteArbol")}>Reporte nómina</DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
@@ -817,10 +958,45 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     {/* <DropdownItem onClick={() => navigate("/usuarios")}>Usuarios</DropdownItem> */}
-                    <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles seguridad</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Permisos seguridad</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_perfilseguridad_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Perfiles");
+                      }}
+                    >
+                      Perfiles seguridad
+                    </DropdownItem>
 
-                    <DropdownItem onClick={() => navigate("/ShopifySinc")}>SINC SHOPIFY</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_perfilmodulo_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/PerfilesModulos");
+                      }}
+                    >s
+                      Permisos seguridad
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_sincrosho_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/ShopifySinc");
+                      }}
+                    >
+                      SINC SHOPIFY
+                    </DropdownItem>
+
+                    {/* <DropdownItem onClick={() => navigate("/Perfiles")}>Perfiles seguridad</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/PerfilesModulos")}>Permisos seguridad</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/ShopifySinc")}>SINC SHOPIFY</DropdownItem> */}
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
