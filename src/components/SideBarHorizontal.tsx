@@ -32,7 +32,7 @@ import { useQuery } from "react-query";
 import { versionSistema } from "../utilities/constGenerales";
 import JezaApiService from "../api/jezaApi2";
 import { useAuth } from "../context/AuthContext";
- // Asegúrate de importar useHistory si estás utilizando React Router
+// Asegúrate de importar useHistory si estás utilizando React Router
 
 const SidebarHorizontal = () => {
   const { isLoading, error, data, isFetching } = useQuery(
@@ -58,7 +58,7 @@ const SidebarHorizontal = () => {
           setVerificadorVersion(false);
         }
       }),
-    { staleTime: 10000 }
+    { staleTime: 2000 }
   );
 
   const [verificadorVersion, setVerificadorVersion] = useState(false);
@@ -73,42 +73,78 @@ const SidebarHorizontal = () => {
     setIsOpen(!isOpen);
   };
 
-  const { jezaApi } = JezaApiService();
-  const { logout } = useAuth();
-  const history = useNavigate();
+  // const { jezaApi } = JezaApiService();
+  // const { logout } = useAuth();
+  // const history = useNavigate();
 
-  useEffect(() => {
-    const interceptor = jezaApi.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response && error.response.status === 401) {
-          // Si el servidor responde con 401 (No autorizado), se asume que el token ha expirado
-          Swal.fire({
-            icon: "error",
-            title: "Tiempo de sesión expirado",
-            text: "Favor de ingresar sesión nuevamente",
-            confirmButtonColor: "#3085d6",
-            showCancelButton: true, // Mostrar botón de cancelar
-            cancelButtonText: "Cancelar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Si el usuario confirma, redirige a la página de inicio de sesión
-              navigate("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
-            } else {
-              // Si el usuario cancela, ejecuta la función de cierre de sesión
-              logout();
-            }
-          });
-        }
-        return Promise.reject(error);
-      }
-    );
+  // useEffect(() => {
+  //   const interceptor = jezaApi.interceptors.response.use(
+  //     (response) => response,
+  //     (error) => {
+  //       console.log("Interceptor ejecutado con error:", error);
+  //       if (error.response && error.response.status === 401) {
+  //         // Si el servidor responde con 401 (No autorizado), se asume que el token ha expirado
+  //         Swal.fire({
+  //           icon: "error",
+  //           title: "Tiempo de sesión expirado",
+  //           text: "Favor de ingresar sesión nuevamente",
+  //           confirmButtonColor: "#3085d6",
+  //           showCancelButton: true, // Mostrar botón de cancelar
+  //           cancelButtonText: "Cancelar",
+  //         }).then((result) => {
+  //           if (result.isConfirmed) {
+  //             // Si el usuario confirma, redirige a la página de inicio de sesión
+  //             navigate("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
+  //           } else {
+  //             // Si el usuario cancela, ejecuta la función de cierre de sesión
+  //             logout();
+  //           }
+  //         });
+  //       }
+  //       return Promise.reject(error);
+  //     }
+  //   );
 
-    return () => {
-      // Eliminar el interceptor cuando el componente se desmonte
-      jezaApi.interceptors.response.eject(interceptor);
-    };
-  }, [jezaApi, logout, history]);
+  //   return () => {
+  //     // Eliminar el interceptor cuando el componente se desmonte
+  //     jezaApi.interceptors.response.eject(interceptor);
+  //   };
+  // }, [jezaApi, logout, history]);
+
+  // useEffect(() => {
+  //   console.log(jezaApi);
+  //   const interceptor = jezaApi.interceptors.response.use(
+  //     (response) => response,
+  //     (error) => {
+  //       if (error.response && error.response.status === 401) {
+  //         // Se ha recibido un estado 401 (No autorizado)
+  //         Swal.fire({
+  //           icon: "error",
+  //           title: "Tiempo de sesión expirado",
+  //           text: "Favor de iniciar sesión nuevamente",
+  //           confirmButtonColor: "#3085d6",
+  //           showCancelButton: true,
+  //           cancelButtonText: "Cancelar",
+  //         }).then((result) => {
+  //           if (result.isConfirmed) {
+  //             // Redirigir al usuario a la página de inicio de sesión
+  //             history.push("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
+  //           } else {
+  //             // Cerrar sesión si el usuario cancela
+  //             logout();
+  //           }
+  //         });
+  //       }
+  //       return Promise.reject(error);
+  //     }
+  //   );
+
+  //   return () => {
+  //     // Eliminar el interceptor cuando el componente se desmonte
+  //     jezaApi.interceptors.response.eject(interceptor);
+  //   };
+  // }, [jezaApi, logout, history]);
+
 
 
 
@@ -140,7 +176,7 @@ const SidebarHorizontal = () => {
 
 
 
-  
+
   const handleTimerUpdate = (timeLeft: number, userLogged: Usuario[]) => {
     const expirationTime = Date.now() + timeLeft;
     localStorage.setItem("timerExpiration", String(expirationTime));
@@ -453,20 +489,178 @@ const SidebarHorizontal = () => {
                     >
                       Clientes
                     </DropdownItem>
-                    <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/UnidadMedida")}>Unidad de medida</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/TipoMovto")}>Tipo de movimiento</DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_clientshopi_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/ClientesShopify");
+                      }}
+                    >
+                      Shopify clientes
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_anticipo_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Anticipo");
+                      }}
+                    >
+                      Anticipos
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_tipodescuento_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Descuentos");
+                      }}
+                    >
+                      Tipo de descuentos
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_puntosdeptos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/DescPorPuntos");
+                      }}
+                    >
+                      Configuración de puntos por departamentos
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_productos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/Productos");
+                      }}
+                    >
+                      Productos
+                    </DropdownItem>
+
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_kitpaquetes_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/KitPaquete");
+                      }}
+                    >
+                      Kit de Paquetes piezas
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_paqueteconver_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/PaqueteConversiones");
+                      }}
+                    >
+                      Paquetes conversiones
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_unidadmedida_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/UnidadMedida");
+                      }}
+                    >
+                      Unidad de medida
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_tipo movto_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/TipoMovto");
+                      }}
+                    >
+                      Tipo de movimiento
+                    </DropdownItem>
                     <DropdownItem divider />
+                    {/* <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/UnidadMedida")}>Unidad de medida</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/TipoMovto")}>Tipo de movimiento</DropdownItem> */}
+                    {/* <DropdownItem divider /> */}
                     <DropdownItem header>Recursos Humanos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/PuestoRecursosHumanos")}>Puestos RH</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DepartamentoRecursos")}>Departamentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/TipoBajas")}>Tipo de bajas</DropdownItem>
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_recursoshuma_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/PuestoRecursosHumanos");
+                      }}
+                    >
+                      Puestos RH
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_deptosrecursos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/DepartamentoRecursos");
+                      }}
+                    >
+                      Departamentos
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_deptosrecursos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/TipoBajas");
+                      }}
+                    >
+                      Tipo de bajas
+                    </DropdownItem>
+
+                    <DropdownItem
+                      onClick={async () => {
+                        const permiso = await filtroSeguridad("sb_deptosrecursos_view");
+                        if (permiso === false) {
+                          return;
+                        }
+                        navigate("/NivelEscolar");
+                      }}
+                    >
+                      Niveles de escolaridad
+                    </DropdownItem>
+                    {/* <DropdownItem header>Recursos Humanos</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/PuestoRecursosHumanos")}>Puestos RH</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/DepartamentoRecursos")}>Departamentos</DropdownItem> */}
+                    {/* <DropdownItem onClick={() => navigate("/TipoBajas")}>Tipo de bajas</DropdownItem> */}
                     <DropdownItem onClick={() => navigate("/NivelEscolar")}>Niveles de escolaridad</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Estatuscolaborador")}>Estatus colaboradores</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>

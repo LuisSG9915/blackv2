@@ -87,6 +87,64 @@ function Home() {
     }
   };
 
+  // const { logout } = useAuth();
+  // const history = useNavigate();
+
+  // useEffect(() => {
+  //   const interceptor = jezaApi.interceptors.response.use(
+  //     (response) => response,
+  //     (error) => {
+  //       if (error.response && error.response.status === 401) {
+  //         // Se ha recibido un estado 401 (No autorizado)
+  //         Swal.fire({
+  //           icon: "error",
+  //           title: "Tiempo de sesión expirado",
+  //           text: "Favor de iniciar sesión nuevamente",
+  //           confirmButtonColor: "#3085d6",
+  //           showCancelButton: true,
+  //           cancelButtonText: "Cancelar",
+  //         }).then((result) => {
+  //           if (result.isConfirmed) {
+  //             // Redirigir al usuario a la página de inicio de sesión
+  //             history.push("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
+  //           } else {
+  //             // Cerrar sesión si el usuario cancela
+  //             logout();
+  //           }
+  //         });
+  //       }
+  //       return Promise.reject(error);
+  //     }
+  //   );
+
+  //   return () => {
+  //     // Eliminar el interceptor cuando el componente se desmonte
+  //     jezaApi.interceptors.response.eject(interceptor);
+  //   };
+  // }, [jezaApi, logout, history]);
+
+
+  // useEffect(() => {
+  //   const interceptor = jezaApi.interceptors.response.use(
+  //     (response) => response,
+  //     (error) => {
+  //       if (error && error.response) {
+  //         const { status, data } = error.response;
+  //         if (status === 401 && data && data.Message === "Se ha denegado la autorización para esta solicitud.") {
+  //           // Resto del código
+  //           console.log("Interceptor capturó respuesta 401 con mensaje específico");
+  //         }
+  //       }
+  //       return Promise.reject(error);
+  //     }
+  //   );
+
+  //   return () => {
+  //     // Eliminar el interceptor cuando el componente se desmonte
+  //     jezaApi.interceptors.response.eject(interceptor);
+  //   };
+  // }, [jezaApi]);
+
   const [visible, setVisible] = useState(false);
   const [sucData, setSucData] = useState({ idSuc: 0, dSuc: "" });
   const onDismiss = () => setVisible(false);
