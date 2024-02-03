@@ -22,6 +22,7 @@ import {
   NavLink,
   TabContent,
   TabPane,
+  InputGroup
 } from "reactstrap";
 import CButton from "../components/CButton";
 import SidebarHorizontal from "../components/SideBarHorizontal";
@@ -53,6 +54,10 @@ import { useRepoComision } from "../hooks/getsHooks/useRepoComision";
 import { UserResponse } from "../models/Home";
 import { RecursosDepartamento } from "../models/RecursosDepartamento";
 import { ComisionRepo } from "../models/ComisionRepo";
+import TableCliente from "../screens/ventas/Components/TableCliente";
+import { useClientes } from "../hooks/getsHooks/useClientes";
+import { Venta } from "../models/Venta";
+import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
 function NominaTrabajadores() {
   const { filtroSeguridad, session } = useSeguridad();
 
@@ -108,6 +113,66 @@ function NominaTrabajadores() {
   const { dataPerfiles } = usePerfiles();
   const { dataCitaFutura } = useCitaFutura();
   const { dataRepoComi } = useRepoComision();
+  const [modalCliente, setModalCliente] = useState<boolean>(false);
+  const { dataClientes, fetchClientes } = useClientes();
+ 
+  const [dataTemporal, setDataTemporal] = useState<Venta>({
+    id: 0,
+    Sucursal: 0,
+    Fecha: "",
+    Caja: 1,
+    No_venta: 1,
+    Clave_prod: 1,
+    Cant_producto: 1,
+    Precio: 0,
+    Precio_base: 0,
+    Cve_cliente: 0,
+    Tasa_iva: 0.16,
+    ieps: 0,
+    Observacion: "",
+    Descuento: 0,
+    Clave_Descuento: 0,
+    Usuario: 0,
+    Credito: false,
+    Corte: 1,
+    Corte_parcial: 1,
+    Costo: 1,
+    cancelada: false,
+    idEstilista: 0,
+    folio_estilista: 1,
+    hora: new Date(),
+    tiempo: 1,
+    terminado: false,
+    validadoServicio: false,
+    Cia: 0,
+    cliente: "",
+    d_estilista: "",
+    d_producto: "",
+    d_existencia: "",
+    estilista: "",
+    producto: "",
+    formaPago: 0,
+    idestilistaAux: 0,
+    idRecepcionista: 0,
+  });
+
+  const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
+const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
+const idCliente = new URLSearchParams(window.location.search).get("idCliente");
+
+useEffect(() => {
+  const fetchData = async () => {
+    const { dataClientes, fetchClientes } = useClientes();
+    setDataTemporal((prevDataTemporal) => ({
+      ...prevDataTemporal,
+      dataClientes: dataClientes,
+      fetchClientes: fetchClientes,
+      idCliente: Number(idCliente),
+    }));
+  };
+
+  fetchData();
+}, [nombreCliente, idCliente]);
 
   const [formDepartamentos, setFormDepartamnetos] = useState<RecursosDepartamento>({
     id: 0,
@@ -1418,6 +1483,28 @@ function NominaTrabajadores() {
                             minlength={1} maxlength={50}
                           />
                         </Col>
+
+                        <Col sm="6">
+                        <Label>Enlazar nombre de cliente nomina:</Label>
+                        <InputGroup>
+
+                          <Input disabled value={dataTemporal.cliente}  name={"clave_perfil"} />
+                          <Button onClick={() => setModalCliente(true)} color="info">
+                          <MdEmojiPeople size={23} />
+                         Elegir
+                          </Button>
+                          </InputGroup>
+                        </Col>
+                         
+                        <Col sm="6">
+                          <CFormGroupInput
+                            handleChange={handleChange}
+                            inputName="codigo_postal"
+                            labelName="Orden agenda:"
+                            value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+                            minlength={1} maxlength={50}
+                          />
+                        </Col>
                       </Row>
                       <br />
                     </TabPane>
@@ -1574,6 +1661,31 @@ function NominaTrabajadores() {
               <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
             </ModalFooter>
           </Modal>
+
+          <Modal isOpen={modalCliente} size="lg">
+        <ModalHeader>
+          <h3>Selección de clientes</h3>{" "}
+        </ModalHeader>
+        <ModalBody>
+          <TableCliente
+            sucursal={dataUsuarios2[0]?.sucursal}
+            dataTemporal={dataTemporal}
+            setDataTemporal={setDataTemporal}
+            data={dataClientes}
+            setModalCliente={setModalCliente}
+          ></TableCliente>
+        </ModalBody>
+        <ModalFooter>
+          <CButton
+            color="danger"
+            onClick={() => {
+              setModalCliente(false);
+            }}
+            text="Salir"
+          />
+        </ModalFooter>
+      </Modal>
+
         </>
       ) : null}
     </>
