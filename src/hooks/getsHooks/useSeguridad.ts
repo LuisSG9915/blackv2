@@ -143,12 +143,13 @@ const useSeguridad = () => {
             title: "Tiempo de sesión expirado",
             text: "Favor de iniciar sesión nuevamente",
             confirmButtonColor: "#3085d6",
+            allowOutsideClick: false,
             // showCancelButton: true,
             // cancelButtonText: "Cancelar",
           }).then((result) => {
             if (result.isConfirmed) {
               // Redirigir al usuario a la página de inicio de sesión
-              window.location.href = "http://cbinfo.no-ip.info:9088/"; // Puedes ajustar la ruta según tu configuración
+              window.location.href = 'http://localhost:5173/'; // Puedes ajustar la ruta según tu configuración
             } else {
               // Puedes manejar otras acciones si el usuario cancela la alerta
             }

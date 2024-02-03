@@ -31,14 +31,44 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { versionSistema } from "../utilities/constGenerales";
 import JezaApiService from "../api/jezaApi2";
-import { useAuth } from "../context/AuthContext";
+
 // Asegúrate de importar useHistory si estás utilizando React Router
 
 const SidebarHorizontal = () => {
+  // const { isLoading, error, data, isFetching } = useQuery(
+  //   "repoData",
+  //   () =>
+  //     axios.get("http://cbinfo.no-ip.info:9086/version").then((res) => {
+  //       if (res.data.ver > versionSistema) {
+  //         Swal.fire({
+  //           title: "Actualización",
+  //           text: `Favor de actualizar sitio, hemos detectado una versión anterior`,
+  //           icon: "info",
+  //           showCancelButton: true,
+  //           confirmButtonColor: "#3085d6",
+  //           cancelButtonColor: "#d33",
+  //           confirmButtonText: "Actualizar",
+  //         }).then((result) => {
+  //           if (result.isConfirmed) {
+  //             window.location.reload();
+  //           }
+  //         });
+  //         setVerificadorVersion(true);
+  //       } else {
+  //         setVerificadorVersion(false);
+  //       }
+  //     },
+
+  //       //      
+  //       //       
+  //     ),
+  //   { staleTime: 5000 }
+  // );
+  const { jezaApi } = JezaApiService();
   const { isLoading, error, data, isFetching } = useQuery(
     "repoData",
     () =>
-      axios.get("http://cbinfo.no-ip.info:9086/version").then((res) => {
+      jezaApi.get("http://cbinfo.no-ip.info:9086/version").then((res) => {
         if (res.data.ver > versionSistema) {
           Swal.fire({
             title: "Actualización",
@@ -48,6 +78,7 @@ const SidebarHorizontal = () => {
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
             confirmButtonText: "Actualizar",
+            allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
               window.location.reload();
@@ -57,9 +88,33 @@ const SidebarHorizontal = () => {
         } else {
           setVerificadorVersion(false);
         }
-      }),
-    { staleTime: 2000 }
+      },
+        jezaApi.get('/Perfil?id=0').then((res) => { }).catch((error) => {
+          if (error.response && error.response.status === 401) {
+            // Manejar el error 401 aquí (por ejemplo, mosstrar una alerta de token expirado)
+            Swal.fire({
+              title: 'Error de autenticación',
+              text: 'Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.',
+              icon: 'error',
+              confirmButtonText: 'Iniciar sesión',
+              allowOutsideClick: false,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // Redirigir a la página de inicio de sesión después de un retraso
+                window.location.href = 'http://localhost:5173/'; // Reemplaza con la ruta correcta
+              }
+            });
+          } else {
+            // Otro tipo de error (por ejemplo, problemas de red)
+            console.error('Error al realizar la solicitud:', error.message);
+          }
+        })
+        //      
+        //       
+      ),
+    { staleTime: 5000 }
   );
+
 
   const [verificadorVersion, setVerificadorVersion] = useState(false);
   const { filtroSeguridad, session } = useSeguridad();
@@ -72,81 +127,6 @@ const SidebarHorizontal = () => {
   const toggle = () => {
     setIsOpen(!isOpen);
   };
-
-  // const { jezaApi } = JezaApiService();
-  // const { logout } = useAuth();
-  // const history = useNavigate();
-
-  // useEffect(() => {
-  //   const interceptor = jezaApi.interceptors.response.use(
-  //     (response) => response,
-  //     (error) => {
-  //       console.log("Interceptor ejecutado con error:", error);
-  //       if (error.response && error.response.status === 401) {
-  //         // Si el servidor responde con 401 (No autorizado), se asume que el token ha expirado
-  //         Swal.fire({
-  //           icon: "error",
-  //           title: "Tiempo de sesión expirado",
-  //           text: "Favor de ingresar sesión nuevamente",
-  //           confirmButtonColor: "#3085d6",
-  //           showCancelButton: true, // Mostrar botón de cancelar
-  //           cancelButtonText: "Cancelar",
-  //         }).then((result) => {
-  //           if (result.isConfirmed) {
-  //             // Si el usuario confirma, redirige a la página de inicio de sesión
-  //             navigate("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
-  //           } else {
-  //             // Si el usuario cancela, ejecuta la función de cierre de sesión
-  //             logout();
-  //           }
-  //         });
-  //       }
-  //       return Promise.reject(error);
-  //     }
-  //   );
-
-  //   return () => {
-  //     // Eliminar el interceptor cuando el componente se desmonte
-  //     jezaApi.interceptors.response.eject(interceptor);
-  //   };
-  // }, [jezaApi, logout, history]);
-
-  // useEffect(() => {
-  //   console.log(jezaApi);
-  //   const interceptor = jezaApi.interceptors.response.use(
-  //     (response) => response,
-  //     (error) => {
-  //       if (error.response && error.response.status === 401) {
-  //         // Se ha recibido un estado 401 (No autorizado)
-  //         Swal.fire({
-  //           icon: "error",
-  //           title: "Tiempo de sesión expirado",
-  //           text: "Favor de iniciar sesión nuevamente",
-  //           confirmButtonColor: "#3085d6",
-  //           showCancelButton: true,
-  //           cancelButtonText: "Cancelar",
-  //         }).then((result) => {
-  //           if (result.isConfirmed) {
-  //             // Redirigir al usuario a la página de inicio de sesión
-  //             history.push("/http://localhost:5173/"); // Ajusta la ruta según tu configuración
-  //           } else {
-  //             // Cerrar sesión si el usuario cancela
-  //             logout();
-  //           }
-  //         });
-  //       }
-  //       return Promise.reject(error);
-  //     }
-  //   );
-
-  //   return () => {
-  //     // Eliminar el interceptor cuando el componente se desmonte
-  //     jezaApi.interceptors.response.eject(interceptor);
-  //   };
-  // }, [jezaApi, logout, history]);
-
-
-
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -540,7 +520,7 @@ const SidebarHorizontal = () => {
 
                     <DropdownItem
                       onClick={async () => {
-                        const permiso = await filtroSeguridad("sb_productos_view");
+                        const permiso = await filtroSeguridad("sb_productosmenu_view");
                         if (permiso === false) {
                           return;
                         }
@@ -648,7 +628,7 @@ const SidebarHorizontal = () => {
 
                     <DropdownItem
                       onClick={async () => {
-                        const permiso = await filtroSeguridad("sb_nivelescolar_view");
+                        const permiso = await filtroSeguridad("sb_nivelescolarmenu_view");
                         if (permiso === false) {
                           return;
                         }
@@ -660,7 +640,7 @@ const SidebarHorizontal = () => {
 
                     <DropdownItem
                       onClick={async () => {
-                        const permiso = await filtroSeguridad("sb_estatuscolab_view");
+                        const permiso = await filtroSeguridad("sb_estatuscolabmenu_view");
                         if (permiso === false) {
                           return;
                         }
@@ -751,7 +731,7 @@ const SidebarHorizontal = () => {
                   <DropdownMenu dark>
                     <DropdownItem
                       onClick={async () => {
-                        const permiso = await filtroSeguridad("sb_ventas_view");
+                        const permiso = await filtroSeguridad("sb_ventasmenu_view");
                         if (permiso === false) {
                           return;
                         }
@@ -978,7 +958,7 @@ const SidebarHorizontal = () => {
                         }
                         navigate("/PerfilesModulos");
                       }}
-                    >s
+                    >
                       Permisos seguridad
                     </DropdownItem>
 

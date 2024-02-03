@@ -1,6 +1,7 @@
 import { GridColDef } from "@mui/x-data-grid";
 
 export const columnsBloqueos: GridColDef[] = [
+
   {
     field: "actions",
     headerName: "Acciones",

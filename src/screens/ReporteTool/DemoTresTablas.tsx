@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 // import { jezaApi } from "../../api/jezaApi";
 import { format } from "date-fns-tz";
+import JezaApiService from "../../api/jezaApi2";
 
 function DemoTresTablas() {
   const { jezaApi } = JezaApiService();

@@ -39,6 +39,7 @@ export const postBloqueoColaborador = async (form, idUsuario) => {
 };
 
 export const putBloqueoColaborador = async (form, idUsuario) => {
+  const { jezaApi } = JezaApiService();
   const { id, fecha, idColaborador, idTipoBloqueo, h1, h2, observaciones } = form;
   const newH1 = format(new Date(h1), "yyyy-MM-dd HH:mm");
   const newH2 = format(new Date(h2), "yyyy-MM-dd HH:mm");
@@ -60,6 +61,7 @@ export const putBloqueoColaborador = async (form, idUsuario) => {
 };
 
 export const deleteBloqueoColab = async (id: number, estilista: string, fecha: string) => {
+  const { jezaApi } = JezaApiService();
   Swal.fire({
     title: "ADVERTENCIA",
     text: `¿Está seguro que desea eliminar el registro: ${estilista} de la fecha: ${fecha}?`,
