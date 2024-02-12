@@ -23,7 +23,7 @@ import { AiOutlineUser, AiOutlineAlert, AiFillAlert } from "react-icons/ai";
 import Timer from "../components/Timer";
 import Swal from "sweetalert2";
 import "../../css/sidebar.css";
-import logoImage from "../assets/logoN.png";
+import logoImage from "../assets/pe-logon.png";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
 import RataLogo from "../assets/rataTNB.jpeg";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
@@ -265,7 +265,8 @@ const SidebarHorizontal = () => {
             {/* <NavbarBrand href="/" src={logoImage}></NavbarBrand> */}
             {/* <img href="/" src={logoImage} alt="Logotipo" className="logo-inv" /> */}
             <NavbarBrand href="/">
-              <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" />
+              {/* <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" /> */}
+              <h4>PEINADOS EXPRESS</h4>
             </NavbarBrand>
             <NavbarToggler onClick={toggle} />
             {/* <div className="containersinc">
