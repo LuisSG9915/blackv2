@@ -23,7 +23,7 @@ import { AiOutlineUser, AiOutlineAlert, AiFillAlert } from "react-icons/ai";
 import Timer from "../components/Timer";
 import Swal from "sweetalert2";
 import "../../css/sidebar.css";
-import logoImage from "../assets/pe-logon.png";
+import logoImage from "../assets/logoN.png";
 import { useSucursales } from "../hooks/getsHooks/useSucursales";
 import RataLogo from "../assets/rataTNB.jpeg";
 import useSeguridad from "../hooks/getsHooks/useSeguridad";
@@ -265,8 +265,7 @@ const SidebarHorizontal = () => {
             {/* <NavbarBrand href="/" src={logoImage}></NavbarBrand> */}
             {/* <img href="/" src={logoImage} alt="Logotipo" className="logo-inv" /> */}
             <NavbarBrand href="/">
-              {/* <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" /> */}
-              <h4>PEINADOS EXPRESS</h4>
+              <img style={{ scale: "80%" }} src={logoImage} alt="Logotipo" />
             </NavbarBrand>
             <NavbarToggler onClick={toggle} />
             {/* <div className="containersinc">
@@ -412,9 +411,7 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/ClientesShopify")}>Shopify clientes </DropdownItem>
                     <DropdownItem onClick={() => navigate("/Anticipo")}>Anticipos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Descuentos")}>Tipo de descuentos</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>
-                      Configuración de puntos por departamentos
-                    </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/DescPorPuntos")}>Configuración de puntos por departamentos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Productos")}>Productos</DropdownItem>
                     <DropdownItem onClick={() => navigate("/KitPaquete")}>Kit de Paquetes piezas</DropdownItem>
                     <DropdownItem onClick={() => navigate("/PaqueteConversiones")}>Paquetes conversiones</DropdownItem>
@@ -472,9 +469,7 @@ const SidebarHorizontal = () => {
                     >
                       Visor de citas
                     </DropdownItem>
-                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>
-                      Bloqueos de colaborador
-                    </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem>
                     <DropdownItem onClick={() => navigate("/HorariosSuc")}>Cambio sucursal</DropdownItem>
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
@@ -500,9 +495,6 @@ const SidebarHorizontal = () => {
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem onClick={() => navigate("/ReporteTool")}>Reportes</DropdownItem>
-                    <DropdownItem onClick={() => navigate("/ReporteToolARBOL_C")}>
-                      REPORTE ARBOL COMPONENTE
-                    </DropdownItem>
                     <DropdownItem onClick={() => navigate("/ReporteCifra")}>Reporte cifra empleado</DropdownItem>
                     <DropdownItem onClick={() => navigate("/ReporteArbol")}>Reporte nómina</DropdownItem>
                   </DropdownMenu>
@@ -521,11 +513,7 @@ const SidebarHorizontal = () => {
                 </UncontrolledDropdown>
                 <UncontrolledDropdown>
                   <DropdownToggle nav caret color="rgba(225,224,253,255)">
-                    {verificadorVersion ? (
-                      <AiFillAlert size={20} color="orange"></AiFillAlert>
-                    ) : (
-                      <AiOutlineUser></AiOutlineUser>
-                    )}
+                    {verificadorVersion ? <AiFillAlert size={20} color="orange"></AiFillAlert> : <AiOutlineUser></AiOutlineUser>}
                     Perfil
                   </DropdownToggle>
                   <DropdownMenu dark>
@@ -537,9 +525,7 @@ const SidebarHorizontal = () => {
                           <ListGroupItem>Nombre: {form.length > 0 && form[0].nombre}</ListGroupItem>
                           <ListGroupItem>Versión: {versionSistema} </ListGroupItem>
                           {/* <ListGroupItem>Sucursal: {form.length > 0 && form[0].d_sucursal}</ListGroupItem> */}
-                          {form[0]?.clave_perfil === 27 ||
-                          form[0]?.clave_perfil === 1032 ||
-                          form[0]?.clave_perfil === 1033 ? (
+                          {form[0]?.clave_perfil === 27 || form[0]?.clave_perfil === 1032 || form[0]?.clave_perfil === 1033 ? (
                             <ListGroupItem>
                               <Input
                                 value={form.length > 0 && form[0].sucursal}

@@ -5,7 +5,7 @@ import AlertComponent from "../../components/AlertComponent";
 import { jezaApi } from "../../api/jezaApi";
 
 import "../../../css/home.css";
-import logoImage from "../../assets/pe_logorecn.png";
+import logoImage from "../../assets/Logo.png";
 import CButton from "../../components/CButton";
 import CFormGroupInput from "../../components/CFormGroupInput";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
@@ -45,11 +45,7 @@ function Home() {
         };
       });
       if (response.data[0].acceso === 1) {
-        if (
-          response.data[0].clave_perfil == 27 ||
-          response.data[0].clave_perfil == 1032 ||
-          response.data[0].clave_perfil == 1033
-        ) {
+        if (response.data[0].clave_perfil == 27 || response.data[0].clave_perfil == 1032 || response.data[0].clave_perfil == 1033) {
           setResponseData(nuevoResponse);
           setModalSucursal(true);
         } else {
@@ -100,14 +96,7 @@ function Home() {
               <br />
               <form>
                 <FormGroup floating>
-                  <Input
-                    id="username"
-                    name="username"
-                    placeholder="Usuario"
-                    onChange={handleUsernameChange}
-                    type="text"
-                    bsSize="sm"
-                  />
+                  <Input id="username" name="username" placeholder="Usuario" onChange={handleUsernameChange} type="text" bsSize="sm" />
                   <Label for="username">Usuario</Label>
                 </FormGroup>
                 <br />
