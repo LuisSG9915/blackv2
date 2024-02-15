@@ -3,15 +3,11 @@ h3 {
   font-weight: 600;
 }
 
-
-
 /* Agregar filtro púrpura al fondo */
 .home-page {
   /* body{ */
   /* Para usar una imagen como fondo */
- /*  background-image: url("/src/assets/setup.jpg"); */
-background-color: #d4709d;
-  background-image: linear-gradient(0deg, #d4709d 0%, #e2adad 22%, #98cacc 57%);
+  background-image: url("/src/assets/setup.jpg");
   /* Para usar un color como fondo, descomenta la siguiente línea y comenta la línea anterior */
   /* background-color: #abcdef; */
   /* Ajustar el fondo para cubrir toda la pantalla */
@@ -33,7 +29,7 @@ background-color: #d4709d;
   left: 0;
   width: 100%;
   height: 100%;
-  /* background-color: rgba(59, 1, 59, 0.315); */ /* Color púrpura con transparencia */
+  background-color: rgba(59, 1, 59, 0.315); /* Color púrpura con transparencia */
   z-index: 1; /* Asegura que la capa esté detrás del contenido */
 }
 .icono-home {
