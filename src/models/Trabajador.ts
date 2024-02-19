@@ -66,4 +66,6 @@ export interface Trabajador {
   password: string;
   nombreAgenda: string;
   aliasTickets: string;
+  idCliente: number;
+  ordenAgenda: number;
 }

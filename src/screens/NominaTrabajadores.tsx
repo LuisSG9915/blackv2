@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
   Row,
@@ -58,6 +58,7 @@ import TableCliente from "../screens/ventas/Components/TableCliente";
 import { useClientes } from "../hooks/getsHooks/useClientes";
 import { Venta } from "../models/Venta";
 import { MdOutlineReceiptLong, MdAttachMoney, MdAccessTime, MdDataSaverOn, MdPendingActions, MdEmojiPeople } from "react-icons/md";
+import { MaterialReactTable, MRT_ColumnDef, MRT_Row } from "material-react-table";
 function NominaTrabajadores() {
   const { filtroSeguridad, session } = useSeguridad();
 
@@ -99,6 +100,7 @@ function NominaTrabajadores() {
 
   const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
     useModalHook();
+  const [modalOpenCli, setModalOpenCli] = useState(false);
   const [filtroValorMedico, setFiltroValorMedico] = useState("");
   const [filtroValorEmail, setFiltroValorEmail] = useState("");
   const [data, setData] = useState([]);
@@ -115,64 +117,60 @@ function NominaTrabajadores() {
   const { dataRepoComi } = useRepoComision();
   const [modalCliente, setModalCliente] = useState<boolean>(false);
   const { dataClientes, fetchClientes } = useClientes();
- 
-  const [dataTemporal, setDataTemporal] = useState<Venta>({
-    id: 0,
-    Sucursal: 0,
-    Fecha: "",
-    Caja: 1,
-    No_venta: 1,
-    Clave_prod: 1,
-    Cant_producto: 1,
-    Precio: 0,
-    Precio_base: 0,
-    Cve_cliente: 0,
-    Tasa_iva: 0.16,
-    ieps: 0,
-    Observacion: "",
-    Descuento: 0,
-    Clave_Descuento: 0,
-    Usuario: 0,
-    Credito: false,
-    Corte: 1,
-    Corte_parcial: 1,
-    Costo: 1,
-    cancelada: false,
-    idEstilista: 0,
-    folio_estilista: 1,
-    hora: new Date(),
-    tiempo: 1,
-    terminado: false,
-    validadoServicio: false,
-    Cia: 0,
-    cliente: "",
-    d_estilista: "",
-    d_producto: "",
-    d_existencia: "",
-    estilista: "",
-    producto: "",
-    formaPago: 0,
-    idestilistaAux: 0,
-    idRecepcionista: 0,
-  });
 
-  const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
-const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
-const idCliente = new URLSearchParams(window.location.search).get("idCliente");
 
-useEffect(() => {
-  const fetchData = async () => {
-    const { dataClientes, fetchClientes } = useClientes();
-    setDataTemporal((prevDataTemporal) => ({
-      ...prevDataTemporal,
-      dataClientes: dataClientes,
-      fetchClientes: fetchClientes,
-      idCliente: Number(idCliente),
+  ///SELECCION DE CLIENTES 
+  const [selectedIdC, setSelectedIdC] = useState(0);
+  const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
+
+  const handleModalSelect = async (id_cliente: number, name: string) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      idCliente: id_cliente,
+      // Otros campos del formulario que deseas actualizar
     }));
+    setSelectedName(name);
+    cerrarModal();
   };
 
-  fetchData();
-}, [nombreCliente, idCliente]);
+  // Función para abrir el modal
+  const abrirModal = () => {
+    setModalOpenCli(true);
+  };
+
+  // Función para cerrar el modal
+  const cerrarModal = () => {
+    setModalOpenCli(false);
+  };
+
+  const dataClientesFiltrados = dataClientes.filter(cliente => cliente.sucursal_origen === 33);
+
+  const columnsclientes: MRT_ColumnDef<any>[] = useMemo(
+    () => [
+      {
+        accessorKey: "id_cliente",
+        header: "ID",
+        size: 30,
+      },
+      {
+        accessorKey: "nombre",
+        header: "Nombre",
+        size: 60,
+      },
+      {
+        header: "Acciones",
+
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <CButton text="Seleccionar" color="secondary" onClick={() => handleModalSelect(row.original.id_cliente, row.original.nombre)} />
+          );
+        },
+        size: 40,
+      },
+    ],
+    []
+  );
 
   const [formDepartamentos, setFormDepartamnetos] = useState<RecursosDepartamento>({
     id: 0,
@@ -212,6 +210,8 @@ useEffect(() => {
     password: "",
     nombreAgenda: "",
     aliasTickets: "",
+    idCliente: 0,
+    ordenAgenda: 0,
 
     // d_estatus: "",
     // descripcion_puesto: "",
@@ -247,6 +247,69 @@ useEffect(() => {
   };
 
   //VALIDACIÓN---->
+  const [camposFaltantesAdd, setCamposFaltantesAdd] = useState<string[]>([]);
+
+  const validarCamposAdd = () => {
+    const camposRequeridos: (keyof Trabajador)[] = [
+      "clave_empleado",
+      "status",
+      "nombre",
+      "fecha_nacimiento",
+      "sexo",
+      "RFC",
+      "CURP",
+      "imss",
+      "domicilio",
+      "colonia",
+      "poblacion",
+      "estado",
+      "lugar_nacimiento",
+      "CURP",
+      "codigo_postal",
+      "telefono1",
+      "telefono2",
+      "email",
+      "idDepartamento",
+      "idPuesto",
+      "observaciones",
+      "nivel_escolaridad",
+      "clave_perfil",
+      "password",
+      "nombreAgenda",
+      "aliasTickets",
+      // "ordenAgenda",
+      // "idCliente",
+
+    ];
+
+    const camposVacios: string[] = [];
+
+    camposRequeridos.forEach((campo: keyof Trabajador) => {
+      const fieldValue = form[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios.push(campo);
+      }
+    });
+
+    setCamposFaltantes(camposVacios);
+
+    if (camposVacios.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios.length === 0;
+  };
+
+  //LIMPIEZA DE CAMPOS
+  const [estadoAdd, setEstadoAdd] = useState("");
+
+
+
+  //VALIDACIÓN PARA ACTUALIZACIÓN ---->
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
@@ -277,7 +340,11 @@ useEffect(() => {
       "password",
       "nombreAgenda",
       "aliasTickets",
+      "ordenAgenda",
+      "idCliente",
+
     ];
+
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Trabajador) => {
@@ -394,9 +461,9 @@ useEffect(() => {
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-    console.log(validarCampos());
+    console.log(validarCamposAdd());
     console.log({ form });
-    if (validarCampos() === true) {
+    if (validarCamposAdd() === true) {
       await jezaApi
         .post("/Trabajador", null, {
           params: {
@@ -455,58 +522,6 @@ useEffect(() => {
     } else {
     }
   };
-
-  // const editar = () => {
-  //   const fechaHoy = new Date();
-
-  //   jezaApi
-  //     .put(`/Trabajador?id=${form.id}`, null, {
-  //       params: {
-
-  //         id: form.id,
-  //         clave_empleado: form.clave_empleado,
-  //         status: form.status,
-  //         nombre: form.nombre,
-  //         fecha_nacimiento: form.fecha_nacimiento,
-  //         sexo: form.sexo,
-  //         RFC: form.RFC,
-  //         CURP: form.CURP,
-  //         imss: form.imss,
-  //         domicilio: form.domicilio,
-  //         colonia: form.colonia,
-  //         poblacion: form.poblacion,
-  //         estado: form.estado,
-  //         lugar_nacimiento: form.lugar_nacimiento,
-  //         codigo_postal: form.codigo_postal,
-  //         telefono1: form.telefono1,
-  //         telefono2: form.telefono2,
-  //         email: form.email,
-  //         idDepartamento: form.idDepartamento,
-  //         idPuesto: form.idPuesto,
-  //         observaciones: form.observaciones,
-  //         nivel_escolaridad: form.nivel_escolaridad,
-  //         fecha_baja: form.fecha_baja,
-  //         motivo_baja: form.motivo_baja,
-  //         motivo_baja_especificacion: form.motivo_baja_especificacion,
-  //         fecha_alta: form.fecha_alta,
-  //         fecha_cambio: fechaHoy,
-  //         clave_perfil: form.clave_perfil,
-  //         password: form.password,
-  //         nombreAgenda: form.nombreAgenda,
-  //         aliasTickets: form.aliasTickets,
-
-  //       },
-  //     })
-  //     .then((r) => {
-  //       console.log({ r });
-  //       setVisible(true);
-  //       getTrabajador();
-  //       console.log("no");
-  //     })
-  //     .catch((e) => {
-  //       console.log(e);
-  //     });
-  // };
 
   // Formatea la fecha como "YYYYMMDD"
   const anio = fechaHoy.getFullYear();
@@ -597,6 +612,8 @@ useEffect(() => {
               password: form.password,
               nombreAgenda: form.nombreAgenda,
               aliasTickets: form.aliasTickets,
+              idCliente: form.idCliente,
+              ordenAgenda: form.ordenAgenda
             },
           })
 
@@ -866,6 +883,8 @@ useEffect(() => {
       password: "",
       nombreAgenda: "",
       aliasTickets: "",
+      ordenAgenda: 0,
+      idCliente: 0,
     });
   };
 
@@ -1483,25 +1502,28 @@ useEffect(() => {
                             minlength={1} maxlength={50}
                           />
                         </Col>
-
                         <Col sm="6">
-                        <Label>Enlazar nombre de cliente nomina:</Label>
-                        <InputGroup>
-
-                          <Input disabled value={dataTemporal.cliente}  name={"clave_perfil"} />
-                          <Button onClick={() => setModalCliente(true)} color="info">
-                          <MdEmojiPeople size={23} />
-                         Elegir
-                          </Button>
+                          <Label>Enlazar cliente nómina: </Label>
+                          <InputGroup>
+                            {" "}
+                            <Input
+                              disabled
+                              handleChange={handleChange}
+                              type="text"
+                              name="idCliente"
+                              value={form.idCliente ? form.idCliente : 0} // Usamos selectedId si formulario.cliente está vacío
+                              placeholder="Ingrese el cliente"
+                            />
+                            <CButton text="Seleccionar" color="danger" onClick={abrirModal} />
                           </InputGroup>
                         </Col>
-                         
+
                         <Col sm="6">
                           <CFormGroupInput
                             handleChange={handleChange}
-                            inputName="codigo_postal"
+                            inputName="ordenAgenda"
                             labelName="Orden agenda:"
-                            value={form.codigo_postal ? form.codigo_postal : form.codigo_postal}
+                            value={form.ordenAgenda ? form.ordenAgenda : form.ordenAgenda}
                             minlength={1} maxlength={50}
                           />
                         </Col>
@@ -1662,61 +1684,30 @@ useEffect(() => {
             </ModalFooter>
           </Modal>
 
-          <Modal isOpen={modalCliente} size="lg">
-        <ModalHeader>
-          <h3>Selección de clientes</h3>{" "}
-        </ModalHeader>
-        <ModalBody>
-          <TableCliente
-            sucursal={dataUsuarios2[0]?.sucursal}
-            dataTemporal={dataTemporal}
-            setDataTemporal={setDataTemporal}
-            data={dataClientes}
-            setModalCliente={setModalCliente}
-          ></TableCliente>
-        </ModalBody>
-        <ModalFooter>
-          <CButton
-            color="danger"
-            onClick={() => {
-              setModalCliente(false);
-            }}
-            text="Salir"
-          />
-        </ModalFooter>
-      </Modal>
+          {/* //------ MODAL SELECION DE CLIENTES */}
+          <Modal isOpen={modalOpenCli} toggle={cerrarModal} size="lg">
+            <ModalHeader toggle={cerrarModal}><h2>Enlazar cliente a nómina:</h2></ModalHeader>
+            <ModalBody>
+              <MaterialReactTable
+                columns={columnsclientes}
+                data={dataClientesFiltrados}
+                onSelect={(id_cliente, name) => handleModalSelect(id_cliente, name)} // Pasa la función de selección
+                initialState={{ density: "compact" }}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <CButton text="Cerrar" color="danger" onClick={cerrarModal} />
+              {/* Cerrar
+              </Button> */}
+            </ModalFooter>
+          </Modal>
+
 
         </>
-      ) : null}
+      ) : null
+      }
     </>
   );
 }
 
 export default NominaTrabajadores;
-
-//0PUT ANTIGUO  clave_empleado: form.clave_empleado,
-// status: form.status,
-// nombre: form.nombre,
-// fecha_nacimiento: form.fecha_nacimiento ? form.fecha_nacimiento.split("T")[0] : null,
-// sexo: form.sexo,
-// RFC: form.RFC,
-// CURP: form.CURP,
-// imss: form.imss,
-// domicilio: form.domicilio,
-// colonia: form.colonia,
-// poblacion: form.poblacion,
-// estado: form.estado,
-// lugar_nacimiento: form.lugar_nacimiento,
-// codigo_postal: form.codigo_postal,
-// telefono1: form.telefono1,
-// telefono2: form.telefono2,
-// email: form.email,
-// idDepartamento: form.idDepartamento,
-// idPuesto: form.idPuesto,
-// observaciones: form.observaciones,
-// nivel_escolaridad: form.nivel_escolaridad,
-// fecha_baja: form.fecha_baja ? form.fecha_baja.split("T")[0] : null,
-// motivo_baja: form.motivo_baja ? form.motivo_baja : 0,
-// motivo_baja_especificacion: form.motivo_baja_especificacion,
-// fecha_alta: form.fecha_alta,
-// fecha_cambio: "2023-06-19",
