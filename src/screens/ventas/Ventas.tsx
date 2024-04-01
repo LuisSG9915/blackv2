@@ -121,6 +121,7 @@ const Ventas = () => {
   const [modalOpen2, setModalOpen2] = useState<boolean>(false);
   const [modalOpen3, setModalOpen3] = useState<boolean>(false);
   const [modalOpenPago, setModalOpenPago] = useState<boolean>(false);
+  const [modalOpenPromo, setModalOpenPromo] = useState<boolean>(false);
   const [modalOpenInsumos, setModalOpenInsumos] = useState<boolean>(false);
   const [modalOpenInsumosSelect, setModalOpenInsumosSelect] = useState<boolean>(false);
   const [modalEditInsumo, setModalEditInsumo] = useState<boolean>(false);
@@ -1541,6 +1542,22 @@ const Ventas = () => {
     historialCitaFutura(dataTemporal.Cve_cliente);
   };
 
+
+  const [dataPromo, setDataPromo] = useState<any[]>([]); // Definir el estado datah
+  const getPromo = (dato: any) => {
+    jezaApi.get(`/sp_nPromociones02?cve_cliente=${dataTemporal.Cve_cliente}&sucursal=${dataUsuarios2[0]?.sucursal}`).then((response) => {
+      // Asumiendo que quieres comprobar si hay algún dato
+      if (response.data && Object.keys(response.data).length !== 0) {
+        // Aquí puedes añadir más lógica específica, por ejemplo, comprobar propiedades específicas dentro de response.data
+        setDataPromo(response.data);
+        setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
+      } else {
+        // Opcional: manejar el caso cuando no hay datos relevantes
+        console.log("No hay datos relevantes para mostrar.");
+      }
+    });
+  };
+
   const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
 
   const toggleModalHistorialFutura = () => {
@@ -1940,7 +1957,9 @@ const Ventas = () => {
                   disabled={dataVentas.length > 0 ? false : true}
                   color="success"
                   onClick={() => {
+                    getPromo();
                     setModalOpenPago(true);
+
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
                     fetchVentas();
                     setValidacion(true);
@@ -2304,6 +2323,7 @@ const Ventas = () => {
       </ModalActualizarLayout>
 
       <Modal isOpen={modalOpenPago} size="xl">
+        
         <ModalHeader>
           <h3>Cobro</h3>
         </ModalHeader>
@@ -3293,6 +3313,25 @@ const Ventas = () => {
           </div>
         </ModalBody>
       </Modal>
+      <Modal isOpen={modalOpenPromo} size="sm" toggle={() => setModalOpenPromo(false)}>
+  <ModalHeader>Descuento disponible</ModalHeader>
+  <ModalBody>
+    {/* Asumiendo que solo quieres mostrar los datos del primer ítem */}
+    {dataPromo && dataPromo["0"] && (
+      <div>
+      <p>
+  ¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>{dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>${dataPromo["0"].importeDescuento}</strong>.
+</p>
+
+      </div>
+    )}
+
+  </ModalBody>
+  <ModalFooter>
+    <CButton color="danger" onClick={() => setModalOpenPromo(false)} text="Salir" />
+  </ModalFooter>
+</Modal>
+
     </>
   );
 };
