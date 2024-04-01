@@ -291,7 +291,7 @@ const SidebarHorizontal = () => {
               <Nav className="ml-auto" navbar justified={true}>
                 <UncontrolledDropdown color="black">
                   <DropdownToggle nav caret color="dark" className="navToggle">
-                    Catálogos
+                    Catálogos PRUEBAS-- 
                   </DropdownToggle>
                   <DropdownMenu dark>
                     <DropdownItem header>Administrativo</DropdownItem>
