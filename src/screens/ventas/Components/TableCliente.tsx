@@ -55,16 +55,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     setModalOpen(!modalOpen);
   };
 
-  // /* get */
-  // const getCliente = () => {
-  //   jezaApi.get("/Cliente?id=0").then((response) => {
-  //     setData(response.data);
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   getCliente();
-  // }, []);
 
   const dataClientesConAcciones = useMemo(
     () =>
