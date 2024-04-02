@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo,  useEffect } from "react";
 import { Button, Card, CardBody, CardText, CardTitle, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { GrAdd } from "react-icons/gr";
 import { MaterialReactTable, MRT_ColumnDef, MRT_FullScreenToggleButton, MRT_ToggleDensePaddingButton } from "material-react-table";
@@ -11,6 +11,8 @@ import { jezaApi } from "../../../api/jezaApi";
 import useSeguridad from "../../../hooks/getsHooks/useSeguridad";
 import { Venta } from "../../../models/Venta";
 import { UserResponse } from "../../models/Home";
+import CFormGroupInput from "../../../components/CFormGroupInput";
+import useModalHook from "../../../hooks/useModalHook";
 // interface Venta {
 //   id?: number;
 //   estilista: string;
@@ -34,6 +36,8 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
 
   const TableDataHeader = ["First Name", "Last Name", "Actions"]; // Add "Actions" column header
+  const { modalActualizar, setModalActualizar, cerrarModalActualizar} =
+  useModalHook();
 
   const handle = (dato: Cliente) => {
     setModalCliente(false);
@@ -51,6 +55,17 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     setModalOpen(!modalOpen);
   };
 
+  // /* get */
+  // const getCliente = () => {
+  //   jezaApi.get("/Cliente?id=0").then((response) => {
+  //     setData(response.data);
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   getCliente();
+  // }, []);
+
   const dataClientesConAcciones = useMemo(
     () =>
       dataClientes.map((dato: Cliente) => ({
@@ -59,6 +74,9 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           <>
             <Button size="sm" onClick={() => handle(dato)}>
               Seleccionar
+            </Button>{" "}
+            <Button size="sm" onClick={() => mostrarModalActualizar(dato)}>
+              Actualizar
             </Button>{" "}
           </>
         ),
@@ -229,6 +247,85 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
         });
     } else {
     }
+  };
+
+
+  const mostrarModalActualizar = (dato: Cliente) => {
+    setForm({ ...dato, fecha_nac: dato.fecha_nac ? dato.fecha_nac.split("T")[0] : "" });
+    setModalActualizar(true);
+  };
+
+  const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
+  const validarCampos1 = () => {
+    const camposRequeridos1: (keyof Cliente)[] = ["email", "telefono"];
+    const camposVacios1: string[] = [];
+
+    camposRequeridos1.forEach((campo: keyof Cliente) => {
+      const fieldValue = form[campo];
+      if (!fieldValue || String(fieldValue).trim() === "") {
+        camposVacios1.push(campo);
+      }
+    });
+
+    setCamposFaltantes(camposVacios1);
+
+    if (camposVacios1.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Los siguientes campos son requeridos: ${camposVacios1.join(", ")}`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+    return camposVacios1.length === 0;
+  };
+
+  const editar = async () => {
+    /* CREATE */
+    const fechaHoy = new Date();
+
+    // Formatear la fecha actual como YYYY-MM-DD
+    const año = fechaHoy.getFullYear();
+    const mes = String(fechaHoy.getMonth() + 1).padStart(2, '0'); // El mes se indexa desde 0
+    const dia = String(fechaHoy.getDate()).padStart(2, '0');
+    const fechaFormateada = `${año}-${mes}-${dia}`;
+    const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos1());
+    console.log({ form });
+    if (validarCampos1() === true) {
+      await jezaApi
+      .put(`/Cliente`, null, {
+        params: {
+          id_cliente: form.id_cliente,
+          email: form.email,
+          telefono: form.telefono,
+        },
+      })
+        .then((response) => {
+          Swal.fire({
+            icon: "success",
+            text: "Cliente actulizado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setModalActualizar(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form.fecha_nac);
+    console.log(form);
   };
 
   const cHistorial = useMemo<MRT_ColumnDef<Cliente>[]>(
@@ -411,6 +508,35 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           </Button>
         </ModalFooter>
       </Modal>
+{/* actualizar correos en clientes  */}
+<Modal isOpen={modalActualizar} size="lg">
+        <ModalHeader>
+          <h3>Actualizar cliente</h3>
+        </ModalHeader>
+        <ModalBody>
+          {/* parte */}
+          <Row>
+                    <Col sm="6">
+                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
+                    </Col>
+
+                    <Col sm="6">
+                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
+                    </Col>
+                    </Row>
+
+        </ModalBody>
+        <ModalFooter>
+        <CButton color="primary" onClick={editar} text="Actualizar" />
+          <CButton color="danger" onClick={cerrarModalActualizar} text="Cancelar"></CButton>
+        </ModalFooter>
+      </Modal>
+
+
+
+
+
+
     </>
   );
 };
