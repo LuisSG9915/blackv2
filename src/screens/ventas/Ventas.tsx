@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useReactToPrint } from "react-to-print";
-
+import CFormGroupInput from "../../components/CFormGroupInput";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   Alert,
@@ -26,7 +26,6 @@ import {
 } from "reactstrap";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
-
 import CButton from "../../components/CButton";
 import TableEstilistas from "./Components/TableEstilistas";
 import TableProductos, { InsumoExistencia, ProductoExistencia } from "./Components/TableProductos";
@@ -69,6 +68,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 import TableTiendaVirtual from "./Components/TableTiendaVirtual";
+import { Cliente } from "../../models/Cliente";
 
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -87,6 +87,7 @@ const Ventas = () => {
       getPermisoPantalla(parsedItem);
     }
   }, []);
+
 
   const getPermisoPantalla = async (userData) => {
     try {
@@ -115,7 +116,7 @@ const Ventas = () => {
   };
 
   const { modalActualizar, setModalActualizar, cerrarModalActualizar } = useModalHook();
-
+  const [modalActualizar2, setModalActualizar2] = useState(false)
   const [modalOpenVenta, setModalOpen] = useState<boolean>(false);
   const [modalOpenVentaEdit, setModalOpenVentaEdit] = useState<boolean>(false);
   const [modalOpen2, setModalOpen2] = useState<boolean>(false);
@@ -177,6 +178,7 @@ const Ventas = () => {
   const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
   const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
   const idCliente = new URLSearchParams(window.location.search).get("idCliente");
+  const [correoCliente, setCorreoCliente] = useState("")
 
   useEffect(() => {
     setDataTemporal((prevDataTemporal) => ({
@@ -393,6 +395,13 @@ const Ventas = () => {
     idestilistaAux: 0,
     idRecepcionista: 0,
   });
+
+  useEffect(() => {
+    const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+    setCorreoCliente(correo[0]?.email ? correo[0]?.email : 'SIN CORREOP')
+  }, [dataTemporal.Cve_cliente])
+
+
   const [data, setdata] = useState<Venta[]>([]);
   useEffect(() => {
     setdata(datosInicialesArreglo);
@@ -1110,11 +1119,11 @@ const Ventas = () => {
   //                       });
   //                     ticketVta({ folio: temp });
   //                     setModalTicket(true);
-                    
+
   //                 });
   //               });
   //             }, 3000)
-              
+
   //           .catch(() => console.log("Error"));
   //       });
   //       Swal.fire({
@@ -1205,7 +1214,7 @@ const Ventas = () => {
                 }).then((result) => {
                   if (result.isConfirmed) {
                     const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
-                    const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+
                     Swal.fire({
                       title: "ADVERTENCIA",
                       text: `¿Su correo es ${correo[0].email}?`,
@@ -1332,6 +1341,14 @@ const Ventas = () => {
     fetchInsumosProducto();
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form);
+  };
+
   const endVenta = async () => {
     // Cierro mi venta y mando response a medioPago
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
@@ -1359,15 +1376,15 @@ const Ventas = () => {
             )
             .then((response) => {
               const clienteSuspendido = true; // Reemplaza esto con tu lógica para verificar si el cliente está suspendido
-          if (clienteSuspendido) {
-            // Muestra una alerta indicando que el cliente está suspendido y no requiere su ticket por correo
-            Swal.fire({
-              icon: "warning",
-              title: "Alerta",
-              text: "Este cliente está suspendido y no requiere su ticket por correo.",
-              confirmButtonColor: "#3085d6",
-            });
-          }
+              if (clienteSuspendido) {
+                // Muestra una alerta indicando que el cliente está suspendido y no requiere su ticket por correo
+                Swal.fire({
+                  icon: "warning",
+                  title: "Alerta",
+                  text: "Este cliente está suspendido y no requiere su ticket por correo.",
+                  confirmButtonColor: "#3085d6",
+                });
+              }
               if (dataUsuarios2[0]?.sucursal == 27) {
               }
               setDatoTicket(response.data);
@@ -1973,6 +1990,63 @@ const Ventas = () => {
     newWindow.document.close();
   }
 
+  const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
+  const validarCampos1 = () => {
+
+    if (!correoCliente) {
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `El campo correo es requerido`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+      return false
+    } else {
+      return true
+    }
+  };
+  const cerrarModalActualizar2 = () => {
+    setModalActualizar2(false);
+  };
+
+  const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
+    if (!permiso) {
+      return;
+    }
+    console.log(validarCampos1());
+    console.log({ form });
+
+    if (validarCampos1()) {
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      if (!regexCorreo.test(correoCliente)) {
+        Swal.fire({
+          icon: "error",
+          text: "Por favor, ingrese un correo electrónico válido",
+        });
+        return;
+      }
+      try {
+        await jezaApi.put(`/ClienteUpdCorreo?`, null, {
+          params: {
+            id_cliente: dataTemporal.Cve_cliente,
+            email: correoCliente,
+          },
+        });
+
+        Swal.fire({
+          icon: "success",
+          text: "Cliente actualizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+        cerrarModalActualizar2();
+        fetchClientes();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
     <>
       <Row>
@@ -2533,7 +2607,7 @@ const Ventas = () => {
       </ModalActualizarLayout>
 
       <Modal isOpen={modalOpenPago} size="xl">
-        
+
         <ModalHeader>
           <h3>Cobro</h3>
         </ModalHeader>
@@ -2673,22 +2747,29 @@ const Ventas = () => {
           <CButton
             color="success"
             onClick={() => {
-
-               // Obtener el correo electrónico del cliente
-       const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
-
-    // Validar el formato del correo electrónico
-    const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-    if (!regexCorreo.test(correo)) {
-      // Si el formato del correo electrónico no es válido, mostrar una alerta
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `El formato del correo electrónico del cliente no es válido`,
-        confirmButtonColor: "#3085d6",
-      });
-      return; // Detener el proceso de cobro
-    }
+              const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
+              // Validar el formato del correo electrónico
+              const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+              if (!regexCorreo.test(correo)) {
+                // Si el formato del correo electrónico no es válido, mostrar una alerta
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: `El formato del correo electrónico del cliente no es válido`,
+                  confirmButtonColor: "#3085d6",
+                  showCancelButton: true,
+                  cancelButtonText: "Cancelar",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Cambiar correo",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    // Muestra un modal para que el usuario ingrese un nuevo correo electrónico
+                    //modalActualizar();
+                    setModalActualizar2(true)
+                  }
+                });
+                return; // Detener el proceso de cobro
+              }
               // Convertir los valores a números antes de realizar la comparación
               const cambioCliente = parseFloat(formPago.cambioCliente);
               const efectivo = parseFloat(formPago.efectivo);
@@ -2740,6 +2821,27 @@ const Ventas = () => {
           />
         </ModalFooter>
       </Modal>
+
+      <Modal isOpen={modalActualizar2} size="lg">
+        <ModalHeader>
+          <h3>Actualizar correo del cliente</h3>
+        </ModalHeader>
+        <ModalBody>
+          {/* parte */}
+          <Row>
+            <Col sm="6">
+              <CFormGroupInput handleChange={(e) => {
+                setCorreoCliente(e.target.value)
+              }} inputName="correoCliente" labelName="Correo:" defaultValue={correoCliente ? correoCliente : 'HALA'} minlength={1} maxlength={199} />
+            </Col>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <CButton color="primary" onClick={editar} text="Actualizar" />
+          <CButton color="danger" onClick={cerrarModalActualizar2} text="Cancelar" />
+        </ModalFooter>
+      </Modal>
+
 
       <Modal isOpen={modalOpenInsumos} size="xl">
         <ModalHeader>Insumos del servicio {datoVentaSeleccionado.d_producto}</ModalHeader>
@@ -3540,23 +3642,23 @@ const Ventas = () => {
         </ModalBody>
       </Modal>
       <Modal isOpen={modalOpenPromo} size="sm" toggle={() => setModalOpenPromo(false)}>
-  <ModalHeader>Descuento disponible</ModalHeader>
-  <ModalBody>
-    {/* Asumiendo que solo quieres mostrar los datos del primer ítem */}
-    {dataPromo && dataPromo["0"] && (
-      <div>
-      <p>
-  ¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>{dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>${dataPromo["0"].importeDescuento}</strong>.
-</p>
+        <ModalHeader>Descuento disponible</ModalHeader>
+        <ModalBody>
+          {/* Asumiendo que solo quieres mostrar los datos del primer ítem */}
+          {dataPromo && dataPromo["0"] && (
+            <div>
+              <p>
+                ¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>{dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>${dataPromo["0"].importeDescuento}</strong>.
+              </p>
 
-      </div>
-    )}
+            </div>
+          )}
 
-  </ModalBody>
-  <ModalFooter>
-    <CButton color="danger" onClick={() => setModalOpenPromo(false)} text="Salir" />
-  </ModalFooter>
-</Modal>
+        </ModalBody>
+        <ModalFooter>
+          <CButton color="danger" onClick={() => setModalOpenPromo(false)} text="Salir" />
+        </ModalFooter>
+      </Modal>
 
     </>
   );
