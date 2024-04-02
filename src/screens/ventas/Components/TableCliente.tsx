@@ -1,4 +1,4 @@
-import React, { useState, useMemo,  useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button, Card, CardBody, CardText, CardTitle, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import { GrAdd } from "react-icons/gr";
 import { MaterialReactTable, MRT_ColumnDef, MRT_FullScreenToggleButton, MRT_ToggleDensePaddingButton } from "material-react-table";
@@ -32,12 +32,12 @@ interface Props {
 }
 
 const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, sucursal }: Props) => {
-  const { dataClientes, setDataClientes } = useClientes();
+  const { dataClientes, setDataClientes, fetchClientes } = useClientes();
   // const { data: dataTemporal, setData: setDataTemporal } = useGentlemanContext();
 
   const TableDataHeader = ["First Name", "Last Name", "Actions"]; // Add "Actions" column header
-  const { modalActualizar, setModalActualizar, cerrarModalActualizar} =
-  useModalHook();
+  const { modalActualizar, setModalActualizar, cerrarModalActualizar } =
+    useModalHook();
 
   const handle = (dato: Cliente) => {
     setModalCliente(false);
@@ -257,7 +257,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
 
   const [camposFaltantes1, setCamposFaltantes1] = useState<string[]>([]);
   const validarCampos1 = () => {
-    const camposRequeridos1: (keyof Cliente)[] = ["email", "telefono"];
+    const camposRequeridos1: (keyof Cliente)[] = ["nombre", "email", "telefono"];
     const camposVacios1: string[] = [];
 
     camposRequeridos1.forEach((campo: keyof Cliente) => {
@@ -280,44 +280,141 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     return camposVacios1.length === 0;
   };
 
-  const editar = async () => {
-    /* CREATE */
-    const fechaHoy = new Date();
+  // const editar = async () => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
+  //   if (permiso === false) {
+  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+  //   }
+  //   console.log(validarCampos1());
+  //   console.log({ form });
+  //   if (validarCampos1() === true) {
+  //     const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+  //     if (!regexCorreo.test(correo)) {
+  //       Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
+  //     }
+  //     await jezaApi
+  //       .put(`/ClienteCorreo`, null, {
+  //         params: {
+  //           id_cliente: form.id_cliente,
+  //           nombre: form.nombre,
+  //           telefono: form.telefono,
+  //           email: form.email,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         Swal.fire({
+  //           icon: "success",
+  //           text: "Cliente actulizado con éxito",
+  //           confirmButtonColor: "#3085d6",
+  //         });
+  //         setModalActualizar(false);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   } else {
+  //   }
+  // };
 
-    // Formatear la fecha actual como YYYY-MM-DD
-    const año = fechaHoy.getFullYear();
-    const mes = String(fechaHoy.getMonth() + 1).padStart(2, '0'); // El mes se indexa desde 0
-    const dia = String(fechaHoy.getDate()).padStart(2, '0');
-    const fechaFormateada = `${año}-${mes}-${dia}`;
+  const editar1 = async () => {
     const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
-    if (permiso === false) {
-      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    if (!permiso) {
+      return;
     }
     console.log(validarCampos1());
     console.log({ form });
-    if (validarCampos1() === true) {
-      await jezaApi
-      .put(`/Cliente`, null, {
-        params: {
-          id_cliente: form.id_cliente,
-          email: form.email,
-          telefono: form.telefono,
-        },
-      })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Cliente actulizado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalActualizar(false);
-        })
-        .catch((error) => {
-          console.log(error);
+
+    if (validarCampos1()) {
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      if (!regexCorreo.test(form.email)) {
+        Swal.fire({
+          icon: "error",
+          text: "Por favor, ingrese un correo electrónico válido",
         });
-    } else {
+        return;
+      }
+      try {
+        await jezaApi.put(`/ClienteCorreo`, null, {
+          params: {
+            id_cliente: form.id_cliente,
+            nombre: form.nombre,
+            telefono: form.telefono,
+            email: form.email,
+          },
+        });
+
+        Swal.fire({
+          icon: "success",
+          text: "Cliente actualizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+
+        setModalActualizar(false);
+        fetchClientes();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
+  const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
+    if (!permiso) {
+      return;
+    }
+    console.log(validarCampos1());
+    console.log({ form });
+    if (validarCampos1()) {
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      if (!regexCorreo.test(form.email)) {
+        Swal.fire({
+          icon: "error",
+          text: "Por favor, ingrese un correo electrónico válido",
+        });
+        return;
+      }
+
+      try {
+        await jezaApi.put(`/ClienteCorreo`, null, {
+          params: {
+            id_cliente: form.id_cliente,
+            nombre: form.nombre,
+            telefono: form.telefono,
+            email: form.email,
+          },
+        });
+
+        Swal.fire({
+          icon: "success",
+          text: "Cliente actualizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+
+        setModalActualizar(false);
+
+        // Actualizar los datos de los clientes en el estado local
+        const updatedDataClientes = dataClientes.map(cliente => {
+          if (cliente.id_cliente === form.id_cliente) {
+            return {
+              ...cliente,
+              nombre: form.nombre,
+              telefono: form.telefono,
+              email: form.email,
+            };
+          }
+          return cliente;
+        });
+        setDataClientes(updatedDataClientes);
+
+        // Volver a cargar los datos de los clientes desde la API
+        fetchClientes();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -411,7 +508,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           </Box>
         )}
 
-        //customize built-in buttons in the top-right of top toolbar
+      //customize built-in buttons in the top-right of top toolbar
       >
         <thead>
           <tr>
@@ -508,34 +605,33 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           </Button>
         </ModalFooter>
       </Modal>
-{/* actualizar correos en clientes  */}
-<Modal isOpen={modalActualizar} size="lg">
+      {/* actualizar correos en clientes  */}
+      <Modal isOpen={modalActualizar} size="lg">
         <ModalHeader>
           <h3>Actualizar cliente</h3>
         </ModalHeader>
         <ModalBody>
           {/* parte */}
           <Row>
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
-                    </Col>
+            <Col sm="6">
+              <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={100} />
+            </Col>
 
-                    <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
-                    </Col>
-                    </Row>
+            <Col sm="6">
+              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
+            </Col>
+
+            <Col sm="6">
+              <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
+            </Col>
+          </Row>
 
         </ModalBody>
         <ModalFooter>
-        <CButton color="primary" onClick={editar} text="Actualizar" />
+          <CButton color="primary" onClick={editar} text="Actualizar" />
           <CButton color="danger" onClick={cerrarModalActualizar} text="Cancelar"></CButton>
         </ModalFooter>
       </Modal>
-
-
-
-
-
 
     </>
   );

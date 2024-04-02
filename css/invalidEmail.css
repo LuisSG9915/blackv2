@@ -1,0 +1,7 @@
+.invalid-email {
+ /* border-bottom: 2px solid red;  Cambia el color del subrayado según tu preferencia */
+   
+ text-decoration: underline; 
+ text-decoration-color: red; /* Color del subrayado */
+ text-decoration-thickness: 3px; /* Grosor del subrayado */
+}
