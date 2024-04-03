@@ -129,6 +129,7 @@ function Clientes() {
     redsocial1: "",
     redsocial2: "",
     redsocial3: "",
+    recibirCorreo : false,
   });
 
   const [dataTemporal, setDataTemporal] = useState<Venta>({
@@ -271,6 +272,14 @@ function Clientes() {
     console.log(validarCampos());
     console.log({ form });
     if (validarCampos() === true) {
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      if (!regexCorreo.test(form.email)) {
+        Swal.fire({
+          icon: "error",
+          text: "Por favor, ingrese un correo electrónico válido",
+        });
+        return;
+      }
       await jezaApi
         .post("/Cliente", null, {
           params: {
@@ -287,6 +296,7 @@ function Clientes() {
             redsocial2: "...",
             redsocial3: "...",
             sucOrigen: dataUsuarios2[0]?.sucursal,
+            recibirCorreo : form.recibirCorreo,
           },
         })
         .then((response) => {
@@ -349,6 +359,14 @@ function Clientes() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
     if (validarCampos1() === true) {
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      if (!regexCorreo.test(form.email)) {
+        Swal.fire({
+          icon: "error",
+          text: "Por favor, ingrese un correo electrónico válido",
+        });
+        return;
+      }
       const estatusSuspendido = form.suspendido === true;
 
       // Verifica si el trabajador tiene citas futuras
@@ -395,6 +413,7 @@ function Clientes() {
             rs1: form.redSocial1 ? form.redSocial1 : "...",
             rs2: "...",
             rs3: "...",
+            recibirCorreo : form.recibirCorreo,
           },
         })
         .then((response) => {
@@ -551,6 +570,7 @@ function Clientes() {
       redsocial1: "",
       redsocial2: "",
       redsocial3: "",
+      recibirCorreo : false,
     });
   };
 
@@ -566,7 +586,7 @@ function Clientes() {
   const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    if (name === "suspendido") {
+    if (name === "suspendido" || name === "recibirCorreo" ) {
       setForm((prevState) => ({ ...prevState, [name]: checked }));
     } else {
       setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
@@ -1100,6 +1120,14 @@ function Clientes() {
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} minlength={1} maxlength={199} />
             </Col>
+            <Col sm="6">
+                      <label className="checkbox-container">
+                        <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
+                        <span className="checkmark"></span>
+                        No recibir correos
+                      </label>
+                    </Col>
+
           </Row>
         </ModalBody>
         <ModalFooter>
@@ -1214,6 +1242,14 @@ function Clientes() {
                         <input type="checkbox" checked={form.suspendido} onChange={handleChange1} name="suspendido" />
                         <span className="checkmark"></span>
                         Suspendido
+                      </label>
+                    </Col>
+
+                    <Col sm="6">
+                      <label className="checkbox-container">
+                        <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
+                        <span className="checkmark"></span>
+                        No recibir correos
                       </label>
                     </Col>
                     <br />

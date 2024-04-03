@@ -1375,8 +1375,9 @@ const Ventas = () => {
               }&pago=${Number(formPago.totalPago)}`
             )
             .then((response) => {
-              const clienteSuspendido = true; // Reemplaza esto con tu lógica para verificar si el cliente está suspendido
-              if (clienteSuspendido) {
+              setDatoTicket(response.data);
+              const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
+              if (cliente && cliente.recibirCorreo === true) {
                 // Muestra una alerta indicando que el cliente está suspendido y no requiere su ticket por correo
                 Swal.fire({
                   icon: "warning",
@@ -1387,7 +1388,7 @@ const Ventas = () => {
               }
               if (dataUsuarios2[0]?.sucursal == 27) {
               }
-              setDatoTicket(response.data);
+              //setDatoTicket(response.data);
               setTimeout(() => {
                 Swal.fire({
                   title: "ADVERTENCIA",

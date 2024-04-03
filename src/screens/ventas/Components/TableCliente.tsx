@@ -270,83 +270,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     return camposVacios1.length === 0;
   };
 
-  // const editar = async () => {
-  //   const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
-  //   if (permiso === false) {
-  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-  //   }
-  //   console.log(validarCampos1());
-  //   console.log({ form });
-  //   if (validarCampos1() === true) {
-  //     const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-  //     if (!regexCorreo.test(correo)) {
-  //       Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
-  //     }
-  //     await jezaApi
-  //       .put(`/ClienteCorreo`, null, {
-  //         params: {
-  //           id_cliente: form.id_cliente,
-  //           nombre: form.nombre,
-  //           telefono: form.telefono,
-  //           email: form.email,
-  //         },
-  //       })
-  //       .then((response) => {
-  //         Swal.fire({
-  //           icon: "success",
-  //           text: "Cliente actulizado con éxito",
-  //           confirmButtonColor: "#3085d6",
-  //         });
-  //         setModalActualizar(false);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   } else {
-  //   }
-  // };
-
-  const editar1 = async () => {
-    const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
-    if (!permiso) {
-      return;
-    }
-    console.log(validarCampos1());
-    console.log({ form });
-
-    if (validarCampos1()) {
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-      if (!regexCorreo.test(form.email)) {
-        Swal.fire({
-          icon: "error",
-          text: "Por favor, ingrese un correo electrónico válido",
-        });
-        return;
-      }
-      try {
-        await jezaApi.put(`/ClienteCorreo`, null, {
-          params: {
-            id_cliente: form.id_cliente,
-            nombre: form.nombre,
-            telefono: form.telefono,
-            email: form.email,
-          },
-        });
-
-        Swal.fire({
-          icon: "success",
-          text: "Cliente actualizado con éxito",
-          confirmButtonColor: "#3085d6",
-        });
-
-        setModalActualizar(false);
-        fetchClientes();
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
   const editar = async () => {
     const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
     if (!permiso) {
@@ -363,7 +286,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
         });
         return;
       }
-
       try {
         await jezaApi.put(`/ClienteCorreo`, null, {
           params: {
@@ -371,6 +293,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
             nombre: form.nombre,
             telefono: form.telefono,
             email: form.email,
+            recibirCorreo: form.recibirCorreo,
           },
         });
 
@@ -381,8 +304,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
         });
 
         setModalActualizar(false);
-
-        // Actualizar los datos de los clientes en el estado local
         const updatedDataClientes = dataClientes.map(cliente => {
           if (cliente.id_cliente === form.id_cliente) {
             return {
@@ -390,6 +311,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
               nombre: form.nombre,
               telefono: form.telefono,
               email: form.email,
+              recibirCorreo: form.recibirCorreo,
             };
           }
           return cliente;
@@ -413,6 +335,16 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(form.fecha_nac);
     console.log(form);
+  };
+
+  const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    if (name === "recibirCorreo" ) {
+      setForm((prevState) => ({ ...prevState, [name]: checked }));
+    } else {
+      setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
+    }
   };
 
   const cHistorial = useMemo<MRT_ColumnDef<Cliente>[]>(
@@ -614,6 +546,15 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
             </Col>
+
+            <Col sm="6">
+                      <label className="checkbox-container">
+                        <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
+                        <span className="checkmark"></span>
+                        No recibir correos
+                      </label>
+                    </Col>
+
           </Row>
 
         </ModalBody>
