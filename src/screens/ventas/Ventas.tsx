@@ -1549,7 +1549,7 @@ const Ventas = () => {
               setDatoTicket(response.data);
         const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
         if (cliente && cliente.recibirCorreo === true) {
-        const envioCorreoRem = "soporte@cbinformatica.net";
+        const envioCorreoRem = "soporte@cbinformatica.net, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
         axios
           .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
             to: envioCorreoRem,
