@@ -1342,7 +1342,7 @@ const Ventas = () => {
   // };
 
 
-  const endVenta = async () => {
+  const endVentaori = async () => {
     // Cierro mi venta y mando response a medioPago
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
     if (permiso === false) {
@@ -1512,9 +1512,6 @@ const Ventas = () => {
   };
 
 
-
-
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
@@ -1523,7 +1520,7 @@ const Ventas = () => {
     console.log(form);
   };
 
-  const endVenta111 = async () => {
+  const endVenta = async () => {
     // Cierro mi venta y mando response a medioPago
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
     if (permiso === false) {
@@ -1550,22 +1547,37 @@ const Ventas = () => {
             )
             .then((response) => {
               setDatoTicket(response.data);
-              const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
-              if (cliente && cliente.recibirCorreo === true) {
-                // Muestra una alerta indicando que el cliente está suspendido y no requiere su ticket por correo
-                Swal.fire({
-                  icon: "warning",
-                  title: "Alerta",
-                  text: "Este cliente está suspendido y no requiere su ticket por correo.",
-                  confirmButtonColor: "#3085d6",
-                });
-              }
+        const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
+        if (cliente && cliente.recibirCorreo === true) {
+        const envioCorreoRem = "soporte@cbinformatica.net";
+        axios
+          .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+            to: envioCorreoRem,
+            subject: "Ticket",
+            textTicket: response.data,
+            text: "...",
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              text: "El cliente no desea recibir correos, el correo fue enviado a TNB",
+              confirmButtonColor: "#3085d6",
+            });
+          })
+          .catch((error) => {
+            alert(error);
+            console.log(error);
+          });
+        ticketVta({ folio: temp });
+        setModalTicket(true);
+        return; 
+      }
               if (dataUsuarios2[0]?.sucursal == 27) {
               }
               //setDatoTicket(response.data);
               setTimeout(() => {
                 Swal.fire({
-                  title: "ADVERTENCIA",
+                  title: "Envío de ticket",
                   text: `¿Se enviará el ticket por correo?`,
                   icon: "warning",
                   showCancelButton: true,
@@ -1573,27 +1585,29 @@ const Ventas = () => {
                   cancelButtonColor: "#d33",
                   confirmButtonText: "Verificar correo",
                   cancelButtonText: "No deseo recibir correos",
+                  allowOutsideClick: false
                 }).then((result) => {
                   if (result.isConfirmed) {
                     // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
-                    const envioCorreoRem = "soporte@cbinformatica.net";
+                    const envioCorreoRem = "soporte@cbinformatica.net, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
                     const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                     Swal.fire({
-                      title: "ADVERTENCIA",
+                      title: "CONFIRMACIÓN",
                       text: `¿Su correo es ${correo[0].email}?`,
                       icon: "warning",
-                      showCancelButton: true,
+                     // showCancelButton: true,
                       showDenyButton: true,
                       denyButtonText: `Asignar correo`,
                       denyButtonColor: "green",
                       confirmButtonColor: "#3085d6",
-                      cancelButtonColor: "#d33",
+                      //cancelButtonColor: "#d33",
                       confirmButtonText: "Sí",
-                      cancelButtonText: "No, imprimir",
+                      allowOutsideClick: false
+                      //cancelButtonText: "No, imprimir",
                     }).then((result) => {
                       if (result.isConfirmed) {
-                        //const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                        const envioCorreoRem = "soporte@cbinformatica.net";
+                        const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
+                        //const envioCorreoRem = "soporte@cbinformatica.net";
                         const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         axios
                           .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -1621,13 +1635,12 @@ const Ventas = () => {
                           inputAttributes: {
                             autocapitalize: "off",
                           },
-                          showCancelButton: true,
+                          //showCancelButton: true,
                           confirmButtonText: "Listo",
                           showLoaderOnConfirm: true,
+                          allowOutsideClick: false,
+                          allowEscapeKey: false, 
                           preConfirm: (correo) => {
-                            // if (!/^\S+@\S+\.\S+$/.test(correo)) {
-                            //   Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
-                            // }
                             const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
                             if (!regexCorreo.test(correo)) {
                               Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
@@ -1636,8 +1649,8 @@ const Ventas = () => {
                         }).then((result) => {
                           if (result.isConfirmed) {
                             // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
-                            // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
-                            const envioCorreoRem = "soporte@cbinformatica.net";
+                            const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com";
+                            //const envioCorreoRem = "soporte@cbinformatica.net";
                             axios
                               .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                                 // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
@@ -1662,7 +1675,7 @@ const Ventas = () => {
                       }
                     });
                   } else {
-                    const envioCorreoRem = "soporte@cbinformatica.net";
+                    const envioCorreoRem = "soporte@cbinformatica.net, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
                     // const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                     axios
                       .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -1688,7 +1701,7 @@ const Ventas = () => {
                   }
                 });
               });
-            }, 3000)
+            }, 800)
             .catch(() => console.log("Error"));
         });
         Swal.fire({
@@ -2416,7 +2429,7 @@ const Ventas = () => {
                   disabled={dataVentas.length > 0 ? false : true}
                   color="success"
                   onClick={() => {
-                    getPromo();
+                    // getPromo();
                     setModalOpenPago(true);
 
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
@@ -2922,30 +2935,30 @@ const Ventas = () => {
           <CButton
             color="success"
             onClick={() => {
-              // const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
-              // // Validar el formato del correo electrónico
-              // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-              // if (!regexCorreo.test(correo)) {
-              //   // Si el formato del correo electrónico no es válido, mostrar una alerta
-              //   Swal.fire({
-              //     icon: "error",
-              //     title: "Error",
-              //     text: `El formato del correo electrónico del cliente no es válido`,
-              //     confirmButtonColor: "#3085d6",
-              //     showCancelButton: true,
-              //     cancelButtonText: "Cancelar",
-              //     cancelButtonColor: "#d33",
-              //     confirmButtonText: "Cambiar correo",
-              //   }).then((result) => {
-              //     if (result.isConfirmed) {
-              //       // Muestra un modal para que el usuario ingrese un nuevo correo electrónico
-              //       //modalActualizar();
-              //       setModalActualizar2(true)
-              //     }
-              //   });
-              //   return; // Detener el proceso de cobro
-              // }
-              // Convertir los valores a números antes de realizar la comparación
+              const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
+              // Validar el formato del correo electrónico
+              const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+              if (!regexCorreo.test(correo)) {
+                // Si el formato del correo electrónico no es válido, mostrar una alerta
+                Swal.fire({
+                  icon: "error",
+                  title: "Error",
+                  text: `El formato del correo electrónico del cliente no es válido`,
+                  confirmButtonColor: "#3085d6",
+                  showCancelButton: true,
+                  cancelButtonText: "Cancelar",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Cambiar correo",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    // Muestra un modal para que el usuario ingrese un nuevo correo electrónico
+                    //modalActualizar();
+                    setModalActualizar2(true)
+                  }
+                });
+                return; // Detener el proceso de cobro
+              }
+             // Convertir los valores a números antes de realizar la comparación
               const cambioCliente = parseFloat(formPago.cambioCliente);
               const efectivo = parseFloat(formPago.efectivo);
               const totalVenta = parseFloat(total); // Asegúrate de que "total" sea un número
