@@ -136,6 +136,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     redsocial1: "",
     redsocial2: "",
     redsocial3: "",
+    recibirCorreo: false,
   });
   const toggleCreateModal = () => {
     setForm({
@@ -167,6 +168,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
       redsocial1: "",
       redsocial2: "",
       redsocial3: "",
+      recibirCorreo: false,
     });
     setModalCreate(!modalCreate);
   };
@@ -195,7 +197,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     return camposVacios.length === 0;
   };
   // const [data, setData] = useState<Cliente[]>([]);
-  const insertCliente = async () => {
+  const insertCliente1 = async () => {
     /* CREATE */
     const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
     if (permiso === false) {
@@ -204,6 +206,14 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     console.log(validarCampos());
     console.log({ form });
     if (validarCampos() === true) {
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      if (!regexCorreo.test(form.email)) {
+        Swal.fire({
+          icon: "error",
+          text: "Por favor, ingrese un correo electrónico válido",
+        });
+        return;
+      }
       await jezaApi
         .post("/Cliente", null, {
           params: {
@@ -220,6 +230,8 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
             redsocial2: "...",
             redsocial3: "...",
             sucOrigen: sucursal,
+            recibirCorreo: form.recibirCorreo ? form.recibirCorreo : false
+
           },
         })
         .then((response) => {
@@ -234,10 +246,112 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
         })
         .catch((error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
         });
     } else {
     }
   };
+
+  const insertCliente = async () => {
+    /* CREATE */
+    const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      if (form.recibirCorreo === true) {
+        await jezaApi
+          .post("/Cliente", null, {
+            params: {
+              nombre: form.nombre,
+              domicilio: form.domicilio,
+              ciudad: form.ciudad ? form.ciudad : "...",
+              estado: form.estado ? form.estado : "...",
+              colonia: form.colonia ? form.redsocial1 : "...",
+              cp: form.cp ? form.cp : "...",
+              telefono: form.telefono,
+              email: form.email,
+              fecha_nac: form.fecha_nac,
+              redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+              redsocial2: "...",
+              redsocial3: "...",
+              sucOrigen: sucursal,
+              recibirCorreo: true
+            },
+          })
+          .then((response) => {
+            Swal.fire({
+              icon: "success",
+              text: "Cliente creado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            toggleCreateModal(); // Cerrar modal después de guardar
+            setModalCliente(false);
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+              confirmButtonColor: "#d33",
+            });
+          });
+      } else {
+        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+        if (!regexCorreo.test(form.email)) {
+          Swal.fire({
+            icon: "error",
+            text: "Por favor, ingrese un correo electrónico válido",
+          });
+          return;
+        }
+        await jezaApi
+          .post("/Cliente", null, {
+            params: {
+              nombre: form.nombre,
+              domicilio: form.domicilio,
+              ciudad: form.ciudad ? form.ciudad : "...",
+              estado: form.estado ? form.estado : "...",
+              colonia: form.colonia ? form.redsocial1 : "...",
+              cp: form.cp ? form.cp : "...",
+              telefono: form.telefono,
+              email: form.email,
+              fecha_nac: form.fecha_nac,
+              redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+              redsocial2: "...",
+              redsocial3: "...",
+              sucOrigen: sucursal,
+              recibirCorreo: form.recibirCorreo ? form.recibirCorreo : false
+            },
+          })
+          .then((response) => {
+            Swal.fire({
+              icon: "success",
+              text: "Cliente creado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            toggleCreateModal(); // Cerrar modal después de guardar
+            setModalCliente(false);
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+              confirmButtonColor: "#d33",
+            });
+          });
+      }
+    } else {
+    }
+  };
+
 
 
   const mostrarModalActualizar = (dato: Cliente) => {
@@ -270,6 +384,62 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     return camposVacios1.length === 0;
   };
 
+  // const editar1 = async () => {
+  //   const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
+  //   if (!permiso) {
+  //     return;
+  //   }
+  //   console.log(validarCampos1());
+  //   console.log({ form });
+  //   if (validarCampos1()) {
+  //     const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+  //     if (!regexCorreo.test(form.email)) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         text: "Por favor, ingrese un correo electrónico válido",
+  //       });
+  //       return;
+  //     }
+  //     try {
+  //       await jezaApi.put(`/ClienteCorreo`, null, {
+  //         params: {
+  //           id_cliente: form.id_cliente,
+  //           nombre: form.nombre,
+  //           telefono: form.telefono,
+  //           email: form.email,
+  //           recibirCorreo: form.recibirCorreo,
+  //         },
+  //       });
+
+  //       Swal.fire({
+  //         icon: "success",
+  //         text: "Cliente actualizado con éxito",
+  //         confirmButtonColor: "#3085d6",
+  //       });
+
+  //       setModalActualizar(false);
+  //       const updatedDataClientes = dataClientes.map(cliente => {
+  //         if (cliente.id_cliente === form.id_cliente) {
+  //           return {
+  //             ...cliente,
+  //             nombre: form.nombre,
+  //             telefono: form.telefono,
+  //             email: form.email,
+  //             recibirCorreo: form.recibirCorreo,
+  //           };
+  //         }
+  //         return cliente;
+  //       });
+  //       setDataClientes(updatedDataClientes);
+
+  //       // Volver a cargar los datos de los clientes desde la API
+  //       fetchClientes();
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
+
   const editar = async () => {
     const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
     if (!permiso) {
@@ -278,54 +448,103 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
     console.log(validarCampos1());
     console.log({ form });
     if (validarCampos1()) {
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-      if (!regexCorreo.test(form.email)) {
-        Swal.fire({
-          icon: "error",
-          text: "Por favor, ingrese un correo electrónico válido",
-        });
-        return;
-      }
-      try {
-        await jezaApi.put(`/ClienteCorreo`, null, {
-          params: {
-            id_cliente: form.id_cliente,
-            nombre: form.nombre,
-            telefono: form.telefono,
-            email: form.email,
-            recibirCorreo: form.recibirCorreo,
-          },
-        });
-
-        Swal.fire({
-          icon: "success",
-          text: "Cliente actualizado con éxito",
-          confirmButtonColor: "#3085d6",
-        });
-
-        setModalActualizar(false);
-        const updatedDataClientes = dataClientes.map(cliente => {
-          if (cliente.id_cliente === form.id_cliente) {
-            return {
-              ...cliente,
+      if (form.recibirCorreo === true) {
+        try {
+          await jezaApi.put(`/ClienteCorreo`, null, {
+            params: {
+              id_cliente: form.id_cliente,
               nombre: form.nombre,
               telefono: form.telefono,
               email: form.email,
-              recibirCorreo: form.recibirCorreo,
-            };
-          }
-          return cliente;
-        });
-        setDataClientes(updatedDataClientes);
+              recibirCorreo: true,
+            },
+          });
 
-        // Volver a cargar los datos de los clientes desde la API
-        fetchClientes();
-      } catch (error) {
-        console.log(error);
+          Swal.fire({
+            icon: "success",
+            text: "Cliente actualizado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+
+          setModalActualizar(false);
+          const updatedDataClientes = dataClientes.map(cliente => {
+            if (cliente.id_cliente === form.id_cliente) {
+              return {
+                ...cliente,
+                nombre: form.nombre,
+                telefono: form.telefono,
+                email: form.email,
+                recibirCorreo: true,
+              };
+            }
+            return cliente;
+          });
+          setDataClientes(updatedDataClientes);
+
+          // Volver a cargar los datos de los clientes desde la API
+          fetchClientes();
+        } catch (error) {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
+        }
+      } else {
+        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+        if (!regexCorreo.test(form.email)) {
+          Swal.fire({
+            icon: "error",
+            text: "Por favor, ingrese un correo electrónico válido",
+          });
+          return;
+        }
+        try {
+          await jezaApi.put(`/ClienteCorreo`, null, {
+            params: {
+              id_cliente: form.id_cliente,
+              nombre: form.nombre,
+              telefono: form.telefono,
+              email: form.email,
+              recibirCorreo: false,
+            },
+          });
+
+          Swal.fire({
+            icon: "success",
+            text: "Cliente actualizado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+
+          setModalActualizar(false);
+          const updatedDataClientes = dataClientes.map(cliente => {
+            if (cliente.id_cliente === form.id_cliente) {
+              return {
+                ...cliente,
+                nombre: form.nombre,
+                telefono: form.telefono,
+                email: form.email,
+                recibirCorreo: false,
+              };
+            }
+            return cliente;
+          });
+          setDataClientes(updatedDataClientes);
+
+          // Volver a cargar los datos de los clientes desde la API
+          fetchClientes();
+        } catch (error) {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+            confirmButtonColor: "#d33",
+          });
+        }
       }
     }
   };
-
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -340,7 +559,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
   const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    if (name === "recibirCorreo" ) {
+    if (name === "recibirCorreo") {
       setForm((prevState) => ({ ...prevState, [name]: checked }));
     } else {
       setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
@@ -449,8 +668,9 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           {/* parte */}
           <div className="row">
             <div className="col-md-6">
-              <Label>Nombre</Label>
+              <Label>Nombre:</Label>
               <Input type="text" name={"nombre"} onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })} defaultValue={form.nombre} />
+              <br />
               <Label>Domicilio:</Label>
               <Input
                 type="text"
@@ -458,12 +678,14 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
                 onChange={(e) => setForm({ ...form, domicilio: String(e.target.value) })}
                 defaultValue={form.domicilio}
               />
+              <br />
               <Label>Ciudad:</Label>
               <Input type="text" name={"ciudad"} onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })} defaultValue={form.ciudad} />
+              <br />
               <Label>Estado:</Label>
               <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
+              <br />
               <Label>Instagram:</Label>
-
               <Input
                 type="text"
                 name={"redsocial1"}
@@ -472,6 +694,7 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
               />
             </div>
             <div className="col-md-6">
+              <br />
               <Label>Colonia:</Label>
               <Input
                 type="text"
@@ -479,8 +702,10 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
                 onChange={(e) => setForm({ ...form, colonia: String(e.target.value) })}
                 defaultValue={form.colonia}
               />
+              <br />
               <Label>Código postal:</Label>
               <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
+              <br />
               <Label>Teléfono:</Label>
               <Input
                 type="text"
@@ -488,15 +713,23 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
                 onChange={(e) => setForm({ ...form, telefono: String(e.target.value) })}
                 defaultValue={form.telefono}
               />
+              <br />
               <Label>E-mail:</Label>
               <Input type="email" name={"email"} onChange={(e) => setForm({ ...form, email: String(e.target.value) })} defaultValue={form.email} />
+              <br />
+
               <Label>Fecha de nacimiento:</Label>
               <Input
                 type="date"
                 name={"fecha_nac"}
                 onChange={(e) => setForm({ ...form, fecha_nac: String(e.target.value) })}
-                defaultValue={form.fecha_nac}
-              />
+                defaultValue={form.fecha_nac} />
+              <br />
+              <label className="checkbox-container">
+                <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
+                <span className="checkmark"></span>
+                No recibir correos
+              </label>
             </div>
           </div>
         </ModalBody>
@@ -548,12 +781,12 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
             </Col>
 
             <Col sm="6">
-                      <label className="checkbox-container">
-                        <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
-                        <span className="checkmark"></span>
-                        No recibir correos
-                      </label>
-                    </Col>
+              <label className="checkbox-container">
+                <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
+                <span className="checkmark"></span>
+                No recibir correos
+              </label>
+            </Col>
 
           </Row>
 

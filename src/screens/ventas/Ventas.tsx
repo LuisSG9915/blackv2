@@ -1547,31 +1547,31 @@ const Ventas = () => {
             )
             .then((response) => {
               setDatoTicket(response.data);
-        const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
-        if (cliente && cliente.recibirCorreo === true) {
-        const envioCorreoRem = "soporte@cbinformatica.net, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
-        axios
-          .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-            to: envioCorreoRem,
-            subject: "Ticket",
-            textTicket: response.data,
-            text: "...",
-          })
-          .then(() => {
-            Swal.fire({
-              icon: "success",
-              text: "El cliente no desea recibir correos, el correo fue enviado a TNB",
-              confirmButtonColor: "#3085d6",
-            });
-          })
-          .catch((error) => {
-            alert(error);
-            console.log(error);
-          });
-        ticketVta({ folio: temp });
-        setModalTicket(true);
-        return; 
-      }
+              const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
+              if (cliente && cliente.recibirCorreo === true) {
+                const envioCorreoRem = "soporte@cbinformatica.net, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
+                axios
+                  .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                    to: envioCorreoRem,
+                    subject: "Ticket",
+                    textTicket: response.data,
+                    text: "...",
+                  })
+                  .then(() => {
+                    Swal.fire({
+                      icon: "success",
+                      text: "El cliente no desea recibir correos, el correo fue enviado a TNB",
+                      confirmButtonColor: "#3085d6",
+                    });
+                  })
+                  .catch((error) => {
+                    alert(error);
+                    console.log(error);
+                  });
+                ticketVta({ folio: temp });
+                setModalTicket(true);
+                return;
+              }
               if (dataUsuarios2[0]?.sucursal == 27) {
               }
               //setDatoTicket(response.data);
@@ -1595,7 +1595,7 @@ const Ventas = () => {
                       title: "CONFIRMACIÓN",
                       text: `¿Su correo es ${correo[0].email}?`,
                       icon: "warning",
-                     // showCancelButton: true,
+                      // showCancelButton: true,
                       showDenyButton: true,
                       denyButtonText: `Asignar correo`,
                       denyButtonColor: "green",
@@ -1639,9 +1639,9 @@ const Ventas = () => {
                           confirmButtonText: "Listo",
                           showLoaderOnConfirm: true,
                           allowOutsideClick: false,
-                          allowEscapeKey: false, 
+                          allowEscapeKey: false,
                           preConfirm: (correo) => {
-                            const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+                            const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
                             if (!regexCorreo.test(correo)) {
                               Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
                             }
@@ -2937,7 +2937,7 @@ const Ventas = () => {
             onClick={() => {
               const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
               // Validar el formato del correo electrónico
-              const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+              const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
               if (!regexCorreo.test(correo)) {
                 // Si el formato del correo electrónico no es válido, mostrar una alerta
                 Swal.fire({
@@ -2958,7 +2958,7 @@ const Ventas = () => {
                 });
                 return; // Detener el proceso de cobro
               }
-             // Convertir los valores a números antes de realizar la comparación
+              // Convertir los valores a números antes de realizar la comparación
               const cambioCliente = parseFloat(formPago.cambioCliente);
               const efectivo = parseFloat(formPago.efectivo);
               const totalVenta = parseFloat(total); // Asegúrate de que "total" sea un número

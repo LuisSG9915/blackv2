@@ -129,7 +129,7 @@ function Clientes() {
     redsocial1: "",
     redsocial2: "",
     redsocial3: "",
-    recibirCorreo : false,
+    recibirCorreo: false,
   });
 
   const [dataTemporal, setDataTemporal] = useState<Venta>({
@@ -272,7 +272,7 @@ function Clientes() {
     console.log(validarCampos());
     console.log({ form });
     if (validarCampos() === true) {
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
       if (!regexCorreo.test(form.email)) {
         Swal.fire({
           icon: "error",
@@ -296,7 +296,7 @@ function Clientes() {
             redsocial2: "...",
             redsocial3: "...",
             sucOrigen: dataUsuarios2[0]?.sucursal,
-            recibirCorreo : form.recibirCorreo,
+            recibirCorreo: form.recibirCorreo,
           },
         })
         .then((response) => {
@@ -359,7 +359,7 @@ function Clientes() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
     if (validarCampos1() === true) {
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
       if (!regexCorreo.test(form.email)) {
         Swal.fire({
           icon: "error",
@@ -413,7 +413,7 @@ function Clientes() {
             rs1: form.redSocial1 ? form.redSocial1 : "...",
             rs2: "...",
             rs3: "...",
-            recibirCorreo : form.recibirCorreo,
+            recibirCorreo: form.recibirCorreo,
           },
         })
         .then((response) => {
@@ -570,7 +570,7 @@ function Clientes() {
       redsocial1: "",
       redsocial2: "",
       redsocial3: "",
-      recibirCorreo : false,
+      recibirCorreo: false,
     });
   };
 
@@ -586,7 +586,7 @@ function Clientes() {
   const handleChange1 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    if (name === "suspendido" || name === "recibirCorreo" ) {
+    if (name === "suspendido" || name === "recibirCorreo") {
       setForm((prevState) => ({ ...prevState, [name]: checked }));
     } else {
       setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
@@ -1121,12 +1121,12 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} minlength={1} maxlength={199} />
             </Col>
             <Col sm="6">
-                      <label className="checkbox-container">
-                        <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
-                        <span className="checkmark"></span>
-                        No recibir correos
-                      </label>
-                    </Col>
+              <label className="checkbox-container">
+                <input type="checkbox" checked={form.recibirCorreo} onChange={handleChange1} name="recibirCorreo" />
+                <span className="checkmark"></span>
+                No recibir correos
+              </label>
+            </Col>
 
           </Row>
         </ModalBody>
