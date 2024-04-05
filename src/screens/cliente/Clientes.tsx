@@ -264,7 +264,7 @@ function Clientes() {
     return camposVacios.length === 0;
   };
 
-  const insertar = async () => {
+  const insertarORIGINAL = async () => {
     const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -320,6 +320,104 @@ function Clientes() {
     }
   };
 
+  const insertar = async () => {
+    const permiso = await filtroSeguridad("CAT_CLIENT_ADD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+    console.log(validarCampos());
+    console.log({ form });
+    if (validarCampos() === true) {
+      // Verifica si el cliente NO requiere recibir correos electrónicos
+      if (form.recibirCorreo == true) {
+        // Si no requiere recibir correos electrónicos, no se valida el correo electrónico
+        // Proceder con la creación del cliente
+        await jezaApi.post("/Cliente", null, {
+          params: {
+            nombre: form.nombre,
+            domicilio: form.domicilio,
+            ciudad: form.ciudad ? form.ciudad : "...",
+            estado: form.estado ? form.estado : "...",
+            colonia: form.colonia ? form.redsocial1 : "...",
+            cp: form.cp ? form.cp : "...",
+            telefono: form.telefono,
+            email: form.email,
+            fecha_nac: form.fecha_nac,
+            redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+            redsocial2: "...",
+            redsocial3: "...",
+            sucOrigen: dataUsuarios2[0]?.sucursal,
+            recibirCorreo: form.recibirCorreo,
+          },
+        })
+          .then((response) => {
+            Swal.fire({
+              icon: "success",
+              text: "Cliente creado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            setModalInsertar(false);
+            getCliente();
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+              confirmButtonColor: "#d33",
+            });
+          });
+      } else {
+        // Si el cliente requiere recibir correos electrónicos, se valida el correo electrónico
+        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!regexCorreo.test(form.email)) {
+          Swal.fire({
+            icon: "error",
+            text: "Por favor, ingrese un correo electrónico válido",
+          });
+          return;
+        }
+        // Proceder con la creación del cliente
+        await jezaApi.post("/Cliente", null, {
+          params: {
+            nombre: form.nombre,
+            domicilio: form.domicilio,
+            ciudad: form.ciudad ? form.ciudad : "...",
+            estado: form.estado ? form.estado : "...",
+            colonia: form.colonia ? form.redsocial1 : "...",
+            cp: form.cp ? form.cp : "...",
+            telefono: form.telefono,
+            email: form.email,
+            fecha_nac: form.fecha_nac,
+            redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+            redsocial2: "...",
+            redsocial3: "...",
+            sucOrigen: dataUsuarios2[0]?.sucursal,
+            recibirCorreo: form.recibirCorreo,
+          },
+        })
+          .then((response) => {
+            Swal.fire({
+              icon: "success",
+              text: "Cliente creado con éxito",
+              confirmButtonColor: "#3085d6",
+            });
+            setModalInsertar(false);
+            getCliente();
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: "error",
+              text: "Hubo un error al crear el cliente. Por favor, inténtalo de nuevo. Verifique la longitud de sus caracteres",
+              confirmButtonColor: "#d33",
+            });
+          });
+      }
+    } else {
+      // Otra lógica para manejar el caso donde los campos no son válidos
+    }
+  };
 
   // const insertar1 = async () => {
   //   /* CREATE */
@@ -359,7 +457,8 @@ function Clientes() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
     if (validarCampos1() === true) {
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!regexCorreo.test(form.email)) {
         Swal.fire({
           icon: "error",
@@ -368,10 +467,8 @@ function Clientes() {
         return;
       }
       const estatusSuspendido = form.suspendido === true;
-
       // Verifica si el trabajador tiene citas futuras
       const clienteSuspAnticipo = dataAnticiposVal.some(suspendido => Number(suspendido.idCliente) === Number(form.id_cliente));
-
       const clienteCitafutura = dataCitaFutura.some(cita => Number(cita.idCliente) === Number(form.id_cliente));
       // Si el estatus está cambiando a 2 y hay citas futuras, muestra un mensaje de error
       // if (estatusSuspendido && clienteSuspAnticipo) {

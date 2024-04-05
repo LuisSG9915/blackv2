@@ -30,5 +30,5 @@ export interface Cliente {
     redSocial1?: string;
     redsocial2:string;
     redsocial3: string;
-    recibirCorreo : false,
+    recibirCorreo : false;
 }

@@ -303,7 +303,8 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
             });
           });
       } else {
-        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+        // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!regexCorreo.test(form.email)) {
           Swal.fire({
             icon: "error",
@@ -492,7 +493,8 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
           });
         }
       } else {
-        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+        // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
+        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!regexCorreo.test(form.email)) {
           Swal.fire({
             icon: "error",
@@ -694,7 +696,6 @@ const TableCliente = ({ data, setModalCliente, dataTemporal, setDataTemporal, su
               />
             </div>
             <div className="col-md-6">
-              <br />
               <Label>Colonia:</Label>
               <Input
                 type="text"
