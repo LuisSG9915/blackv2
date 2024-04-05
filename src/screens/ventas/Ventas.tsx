@@ -1521,12 +1521,14 @@ const Ventas = () => {
   };
 
   const endVenta = async () => {
+   // alert(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`)
+   // return;
     // Cierro mi venta y mando response a medioPago
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
     if (permiso === false) {
       return;
     }
-    jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
+    jezaApi.put(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`).then((response) => {
       if (response.data.codigo == 0) {
         // alert("ESTAMOS MAL");
         Swal.fire({
@@ -1959,14 +1961,59 @@ const Ventas = () => {
   };
 
 
-  const [dataPromo, setDataPromo] = useState<any[]>([]); // Definir el estado datah
-  const getPromo = (dato: any) => {
+  const [dataPromo, setDataPromo] = useState<any[]>([]);
+  const [promocion, setPromocion] = useState(0);
+  const getPromo = () => {
+
+
+
     jezaApi.get(`/sp_nPromociones02?cve_cliente=${dataTemporal.Cve_cliente}&sucursal=${dataUsuarios2[0]?.sucursal}`).then((response) => {
       // Asumiendo que quieres comprobar si hay algún dato
       if (response.data && Object.keys(response.data).length !== 0) {
         // Aquí puedes añadir más lógica específica, por ejemplo, comprobar propiedades específicas dentro de response.data
         setDataPromo(response.data);
-        setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
+
+ // Se prepara el mensaje con la descripción y el importe del descuento
+      const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
+
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      });
+
+      swalWithBootstrapButtons.fire({
+        title: 'Venta con descuento disponible',
+        html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, aplicar descuento',
+        cancelButtonText: 'No, cancelar',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setPromocion(1);
+          setTotal(Number(dataPromo["0"].importeDescuento.toFixed(2)));
+
+          swalWithBootstrapButtons.fire({
+            title: '¡Descuento aplicado!',
+            text: 'El descuento ha sido aplicado a tu compra.',
+            icon: 'success'
+          });
+          // Aquí podrías incluir lógica adicional para aplicar el descuento
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          setPromocion(0);
+          swalWithBootstrapButtons.fire({
+            title: 'Cancelado',
+            text: 'El descuento no ha sido aplicado.',
+            icon: 'error'
+          });
+        }
+      });
+
+        //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
       } else {
         // Opcional: manejar el caso cuando no hay datos relevantes
         console.log("No hay datos relevantes para mostrar.");
@@ -2431,7 +2478,7 @@ const Ventas = () => {
                   disabled={dataVentas.length > 0 ? false : true}
                   color="success"
                   onClick={() => {
-                    // getPromo();
+                    getPromo();
                     setModalOpenPago(true);
 
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
@@ -3457,7 +3504,7 @@ const Ventas = () => {
         </ModalHeader>
         <ModalBody>
           <Label> Forma de pago: </Label>
-          <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
+          {/* <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
             <option value={""}>--Seleccione la forma de pago--</option>
             {formasPagosFiltradas.map((formaPago, index) => (
               <option key={index} value={formaPago.tipo}>
@@ -3465,6 +3512,20 @@ const Ventas = () => {
               </option>
             ))}
           </Input>
+           */}
+
+<Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name="formaPago">
+    <option value="">--Seleccione la forma de pago--</option>
+    {formasPagosFiltradas
+        .filter((formaPago) =>
+            promocion === 1 ? formaPago.descripcion.includes("EFECTIVO") || formaPago.descripcion.includes("anticipos") : true
+        )
+        .map((formaPago, index) => (
+            <option key={index} value={formaPago.tipo}>
+                {formaPago.descripcion}
+            </option>
+        ))}
+</Input>
           <br />
           <Label> Importe: </Label>
           <Input
