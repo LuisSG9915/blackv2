@@ -1963,63 +1963,76 @@ const Ventas = () => {
 
   const [dataPromo, setDataPromo] = useState<any[]>([]);
   const [promocion, setPromocion] = useState(0);
+ 
+ 
   const getPromo = () => {
-
-
-
     jezaApi.get(`/sp_nPromociones02?cve_cliente=${dataTemporal.Cve_cliente}&sucursal=${dataUsuarios2[0]?.sucursal}`).then((response) => {
       // Asumiendo que quieres comprobar si hay algún dato
       if (response.data && Object.keys(response.data).length !== 0) {
         // Aquí puedes añadir más lógica específica, por ejemplo, comprobar propiedades específicas dentro de response.data
         setDataPromo(response.data);
-
- // Se prepara el mensaje con la descripción y el importe del descuento
-      const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
-
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-      });
-
-      swalWithBootstrapButtons.fire({
-        title: 'Venta con descuento disponible',
-        html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, aplicar descuento',
-        cancelButtonText: 'No, cancelar',
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setPromocion(1);
-          setTotal(Number(dataPromo["0"].importeDescuento.toFixed(2)));
-
-          swalWithBootstrapButtons.fire({
-            title: '¡Descuento aplicado!',
-            text: 'El descuento ha sido aplicado a tu compra.',
-            icon: 'success'
-          });
-          // Aquí podrías incluir lógica adicional para aplicar el descuento
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          setPromocion(0);
-          swalWithBootstrapButtons.fire({
-            title: 'Cancelado',
-            text: 'El descuento no ha sido aplicado.',
-            icon: 'error'
-          });
-        }
-      });
-
-        //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
       } else {
         // Opcional: manejar el caso cuando no hay datos relevantes
         console.log("No hay datos relevantes para mostrar.");
       }
     });
   };
+  
+  const muestraPromo = () => {
+   
+    if (dataPromo["0"].importeNormal > 850 ){
+    // Se prepara el mensaje con la descripción y el importe del descuento
+    const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
+  
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+    });
+  
+    swalWithBootstrapButtons.fire({
+      title: 'Venta con descuento disponible',
+      html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, aplicar descuento',
+      cancelButtonText: 'No, cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setPromocion(1);
+        setTotal(Number(dataPromo["0"].importeDescuento.toFixed(2)));
+  
+        swalWithBootstrapButtons.fire({
+          title: '¡Descuento aplicado!',
+          text: 'El descuento ha sido aplicado a tu compra.',
+          icon: 'success'
+        });
+        // Aquí podrías incluir lógica adicional para aplicar el descuento
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        setPromocion(0);
+        swalWithBootstrapButtons.fire({
+          title: 'Cancelado',
+          text: 'El descuento no ha sido aplicado.',
+          icon: 'error'
+        });
+      }
+    });
+  } else{
+    console.log(dataPromo["0"].importeNormal)
+  }
+  
+    //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
+  };
+  
+
+  useEffect(() => {
+   getPromo();
+  }, [dataVentas]);
+  
+
 
   const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
 
@@ -2294,7 +2307,9 @@ const Ventas = () => {
         <br />
         <h1>
           Venta <FaCashRegister size={35} />
+          
         </h1>
+        <input type="" value={promocion} />
         <br />
         <Row>
           <Col md={"8"}>
@@ -2478,7 +2493,8 @@ const Ventas = () => {
                   disabled={dataVentas.length > 0 ? false : true}
                   color="success"
                   onClick={() => {
-                    getPromo();
+                    //getPromo();
+                    muestraPromo();
                     setModalOpenPago(true);
 
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
