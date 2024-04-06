@@ -1342,7 +1342,7 @@ const Ventas = () => {
   // };
 
 
-  const endVentaori = async () => {
+  const endVenta = async () => {
     // Cierro mi venta y mando response a medioPago
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
     if (permiso === false) {
@@ -1512,6 +1512,9 @@ const Ventas = () => {
   };
 
 
+
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     // Eliminar espacios en blanco al principio de la cadena
@@ -1520,15 +1523,13 @@ const Ventas = () => {
     console.log(form);
   };
 
-  const endVenta = async () => {
-   // alert(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`)
-   // return;
+  const endVenta111 = async () => {
     // Cierro mi venta y mando response a medioPago
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
     if (permiso === false) {
       return;
     }
-    jezaApi.put(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`).then((response) => {
+    jezaApi.put(`/VentaCierre?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1`).then((response) => {
       if (response.data.codigo == 0) {
         // alert("ESTAMOS MAL");
         Swal.fire({
@@ -1551,35 +1552,20 @@ const Ventas = () => {
               setDatoTicket(response.data);
               const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
               if (cliente && cliente.recibirCorreo === true) {
-                const envioCorreoRem = "soporte@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
-                axios
-                  .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                    to: envioCorreoRem,
-                    subject: "Ticket",
-                    textTicket: response.data,
-                    text: "...",
-                  })
-                  .then(() => {
-                    Swal.fire({
-                      icon: "success",
-                      text: "El cliente no desea recibir correos, el correo fue enviado a TNB",
-                      confirmButtonColor: "#3085d6",
-                    });
-                  })
-                  .catch((error) => {
-                    alert(error);
-                    console.log(error);
-                  });
-                ticketVta({ folio: temp });
-                setModalTicket(true);
-                return;
+                // Muestra una alerta indicando que el cliente está suspendido y no requiere su ticket por correo
+                Swal.fire({
+                  icon: "warning",
+                  title: "Alerta",
+                  text: "Este cliente está suspendido y no requiere su ticket por correo.",
+                  confirmButtonColor: "#3085d6",
+                });
               }
               if (dataUsuarios2[0]?.sucursal == 27) {
               }
               //setDatoTicket(response.data);
               setTimeout(() => {
                 Swal.fire({
-                  title: "Envío de ticket",
+                  title: "ADVERTENCIA",
                   text: `¿Se enviará el ticket por correo?`,
                   icon: "warning",
                   showCancelButton: true,
@@ -1587,29 +1573,27 @@ const Ventas = () => {
                   cancelButtonColor: "#d33",
                   confirmButtonText: "Verificar correo",
                   cancelButtonText: "No deseo recibir correos",
-                  allowOutsideClick: false
                 }).then((result) => {
                   if (result.isConfirmed) {
                     // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com";
-                    const envioCorreoRem = "soporte@cbinformatica.net, abigailmh9@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
+                    const envioCorreoRem = "soporte@cbinformatica.net";
                     const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                     Swal.fire({
-                      title: "CONFIRMACIÓN",
+                      title: "ADVERTENCIA",
                       text: `¿Su correo es ${correo[0].email}?`,
                       icon: "warning",
-                      // showCancelButton: true,
+                      showCancelButton: true,
                       showDenyButton: true,
                       denyButtonText: `Asignar correo`,
                       denyButtonColor: "green",
                       confirmButtonColor: "#3085d6",
-                      //cancelButtonColor: "#d33",
+                      cancelButtonColor: "#d33",
                       confirmButtonText: "Sí",
-                      allowOutsideClick: false
-                      //cancelButtonText: "No, imprimir",
+                      cancelButtonText: "No, imprimir",
                     }).then((result) => {
                       if (result.isConfirmed) {
-                        const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
-                        //const envioCorreoRem = "soporte@cbinformatica.net";
+                        //const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                        const envioCorreoRem = "soporte@cbinformatica.net";
                         const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         axios
                           .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -1637,14 +1621,14 @@ const Ventas = () => {
                           inputAttributes: {
                             autocapitalize: "off",
                           },
-                          //showCancelButton: true,
+                          showCancelButton: true,
                           confirmButtonText: "Listo",
                           showLoaderOnConfirm: true,
-                          allowOutsideClick: false,
-                          allowEscapeKey: false,
                           preConfirm: (correo) => {
-                            // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-                            const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                            // if (!/^\S+@\S+\.\S+$/.test(correo)) {
+                            //   Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
+                            // }
+                            const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
                             if (!regexCorreo.test(correo)) {
                               Swal.showValidationMessage("Por favor, ingrese un correo electrónico válido");
                             }
@@ -1652,8 +1636,8 @@ const Ventas = () => {
                         }).then((result) => {
                           if (result.isConfirmed) {
                             // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
-                            const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com";
-                            //const envioCorreoRem = "soporte@cbinformatica.net";
+                            // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
+                            const envioCorreoRem = "soporte@cbinformatica.net";
                             axios
                               .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                                 // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
@@ -1678,7 +1662,7 @@ const Ventas = () => {
                       }
                     });
                   } else {
-                    /* const envioCorreoRem = "soporte@cbinformatica.net, abigailmh9@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
+                    const envioCorreoRem = "soporte@cbinformatica.net";
                     // const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                     axios
                       .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -1700,14 +1684,11 @@ const Ventas = () => {
                         console.log(error);
                       });
                     ticketVta({ folio: temp });
-                    setModalTicket(true); */
+                    setModalTicket(true);
                   }
-                  /* tengo que quitar estos de aqui abajo */
-                  ticketVta({ folio: temp });
-                  setModalTicket(true);
                 });
               });
-            }, 800)
+            }, 3000)
             .catch(() => console.log("Error"));
         });
         Swal.fire({
@@ -1964,89 +1945,57 @@ const Ventas = () => {
   };
 
 
-  const [dataPromo, setDataPromo] = useState<any[]>([]);
-  const [promocion, setPromocion] = useState(0);
- 
- 
-  const getPromo = () => {
+  const [dataPromo, setDataPromo] = useState<any[]>([]); // Definir el estado datah
+  const getPromo = (dato: any) => {
     jezaApi.get(`/sp_nPromociones02?cve_cliente=${dataTemporal.Cve_cliente}&sucursal=${dataUsuarios2[0]?.sucursal}`).then((response) => {
       // Asumiendo que quieres comprobar si hay algún dato
       if (response.data && Object.keys(response.data).length !== 0) {
         // Aquí puedes añadir más lógica específica, por ejemplo, comprobar propiedades específicas dentro de response.data
         setDataPromo(response.data);
+
+ // Se prepara el mensaje con la descripción y el importe del descuento
+      const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
+
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      });
+
+      swalWithBootstrapButtons.fire({
+        title: 'Venta con descuento disponible',
+        html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, aplicar descuento',
+        cancelButtonText: 'No, cancelar',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire({
+            title: '¡Descuento aplicado!',
+            text: 'El descuento ha sido aplicado a tu compra.',
+            icon: 'success'
+          });
+          // Aquí podrías incluir lógica adicional para aplicar el descuento
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire({
+            title: 'Cancelado',
+            text: 'El descuento no ha sido aplicado.',
+            icon: 'error'
+          });
+        }
+      });
+
+        //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
       } else {
         // Opcional: manejar el caso cuando no hay datos relevantes
         console.log("No hay datos relevantes para mostrar.");
       }
     });
   };
-  
-  const muestraPromo = () => {
-   
-    if (dataPromo["0"].importeNormal > 850 ){
-    // Se prepara el mensaje con la descripción y el importe del descuento
-    const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
-  
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger'
-      },
-      buttonsStyling: false
-    });
-  
-    swalWithBootstrapButtons.fire({
-      title: 'Venta con descuento disponible',
-      html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, aplicar descuento',
-      cancelButtonText: 'No, cancelar',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setPromocion(1);
-        setTotal(Number(dataPromo["0"].importeDescuento.toFixed(2)));
-  
-        swalWithBootstrapButtons.fire({
-          title: '¡Descuento aplicado!',
-          text: 'El descuento ha sido aplicado a tu compra.',
-          icon: 'success'
-        });
-        // Aquí podrías incluir lógica adicional para aplicar el descuento
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        setPromocion(0);
-        swalWithBootstrapButtons.fire({
-          title: 'Cancelado',
-          text: 'El descuento no ha sido aplicado.',
-          icon: 'error'
-        });
-      }
-    });
-  } else{
-    console.log(dataPromo["0"].importeNormal)
-  }
-  
-    //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
-  };
-  
-
-  useEffect(() => {
-   getPromo();
-  }, [dataVentas]);
-  
-
-
-  useEffect(() => {
-    // Verificamos si modalOpenPago es false
-    if (!modalOpenPago) {
-      // Aquí puedes ejecutar la lógica que deseas realizar cuando modalOpenPago sea false
-      /* alert("modalOpenPago es false. Realizando alguna acción..."); */
-      // Por ejemplo, puedes llamar a una función, hacer una petición, etc.
-      setPromocion(0)
-    }
-  }, [modalOpenPago]); 
-
 
   const [datah1, setData1] = useState<any[]>([]); // Definir el estado datah
 
@@ -2281,8 +2230,7 @@ const Ventas = () => {
     console.log({ form });
 
     if (validarCampos1()) {
-      //const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
       if (!regexCorreo.test(correoCliente)) {
         Swal.fire({
           icon: "error",
@@ -2321,9 +2269,7 @@ const Ventas = () => {
         <br />
         <h1>
           Venta <FaCashRegister size={35} />
-          
         </h1>
-        <input type="" value={promocion} />
         <br />
         <Row>
           <Col md={"8"}>
@@ -2507,8 +2453,7 @@ const Ventas = () => {
                   disabled={dataVentas.length > 0 ? false : true}
                   color="success"
                   onClick={() => {
-                    //getPromo();
-                    muestraPromo();
+                    getPromo();
                     setModalOpenPago(true);
 
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
@@ -3016,8 +2961,7 @@ const Ventas = () => {
             onClick={() => {
               // const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
               // // Validar el formato del correo electrónico
-              // //const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-              // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+              // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
               // if (!regexCorreo.test(correo)) {
               //   // Si el formato del correo electrónico no es válido, mostrar una alerta
               //   Swal.fire({
@@ -3039,36 +2983,6 @@ const Ventas = () => {
               //   return; // Detener el proceso de cobro
               // }
               // Convertir los valores a números antes de realizar la comparación
-
-              const recibirCorreo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.recibirCorreo;
-              const correo = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente)?.email;
-              // Si el cliente tiene la opción de recibirCorreo configurada como false, entonces se valida el formato del correo electrónico
-
-              const cliente = dataClientes.find(cliente => cliente.id_cliente === dataTemporal.Cve_cliente);
-              if (recibirCorreo === false || recibirCorreo === null) {
-                // Validar el formato del correo electrónico
-                //const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-                const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                if (!regexCorreo.test(correo)) {
-                  // Si el formato del correo electrónico no es válido, mostrar una alerta
-                  Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: `El formato del correo electrónico del cliente no es válido`,
-                    confirmButtonColor: "#3085d6",
-                    showCancelButton: true,
-                    cancelButtonText: "Cancelar",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Cambiar correo",
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      setModalActualizar2(true);
-                    }
-                  });
-                  return; // Detener el proceso de cobro
-                }
-              }
               const cambioCliente = parseFloat(formPago.cambioCliente);
               const efectivo = parseFloat(formPago.efectivo);
               const totalVenta = parseFloat(total); // Asegúrate de que "total" sea un número
@@ -3090,12 +3004,11 @@ const Ventas = () => {
                     // fetchVentas();
                     setValidacion(false);
 
-                  
+                    setModalOpenPago(false);
                     setDataTemporal({ Cve_cliente: 0 });
                     setFormPago({ anticipos: 0, cambioCliente: 0, efectivo: 0, tc: 0, totalPago: 0 });
                     setArregloTemporal([]);
                     endVenta();
-                    setModalOpenPago(false);
                   } else {
                     // El total de pagos es menor al total de venta, mostrar un mensaje de error
                     Swal.fire({
@@ -3535,7 +3448,7 @@ const Ventas = () => {
         </ModalHeader>
         <ModalBody>
           <Label> Forma de pago: </Label>
-          {/* <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
+          <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name={"formaPago"}>
             <option value={""}>--Seleccione la forma de pago--</option>
             {formasPagosFiltradas.map((formaPago, index) => (
               <option key={index} value={formaPago.tipo}>
@@ -3543,20 +3456,6 @@ const Ventas = () => {
               </option>
             ))}
           </Input>
-           */}
-
-<Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name="formaPago">
-    <option value="">--Seleccione la forma de pago--</option>
-    {formasPagosFiltradas
-        .filter((formaPago) =>
-            promocion === 1 ? formaPago.descripcion.includes("EFECTIVO") || formaPago.descripcion.includes("anticipos") : true
-        )
-        .map((formaPago, index) => (
-            <option key={index} value={formaPago.tipo}>
-                {formaPago.descripcion}
-            </option>
-        ))}
-</Input>
           <br />
           <Label> Importe: </Label>
           <Input
