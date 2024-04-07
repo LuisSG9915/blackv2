@@ -1678,7 +1678,7 @@ const Ventas = () => {
                       }
                     });
                   } else {
-                    /* const envioCorreoRem = "soporte@cbinformatica.net, abigailmh9@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
+                    const envioCorreoRem = "soporte@cbinformatica.net, abigailmh9@gmail.com, holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com ";
                     // const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                     axios
                       .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
@@ -1700,11 +1700,11 @@ const Ventas = () => {
                         console.log(error);
                       });
                     ticketVta({ folio: temp });
-                    setModalTicket(true); */
+                    setModalTicket(true);
                   }
                   /* tengo que quitar estos de aqui abajo */
-                  ticketVta({ folio: temp });
-                  setModalTicket(true);
+                 /*  ticketVta({ folio: temp });
+                  setModalTicket(true); */
                 });
               });
             }, 800)
