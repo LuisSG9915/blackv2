@@ -70,14 +70,14 @@ const TableEstilistas = ({ data, setModalOpen2, dataVentaEdit, setDataVentaEdit,
     console.log({ estilistaFiltro }); // Mostrará el valor actualizado de estilistaFiltro
   }, [estilistaFiltro]);
 
-  const filtroEmail = (datoMedico: string) => {
-    var resultado = data.filter((elemento: Estilistas) => {
-      if ((datoMedico === "" || elemento.estilista.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.estilista.length > 0) {
-        return elemento;
-      }
-    });
-    setEstilistasFiltrado(resultado);
-  };
+  // const filtroEmail = (datoMedico: string) => {
+  //   var resultado = data.filter((elemento: Estilistas) => {
+  //     if ((datoMedico === "" || elemento.estilista.toLowerCase().includes(datoMedico.toLowerCase())) && elemento.estilista.length > 0) {
+  //       return elemento;
+  //     }
+  //   });
+  //   setEstilistasFiltrado(resultado);
+  // };
 
   useEffect(() => {
     console.log(data);
