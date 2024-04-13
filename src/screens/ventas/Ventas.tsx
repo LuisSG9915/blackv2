@@ -5965,7 +5965,13 @@ const Ventas = () => {
 
   const muestraPromo = () => {
 
-    if (dataPromo["0"].importeNormal > 850) {
+  // Verificar si dataPromo es un arreglo vacío
+  if (Array.isArray(dataPromo) && dataPromo.length === 0) {
+    console.log("DATAPROMO ES ARREGLO VACIO")
+    return;
+  }
+
+  if (dataPromo["0"].importeNormal > 850) {
       // Se prepara el mensaje con la descripción y el importe del descuento
       const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
 
@@ -7522,18 +7528,20 @@ const Ventas = () => {
           </Input>
            */}
 
-          <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name="formaPago">
-            <option value="">--Seleccione la forma de pago--</option>
-            {formasPagosFiltradas
-              .filter((formaPago) =>
-                promocion === 1 ? formaPago.descripcion.includes("EFECTIVO") || formaPago.descripcion.includes("anticipos") : true
-              )
-              .map((formaPago, index) => (
-                <option key={index} value={formaPago.tipo}>
-                  {formaPago.descripcion}
-                </option>
-              ))}
-          </Input>
+<Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name="formaPago">
+  <option value="">--Seleccione la forma de pago--</option>
+  {formasPagosFiltradas
+    .filter((formaPago) => {
+      const descripcion = formaPago.descripcion.toLowerCase();
+      const palabraClave = /efectivo|anticipos/;
+      return promocion === 1 ? palabraClave.test(descripcion) : true;
+    })
+    .map((formaPago, index) => (
+      <option key={index} value={formaPago.tipo}>
+        {formaPago.descripcion}
+      </option>
+    ))}
+</Input>
           <br />
           <Label> Importe: </Label>
           <Input
