@@ -5959,6 +5959,7 @@ const Ventas = () => {
         // Aquí puedes añadir más lógica específica, por ejemplo, comprobar propiedades específicas dentro de response.data
         setDataPromo(response.data);
       } else {
+        setDataPromo([])
         // Opcional: manejar el caso cuando no hay datos relevantes
         console.log("No hay datos relevantes para mostrar.");
       }
@@ -5973,7 +5974,7 @@ const Ventas = () => {
     return;
   }
 
-  if (dataPromo["0"].importeNormal > 850) {
+ 
       // Se prepara el mensaje con la descripción y el importe del descuento
       const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
 
@@ -6006,6 +6007,7 @@ const Ventas = () => {
           // Aquí podrías incluir lógica adicional para aplicar el descuento
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           setPromocion(0);
+          setDataPromo([])
           swalWithBootstrapButtons.fire({
             title: 'Cancelado',
             text: 'El descuento no ha sido aplicado.',
@@ -6013,9 +6015,7 @@ const Ventas = () => {
           });
         }
       });
-    } else {
-      console.log(dataPromo["0"].importeNormal)
-    }
+    
 
     //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
   };
@@ -6023,7 +6023,7 @@ const Ventas = () => {
 
   useEffect(() => {
     getPromo();
-  }, [dataVentas]);
+  }, [dataVentas,modalOpenPago]);
 
 
 
