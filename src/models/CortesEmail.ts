@@ -23,6 +23,7 @@ export interface CorteC {
   colaborador: string;
   ventaProductos: number;
   ventaServicios: number;
+  cantidadProductos: number;
   ventaTotal: number;
   porcentaje: number;
   ticketPromedio: number;

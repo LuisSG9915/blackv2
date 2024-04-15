@@ -161,7 +161,7 @@ function DemoTresTablas() {
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
         to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, paoacv@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
-        // to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
+        //to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
         subject: `Corte del dia de: ${dataUsuarios2[0]?.d_sucursal}`,
         text: "Corte",
         sucursal: dataUsuarios2[0]?.sucursal,
@@ -294,6 +294,11 @@ function DemoTresTablas() {
         },
       },
       {
+        accessorKey: "cantidadProductos",
+        header: "Cant. de productos",
+        size: 5,
+      },
+      {
         accessorKey: "ventaTotal",
         header: "Venta total",
         size: 10,
@@ -331,6 +336,7 @@ function DemoTresTablas() {
           return <p>{row.original.ticketPromedio.toFixed(2)}</p>;
         },
       },
+      
     ],
     []
   );
