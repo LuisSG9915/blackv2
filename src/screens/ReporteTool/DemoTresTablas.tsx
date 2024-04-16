@@ -336,7 +336,7 @@ function DemoTresTablas() {
           return <p>{row.original.ticketPromedio.toFixed(2)}</p>;
         },
       },
-      
+
     ],
     []
   );
