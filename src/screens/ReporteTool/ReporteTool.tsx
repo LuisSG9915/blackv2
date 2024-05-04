@@ -337,6 +337,13 @@ function ReporteTool() {
       if (permiso === false) {
         return; // Si el permiso es falso o los campos no son válidos, se sale de la función
       }
+
+      queryString = `/${reporte}?f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}&suc=${formData.sucursal}`;
+    } else if (reporte == "sp_nominaComision63") {
+      const permiso = await filtroSeguridad("REP_COMISIONES1");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
       queryString = `/${reporte}?suc=${formData.sucursal}&f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     } else if (reporte == "TicketInsumosEstilsta") {
       const permiso = await filtroSeguridad("REP_TICKET_INSUMOS_ESTILISTA");
@@ -392,6 +399,8 @@ function ReporteTool() {
       }
       queryString = `/${reporte}?suc=${formData.sucursal}f1=${formData.fechaInicial}&f2=${formData.fechaFinal}&estilista=${formData.estilista}`;
     }
+
+
 
     jezaApi
 
@@ -733,6 +742,34 @@ function ReporteTool() {
         setShowAñoInput(false);
         //sp_repoComisiones1
       } else if (value === "sp_repoComisiones1") {
+        //f1- f2 -suc-estilista
+
+        setShowSucursalInput(true);
+        setShowEstilistaInput(true);
+        setShowf1(true);
+        setShowf2(true);
+        //----------------------------------------------------------------
+        setShowTipoDescuentoInput(false);
+
+        setShowMetodoPagoInput(false);
+        setShowAreaInput(false);
+        setShowEmpresaInput(false);
+        setShowClaveProdInput(false);
+        setShowClienteInput(false);
+        setShowSucDesInput(false);
+        setShowAlmOrigenInput(false);
+        setShowAlmDestInput(false);
+        setShowTipoMovtoInput(false);
+        setShowProveedorInput(false);
+        setShowMarcaInput(false);
+        setShowProductoInput(false);
+        setShowDeptoInput(false);
+        setShowAlmacenInput(false);
+        setShowNoVentaInput(false);
+        setShowPalabraProdInput(false);
+        setShowMesInput(false);
+        setShowAñoInput(false);
+      } else if (value === "sp_nominaComision63") {
         //f1- f2 -suc-estilista
 
         setShowSucursalInput(true);
