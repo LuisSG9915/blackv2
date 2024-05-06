@@ -471,8 +471,10 @@ const SidebarHorizontal = () => {
                     </DropdownItem>
                     <DropdownItem onClick={() => navigate("/BloqueosColaborador")}>Bloqueos de colaborador</DropdownItem>
                     <DropdownItem onClick={() => navigate("/HorariosSuc")}>Cambio sucursal</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/Reagendado")}>Reagendar clientes</DropdownItem>
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
+                  
                 </UncontrolledDropdown>
 
                 <UncontrolledDropdown>

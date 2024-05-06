@@ -80,6 +80,7 @@ import Example2 from "./screens/EXAMPLE/Example2";
 import { store } from "./screens/EXAMPLE/app/store";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CifraSucursal from "./screens/cifrasuc/CifraSucursal";
+import Reagendado from "./screens/reagendado/Reagendado";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -383,6 +384,10 @@ const router = createBrowserRouter([
   {
     path: "/Example2",
     element: <Example2 />,
+  },
+  {
+    path: "/Reagendado",
+    element: <Reagendado />,
   },
 ]);
 const queryClient = new QueryClient();
