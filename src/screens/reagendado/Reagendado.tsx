@@ -37,7 +37,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useAnticipos } from "../../hooks/getsHooks/useAnticipo";
-import { AnticipoGet } from "../../models/Anticipo";
+import { clientesAgendado } from "../../models/clientesAgendado";
 import { UserResponse } from "../../models/Home";
 import { format } from "date-fns";
 import TableCliente from "../ventas/Components/TableCliente";
@@ -137,6 +137,14 @@ function Reagendado() {
     cerrarModal();
   };
 
+  const handleChange3 = (event) => {
+    const { name, value } = event.target;
+    setFormulario((prevFormulario) => ({
+      ...prevFormulario,
+      [name]: value,
+    }));
+  };
+
   const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
     () => [
       {
@@ -209,35 +217,13 @@ function Reagendado() {
     almacenDestino: "",
   });
 
-  const [formPago, setFormPago] = useState<FormaPago>({
-    id: 0,
-    descripcion: "",
-    grupo_operacion: 0,
-    sucursal: 0,
-    nombreSuc: "",
-    tarjeta: false,
-    tipo: 0,
-  });
 
-  const [form, setForm] = useState<AnticipoGet>({
-    id: 0,
-    caja: 0,
-    cia: 0,
-    fecha: "",
-    fechaMovto: "",
-    idCliente: 0,
-    idUsuario: 0,
-    importe: 0,
-    no_venta: 0,
-    nombreCia: "",
-    nombreSuc: "",
-    nombreUsr: "",
-    observaciones: "",
-    referencia: "",
-    sucursal: 0,
-    tipoMovto: 0,
-    d_cliente: "",
-    idformaPago: 0,
+
+  const [form, setForm] = useState<clientesAgendado>({
+    suc: 0,
+    d1: 0,
+    d2: 0,
+
   });
 
   const mostrarModalActualizar = (dato: any) => {
@@ -254,10 +240,10 @@ function Reagendado() {
   const formattedDate = format(currentDate, "yyyyMMdd");
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof AnticipoGet)[] = ["idCliente", "importe", "observaciones", "fechaMovto"];
+    const camposRequeridos: (keyof clientesAgendado)[] = ["suc", "d1", "d2"];
     const camposVacios: string[] = [];
 
-    camposRequeridos.forEach((campo: keyof AnticipoGet) => {
+    camposRequeridos.forEach((campo: keyof clientesAgendado) => {
       const fieldValue = form[campo];
       if (!fieldValue || String(fieldValue).trim() === "") {
         camposVacios.push(campo);
@@ -282,12 +268,9 @@ function Reagendado() {
   const limpiezaFormAnticipos = () => {
     setForm({
       ...form,
-      fechaMovto: "",
-      d_cliente: "",
-      id: 0,
-      referencia: "",
-      importe: 0,
-      observaciones: "",
+      suc: 0,
+      d1: 0,
+      d2: 0,
     });
   };
   const insertar = async () => {
@@ -297,32 +280,20 @@ function Reagendado() {
     }
     if (validarCampos() === true) {
       await jezaApi
-        .post("/Anticipo", null, {
+        .post("/sp_detalleSeguimiento", null, {
           params: {
-            cia: dataUsuarios2[0]?.idCia,
-            sucursal: dataUsuarios2[0]?.sucursal,
-            caja: 1,
-            fecha: form.fechaMovto.replace(/-/g, ""),
-            no_venta: 0,
-            fechaMovto: formattedDate,
-            idCliente: form.idCliente,
-            idUsuario: dataUsuarios2[0]?.id,
-            tipoMovto: 2,
-            referencia: form.referencia,
-            id_formaPago: formPago.id,
-            importe: form.importe * -1,
-            observaciones: form.observaciones,
+            suc: form.suc,
+            d1: form.d1,
+            d2: form.d2,
           },
         })
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Anticipo creada con éxito",
+            text: "Registros creados con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalInsertar(false);
-          fetchAnticipos();
-          ejecutaPeticion(formulario.reporte);
           limpiezaFormAnticipos();
           // LIMPIEZA DE CAMPOS . ... . . . . . . .. . .
         })
@@ -365,35 +336,6 @@ function Reagendado() {
       // Mostrar mensajes de validación si es necesario
     }
   };
-
-  // const eliminar = async (id) => {
-  //   // Recibe el id como parámetro
-  //   const permiso = await filtroSeguridad("CAT_ANT_DEL");
-  //   if (permiso === false || !id) {
-  //     return;
-  //   }
-
-  //   Swal.fire({
-  //     title: "ADVERTENCIA",
-  //     text: `¿Está seguro que desea eliminar el anticipo? ${id}`,
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonColor: "#3085d6",
-  //     cancelButtonColor: "#d33",
-  //     confirmButtonText: "Sí, eliminar",
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       jezaApi.delete(`/Anticipo?id=${id}`).then(() => {
-  //         Swal.fire({
-  //           icon: "success",
-  //           text: "Registro eliminado con éxito",
-  //           confirmButtonColor: "#3085d6",
-  //         });
-  //         ejecutaPeticion(formulario.reporte);
-  //       });
-  //     }
-  //   });
-  // };
 
 
   const eliminar = async (id) => {
@@ -442,69 +384,16 @@ function Reagendado() {
   };
 
 
-  //AQUÍ COMIENZA EL MÉTODO GET PARA VISUALIZAR LOS REGISTROS
-  const getFormaPago = () => {
-    jezaApi.get("/FormaPago?id=%").then((response) => {
-      setDataPago(response.data); // Aquí se actualiza el estado dataPago con los datos de la API
-    });
-  };
-  useEffect(() => {
-    getFormaPago();
-  }, []);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    setForm((prevState: AnticipoGet) => ({ ...prevState, [name]: value }));
+    setForm((prevState: clientesAgendado) => ({ ...prevState, [name]: value }));
 
     console.log(form);
   };
 
   const [disabledReferencia, setdisabledReferencia] = useState(false);
-  // const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const selectedId = parseInt(event.target.value);
-  //   const selectedFormaPago = dataPago.find((formapago) => formapago.id === selectedId);
-  //   if (selectedFormaPago) {
-  //     setFormPago(selectedFormaPago);
-  //   }
-  //   if (selectedFormaPago?.tipo == 1) {
-  //     setdisabledReferencia(true);
-  //   } else {
-  //     setdisabledReferencia(false);
-  //   }
-  // };
-  const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedId = event.target.value;
 
-    if (selectedId === "") {
-      // Mostrar una alerta de SweetAlert2 indicando que debe seleccionar una forma de pago válida
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Por favor, selecciona una forma de pago válida.",
-      });
-    } else {
-      const selectedFormaPago = dataPago.find((formapago) => formapago.id === parseInt(selectedId, 10));
-      if (selectedFormaPago) {
-        setFormPago(selectedFormaPago);
-      }
-      if (selectedFormaPago?.tipo === 1) {
-        setdisabledReferencia(true);
-        // Si la forma de pago tiene tipo 1, también podrías limpiar el campo de referencia
-        setForm({ ...form, referencia: "" });
-      } else {
-        setdisabledReferencia(false);
-      }
-    }
-  };
-
-  const handleChange3 = (event) => {
-    const { name, value } = event.target;
-    setFormulario((prevFormulario) => ({
-      ...prevFormulario,
-      [name]: value,
-    }));
-  };
 
   // Redirige a la ruta "/app"
   const navigate = useNavigate();
@@ -516,10 +405,6 @@ function Reagendado() {
     window.location.reload();
   };
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
-
-  const LimpiezaForm = () => {
-    setForm({ ...form, id: 0, idCliente: 0, referencia: "", importe: 0, observaciones: "", fechaMovto: "" });
-  };
 
 
   const handleOpenNewWindow = () => {
@@ -577,7 +462,7 @@ function Reagendado() {
             className="mr-2"
             size={35}
           ></AiFillEdit>
-          <MdOutlineEditCalendar  size={35}></MdOutlineEditCalendar >
+          <MdOutlineEditCalendar size={35}></MdOutlineEditCalendar >
           {/* <AiFillEdit
             className="mr-2"
             onClick={() => {
@@ -643,6 +528,43 @@ function Reagendado() {
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
+    {
+      accessorKey: "llamada1",
+      header: "Llamada 1",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+    {
+      accessorKey: "llamada2",
+      header: "Llamada 2",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+    {
+      accessorKey: "llamada3",
+      header: "Llamada 3",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+    {
+      accessorKey: "idRespuesta",
+      header: "Respuesta",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+    {
+      accessorKey: "fechaNuevaCita",
+      header: "Fecha nueva cita",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+
+    {
+      accessorKey: "dUsurioAltaSeguimiento",
+      header: "Contacto",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
     // Agrega más objetos para cada columna que desees mostrar
   ];
 
@@ -671,8 +593,8 @@ function Reagendado() {
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
     const queryString = `/sp_repoDetalleSeguimiento?f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}&cliente=%&estilista=${formData.estilista
-    }&claveProd=${formData.claveProd
-    }`;
+      }&claveProd=${formData.claveProd
+      }`;
 
     jezaApi
       .get(queryString)
@@ -719,7 +641,7 @@ function Reagendado() {
         <Row>
           <Col>
             <Container fluid>
-            <br />
+              <br />
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <h1>
                   {" "}
@@ -732,13 +654,13 @@ function Reagendado() {
                     <Button
                       style={{ marginLeft: "auto" }}
                       color="secondary"
-                      // onClick={() => {
-                      //   setModalInsertar(true);
-                      //   setEstado("insert");
-                      //   LimpiezaForm();
-                      // }}
+                      onClick={() => {
+                        setModalInsertar(true);
+                        setEstado("insert");
+                        LimpiezaForm();
+                      }}
                     >
-                      Agregar clientes
+                      Agregar registros
                     </Button>
 
                     <Button color="primary" onClick={handleRedirect}>
@@ -760,7 +682,7 @@ function Reagendado() {
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}></div>
                   <br />
                   <Row>
-                    
+
                     <Col sm="3">
                       <Label>Fecha inicial:</Label>
                       <Input
@@ -785,20 +707,20 @@ function Reagendado() {
 
                     <Col sm="3">
                       <Label>Estilista:</Label>
-                    <Select
-                      menuPlacement="top"
-                      name="estilista"
-                      options={optionsEstilista}
-                      value={optionsEstilista.find((option) => option.value === formulario.estilista)}
-                      onChange={(selectedOption) => {
-                        // Aquí actualizas el valor en el estado form
-                        setFormulario((prevState) => ({
-                          ...prevState,
-                          estilista: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
-                        }));
-                      }}
-                      placeholder="--Selecciona una opción--"
-                    />
+                      <Select
+                        menuPlacement="top"
+                        name="estilista"
+                        options={optionsEstilista}
+                        value={optionsEstilista.find((option) => option.value === formulario.estilista)}
+                        onChange={(selectedOption) => {
+                          // Aquí actualizas el valor en el estado form
+                          setFormulario((prevState) => ({
+                            ...prevState,
+                            estilista: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                          }));
+                        }}
+                        placeholder="--Selecciona una opción--"
+                      />
                     </Col>
 
                     {/* <Col sm="3">
@@ -819,24 +741,24 @@ function Reagendado() {
                     </Col> */}
 
                     <Col sm="3">
-                    <div>
-                    <Label>Servicio:</Label>
-                    <Select
-                      menuPlacement="top"
-                      // styles={{ placeholder }}
-                      name="claveProd"
-                      options={optionsProductos}
-                      value={optionsProductos.find((option) => option.value === formulario.claveProd)}
-                      onChange={(selectedOption) => {
-                        // Aquí actualizas el valor en el estado form
-                        setFormulario((prevState) => ({
-                          ...prevState,
-                          claveProd: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
-                        }));
-                      }}
-                      placeholder="--Selecciona una opción--"
-                    />
-                  </div>
+                      <div>
+                        <Label>Servicio:</Label>
+                        <Select
+                          menuPlacement="top"
+                          // styles={{ placeholder }}
+                          name="claveProd"
+                          options={optionsProductos}
+                          value={optionsProductos.find((option) => option.value === formulario.claveProd)}
+                          onChange={(selectedOption) => {
+                            // Aquí actualizas el valor en el estado form
+                            setFormulario((prevState) => ({
+                              ...prevState,
+                              claveProd: selectedOption ? selectedOption.value : "", // 0 u otro valor predeterminado
+                            }));
+                          }}
+                          placeholder="--Selecciona una opción--"
+                        />
+                      </div>
                     </Col>
                     <Col sm="6">
                       <Label>Cliente:</Label>
@@ -930,67 +852,33 @@ function Reagendado() {
       <Modal isOpen={modalInsertar}>
         <ModalHeader>
           <div>
-            <h3>Crear anticipo</h3>
+            <h3>Añadir registros</h3>
           </div>
         </ModalHeader>
 
         <ModalBody>
           <Form>
             <FormGroup>
-              <Label for="fechaMovto">Fecha del anticipo:</Label>
-              <Input type="date" name="fechaMovto" id="fechaMovto" value={form.fechaMovto} onChange={handleChange} />
-            </FormGroup>
-            <FormGroup>
-              {/* SELECT */}
-              <Label for="idCliente">Cliente:</Label>
-              <InputGroup>
-                <Input
-                  disabled
-                  type="text"
-                  name="d_cliente"
-                  id="d_cliente"
-                  value={form.d_cliente}
-                  onChange={handleChange}
-                />
-                <CButton color="secondary" text="Seleccionar" onClick={mostrarModalClienteActualizar}></CButton>
-              </InputGroup>
-            </FormGroup>
-
-            <FormGroup>
-              <Label>Forma de pago:</Label>
-              <Input type="select" name="id" id="id" value={formPago.id} onChange={handleChange1}>
-                <option value={""}>Selecciona forma de pago</option>
-                {formasPagosFiltradas.map((formapago: FormaPago) => (
-                  <option key={formapago.id} value={formapago.id}>
-                    {formapago.descripcion}
-                  </option>
+              <Label>Sucursal:</Label>
+              <Input type="select" name="suc" value={form.suc} onChange={handleChange} bsSize="sm">
+                <option value={""}>Seleccione la sucursal</option>
+                {dataSucursales.map((item) => (
+                  <option value={item.sucursal}>{item.nombre}</option>
                 ))}
               </Input>
             </FormGroup>
-            {!disabledReferencia ? (
-              <FormGroup>
-                <Label for="referencia">Referencia:</Label>
-                <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
-              </FormGroup>
-            ) : null}
             <FormGroup>
-              <Label for="importe">Importe:</Label>
-              <Input type="number" name="importe" id="importe" value={form.importe} onChange={handleChange} />
+              <Label for="d1">Rango día 1:</Label>
+              <Input type="number" name="d1" id="d1" value={form.d1} onChange={handleChange} />
             </FormGroup>
             <FormGroup>
-              <Label for="observaciones">Observaciones:</Label>
-              <Input
-                type="text"
-                name="observaciones"
-                id="observaciones"
-                value={form.observaciones}
-                onChange={handleChange}
-              />
+              <Label for="d2">Rango día 2:</Label>
+              <Input type="number" name="d2" id="d2" value={form.d2} onChange={handleChange} />
             </FormGroup>
           </Form>
         </ModalBody>
         <ModalFooter>
-          <CButton color="success" onClick={insertar} text="Guardar anticipo" />
+          <CButton color="success" onClick={insertar} text="Actualizar" />
           <CButton
             color="danger"
             onClick={() => {
@@ -1046,3 +934,6 @@ function Reagendado() {
 }
 
 export default Reagendado;
+
+
+
