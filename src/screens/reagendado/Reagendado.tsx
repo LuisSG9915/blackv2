@@ -27,6 +27,8 @@ import CFormGroupInput from "../../components/CFormGroupInput";
 import SidebarHorizontal from "../../components/SidebarHorizontal";
 import useModalHook from "../../hooks/useModalHook";
 import { Sucursal } from "../../models/Sucursal";
+import { RespuestaClie } from "../../models/RespuestaClie";
+import { useRespuesta } from "../../hooks/getsHooks/useRespuesta";
 import { useCias } from "../../hooks/getsHooks/useCias";
 import Swal from "sweetalert2";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -38,6 +40,7 @@ import { HiBuildingStorefront } from "react-icons/hi2";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import { useAnticipos } from "../../hooks/getsHooks/useAnticipo";
 import { clientesAgendado } from "../../models/clientesAgendado";
+import { clientesAgendadoAct } from "../../models/clientesAgendadoAct";
 import { UserResponse } from "../../models/Home";
 import { format } from "date-fns";
 import TableCliente from "../ventas/Components/TableCliente";
@@ -55,6 +58,8 @@ import { useProductosFiltradoExistenciaProductoAlm } from "../../hooks/getsHooks
 import { useUsuarios } from "../../hooks/getsHooks/useUsuarios";
 import { MdOutlineEditCalendar } from "react-icons/md";
 import { TfiAgenda } from "react-icons/tfi";
+import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
+import { Usuario } from "../models/Usuario";
 
 import axios from "axios";
 function Reagendado() {
@@ -197,6 +202,9 @@ function Reagendado() {
   const [dataPago, setDataPago] = useState<FormaPago[]>([]);
   const [reportes, setReportes] = useState([]);
   const { dataCias, fetchCias } = useCias();
+
+  const { dataRespuesta, fetchRespuesta } = useRespuesta();
+
   const { dataSucursales, fetchSucursales } = useSucursales();
   const [idActualizar, setIdActualizar] = useState(null);
   const [formulario, setFormulario] = useState({
@@ -218,17 +226,26 @@ function Reagendado() {
   });
 
 
-
   const [form, setForm] = useState<clientesAgendado>({
     suc: 0,
     d1: 0,
     d2: 0,
+    usuario : 0,
+  });
 
+  const [form1, setForm1] = useState<clientesAgendadoAct>({
+    id : 0,
+    llamada1: false,
+    llamada2: false,
+    llamada3: false,
+    idRespuesta	: 0,
+    observaciones : "",
+    idUsuarioSeguimiento: 0,
   });
 
   const mostrarModalActualizar = (dato: any) => {
     setIdActualizar(dato.id);
-    setForm(dato);
+    setForm1(dato);
     setModalActualizar(true);
   };
 
@@ -285,6 +302,7 @@ function Reagendado() {
             suc: form.suc,
             d1: form.d1,
             d2: form.d2,
+            usuario: dataUsuarios2[0]?.id,
           },
         })
         .then((response) => {
@@ -304,93 +322,52 @@ function Reagendado() {
     }
   };
 
-  const editar = async (id) => {
-    if (!id) {
-      return;
-    }
-
-    const permiso = await filtroSeguridad("CAT_ANT_UPD");
+  const editar = async () => {
+    const permiso = await filtroSeguridad("CAT_SUC_UPD");
     if (permiso === false) {
-      return;
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
-
-    if (validarCampos() === true) {
+    // if (validarCampos() === true) {
       await jezaApi
-        .put(
-          `/Anticipo?id=${id}&fechamovto=${formattedDate}&referencia=${form.referencia}&observaciones=${form.observaciones}`
-        )
+        .put(`/clienteReagendadoAct`, null, {
+          params: {
+            id: form1.id,
+            llamada1: form1.llamada1,
+            llamada2: form1. llamada2,
+            llamada3: form1.llamada3,
+            idRespuesta: form1.idRespuesta,
+            idUsuarioSeguimiento: dataUsuarios2[0]?.id,
+            observaciones: form1.observaciones,
+           
+          },
+        })
         .then((response) => {
           Swal.fire({
             icon: "success",
-            text: "Anticipo actualizado con éxito",
+            text: "Cliente actualizado con éxito",
             confirmButtonColor: "#3085d6",
           });
           setModalActualizar(false);
-          fetchAnticipos();
-          ejecutaPeticion(formulario.reporte);
+       
         })
         .catch((error) => {
           console.log(error);
         });
-    } else {
-      // Mostrar mensajes de validación si es necesario
-    }
-  };
-
-
-  const eliminar = async (id) => {
-    // Recibe el id como parámetro
-    const permiso = await filtroSeguridad("CAT_ANT_DEL");
-
-    if (permiso === false || !id) {
-      return;
-    }
-
-    try {
-      const result = await Swal.fire({
-        title: "ADVERTENCIA",
-        text: `¿Está seguro que desea eliminar el anticipo? ${id}`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar",
-      });
-
-      if (result.isConfirmed) {
-        await jezaApi.delete(`/Anticipo?id=${id}`);
-
-        Swal.fire({
-          icon: "success",
-          text: "Registro eliminado con éxito",
-          confirmButtonColor: "#3085d6",
-        });
-
-        ejecutaPeticion(formulario.reporte);
-      } else {
-        // El usuario canceló la eliminación
-        // Puedes manejar este caso si es necesario
-      }
-    } catch (error) {
-      console.error(error);
-
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Hubo un error al eliminar el anticipo. Por favor, inténtalo de nuevo.",
-        confirmButtonColor: "#d33",
-      });
-    }
+    // } else {
+    // }
   };
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    setForm((prevState: clientesAgendado) => ({ ...prevState, [name]: value }));
-
-    console.log(form);
+    const checked = (e.target as HTMLInputElement).checked;
+    if (name === "llamada1" || name === "llamada2" || name === "llamada3") {
+      setForm1((prevState) => ({ ...prevState, [name]: checked }));
+    } else {
+      setForm1((prevState: RespuestaClie) => ({ ...prevState, [name]: value }));
+    }
   };
+
 
   const [disabledReferencia, setdisabledReferencia] = useState(false);
 
@@ -406,6 +383,17 @@ function Reagendado() {
   };
   //REALIZA LA LIMPIEZA DE LOS CAMPOS AL CREAR UNA SUCURSAL
 
+  const handleChange4 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setForm((prevState: clientesAgendado) => ({ ...prevState, [name]: value }));
+
+    console.log(form);
+  };
+
+
+
+  const [form3, setForm3] = useState<Usuario[]>([]);
 
   const handleOpenNewWindow = () => {
     const url = "https://www.example.com"; // Reemplaza esto con la URL que desees abrir
@@ -443,9 +431,11 @@ function Reagendado() {
     })),
   ];
 
+  const { dataTrabajadores } = useNominaTrabajadores();
+  const dataFiltrada = dataTrabajadores.filter(estilista => estilista.status !== 2);
   const optionsEstilista = [
     { value: "", label: "--Selecciona un Estilista--" },
-    ...dataUsuarios.map((item) => ({
+    ...dataFiltrada.map((item) => ({
       value: Number(item.id),
       label: item.nombre,
     })),
@@ -458,19 +448,23 @@ function Reagendado() {
       isVisible: true,
       Cell: ({ row }) => (
         <>
-          <AiFillEdit
-            className="mr-2"
-            size={35}
-          ></AiFillEdit>
-          <MdOutlineEditCalendar size={35}></MdOutlineEditCalendar >
-          {/* <AiFillEdit
+            <AiFillEdit
             className="mr-2"
             onClick={() => {
               setIdActualizar(row.original.id); // Establece el id a actualizar
               mostrarModalActualizar(row.original); // Abre el modal
             }}
-            size={23}
-          ></AiFillEdit> */}
+            size={35}
+          ></AiFillEdit>
+          <MdOutlineEditCalendar size={35}
+           onClick={() => {
+          
+              window.location.href = `http://cbinfo.no-ip.info:9085/?idRec=${form3[0].id}&suc=${form3[0].d_sucursal}&idSuc=${form3[0].sucursal}`;
+           
+          }}
+          >
+          </MdOutlineEditCalendar >
+        
           {/* <AiFillDelete
             color="lightred"
             onClick={() => eliminar(row.original.id)} // Pasa el id como parámetro
@@ -486,9 +480,16 @@ function Reagendado() {
     //   isVisible: true,
     //   // Puedes agregar más propiedades de configuración aquí si es necesario
     // },
+
     {
       accessorKey: "fechaVisita",
       header: "Fecha última visita",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+    {
+      accessorKey: "nombre",
+      header: "Sucursal",
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
@@ -532,22 +533,41 @@ function Reagendado() {
       accessorKey: "llamada1",
       header: "Llamada 1",
       isVisible: true,
+      Cell: ({ row }) => {
+        if (row.original.llamada1 === true) {
+          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+        } else {
+          return <Input type="checkbox" disabled="disabled" />;
+        }
+      },
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "llamada2",
       header: "Llamada 2",
       isVisible: true,
-      // Puedes agregar más propiedades de configuración aquí si es necesario
+      Cell: ({ row }) => {
+        if (row.original.llamada2 === true) {
+          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+        } else {
+          return <Input type="checkbox" disabled="disabled" />;
+        }
+      },
     },
     {
       accessorKey: "llamada3",
       header: "Llamada 3",
       isVisible: true,
-      // Puedes agregar más propiedades de configuración aquí si es necesario
+      Cell: ({ row }) => {
+        if (row.original.llamada3 === true) {
+          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+        } else {
+          return <Input type="checkbox" disabled="disabled" />;
+        }
+      },
     },
     {
-      accessorKey: "idRespuesta",
+      accessorKey: "dRespuesta",
       header: "Respuesta",
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
@@ -558,9 +578,20 @@ function Reagendado() {
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
-
+    {
+      accessorKey: "ServicioNuevaCita",
+      header: "Nueva cita",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
     {
       accessorKey: "dUsurioAltaSeguimiento",
+      header: "Usr. Alta Seguiento",
+      isVisible: true,
+      // Puedes agregar más propiedades de configuración aquí si es necesario
+    },
+    {
+      accessorKey: "dUsurioSeguimiento",
       header: "Contacto",
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
@@ -594,6 +625,7 @@ function Reagendado() {
 
     const queryString = `/sp_repoDetalleSeguimiento?f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}&cliente=%&estilista=${formData.estilista
       }&claveProd=${formData.claveProd
+      }&suc=${formData.sucursal
       }`;
 
     jezaApi
@@ -723,12 +755,12 @@ function Reagendado() {
                       />
                     </Col>
 
-                    {/* <Col sm="3">
+                    <Col sm="3">
                       <Label>Sucursal:</Label>
                       <Input
                         type="select"
                         name="sucursal"
-                        value={formulario.sucursal}
+                        value={formulario.suc}
                         onChange={handleChange3}
                         bsSize="sm"
                       >
@@ -738,7 +770,7 @@ function Reagendado() {
                           <option value={item.sucursal}>{item.nombre}</option>
                         ))}
                       </Input>
-                    </Col> */}
+                    </Col>
 
                     <Col sm="3">
                       <div>
@@ -803,48 +835,63 @@ function Reagendado() {
         </Row>
       </Container>
 
-      {/* AQUÍ COMIENZA EL MODAL PARA AGREGAR SUCURSALES */}
-      <Modal isOpen={modalActualizar} size="xl">
+      <Modal isOpen={modalActualizar} size="lg">
         <ModalHeader>
           <div>
-            <h3>Editar anticipo </h3>
+            <h3>Reagendar cliente</h3>
           </div>
         </ModalHeader>
 
         <ModalBody>
-          <Form>
-            <FormGroup>
-              <Label for="referencia">Referencia:</Label>
-              <Input type="text" name="referencia" id="referencia" value={form.referencia} onChange={handleChange} />
-            </FormGroup>
-
-            <FormGroup>
-              <Label for="observaciones">Observaciones:</Label>
-              <Input
-                type="text"
-                name="observaciones"
-                id="observaciones"
-                value={form.observaciones}
-                onChange={handleChange}
-              />
-            </FormGroup>
-          </Form>{" "}
+          <FormGroup>
+            <Row>
+              {/* Debe de coincidir el inputname con el value */}
+             
+              <Col md={"2"}>
+                <br />
+                <label className="checkbox-container">
+                  <input type="checkbox" checked={form1.llamada1} onChange={handleChange} name="llamada1" />
+                  <span className="checkmark"></span>
+                  Llamada 1 
+                </label>
+              </Col>
+              <Col md={"2"}>
+                <br />
+                <label className="checkbox-container">
+                  <input type="checkbox" checked={form1.llamada2} onChange={handleChange} name="llamada2" />
+                  <span className="checkmark"></span>
+                  Llamada 2 
+                </label>
+              </Col>
+              <Col md={"2"}>
+                <br />
+                <label className="checkbox-container">
+                  <input type="checkbox" checked={form1.llamada3} onChange={handleChange} name="llamada3" />
+                  <span className="checkmark"></span>
+                  Llamada 3 
+                </label>
+              </Col>
+              <Col md={"6"}>
+                <Label>Respuesta:</Label>
+                <Input type="select" name="idRespuesta" id="idRespuesta" defaultValue={form1.idRespuesta} onChange={handleChange}>
+                  <option value="">Seleccione respuesta del cliente</option>
+                  {dataRespuesta.map((respuesta: RespuestaClie) => (
+                    <option key={respuesta.id} value={respuesta.id}>
+                      {respuesta.respuestaCliente}
+                    </option>
+                  ))}
+                </Input>
+              </Col>
+              <Col md={"12"}>
+                <CFormGroupInput handleChange={handleChange} inputName="observaciones" labelName="Observaciones:" value={form1.observaciones} />
+              </Col>
+            </Row>
+          </FormGroup>
         </ModalBody>
 
         <ModalFooter>
-          <CButton
-            color="primary"
-            onClick={() => editar(idActualizar)} // Pasa el id como parámetro
-            text="Actualizar"
-          />
-          <CButton
-            color="danger"
-            onClick={() => {
-              cerrarModalActualizar();
-              limpiezaFormAnticipos();
-            }}
-            text="Cancelar"
-          />
+          <CButton color="primary" onClick={editar} text="Actualizar" />
+          <CButton color="danger" onClick={() => cerrarModalActualizar()} text="Cancelar" />
         </ModalFooter>
       </Modal>
 
@@ -860,7 +907,7 @@ function Reagendado() {
           <Form>
             <FormGroup>
               <Label>Sucursal:</Label>
-              <Input type="select" name="suc" value={form.suc} onChange={handleChange} bsSize="sm">
+              <Input type="select" name="suc" value={form.suc} onChange={handleChange4} bsSize="sm">
                 <option value={""}>Seleccione la sucursal</option>
                 {dataSucursales.map((item) => (
                   <option value={item.sucursal}>{item.nombre}</option>
@@ -869,11 +916,11 @@ function Reagendado() {
             </FormGroup>
             <FormGroup>
               <Label for="d1">Rango día 1:</Label>
-              <Input type="number" name="d1" id="d1" value={form.d1} onChange={handleChange} />
+              <Input type="number" name="d1" id="d1" value={form.d1} onChange={handleChange4} />
             </FormGroup>
             <FormGroup>
               <Label for="d2">Rango día 2:</Label>
-              <Input type="number" name="d2" id="d2" value={form.d2} onChange={handleChange} />
+              <Input type="number" name="d2" id="d2" value={form.d2} onChange={handleChange4} />
             </FormGroup>
           </Form>
         </ModalBody>

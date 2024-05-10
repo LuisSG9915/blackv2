@@ -4,4 +4,5 @@ export interface clientesAgendado {
   suc: number;
   d1: number;
   d2: number;
+  usuario : number;
 }
