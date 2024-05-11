@@ -109,7 +109,7 @@ function Reagendado() {
     mostrarModalInsertar,
   } = useModalHook();
   const { dataClientes, fetchClientes } = useClientes();
-  const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
+  const [dataUsuarios2, setDataUsuarios2] = useState<Usuario[]>([]);
   const { dataAnticipos, fetchAnticipos } = useAnticipos({ cia: dataUsuarios2[0]?.cia });
   const [modalCliente, setModalCliente] = useState(false);
   const [descripcionReporte, setDescripcionReporte] = useState("Seleccione un reporte");
@@ -149,6 +149,52 @@ function Reagendado() {
       [name]: value,
     }));
   };
+  // const handleChange5 = (event) => {
+  //   const { name, value } = event.target;
+
+  //   // Actualiza el estado del formulario con la fecha seleccionada
+  //   setForm({
+  //     ...form,
+  //     [name]: value,
+  //   });
+
+  //   // Calcula el rango de días si ambas fechas están seleccionadas
+  //   if (form.d1 && form.d2) {
+  //     const startDate = new Date(form.d1);
+  //     const endDate = new Date(form.d2);
+
+  //     // Calcula la diferencia en milisegundos
+  //     const differenceInTime = endDate.getTime() - startDate.getTime();
+
+  //     // Convierte la diferencia de milisegundos a días
+  //     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+  //     // Agrega 1 porque el rango inclusivo debe incluir el día inicial y final
+  //     const daysInRange = differenceInDays + 1;
+
+  //     // Actualiza el estado del formulario con el rango de días calculado
+  //     setForm({
+  //       ...form,
+  //       dayRange: daysInRange,
+  //     });
+  //   }
+  // };
+  const handleChange5 = (event) => {
+    const { name, value } = event.target;
+
+    // Extrae el día de la fecha seleccionada y conviértelo a un entero
+    const selectedDay = parseInt(value.split("-")[2], 10); // Obtiene el día de la fecha en formato "yyyy-mm-dd"
+
+    // Actualiza el estado del formulario con el día seleccionado
+    setForm({
+      ...form,
+      [name]: selectedDay, // Asigna el día seleccionado a form.d1 o form.d2 según corresponda
+    });
+  };
+
+
+
+
 
   const columnsTrabajador: MRT_ColumnDef<any>[] = useMemo(
     () => [
@@ -230,16 +276,16 @@ function Reagendado() {
     suc: 0,
     d1: 0,
     d2: 0,
-    usuario : 0,
+    usuario: 0,
   });
 
   const [form1, setForm1] = useState<clientesAgendadoAct>({
-    id : 0,
+    id: 0,
     llamada1: false,
     llamada2: false,
     llamada3: false,
-    idRespuesta	: 0,
-    observaciones : "",
+    idRespuesta: 0,
+    observaciones: "",
     idUsuarioSeguimiento: 0,
   });
 
@@ -328,31 +374,31 @@ function Reagendado() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
     // if (validarCampos() === true) {
-      await jezaApi
-        .put(`/clienteReagendadoAct`, null, {
-          params: {
-            id: form1.id,
-            llamada1: form1.llamada1,
-            llamada2: form1. llamada2,
-            llamada3: form1.llamada3,
-            idRespuesta: form1.idRespuesta,
-            idUsuarioSeguimiento: dataUsuarios2[0]?.id,
-            observaciones: form1.observaciones,
-           
-          },
-        })
-        .then((response) => {
-          Swal.fire({
-            icon: "success",
-            text: "Cliente actualizado con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-          setModalActualizar(false);
-       
-        })
-        .catch((error) => {
-          console.log(error);
+    await jezaApi
+      .put(`/clienteReagendadoAct`, null, {
+        params: {
+          id: form1.id,
+          llamada1: form1.llamada1,
+          llamada2: form1.llamada2,
+          llamada3: form1.llamada3,
+          idRespuesta: form1.idRespuesta,
+          idUsuarioSeguimiento: dataUsuarios2[0]?.id,
+          observaciones: form1.observaciones,
+
+        },
+      })
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          text: "Cliente actualizado con éxito",
+          confirmButtonColor: "#3085d6",
         });
+        setModalActualizar(false);
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     // } else {
     // }
   };
@@ -448,7 +494,7 @@ function Reagendado() {
       isVisible: true,
       Cell: ({ row }) => (
         <>
-            <AiFillEdit
+          <AiFillEdit
             className="mr-2"
             onClick={() => {
               setIdActualizar(row.original.id); // Establece el id a actualizar
@@ -457,14 +503,15 @@ function Reagendado() {
             size={35}
           ></AiFillEdit>
           <MdOutlineEditCalendar size={35}
-           onClick={() => {
-          
-              window.location.href = `http://cbinfo.no-ip.info:9085/?idRec=${form3[0].id}&suc=${form3[0].d_sucursal}&idSuc=${form3[0].sucursal}`;
-           
-          }}
+            onClick={() => {
+
+              // window.open = `http://cbinfo.no-ip.info:9085/?idRec=${dataUsuarios2[0].id}&suc=${dataUsuarios2[0].d_sucursal}&idSuc=${dataUsuarios2[0].sucursal}`;
+              window.open(`http://cbinfo.no-ip.info:9085/?idRec=${dataUsuarios2[0].id}&suc=${dataUsuarios2[0].d_sucursal}&idSuc=${dataUsuarios2[0].sucursal}`, '_blank');
+
+            }}
           >
           </MdOutlineEditCalendar >
-        
+
           {/* <AiFillDelete
             color="lightred"
             onClick={() => eliminar(row.original.id)} // Pasa el id como parámetro
@@ -603,6 +650,14 @@ function Reagendado() {
     data: [],
     columns: [],
   });
+
+  const formatDate = (day) => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    return `${year}-${month}-${formattedDay}`;
+  };
 
   const ejecutaPeticion = async (reporte) => {
     const permiso = await filtroSeguridad("CAT_ANT_SEL");
@@ -846,13 +901,13 @@ function Reagendado() {
           <FormGroup>
             <Row>
               {/* Debe de coincidir el inputname con el value */}
-             
+
               <Col md={"2"}>
                 <br />
                 <label className="checkbox-container">
                   <input type="checkbox" checked={form1.llamada1} onChange={handleChange} name="llamada1" />
                   <span className="checkmark"></span>
-                  Llamada 1 
+                  Llamada 1
                 </label>
               </Col>
               <Col md={"2"}>
@@ -860,7 +915,7 @@ function Reagendado() {
                 <label className="checkbox-container">
                   <input type="checkbox" checked={form1.llamada2} onChange={handleChange} name="llamada2" />
                   <span className="checkmark"></span>
-                  Llamada 2 
+                  Llamada 2
                 </label>
               </Col>
               <Col md={"2"}>
@@ -868,7 +923,7 @@ function Reagendado() {
                 <label className="checkbox-container">
                   <input type="checkbox" checked={form1.llamada3} onChange={handleChange} name="llamada3" />
                   <span className="checkmark"></span>
-                  Llamada 3 
+                  Llamada 3
                 </label>
               </Col>
               <Col md={"6"}>
@@ -915,12 +970,25 @@ function Reagendado() {
               </Input>
             </FormGroup>
             <FormGroup>
-              <Label for="d1">Rango día 1:</Label>
-              <Input type="number" name="d1" id="d1" value={form.d1} onChange={handleChange4} />
+              <Label>Fecha inicial:</Label>
+              <Input
+                type="date"
+                name="d1"
+                value={form.d1 ? formatDate(form.d1) : ''}
+                onChange={handleChange5}
+                bsSize="sm"
+              />
             </FormGroup>
+
             <FormGroup>
-              <Label for="d2">Rango día 2:</Label>
-              <Input type="number" name="d2" id="d2" value={form.d2} onChange={handleChange4} />
+              <Label>Fecha final:</Label>
+              <Input
+                type="date"
+                name="d2"
+                value={form.d2 ? formatDate(form.d2) : ''}
+                onChange={handleChange5}
+                bsSize="sm"
+              />
             </FormGroup>
           </Form>
         </ModalBody>
