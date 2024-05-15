@@ -605,6 +605,7 @@ function Reagendado() {
       accessorKey: "llamada3",
       header: "Llamada 3",
       isVisible: true,
+      
       Cell: ({ row }) => {
         if (row.original.llamada3 === true) {
           return <Input type="checkbox" disabled="disabled" checked="checked" />;
@@ -612,6 +613,7 @@ function Reagendado() {
           return <Input type="checkbox" disabled="disabled" />;
         }
       },
+      
     },
     {
       accessorKey: "dRespuesta",
@@ -620,13 +622,13 @@ function Reagendado() {
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
-      accessorKey: "fechaNuevaCita",
+      accessorKey: "FechaAgendada",
       header: "Fecha nueva cita",
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
-      accessorKey: "ServicioNuevaCita",
+      accessorKey: "nombreServ",
       header: "Nueva cita",
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
@@ -678,7 +680,8 @@ function Reagendado() {
     const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
 
-    const queryString = `/sp_repoDetalleSeguimiento?f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}&cliente=%&estilista=${formData.estilista
+    const queryString = `/sp_repoDetalleSeguimiento?f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}&cliente=${formData.cliente
+    }&estilista=${formData.estilista
       }&claveProd=${formData.claveProd
       }&suc=${formData.sucursal
       }`;
