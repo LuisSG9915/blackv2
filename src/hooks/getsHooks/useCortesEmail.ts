@@ -106,8 +106,10 @@ export const useCortesEmail = ({ sucursal, fecha }: Props) => {
     try {
       const response: AxiosResponse<any[]> = await jezaApi.get(
         // `/CorteSeccionC?suc=${sucursal}&fecha=${fecha ? fecha : format(currentDate, "yyyy-MM-dd", { timeZone: zonaHoraria })}`
-        `/sp_reporteCifrasSucursal?año=${fecha ? format(new Date(fecha),"yyyy") : format(currentDate, "yyyy")}&mes=${fecha ? format(new Date(fecha),"MM") :format(currentDate, "MM", { timeZone: zonaHoraria } )}&suc=${sucursal}`
-        );
+        `/sp_repoDetalleSeguimiento?f1=20230401&f2=20240601&cliente=%&estilista=%&claveProd=%&suc=${sucursal}` 
+     
+      
+      );
       setDataCorteEmailE(response.data);
       if (response.data.length > 0) {
         const columnKeys = Object.keys(response.data[0]);

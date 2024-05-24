@@ -411,60 +411,121 @@ function DemoTresTablas() {
   const columnsE: MRT_ColumnDef<CorteE>[] = useMemo(
     () => [
       {
+        accessorKey: "fechaVisita",
+        header: "Fecha última visita",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
+      },
+      {
         accessorKey: "nombre",
-        header: "Nombre",
-        size: 10,
+        header: "Sucursal",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "ventaServicio",
-        header: "Venta Servicio",
-        size: 10,
+        accessorKey: "nombreCliente",
+        header: "Cliente",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "avanceServicio",
-        header: "Avance Sevicios",
-        size: 10,
+        accessorKey: "nombreServicio",
+        header: "Servicio",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "ventaReventa",
-        header: "Venta Reventa",
-        size: 10,
+        accessorKey: "telefono",
+        header: "Telefono/Instragram",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "avanceVenta",
-        header: "Avance Reventa ",
-        size: 10,
+        accessorKey: "nombreEstilista",
+        header: "Estilista",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "cantidadColor",
-        header: "Cantida Color",
-        size: 10,
+        accessorKey: "fechaProximaCitaNormal",
+        header: "Próxima cita",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "cantidadProductos",
-        header: "Cantida Productos",
-        size: 10,
+        accessorKey: "observaciones",
+        header: "Observaciones",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "cantidadTratamietos",
-        header: "Cantidad Tratamientos",
-        size: 10,
+        accessorKey: "llamada1",
+        header: "Llamada 1",
+        isVisible: true,
+        Cell: ({ row }) => {
+          if (row.original.llamada1 === true) {
+            return <Input type="checkbox" disabled="disabled" checked="checked" />;
+          } else {
+            return <Input type="checkbox" disabled="disabled" />;
+          }
+        },
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
       {
-        accessorKey: "total",
-        header: "Total",
-        size: 10,
+        accessorKey: "llamada2",
+        header: "Llamada 2",
+        isVisible: true,
+        Cell: ({ row }) => {
+          if (row.original.llamada2 === true) {
+            return <Input type="checkbox" disabled="disabled" checked="checked" />;
+          } else {
+            return <Input type="checkbox" disabled="disabled" />;
+          }
+        },
       },
       {
-        accessorKey: "porcentajeTotal",
-        header: "Porcentaje Total",
-        size: 10,
-      },
+        accessorKey: "llamada3",
+        header: "Llamada 3",
+        isVisible: true,
 
+        Cell: ({ row }) => {
+          if (row.original.llamada3 === true) {
+            return <Input type="checkbox" disabled="disabled" checked="checked" />;
+          } else {
+            return <Input type="checkbox" disabled="disabled" />;
+          }
+        },
+
+      },
       {
-        accessorKey: "resta",
-        header: "Resta",
-        size: 10,
+        accessorKey: "dRespuesta",
+        header: "Respuesta",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
+      },
+      {
+        accessorKey: "FechaAgendada",
+        header: "Fecha nueva cita",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
+      },
+      {
+        accessorKey: "nombreServ",
+        header: "Nueva cita",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
+      },
+      {
+        accessorKey: "dUsurioAltaSeguimiento",
+        header: "Usr. Alta Seguiento",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
+      },
+      {
+        accessorKey: "dUsurioSeguimiento",
+        header: "Contacto",
+        isVisible: true,
+        // Puedes agregar más propiedades de configuración aquí si es necesario
       },
 
     ],
@@ -682,7 +743,7 @@ function DemoTresTablas() {
           ) : null}
         </div>
 
-        {/* <div style={{ width: "1000px", overflow: "auto" }}>
+        <div style={{ width: "1000px", overflow: "auto" }}>
           <div className="juntos"></div>
           {dataCorteEmailE && dataCorteEmailE.length > 0 ? (
             <MaterialReactTable
@@ -692,7 +753,7 @@ function DemoTresTablas() {
               initialState={{ density: "compact" }}
               renderTopToolbarCustomActions={({ table }) => (
                 <>
-                  <h4>Corte 4 Resumen de cifras sucursal</h4>
+                  <h4>Corte 4 Resumen clientes reagendados</h4>
                   <Button
                     onClick={handleExportDataCorte5}
                     variant="contained"
@@ -707,10 +768,10 @@ function DemoTresTablas() {
               )}
             />
           ) : null}
-        </div> */}
+        </div>
 
 
-        <div style={{ width: "400px", overflow: "auto" }}>
+        {/* <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>
           <h4>Gráfico resumen de ventas </h4>
           <PieChart
@@ -754,8 +815,8 @@ function DemoTresTablas() {
               height={350}
             />
           ) : null}
-        </div>
-
+        </div> */}
+        {/* 
         <div>
           <h4>Gráfico resumen de productos</h4>
           {arregloCorte3Venta ? (
@@ -780,7 +841,7 @@ function DemoTresTablas() {
               height={350}
             />
           ) : null}
-        </div>
+        </div> */}
       </Container>
     </>
   );
