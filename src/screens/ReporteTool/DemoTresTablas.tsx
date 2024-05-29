@@ -160,7 +160,8 @@ function DemoTresTablas() {
     const fechaSelected = fechaPost ? fechaPost : format(new Date(), "yyyy-MM-dd");
     axios
       .post("http://cbinfo.no-ip.info:9086/send-email", {
-        to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, paoacv@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
+        //to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, paoacv@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
+        to: "tnbsoportetnb@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com",
         //to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
         subject: `Corte del dia de: ${dataUsuarios2[0]?.d_sucursal}`,
         text: "Corte",
@@ -743,7 +744,7 @@ function DemoTresTablas() {
           ) : null}
         </div>
 
-        <div style={{ width: "1000px", overflow: "auto" }}>
+        {/* <div style={{ width: "1000px", overflow: "auto" }}>
           <div className="juntos"></div>
           {dataCorteEmailE && dataCorteEmailE.length > 0 ? (
             <MaterialReactTable
@@ -768,7 +769,7 @@ function DemoTresTablas() {
               )}
             />
           ) : null}
-        </div>
+        </div> */}
 
 
         {/* <div style={{ width: "400px", overflow: "auto" }}>
