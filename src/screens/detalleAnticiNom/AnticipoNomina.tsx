@@ -18,13 +18,14 @@ import { IoIosHome, IoIosRefresh } from "react-icons/io";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import useSeguridad from "../../hooks/getsHooks/useSeguridad";
-import { NominaAnticipo} from "../../models/NominaAnticipo";
+import { NominaAnticipo } from "../../models/NominaAnticipo";
 import { useNominaTrabajadores } from "../../hooks/getsHooks/useNominaTrabajadores";
 import { Trabajador } from "../../models/Trabajador";
 import { UserResponse } from "../../models/Home";
 import CurrencyInput from "react-currency-input-field";
 import { HiOutlineTrophy } from "react-icons/hi2";
 import { useSucursales } from "../../hooks/getsHooks/useSucursales";
+import { useAnticipoNomina } from "../../hooks/getsHooks/useAnticipoNomina";
 import { Sucursal } from "../../models/Sucursal";
 function AnticipoNomina() {
   const { filtroSeguridad, session } = useSeguridad();
@@ -69,14 +70,16 @@ function AnticipoNomina() {
   const [data, setData] = useState<NominaAnticipo[]>([]);
   const { dataCias, fetchCias } = useCias();
   const { dataTrabajadores, fetchNominaTrabajadores } = useNominaTrabajadores();
+  const { dataAnticipoNomina, fetchAnticipoNomina } = useAnticipoNomina();
+
   const { dataSucursales } = useSucursales();
   // const { dataNominaAnticipo } = useNominaAnticipo();
   const [form, setForm] = useState<NominaAnticipo>({
-    id: 0,  
+    id: 0,
     fecha: "",
     idEmpleado: 0,
     d_empleado: "",
-    monto	: 0,
+    monto: 0,
     usr_autoriza: 0,
     d_usr: "",
     observaciones: "",
@@ -124,92 +127,130 @@ function AnticipoNomina() {
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
 
-
-  // const insertar = async () => {
-  //   const permiso = await filtroSeguridad("CAT_META_ADD");
-  //   if (permiso === false) {
-  //     return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-  //   }
-
-  //   if (validarCampos() === true) {
-  //     await jezaApi
-  //       .post(
-  //         `/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.0
-  //         }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0
-  //         }&meta6=0&sucursal=${form.sucursal}`
-  //       )
-  //       .then((response) => {
-  //         Swal.fire({
-  //           icon: "success",
-  //           text: "Meta creada con éxito",
-  //           confirmButtonColor: "#3085d6",
-  //         });
-  //         setModalInsertar(false);
-  //         getMetas();
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         Swal.fire({
-  //           icon: "error",
-  //           text: "Ocurrió un error al crear la meta, comuniquese con sistemas",
-  //           confirmButtonColor: "#d63031",
-  //         });
-  //       });
-  //   } else {
-  //     // Puedes manejar un caso específico si la validación de campos falla
-  //   }
-  // };
-
   const insertar = async () => {
     const permiso = await filtroSeguridad("CAT_META_ADD");
     if (permiso === false) {
       return;
     }
 
-    if (validarCampos() === true) {
-      // Verificar si ya existe una meta para el colaborador en el mismo mes y año
-      const metaExistente = data.find(
-        (meta) =>
-          meta.idcolabolador === Number(form.idcolabolador) &&
-          meta.año === Number(form.año) &&
-          meta.mes === Number(form.mes)
-      );
+    try {
+      // Consultar el sueldo del empleado
+      const response = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.idEmpleado}`);
+      console.log('Response data:', response.data); // Para verificar la estructura de la respuesta
 
-      if (metaExistente) {
+      // Asegurarse de que la respuesta contiene datos
+      if (response.data.length === 0) {
         Swal.fire({
           icon: "error",
-          text: "Ya existe una meta para este colaborador en el mismo mes y año",
+          text: "No se encontró el sueldo del empleado",
           confirmButtonColor: "#d63031",
         });
-      } else {
-        // Continuar con la inserción si no hay conflictos
-        try {
-          await jezaApi.post(`/sp_cat_colaboradoresMetasAdd?año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1 ? form.meta1 : 0.0
-            }&meta2=${form.meta2 ? form.meta2 : 0}&meta3=${form.meta3 ? form.meta3 : 0}&meta4=${form.meta4 ? form.meta4 : 0}&meta5=${form.meta5 ? form.meta5 : 0
-            }&meta6=0&sucursal=${form.sucursal}`);
-
-          Swal.fire({
-            icon: "success",
-            text: "Meta creada con éxito",
-            confirmButtonColor: "#3085d6",
-          });
-
-          // Actualizar la lista de metas después de la inserción
-          getMetas();
-          setModalInsertar(false);
-        } catch (error) {
-          console.error(error);
-          Swal.fire({
-            icon: "error",
-            text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
-            confirmButtonColor: "#d63031",
-          });
-        }
+        return;
       }
-    } else {
-      // Puedes manejar un caso específico si la validación de campos falla
+
+      // Acceder al primer elemento del array para obtener el sueldo
+      const sueldoBase = response.data[0].sueldo;
+
+      // Validar que el monto no exceda el sueldo base
+      if (Number(form.monto) > Number(sueldoBase)) {
+        Swal.fire({
+          icon: "error",
+          text: "El monto del anticipo no puede exceder el sueldo base del empleado",
+          confirmButtonColor: "#d63031",
+        });
+        return;
+      }
+
+      // Continuar con la inserción si no hay conflictos
+      await jezaApi.post(`/sp_detalleAnticipoNomAdd?fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${Number(form.monto)}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`);
+
+      Swal.fire({
+        icon: "success",
+        text: "Anticipo a nómina creado con éxito",
+        confirmButtonColor: "#3085d6",
+      });
+
+      // Actualizar la lista de metas después de la inserción
+      getMetas();
+      setModalInsertar(false);
+    } catch (error) {
+      console.error('Error:', error);
+      Swal.fire({
+        icon: "error",
+        text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
+        confirmButtonColor: "#d63031",
+      });
     }
   };
+
+  // const insertar = async () => {
+  //   const permiso = await filtroSeguridad("CAT_META_ADD");
+  //   if (permiso === false) {
+  //     return;
+  //   }
+
+  //   const responseSueldos = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.id}`);
+  //     // Verifica si el colaborador específico está en la respuesta
+  //     const colaboradorEspecifico = responseSueldos.data.find(colaborador => colaborador.id === form.idEmpleado);
+
+
+  //   try {
+  //     await jezaApi.post(`/sp_detalleAnticipoNomAdd?fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${form.monto}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`);
+
+  //     Swal.fire({
+  //       icon: "success",
+  //       text: "Anticipo a nómina creado con éxito",
+  //       confirmButtonColor: "#3085d6",
+  //     });
+
+  //     // Actualizar la lista de metas después de la inserción
+  //     getMetas();
+  //     setModalInsertar(false);
+  //   } catch (error) {
+  //     console.error(error);
+  //     Swal.fire({
+  //       icon: "error",
+  //       text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
+  //       confirmButtonColor: "#d63031",
+  //     });
+  //   }
+  // };
+
+
+  const editar2 = async () => {
+    const permiso = await filtroSeguridad("CAT_META_UPD");
+    if (permiso === false) {
+      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+    }
+
+
+    await jezaApi
+      .put(
+        `/sp_detalleAnticipoNomUpd?id=${form.id}&fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${form.monto}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`
+      )
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          text: "Registro actualizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+        setModalActualizar(false);
+        getMetas();
+      })
+      .catch((error) => {
+        console.log(error);
+        Swal.fire({
+          icon: "error",
+          text: "Ocurrió un error al actualizar la meta, comuníquese con sistemas",
+          confirmButtonColor: "#d63031",
+        });
+      });
+
+    // } else {
+    //   // Puedes manejar un caso específico si la validación de campos falla
+    // }
+  };
+
 
 
   const editar = async () => {
@@ -218,58 +259,66 @@ function AnticipoNomina() {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
 
-    if (validarCampos()) {
-      const nuevaMeta = {
-        id: form.id,
-        idEmpleado: Number(form.idEmpleado),
-        fecha: form.fecha,
-        usr_autoriza: form.usr_autoriza,
-        observaciones: form.observaciones,
-      };
+    try {
+      // Consultar el sueldo del empleado
+      const response = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.idEmpleado}`);
+      console.log('Response data:', response.data); // Para verificar la estructura de la respuesta
 
-      // Verificar si ya existe una meta en el mismo mes y año para el mismo usuario
-      const metaExistenteEnMismoMesAño = data.find(
-        (meta) =>
-          meta.idcolabolador === nuevaMeta.idcolabolador &&
-          meta.año === nuevaMeta.año &&
-          meta.mes === nuevaMeta.mes
-      );
-
-      if (metaExistenteEnMismoMesAño && metaExistenteEnMismoMesAño.id !== form.id) {
-        // Ya existe una meta para el mismo usuario en el mismo mes y año (y no es la misma que estamos editando)
+      // Asegurarse de que la respuesta contiene datos
+      if (response.data.length === 0) {
         Swal.fire({
           icon: "error",
-          text: "Ya existe una meta para este colaborador en el mismo mes y año",
+          text: "No se encontró el sueldo del empleado",
           confirmButtonColor: "#d63031",
         });
-      } else {
-        // No hay duplicados, proceder con la actualización
-        await jezaApi
-          .put(
-            `/sp_cat_colaboradoresMetasUpd?id=${form.id}&año=${form.año}&mes=${form.mes}&idcolabolador=${form.idcolabolador}&meta1=${form.meta1}&meta2=${form.meta2}&meta3=${form.meta3}&meta4=${form.meta4}&meta5=${form.meta5}&meta6=0&sucursal=${form.sucursal}`
-          )
-          .then((response) => {
-            Swal.fire({
-              icon: "success",
-              text: "Meta actualizada con éxito",
-              confirmButtonColor: "#3085d6",
-            });
-            setModalActualizar(false);
-            getMetas();
-          })
-          .catch((error) => {
-            console.log(error);
-            Swal.fire({
-              icon: "error",
-              text: "Ocurrió un error al actualizar la meta, comuníquese con sistemas",
-              confirmButtonColor: "#d63031",
-            });
-          });
+        return;
       }
-    } else {
-      // Puedes manejar un caso específico si la validación de campos falla
+
+      // Acceder al primer elemento del array para obtener el sueldo
+      const sueldoBase = response.data[0].sueldo;
+
+      // Validar que el monto no exceda el sueldo base
+      if (Number(form.monto) > Number(sueldoBase)) {
+        Swal.fire({
+          icon: "error",
+          text: "El monto del anticipo no puede exceder el sueldo base del empleado",
+          confirmButtonColor: "#d63031",
+        });
+        return;
+      }
+
+      // Continuar con la inserción si no hay conflictos
+      await jezaApi
+        .put(
+          `/sp_detalleAnticipoNomUpd?id=${form.id}&fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${Number(form.monto)}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`
+        )
+
+      Swal.fire({
+        icon: "success",
+        text: "Anticipo actualizado con éxito",
+        confirmButtonColor: "#3085d6",
+      });
+
+      // Actualizar la lista de metas después de la inserción
+      setModalActualizar(false);
+      getMetas();
+    } catch (error) {
+      console.error('Error:', error);
+      Swal.fire({
+        icon: "error",
+        text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
+        confirmButtonColor: "#d63031",
+      });
     }
   };
+
+
+
+
+
+
+
+
 
   ///AQUÍ COMIENZA EL MÉTODO DELETE
 
@@ -288,7 +337,7 @@ function AnticipoNomina() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`).then(() => {
+        jezaApi.delete(`/sp_detalleAnticipoNomDel?id=${dato.id}`).then(() => {
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
@@ -317,7 +366,7 @@ function AnticipoNomina() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await jezaApi.delete(`/SP_cat_colaboradoresMetasDel?id=${dato.id}`);
+          await jezaApi.delete(`/sp_detalleAnticipoNomDel?id=${dato.id}`);
           Swal.fire({
             icon: "success",
             text: "Registro eliminado con éxito",
@@ -379,6 +428,16 @@ function AnticipoNomina() {
     }
   };
 
+  const handleChange2 = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    // Eliminar espacios en blanco al principio de la cadena
+    const trimmedValue = value.replace(/^\s+/g, "");
+    setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
+    console.log(form.fecha);
+    console.log(form);
+  };
+
+
   const trabajadoresDisponibles = dataTrabajadores.filter((trabajador: Trabajador) => {
     // Filtra los trabajadores que no están en las metas existentes
     return !data.some((meta: NominaAnticipo) => meta.idcolabolador === trabajador.id);
@@ -407,7 +466,7 @@ function AnticipoNomina() {
       monto: 0,
       usr_autoriza: 0,
       observaciones: "",
-      
+
     });
   };
 
@@ -429,7 +488,7 @@ function AnticipoNomina() {
     {
       field: "d_empleado",
       headerName: "Colaborador",
-      width: 180,
+      width: 200,
       headerClassName: "custom-header",
     },
     {
@@ -441,17 +500,25 @@ function AnticipoNomina() {
     {
       field: "monto",
       headerName: "Cifra Monto",
-      width: 120,
+      width: 180,
       headerClassName: "custom-header",
-      renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : "0"}</span>,
+      // renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(5)}` : "0"}</span>,
+    },
+    {
+      field: "sueldo",
+      headerName: "Sueldo",
+      width: 180,
+      headerClassName: "custom-header",
     },
     {
       field: "observaciones",
       headerName: "Observaciones",
-      width: 150,
+      width: 400,
       headerClassName: "custom-header",
     },
-   
+
+
+
   ];
 
   const ComponentChiquito = ({ params }: { params: any }) => {
@@ -562,7 +629,7 @@ function AnticipoNomina() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <h1>
                 {" "}
-                Anticipo nómina 
+                Anticipo nómina
                 {/* <HiOutlineTrophy size={30} /> */}
               </h1>
             </div>
@@ -608,160 +675,55 @@ function AnticipoNomina() {
             </ModalHeader>
 
             <ModalBody>
-              <FormGroup>
-                <Row>
-                  <Col md={"6"}>
-                    {/* <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} /> */}
-                    <Label>Año:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={Number(form.año)}>
-                      <option value="">--Selecciona el año--</option>
-                      <option value={2023}>2023</option>
-                      <option value={2024}>2024</option>
-                      <option value={2025}>2025</option>
-                      <option value={2026}>2026</option>
-                      <option value={2027}>2027</option>
-                      <option value={2028}>2028</option>
-                      <option value={2029}>2029</option>
-                      <option value={2030}>2030</option>
-                    </Input>
-                  </Col>
-                  <Col md={"6"}>
-                    <Label>Mes:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={Number(form.mes)}>
-                      <option value="">--Selecciona el mes--</option>
-                      <option value={1}>Enero</option>
-                      <option value={2}>Febrero</option>
-                      <option value={3}>Marzo</option>
-                      <option value={4}>Abril</option>
-                      <option value={5}>Mayo</option>
-                      <option value={6}>Junio</option>
-                      <option value={7}>Julio</option>
-                      <option value={8}>Agosto</option>
-                      <option value={9}>Septiembre</option>
-                      <option value={10}>Octubre</option>
-                      <option value={11}>Noviembre</option>
-                      <option value={12}>Diciembre</option>
-                    </Input>
-                  </Col>
+              <Row>
+                <Col sm="6">
+                  <Label for="exampleDate">Fecha:</Label>
+                  <Input
+                    id="exampleDate"
+                    name="fecha"
+                    placeholder="date placeholder"
+                    type="date"
+                    onChange={handleChange2}
+                    defaultValue={form.fecha ? form.fecha.split("T")[0] : form.fecha}
+                  />
+                </Col>
 
-                  <Col md={"6"} style={{ marginBottom: 10 }}>
-                    <Label>Sucursal:</Label>
-                    <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
-                      <option value="">--Selecciona sucursal--</option>
-                      {dataSucursales.map((sucursal) => (
-                        <option key={sucursal.sucursal} value={sucursal.sucursal}>
-                          {sucursal.nombre}
-                        </option>
-                      ))}
-                    </Input>
-                  </Col>
-                  {/* 
-                  <Col md={"6"} style={{ marginBottom: 10 }}>
-                    <Label>Sucursal:</Label>
-                    <select
-                      name="sucursal"
-                      id="exampleSelect"
-                      value={form.sucursal}
-                      onChange={handleChange}
-                    >
-                      <option value="">Selecciona sucursal</option>
-                      {dataSucursales.map((sucursal) => (
-                        <option key={sucursal.sucursal} value={sucursal.sucursal}>
-                          {sucursal.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </Col> */}
-                  <Col md={"6"}>
-                    <Label>Trabajadores:</Label>
-                    <Input
-                      type="select"
-                      name="idcolabolador"
-                      id="idcolabolador"
-                      defaultValue={form.idcolabolador}
-                      onChange={handleChange}
-                      disabled={true} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
-                    >
-                      <option value="">--Selecciona empresa--</option>
-                      {dataTrabajadores.map((colaborador: Trabajador) => (
-                        <option key={colaborador.id} value={colaborador.id}>
-                          {colaborador.nombre}
-                        </option>
-                      ))}
-                    </Input>
-                    <br />
-                  </Col>
+                <Col md={"6"}>
+                  <Label>Colaborador:</Label>
+                  <Input
+                    type="select"
+                    name="idEmpleado"
+                    id="idEmpleado"
+                    defaultValue={form.idEmpleado}
+                    onChange={handleChange}
+                    disabled={true} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
+                  >
+                    <option value="">--Selecciona empresa--</option>
+                    {dataTrabajadores.map((colaborador: Trabajador) => (
+                      <option key={colaborador.id} value={colaborador.id}>
+                        {colaborador.nombre}
+                      </option>
+                    ))}
+                  </Input>
                   <br />
-                  <Col md={"6"}>
-                    <label> Cifra servicios:</label>
-                    <CurrencyInput
-                      className="custom-currency-input"
-                      prefix="$"
-                      name="meta1"
-                      placeholder="Introducir un número"
-                      value={form.meta1}
-                      decimalsLimit={2}
-                      onValueChange={(value) => handleValueChange("meta1", value)}
-                    />
-                    <br />
-                  </Col>
-                  <Col md={"6"}>
-                    <label> Cifra reventa:</label>
-                    <CurrencyInput
-                      className="custom-currency-input"
-                      prefix="$"
-                      name="meta4"
-                      placeholder="Introducir un número"
-                      value={form.meta4 ? form.meta4 : 0}
-                      decimalsLimit={2}
-                      onValueChange={(value) => handleValueChange("meta4", value)}
-                    />
+                </Col>
+                <Col md={"3"}>
+                  <label> Monto:</label>
+                  <CurrencyInput
+                    className="custom-currency-input"
+                    prefix="$"
+                    name="monto"
+                    placeholder="Introducir un número"
+                    value={form.monto ? form.monto : 0}
+                    decimalsLimit={2}
+                    onValueChange={(value) => handleValueChange("monto", value)}
+                  />
+                </Col>
 
-                    {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
-                  </Col>
-
-                  <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta5"
-                      labelName="Cifra color:"
-                      value={form.meta5}
-                      minlength={15}
-                      maxlength={15}
-                    />
-                  </Col>
-
-                  <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta3"
-                      labelName="Cifra productos:"
-                      value={form.meta3}
-                      minlength={15}
-                      maxlength={15}
-                    />
-                  </Col>
-                  <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta2"
-                      labelName="Cifra tratamientos:"
-                      value={form.meta2}
-                      minlength={15}
-                      maxlength={15}
-                    />
-                  </Col>
-
-                  {/* <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta6"
-                      labelName="Meta reventa:"
-                      value={form.meta6}
-                    />
-                  </Col> */}
-                </Row>
-              </FormGroup>
+                <Col sm="9">
+                  <CFormGroupInput handleChange={handleChange2} inputName="observaciones" labelName="Observaciones:" value={form.observaciones} minlength={1} maxlength={190} />
+                </Col>
+              </Row>
             </ModalBody>
 
             <ModalFooter>
@@ -774,94 +736,30 @@ function AnticipoNomina() {
           <Modal isOpen={modalInsertar} size="xl">
             <ModalHeader>
               <div>
-                <h3>Crear cifras</h3>
+                <h3>Crear anticipo nómina</h3>
               </div>
             </ModalHeader>
 
             <ModalBody>
               <FormGroup>
                 <Row>
-                  {/* <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} />
+                  <Col sm="6">
+                    <CFormGroupInput
+                      type="date"
+                      handleChange={handleChange2}
+                      inputName="fecha"
+                      labelName="Fecha:"
+                      value={form.fecha}
+                    />
                   </Col>
-                  <Col md={"6"}>
-                    <CFormGroupInput handleChange={handleChange} inputName="mes" labelName="Mes:" value={form.mes} />
-                  </Col> */}
-                  <Col md={"6"}>
-                    {/* <CFormGroupInput handleChange={handleChange} inputName="año" labelName="Año:" value={form.año} /> */}
-                    <Label>Año:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="año" value={Number(form.año)}>
-                      <option value="">--Selecciona el año--</option>
-                      <option value={2023}>2023</option>
-                      <option value={2024}>2024</option>
-                      <option value={2025}>2025</option>
-                      <option value={2026}>2026</option>
-                      <option value={2027}>2027</option>
-                      <option value={2028}>2028</option>
-                      <option value={2029}>2029</option>
-                      <option value={2030}>2030</option>
-                    </Input>
-                  </Col>
-                  <Col md={"6"}>
-                    <Label>Mes:</Label>
-                    <Input className="mb-3" type="select" onChange={handleChange} name="mes" value={Number(form.mes)}>
-                      <option value="">--Selecciona el mes--</option>
-                      <option value={1}>Enero</option>
-                      <option value={2}>Febrero</option>
-                      <option value={3}>Marzo</option>
-                      <option value={4}>Abril</option>
-                      <option value={5}>Mayo</option>
-                      <option value={6}>Junio</option>
-                      <option value={7}>Julio</option>
-                      <option value={8}>Agosto</option>
-                      <option value={9}>Septiembre</option>
-                      <option value={10}>Octubre</option>
-                      <option value={11}>Noviembre</option>
-                      <option value={12}>Diciembre</option>
-                    </Input>
-                  </Col>
-                  <Col md={"6"} style={{ marginBottom: 10 }}>
-                    <Label>Sucursal:</Label>
-                    <Input type="select" name="sucursal" id="exampleSelect" value={form.sucursal} onChange={handleChange}>
-                      <option value="">--Selecciona sucursal--</option>
-                      {dataSucursales.map((sucursal) => (
-                        <option key={sucursal.sucursal} value={sucursal.sucursal}>
-                          {sucursal.nombre}
-                        </option>
-                      ))}
-                    </Input>
-                  </Col>
-                  {/* <Col md={"6"}>
-                    <Label>Trabajadores:</Label>
-                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
-                      <option value="">Selecciona empresa</option>
-                      {dataTrabajadores.map((colaborador: Trabajador) => (
-                        <option key={colaborador.id} value={colaborador.id}>
-                          {colaborador.nombre}
-                        </option>
-                      ))}
-                    </Input>
-                  
-                  </Col> */}
 
-                  {/* <Col md={"6"}>
-                    <Label>Trabajadores:</Label>
-                    <Input type="select" name="idcolabolador" id="idcolabolador" defaultValue={form.idcolabolador} onChange={handleChange}>
-                      <option value="">--Selecciona trabajador--</option>
-                      {dataTrabajadores.map((colaborador: Trabajador) => (
-                        <option key={colaborador.id} value={colaborador.id}>
-                          {colaborador.nombre}
-                        </option>
-                      ))}
-                    </Input>
-                  </Col> */}
                   <Col md={"6"}>
-                    <Label>Trabajadores:</Label>
+                    <Label>Colaborador:</Label>
                     <Input
                       type="select"
-                      name="idcolabolador"
-                      id="idcolabolador"
-                      defaultValue={form.idcolabolador}
+                      name="idEmpleado"
+                      id="idEmpleado"
+                      defaultValue={form.idEmpleado}
                       onChange={handleChange}
                       disabled={false} // suponiendo que 'modoEdicion' es una variable que indica si estás en modo de edición
                     >
@@ -874,65 +772,20 @@ function AnticipoNomina() {
                     </Input>
                     <br />
                   </Col>
-                  <br />
-
-
-                  <Col md={"6"}>
-                    <label> Cifra servicios:</label>
+                  <Col md={"3"}>
+                    <label> Monto:</label>
                     <CurrencyInput
                       className="custom-currency-input"
                       prefix="$"
-                      name="meta1"
+                      name="monto"
                       placeholder="Introducir un número"
-                      value={form.meta1}
+                      value={form.monto ? form.monto : 0}
                       decimalsLimit={2}
-                      onValueChange={(value) => handleValueChange("meta1", value)}
+                      onValueChange={(value) => handleValueChange("monto", value)}
                     />
                   </Col>
-
-                  <Col md={"6"}>
-                    <label> Cifra reventa:</label>
-                    <CurrencyInput
-                      className="custom-currency-input"
-                      prefix="$"
-                      name="meta4"
-                      placeholder="Introducir un número"
-                      value={form.meta4 ? form.meta4 : 0}
-                      decimalsLimit={2}
-                      onValueChange={(value) => handleValueChange("meta4", value)}
-                    />
-                    {/* <CFormGroupInput handleChange={handleChange} inputName="meta1" placeholder="$" value={form.meta1} /> */}
-                  </Col>
-                  <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta5"
-                      labelName="Cifra color:"
-                      value={form.meta5}
-                      minlength={15}
-                      maxlength={15}
-                    />
-                  </Col>
-
-                  <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta3"
-                      labelName="Cifra productos:"
-                      value={form.meta3}
-                      minlength={15}
-                      maxlength={15}
-                    />
-                  </Col>
-                  <Col md={"6"}>
-                    <CFormGroupInput
-                      handleChange={handleChange}
-                      inputName="meta2"
-                      labelName="Cifra tratamientos:"
-                      value={form.meta2}
-                      minlength={15}
-                      maxlength={15}
-                    />
+                  <Col sm="9">
+                    <CFormGroupInput handleChange={handleChange2} inputName="observaciones" labelName="Observaciones:" value={form.observaciones} minlength={1} maxlength={190} />
                   </Col>
                 </Row>
               </FormGroup>
