@@ -128,58 +128,60 @@ function AnticipoNomina() {
   const [estado, setEstado] = useState("");
 
   const insertar = async () => {
-    const permiso = await filtroSeguridad("CAT_META_ADD");
+    const permiso = await filtroSeguridad("CREAR_ANT_NOMINA");
     if (permiso === false) {
       return;
     }
+    if (validarCampos() === true) {
+      try {
+        // Consultar el sueldo del empleado
+        const response = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.idEmpleado}`);
+        console.log('Response data:', response.data); // Para verificar la estructura de la respuesta
 
-    try {
-      // Consultar el sueldo del empleado
-      const response = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.idEmpleado}`);
-      console.log('Response data:', response.data); // Para verificar la estructura de la respuesta
+        // Asegurarse de que la respuesta contiene datos
+        if (response.data.length === 0) {
+          Swal.fire({
+            icon: "error",
+            text: "No se encontró el sueldo del empleado",
+            confirmButtonColor: "#d63031",
+          });
+          return;
+        }
 
-      // Asegurarse de que la respuesta contiene datos
-      if (response.data.length === 0) {
+        // Acceder al primer elemento del array para obtener el sueldo
+        const sueldoBase = response.data[0].sueldo;
+
+        // Validar que el monto no exceda el sueldo base
+        if (Number(form.monto) > Number(sueldoBase)) {
+          Swal.fire({
+            icon: "error",
+            text: "El monto del anticipo no puede exceder el sueldo base del empleado",
+            confirmButtonColor: "#d63031",
+          });
+          return;
+        }
+
+        // Continuar con la inserción si no hay conflictos
+        await jezaApi.post(`/sp_detalleAnticipoNomAdd?fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${Number(form.monto)}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`);
+
+        Swal.fire({
+          icon: "success",
+          text: "Anticipo a nómina creado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+
+        // Actualizar la lista de metas después de la inserción
+        getMetas();
+        setModalInsertar(false);
+      } catch (error) {
+        console.error('Error:', error);
         Swal.fire({
           icon: "error",
-          text: "No se encontró el sueldo del empleado",
+          text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
           confirmButtonColor: "#d63031",
         });
-        return;
       }
-
-      // Acceder al primer elemento del array para obtener el sueldo
-      const sueldoBase = response.data[0].sueldo;
-
-      // Validar que el monto no exceda el sueldo base
-      if (Number(form.monto) > Number(sueldoBase)) {
-        Swal.fire({
-          icon: "error",
-          text: "El monto del anticipo no puede exceder el sueldo base del empleado",
-          confirmButtonColor: "#d63031",
-        });
-        return;
-      }
-
-      // Continuar con la inserción si no hay conflictos
-      await jezaApi.post(`/sp_detalleAnticipoNomAdd?fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${Number(form.monto)}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`);
-
-      Swal.fire({
-        icon: "success",
-        text: "Anticipo a nómina creado con éxito",
-        confirmButtonColor: "#3085d6",
-      });
-
-      // Actualizar la lista de metas después de la inserción
-      getMetas();
-      setModalInsertar(false);
-    } catch (error) {
-      console.error('Error:', error);
-      Swal.fire({
-        icon: "error",
-        text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
-        confirmButtonColor: "#d63031",
-      });
+    } else {
     }
   };
 
@@ -254,61 +256,63 @@ function AnticipoNomina() {
 
 
   const editar = async () => {
-    const permiso = await filtroSeguridad("CAT_META_UPD");
+    const permiso = await filtroSeguridad("EDITAR_ANT_NOMINA");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
+    if (validarCampos() === true) {
+      try {
+        // Consultar el sueldo del empleado
+        const response = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.idEmpleado}`);
+        console.log('Response data:', response.data); // Para verificar la estructura de la respuesta
 
-    try {
-      // Consultar el sueldo del empleado
-      const response = await jezaApi.get(`/sp_SueldosNominaSel?id=${form.idEmpleado}`);
-      console.log('Response data:', response.data); // Para verificar la estructura de la respuesta
+        // Asegurarse de que la respuesta contiene datos
+        if (response.data.length === 0) {
+          Swal.fire({
+            icon: "error",
+            text: "No se encontró el sueldo del empleado",
+            confirmButtonColor: "#d63031",
+          });
+          return;
+        }
 
-      // Asegurarse de que la respuesta contiene datos
-      if (response.data.length === 0) {
+        // Acceder al primer elemento del array para obtener el sueldo
+        const sueldoBase = response.data[0].sueldo;
+
+        // Validar que el monto no exceda el sueldo base
+        if (Number(form.monto) > Number(sueldoBase)) {
+          Swal.fire({
+            icon: "error",
+            text: "El monto del anticipo no puede exceder el sueldo base del empleado",
+            confirmButtonColor: "#d63031",
+          });
+          return;
+        }
+
+        // Continuar con la inserción si no hay conflictos
+        await jezaApi
+          .put(
+            `/sp_detalleAnticipoNomUpd?id=${form.id}&fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${Number(form.monto)}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`
+          )
+
+        Swal.fire({
+          icon: "success",
+          text: "Anticipo actualizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
+
+        // Actualizar la lista de metas después de la inserción
+        setModalActualizar(false);
+        getMetas();
+      } catch (error) {
+        console.error('Error:', error);
         Swal.fire({
           icon: "error",
-          text: "No se encontró el sueldo del empleado",
+          text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
           confirmButtonColor: "#d63031",
         });
-        return;
       }
-
-      // Acceder al primer elemento del array para obtener el sueldo
-      const sueldoBase = response.data[0].sueldo;
-
-      // Validar que el monto no exceda el sueldo base
-      if (Number(form.monto) > Number(sueldoBase)) {
-        Swal.fire({
-          icon: "error",
-          text: "El monto del anticipo no puede exceder el sueldo base del empleado",
-          confirmButtonColor: "#d63031",
-        });
-        return;
-      }
-
-      // Continuar con la inserción si no hay conflictos
-      await jezaApi
-        .put(
-          `/sp_detalleAnticipoNomUpd?id=${form.id}&fecha=${form.fecha}&idEmpleado=${form.idEmpleado}&monto=${Number(form.monto)}&usr_autoriza=${dataUsuarios2[0]?.id}&observaciones=${form.observaciones}`
-        )
-
-      Swal.fire({
-        icon: "success",
-        text: "Anticipo actualizado con éxito",
-        confirmButtonColor: "#3085d6",
-      });
-
-      // Actualizar la lista de metas después de la inserción
-      setModalActualizar(false);
-      getMetas();
-    } catch (error) {
-      console.error('Error:', error);
-      Swal.fire({
-        icon: "error",
-        text: "Ocurrió un error al crear la meta, comuníquese con sistemas",
-        confirmButtonColor: "#d63031",
-      });
+    } else {
     }
   };
 
@@ -350,7 +354,7 @@ function AnticipoNomina() {
   };
 
   const eliminar = async (dato: NominaAnticipo) => {
-    const permiso = await filtroSeguridad("CAT_META_DEL");
+    const permiso = await filtroSeguridad("ELIMINA_ANTICIPO_NOMIMA");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     }
@@ -483,7 +487,11 @@ function AnticipoNomina() {
       headerName: "Fecha",
       width: 200,
       headerClassName: "custom-header",
-      // renderCell: (params) => <span> {getCiaForeignKey(params.row.cia)} </span>,
+      renderCell: (params) => {
+        const date = new Date(params.value);
+        const formattedDate = params.value ? date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+        return <span>{formattedDate}</span>;
+      },
     },
     {
       field: "d_empleado",
@@ -502,13 +510,14 @@ function AnticipoNomina() {
       headerName: "Cifra Monto",
       width: 180,
       headerClassName: "custom-header",
-      // renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(5)}` : "0"}</span>,
+      renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : "0"}</span>,
     },
     {
       field: "sueldo",
       headerName: "Sueldo",
       width: 180,
       headerClassName: "custom-header",
+      renderCell: (params) => <span>{params.value !== null && params.value !== undefined ? `$${parseFloat(params.value).toFixed(2)}` : "0"}</span>,
     },
     {
       field: "observaciones",
