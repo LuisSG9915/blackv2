@@ -427,6 +427,10 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/Horarios")}>Horarios</DropdownItem>
                     <DropdownItem onClick={() => navigate("/NominaTrabajadores")}>Catálogo trabajadores</DropdownItem>
                     <DropdownItem onClick={() => navigate("/Metas")}>Cifras</DropdownItem>
+                    <DropdownItem onClick={() => navigate("/RespuestasClientes")}>Respuestas clientes</DropdownItem>
+
+
+                    
                     {/* <DropdownItem onClick={() => navigate("/AnticipoNomina")}>Nomina Anticipo</DropdownItem> */}
                     <DropdownItem
                       onClick={async () => {

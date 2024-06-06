@@ -142,7 +142,7 @@ function Reagendado() {
     cerrarModal();
   };
 
-  const handleChange3 = (event) => {
+  const handleChange33 = (event) => {
     const { name, value } = event.target;
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
@@ -179,7 +179,7 @@ function Reagendado() {
   //     });
   //   }
   // };
-  const handleChange5 = (event) => {
+  const handleChange55 = (event) => {
     const { name, value } = event.target;
 
     // Extrae el día de la fecha seleccionada y conviértelo a un entero
@@ -192,6 +192,31 @@ function Reagendado() {
     });
   };
 
+
+
+  const handleChange3 = (event) => {
+    const { name, value } = event.target;
+
+    setFormulario((prevFormulario) => {
+      const newForm = {
+        ...prevFormulario,
+        [name]: value,
+      };
+
+      if (newForm.fechaInicial && newForm.fechaFinal) {
+        const startDate = new Date(newForm.fechaInicial);
+        const endDate = new Date(newForm.fechaFinal);
+
+        const differenceInTime = endDate.getTime() - startDate.getTime();
+        const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+        const daysInRange = differenceInDays + 1;
+
+        newForm.dayRange = daysInRange;
+      }
+
+      return newForm;
+    });
+  };
 
 
 
@@ -255,8 +280,8 @@ function Reagendado() {
   const [idActualizar, setIdActualizar] = useState(null);
   const [formulario, setFormulario] = useState({
     reporte: "",
-    fechaInicial: "",
-    fechaFinal: "",
+    fechaInicial2: "",
+    fechaFinal2: "",
     sucursal: "",
     claveProd: "",
     compania: "",
@@ -269,6 +294,9 @@ function Reagendado() {
     empresa: "",
     sucursalDestino: "",
     almacenDestino: "",
+    dayRange: 0,
+    fechaInicial: '',
+    fechaFinal: '',
   });
 
 
@@ -276,6 +304,7 @@ function Reagendado() {
     suc: 0,
     d1: 0,
     d2: 0,
+    dayRange:0,
     usuario: 0,
   });
 
@@ -303,7 +332,7 @@ function Reagendado() {
   const formattedDate = format(currentDate, "yyyyMMdd");
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof clientesAgendado)[] = ["suc", "d1", "d2"];
+    const camposRequeridos: (keyof clientesAgendado)[] = ["suc"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof clientesAgendado) => {
@@ -346,8 +375,8 @@ function Reagendado() {
         .post("/sp_detalleSeguimiento", null, {
           params: {
             suc: form.suc,
-            d1: form.d1,
-            d2: form.d2,
+            d1: 1,
+            d2: formulario.dayRange,
             usuario: dataUsuarios2[0]?.id,
           },
         })
@@ -366,6 +395,17 @@ function Reagendado() {
         });
     } else {
     }
+    setForm({
+      ...form,
+      suc: 0,
+      d1: 0,
+      d2: 0,
+    })
+    // setFormulario({
+    //   ...formulario,
+    //   formulario.fechaFinal2,
+    //   formulario.fechaInicial2,
+    // });
   };
 
   const editar = async () => {
@@ -401,6 +441,16 @@ function Reagendado() {
       });
     // } else {
     // }
+
+    setForm1({
+      ...form1,
+          llamada1:false,
+          llamada2: false,
+          llamada3: false,
+          idRespuesta: 0,
+          idUsuarioSeguimiento: 0,
+          observaciones: "",
+    });
   };
 
 
@@ -573,13 +623,15 @@ function Reagendado() {
     {
       accessorKey: "observaciones",
       header: "Observaciones",
+      width: 200,
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "llamada1",
-      header: "Llamada 1",
+      header: "Llam. 1",
       isVisible: true,
+      width: 50,
       Cell: ({ row }) => {
         if (row.original.llamada1 === true) {
           return <Input type="checkbox" disabled="disabled" checked="checked" />;
@@ -591,19 +643,21 @@ function Reagendado() {
     },
     {
       accessorKey: "llamada2",
-      header: "Llamada 2",
+      header: "Llam. 2",
+      width: 50,
       isVisible: true,
       Cell: ({ row }) => {
         if (row.original.llamada2 === true) {
-          return <Input type="checkbox" disabled="disabled" checked="checked" />;
+          return <Input type="checkbox" disabled="disabled" checked="checked" className="centered-checkbox"/>;
         } else {
-          return <Input type="checkbox" disabled="disabled" />;
+          return <Input type="checkbox" disabled="disabled" className="centered-checkbox"/>;
         }
       },
     },
     {
       accessorKey: "llamada3",
-      header: "Llamada 3",
+      header: "Llam. 3",
+      width: 50,
       isVisible: true,
       
       Cell: ({ row }) => {
@@ -619,6 +673,7 @@ function Reagendado() {
       accessorKey: "dRespuesta",
       header: "Respuesta",
       isVisible: true,
+      width: 150,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
@@ -677,8 +732,8 @@ function Reagendado() {
       }
     }
 
-    const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial);
-    const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal);
+    const fechaInicialFormateada = obtenerFechaSinGuiones(formData.fechaInicial2);
+    const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal2);
 
     const queryString = `/sp_repoDetalleSeguimiento?f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}&cliente=${formData.cliente
     }&estilista=${formData.estilista
@@ -777,9 +832,9 @@ function Reagendado() {
                       <Label>Fecha inicial:</Label>
                       <Input
                         type="date"
-                        name="fechaInicial"
-                        value={formulario.fechaInicial}
-                        onChange={handleChange3}
+                        name="fechaInicial2"
+                        value={formulario.fechaInicial2}
+                        onChange={handleChange33}
                         bsSize="sm"
                       />
                     </Col>
@@ -788,9 +843,9 @@ function Reagendado() {
                       <Label>Fecha final:</Label>
                       <Input
                         type="date"
-                        name="fechaFinal"
-                        value={formulario.fechaFinal}
-                        onChange={handleChange3}
+                        name="fechaFinal2"
+                        value={formulario.fechaFinal2}
+                        onChange={handleChange33}
                         bsSize="sm"
                       />
                     </Col>
@@ -962,7 +1017,9 @@ function Reagendado() {
         </ModalHeader>
 
         <ModalBody>
-          <Form>
+    
+          <Row>
+          <Col sm="12">
             <FormGroup>
               <Label>Sucursal:</Label>
               <Input type="select" name="suc" value={form.suc} onChange={handleChange4} bsSize="sm">
@@ -972,31 +1029,41 @@ function Reagendado() {
                 ))}
               </Input>
             </FormGroup>
-            <FormGroup>
-              <Label>Fecha inicial:</Label>
-              <Input
-                type="date"
-                name="d1"
-                value={form.d1 ? formatDate(form.d1) : ''}
-                onChange={handleChange5}
-                bsSize="sm"
-              />
-            </FormGroup>
+            </Col>
 
-            <FormGroup>
-              <Label>Fecha final:</Label>
-              <Input
-                type="date"
-                name="d2"
-                value={form.d2 ? formatDate(form.d2) : ''}
-                onChange={handleChange5}
-                bsSize="sm"
-              />
-            </FormGroup>
-          </Form>
+
+      <Col sm="6">
+        <Label>Fecha inicial:</Label>
+        <Input
+          type="date"
+          name="fechaInicial"
+          value={formulario.fechaInicial}
+          onChange={handleChange3}
+          bsSize="sm"
+        />
+      </Col>
+
+      <Col sm="6">
+        <Label>Fecha final:</Label>
+        <Input
+          type="date"
+          name="fechaFinal"
+          value={formulario.fechaFinal}
+          onChange={handleChange3}
+          bsSize="sm"
+        />
+          <br />
+      </Col>
+    
+      <div>
+        Rango de días: {formulario.dayRange}
+      </div>
+ 
+            </Row>
         </ModalBody>
         <ModalFooter>
-          <CButton color="success" onClick={insertar} text="Actualizar" />
+          <CButton color="success" onClick={insertar} 
+          text="Actualizar" />
           <CButton
             color="danger"
             onClick={() => {
