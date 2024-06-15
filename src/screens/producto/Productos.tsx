@@ -26,6 +26,7 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Alert,
 } from "reactstrap";
 import { jezaApi } from "../../api/jezaApi";
 import CButton from "../../components/CButton";
@@ -53,6 +54,7 @@ import useSeguridad from "../../hooks/getsHooks/useSeguridad";
 import Swal from "sweetalert2";
 import { useUnidadMedida } from "../../hooks/getsHooks/useUnidadMedida";
 import { UnidadMedidaModel } from "../../models/UnidadMedidaModel";
+import { ReagendaProd } from "../../models/ReagendaProd";
 import { UserResponse } from "../../models/Home";
 
 function Productos() {
@@ -330,58 +332,123 @@ function Productos() {
     d_Producto: "",
   });
 
-  // const create = () => {
-  //   jezaApi.post(`ProductoSustituto?id_Producto=${form.id}&clave_real=${ProductoSustitutoForm.clave_real}`).then(() => {
-  //     alert("registro cargado"); //manda alerta
-  //     getinfo(); // refresca tabla
-  //   });
-  // };
 
-  // const create = async () => {
-  //   const permiso = await filtroSeguridad("CAT_EMPRE_ADD");
-  //   if (permiso === false) {
-  //     return;
-  //   }
+  const [showSeguimientoTab, setShowSeguimientoTab] = useState(false);
+  const [data2, setData2] = useState<ReagendaProd[]>([]);
+  const [ProdReaForm, setProdReaForm] = useState<ReagendaProd>({
+    id: 0,
+    id_producto: 0,
+    txtAsunto: "",
+    txtMensaje: "",
+    dias_seguimiento: 0,
+    dias_reagendado: 0,
+  });
+  useEffect(() => {
+    if (modalActualizar && form.id) {
+      jezaApi.get(`/sp_catSeguimientoProdSel?idProducto=${form.id}`)
+        .then((response) => {
+          const data = response.data;
+          if (data.length > 0) {
+            const seguimientoData = data[0];
+            setProdReaForm({
+              id: seguimientoData.id,
+              id_producto: seguimientoData.id_producto,
+              txtAsunto: seguimientoData.txtAsunto,
+              txtMensaje: seguimientoData.txtMensaje,
+              dias_seguimiento: seguimientoData.dias_seguimiento,
+              dias_reagendado: seguimientoData.dias_reagendado,
+            });
+          } else {
+            setProdReaForm({
+              id: 0,
+              id_producto: 0,
+              txtAsunto: "",
+              txtMensaje: "",
+              dias_seguimiento: 0,
+              dias_reagendado: 0,
+            });
+          }
+          setData2(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+  }, [modalActualizar, form.id]);
 
-  //   if (validarCampos() === true) {
-  //     if (form.clave_prod === ProductoSustitutoForm.clave_real) {
-  //       Swal.fire({
-  //         icon: "error",
-  //         text: "La clave real no puede ser igual a la clave del producto.",
-  //         confirmButtonColor: "#d33",
-  //       });
-  //       return;
-  //     }
+  const create2 = async () => {
+    // const permiso = await filtroSeguridad("CAT_CLAVEREAL_ADD");
+    // if (permiso === false) {
+    //   return;
+    // }
 
-  //     if (form.id === parseInt(ProductoSustitutoForm.clave_real)) {
-  //       Swal.fire({
-  //         icon: "error",
-  //         text: "El ID de la clave real no puede ser igual a la clave real.",
-  //         confirmButtonColor: "#d33",
-  //       });
-  //       return;
-  //     }
+    // if (validarCampos1() === true) {
+    await jezaApi
+      .post("/sp_UpsertProducto", null, {
+        params: {
+          id: form.id,
+          id_producto: form.id,
+          txtAsunto: ProdReaForm.txtAsunto,
+          txtMensaje: ProdReaForm.txtMensaje,
+          dias_seguimiento: ProdReaForm.dias_seguimiento,
+          dias_reagendado: ProdReaForm.dias_reagendado,
+        },
+      })
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          text: "Registro realizado con éxito",
+          confirmButtonColor: "#3085d6",
+        });
 
-  //     await jezaApi
-  //       .post("/ProductoSustituto", null, {
-  //         params: {
-  //           id_Producto: form.id,
-  //           clave_real: ProductoSustitutoForm.clave_real,
-  //         },
-  //       })
-  //       .then((response) => {
-  //         Swal.fire({
-  //           icon: "success",
-  //           text: "Clave real creada con éxito",
-  //           confirmButtonColor: "#3085d6",
-  //         });
-  //         getinfo();
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  // };
+        getinfoSegProd();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // }
+  };
+
+  const getinfoSegProd = () => {
+    jezaApi.get(`sp_catSeguimientoProdSel?idProducto=${form.id}`).then((response) => {
+      setData2(response.data);
+      console.log(response.data);
+    });
+  };
+  const fetchProduct2 = async () => {
+    try {
+      const response = await jezaApi.get(`/producto?id=${form.id}&descripcion=%&verinventariable=0&esServicio=2&esInsumo=2&obsoleto=2&marca=%&cia=21&sucursal=26`);
+      setDataProductos(response.data);
+
+      // Asumiendo que deseas verificar el primer producto en el arreglo para determinar la visibilidad de la pestaña Seguimiento
+      if (response.data.length > 0) {
+        setShowSeguimientoTab(response.data[0].es_servicio);
+      }
+
+    } catch (error) {
+      console.error("Error al obtener los productos:", error);
+    }
+  };
+
+  const cerrarModalActualizar2 = () => {
+    setModalActualizar(false);
+    // Restablecer estado relacionado con la pestaña "Seguimiento"
+    setActiveTab("1"); // Poner la pestaña activa en la primera pestaña por defecto
+    setProdReaForm({ // Limpiar los datos de seguimiento
+      dias_seguimiento: 0,
+      dias_reagendado: 0,
+      txtAsunto: "",
+      txtMensaje: "",
+    });
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []); // Ejecuta fetchProduct solo una vez al cargar el componente
+
+  useEffect(() => {
+    setShowSeguimientoTab(form.es_servicio);
+  }, [form.es_servicio]);
 
   const validarCampos1 = () => {
     // Aquí agregamos validaciones para los campos requeridos
@@ -453,6 +520,12 @@ function Productos() {
     });
   };
 
+
+
+
+
+
+
   // const eliminarSustituto = (dato: ProdSustituto) => {
   //   const opcion = window.confirm(`Estás Seguro que deseas Eliminar el elemento`);
   //   if (opcion) {
@@ -495,6 +568,7 @@ function Productos() {
   const mostrarModalActualizar = (dato: Producto) => {
     setForm(dato);
     setModalActualizar(true);
+    setShowSeguimientoTab(form.es_servicio);
   };
 
   // const mostrarModalUpdate = (dato: Producto, id: number) => {
@@ -1113,6 +1187,25 @@ function Productos() {
     }
   };
 
+  const handleSeguiProd = (e) => {
+    const { name, value } = e.target;
+
+    // Eliminar espacios iniciales en todos los campos de entrada de texto
+    const sanitizedValue1 = value.trim();
+
+    if (name === 'dias_seguimiento' || name === 'dias_reagendado') {
+      // Eliminar caracteres no numéricos
+      const numericValue1 = sanitizedValue1.replace(/[^0-9]/g, '');
+      setProdReaForm({ ...ProdReaForm, [name]: numericValue1 });
+    } else {
+      // Actualizar el valor sin validación en otros campos
+      const trimmedValue1 = value.replace(/^\s+/g, "");
+      setProdReaForm((prevState) => ({ ...prevState, [name]: trimmedValue1 }));
+      console.log(ProdReaForm);
+    }
+  };
+
+
   const handleNav = () => {
     navigate("/ProductosCrear");
   };
@@ -1134,6 +1227,15 @@ function Productos() {
       setActiveTab(tab);
     }
   };
+
+
+  const toggleModalActualizar = () => {
+    setModalActualizar(!modalActualizar);
+    // Aquí puedes ajustar setShowSeguimientoTab basado en form.es_servicio
+    setShowSeguimientoTab(form.es_servicio);
+  };
+
+
   const [visible, setVisible] = useState(false);
 
   const [error, setError] = useState(false);
@@ -1753,7 +1855,20 @@ function Productos() {
                     Promociones
                   </NavLink>
                 </NavItem>
+                {/* <NavItem>
+                  <NavLink className={activeTab === "5" ? "active" : ""} onClick={() => toggleTab("5")}>
+                    Seguimiento
+                  </NavLink>
+                </NavItem> */}
+                {showSeguimientoTab && (
+                  <NavItem>
+                    <NavLink className={activeTab === "5" ? "active" : ""} onClick={() => toggleTab("5")}>
+                      Seguimiento
+                    </NavLink>
+                  </NavItem>
+                )}
               </Nav>
+
               <TabContent activeTab={activeTab}>
                 <br />
                 <TabPane tabId="1">
@@ -2086,8 +2201,84 @@ function Productos() {
                     </Row>
                   </Container>
                 </TabPane>
-                <br />
-                <br />
+                {showSeguimientoTab && (
+                  <TabPane tabId="5">
+                    <h3>Seguimiento de servicios</h3>
+                    <br />
+                    <Container>
+                      <Row>
+                        <Col sm="3">
+                          <CFormGroupInput
+                            type="number"
+                            disabled="true"
+                            handleChange={handleSeguiProd}
+                            inputName="id_producto"
+                            labelName="Servicio:"
+                            value={form.id}
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <CFormGroupInput
+                            type="number"
+                            handleChange={handleSeguiProd}
+                            inputName="dias_seguimiento"
+                            labelName="Días seguimiento:"
+                            value={ProdReaForm.dias_seguimiento}
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <CFormGroupInput
+                            type="number"
+                            handleChange={handleSeguiProd}
+                            inputName="dias_reagendado"
+                            labelName="Días reagendado:"
+                            value={ProdReaForm.dias_reagendado}
+                          />
+                        </Col>
+                        <Col sm="9">
+                          <CFormGroupInput
+                            type="textarea"
+                            handleChange={handleSeguiProd}
+                            inputName="txtAsunto"
+                            labelName="Asunto:"
+                            value={ProdReaForm.txtAsunto}
+                            minlength={1} maxlength={255}
+                          />
+                          <br />
+                        </Col>
+                        <Col sm="3">
+                          <br />
+                          <br />
+                          <Alert color="primary">
+                            Agregue el asunto del correo.
+                          </Alert>
+                        </Col>
+                        <Col sm="9">
+                          <CFormGroupInput
+                            type="textarea"
+                            handleChange={handleSeguiProd}
+                            inputName="txtMensaje"
+                            labelName="Mensaje:"
+                            value={ProdReaForm.txtMensaje}
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <br />
+                          <Alert color="primary" size={2}>
+                            Agregue el Mensaje del correo.
+                          </Alert>
+                        </Col>
+                        <Col sm="5">
+                          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                            <CButton color="info" onClick={create2} text="Guardar seguimiento" />
+                            <CButton color="secondary" onClick={create2} text="Clonar desde" />
+                          </ButtonGroup>
+                        </Col>
+                      </Row>
+                    </Container>
+                  </TabPane>
+                )}
+
               </TabContent>
             </>
           </Card>
@@ -2099,7 +2290,7 @@ function Productos() {
           <CButton
             color="danger"
             onClick={() => {
-              cerrarModalActualizar();
+              cerrarModalActualizar2();
             }}
             text="Cancelar"
           />
