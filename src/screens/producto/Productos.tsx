@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { AiOutlineUser, AiFillEdit, AiFillDelete, AiOutlineShoppingCart } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import {
@@ -415,6 +415,64 @@ function Productos() {
       console.log(response.data);
     });
   };
+  const [modalOpenCli, setModalOpenCli] = useState(false);
+  const [selectedIdC, setSelectedIdC] = useState(0);
+  const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
+
+  const handleModalSelect = (id: number, name: string) => {
+    setSelectedIdC(id);
+    setSelectedName(name);
+    cerrarModal();
+  };
+  // Función para abrir el modal
+  const abrirModal = () => {
+    setModalOpenCli(true);
+  };
+
+  // Función para cerrar el modal
+  const cerrarModal = () => {
+    setModalOpenCli(false);
+  };
+
+
+  const columnsReaProd: MRT_ColumnDef<ReagendaProd>[] = useMemo(
+    () => [
+
+      {
+        accessorKey: "d_producto",
+        header: "Producto",
+        size: 60,
+      },
+      {
+        accessorKey: "txtAsunto",
+        header: "Asunto",
+        size: 60,
+      },
+      {
+        accessorKey: "dias_seguimiento",
+        header: "Días Seg",
+        size: 60,
+      },
+      {
+        accessorKey: "dias_reagendado",
+        header: "Días Reag.",
+        size: 60,
+      },
+      {
+        header: "Acciones",
+
+        Cell: ({ row }) => {
+          console.log(row.original);
+          return (
+            <CButton text="Seleccionar" color="secondary" onClick={() => handleModalSelect(row.original.id, row.original.nombre)} />
+          );
+        },
+        size: 40,
+      },
+    ],
+    []
+  );
+
   const fetchProduct2 = async () => {
     try {
       const response = await jezaApi.get(`/producto?id=${form.id}&descripcion=%&verinventariable=0&esServicio=2&esInsumo=2&obsoleto=2&marca=%&cia=21&sucursal=26`);
@@ -2271,7 +2329,10 @@ function Productos() {
                         <Col sm="5">
                           <ButtonGroup variant="contained" aria-label="outlined primary button group">
                             <CButton color="info" onClick={create2} text="Guardar seguimiento" />
-                            <CButton color="secondary" onClick={create2} text="Clonar desde" />
+
+                            <CButton text="Clonar desde" color="danger" onClick={abrirModal} />
+
+                            {/* <CButton color="secondary" onClick={create2} text="Clonar desde" /> */}
                           </ButtonGroup>
                         </Col>
                       </Row>
@@ -2377,6 +2438,23 @@ function Productos() {
           />
         </ModalFooter>
       </Modal>
+      <Modal isOpen={modalOpenCli} toggle={cerrarModal} size="lg">
+        <ModalHeader toggle={cerrarModal}><h2>Clonar servicio:</h2></ModalHeader>
+        <ModalBody>
+          <MaterialReactTable
+            columns={columnsReaProd}
+            data={data2}
+            onSelect={(idProducto, d_producto) => handleModalSelect(idProducto, d_producto)} // Pasa la función de selección
+            initialState={{ density: "compact" }}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <CButton text="Cerrar" color="danger" onClick={cerrarModal} />
+          {/* Cerrar
+              </Button> */}
+        </ModalFooter>
+      </Modal>
+
     </>
   );
 }
