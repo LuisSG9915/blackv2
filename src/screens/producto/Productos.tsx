@@ -335,17 +335,34 @@ function Productos() {
 
   const [showSeguimientoTab, setShowSeguimientoTab] = useState(false);
   const [data2, setData2] = useState<ReagendaProd[]>([]);
+  const [data3, setData3] = useState<ReagendaProd[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await jezaApi.get(`/sp_catSeguimientoProdSel2?idProducto=0`);
+        setData3(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
+
   const [ProdReaForm, setProdReaForm] = useState<ReagendaProd>({
     id: 0,
     id_producto: 0,
     txtAsunto: "",
     txtMensaje: "",
+    txtAsuntoRe: "",
+    txtMensajeRe: "",
     dias_seguimiento: 0,
     dias_reagendado: 0,
   });
   useEffect(() => {
     if (modalActualizar && form.id) {
-      jezaApi.get(`/sp_catSeguimientoProdSel?idProducto=${form.id}`)
+      jezaApi.get(`/sp_catSeguimientoProdSel2?idProducto=${form.id}`)
         .then((response) => {
           const data = response.data;
           if (data.length > 0) {
@@ -354,6 +371,8 @@ function Productos() {
               id: seguimientoData.id,
               id_producto: seguimientoData.id_producto,
               txtAsunto: seguimientoData.txtAsunto,
+              txtMensajeRe: seguimientoData.txtMensajeRe,
+              txtAsuntoRe: seguimientoData.txtAsuntoRe,
               txtMensaje: seguimientoData.txtMensaje,
               dias_seguimiento: seguimientoData.dias_seguimiento,
               dias_reagendado: seguimientoData.dias_reagendado,
@@ -364,6 +383,8 @@ function Productos() {
               id_producto: 0,
               txtAsunto: "",
               txtMensaje: "",
+              txtAsuntoRe: "",
+              txtMensajeRe: "",
               dias_seguimiento: 0,
               dias_reagendado: 0,
             });
@@ -390,6 +411,8 @@ function Productos() {
           id_producto: form.id,
           txtAsunto: ProdReaForm.txtAsunto,
           txtMensaje: ProdReaForm.txtMensaje,
+          txtAsuntoRe: ProdReaForm.txtAsuntoRe,
+          txtMensajeRe: ProdReaForm.txtMensajeRe,
           dias_seguimiento: ProdReaForm.dias_seguimiento,
           dias_reagendado: ProdReaForm.dias_reagendado,
         },
@@ -409,6 +432,49 @@ function Productos() {
     // }
   };
 
+
+  const eliminarRe = async (dato: ReagendaProd) => {
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar el registro?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        jezaApi.delete(`/catSeguimientoProdDel?id_producto=${form.id}`).then(() => {
+          Swal.fire({
+            icon: "success",
+            text: "Registro eliminado con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          getinfoSegProd(); // Asegúrate de que esta función actualice correctamente los datos.
+          setProdReaForm({
+            id: 0,
+            id_producto: 0,
+            txtAsunto: "",
+            txtMensaje: "",
+            txtAsuntoRe: "",
+            txtMensajeRe: "",
+            dias_seguimiento: 0,
+            dias_reagendado: 0,
+          });
+      
+        }).catch((error) => {
+          console.error("Error deleting data:", error);
+          Swal.fire({
+            icon: "error",
+            text: "Hubo un error al eliminar el registro.",
+            confirmButtonColor: "#3085d6",
+          });
+        });
+      }
+    });
+  };
+
+
   const getinfoSegProd = () => {
     jezaApi.get(`sp_catSeguimientoProdSel?idProducto=${form.id}`).then((response) => {
       setData2(response.data);
@@ -419,11 +485,26 @@ function Productos() {
   const [selectedIdC, setSelectedIdC] = useState(0);
   const [selectedName, setSelectedName] = useState(""); // Estado para almacenar el nombre seleccionados
 
-  const handleModalSelect = (id: number, name: string) => {
+  const handleModalSelect1 = (id: number, name: string) => {
     setSelectedIdC(id);
     setSelectedName(name);
     cerrarModal();
   };
+
+  const handleModalSelect = (selectedRecord) => {
+    setProdReaForm({
+      id: selectedRecord.id,
+      id_producto: selectedRecord.id_producto,
+      txtAsunto: selectedRecord.txtAsunto,
+      txtMensaje: selectedRecord.txtMensaje,
+      txtAsuntoRe: selectedRecord.txtAsuntoRe,
+      txtMensajeRe: selectedRecord.txtMensajeRe,
+      dias_seguimiento: selectedRecord.dias_seguimiento,
+      dias_reagendado: selectedRecord.dias_reagendado,
+    });
+    cerrarModal();
+  };
+  
   // Función para abrir el modal
   const abrirModal = () => {
     setModalOpenCli(true);
@@ -434,37 +515,34 @@ function Productos() {
     setModalOpenCli(false);
   };
 
-
   const columnsReaProd: MRT_ColumnDef<ReagendaProd>[] = useMemo(
     () => [
-
       {
-        accessorKey: "d_producto",
-        header: "Producto",
-        size: 60,
-      },
-      {
-        accessorKey: "txtAsunto",
-        header: "Asunto",
-        size: 60,
-      },
-      {
-        accessorKey: "dias_seguimiento",
-        header: "Días Seg",
-        size: 60,
-      },
-      {
-        accessorKey: "dias_reagendado",
-        header: "Días Reag.",
-        size: 60,
-      },
+              accessorKey: "d_producto",
+              header: "Producto",
+              size: 60,
+            },
+            {
+              accessorKey: "txtAsunto",
+              header: "Asunto",
+              size: 60,
+            },
+            {
+              accessorKey: "dias_seguimiento",
+              header: "Días Seg",
+              size: 60,
+            },
+            {
+              accessorKey: "dias_reagendado",
+              header: "Días Reag.",
+              size: 60,
+            },
       {
         header: "Acciones",
-
         Cell: ({ row }) => {
-          console.log(row.original);
+          const record = row.original;
           return (
-            <CButton text="Seleccionar" color="secondary" onClick={() => handleModalSelect(row.original.id, row.original.nombre)} />
+            <CButton text="Seleccionar" color="secondary" onClick={() => handleModalSelect(record)} />
           );
         },
         size: 40,
@@ -472,6 +550,44 @@ function Productos() {
     ],
     []
   );
+  
+  // const columnsReaProd: MRT_ColumnDef<ReagendaProd>[] = useMemo(
+  //   () => [
+
+  //     {
+  //       accessorKey: "d_producto",
+  //       header: "Producto",
+  //       size: 60,
+  //     },
+  //     {
+  //       accessorKey: "txtAsunto",
+  //       header: "Asunto",
+  //       size: 60,
+  //     },
+  //     {
+  //       accessorKey: "dias_seguimiento",
+  //       header: "Días Seg",
+  //       size: 60,
+  //     },
+  //     {
+  //       accessorKey: "dias_reagendado",
+  //       header: "Días Reag.",
+  //       size: 60,
+  //     },
+  //     {
+  //       header: "Acciones",
+
+  //       Cell: ({ row }) => {
+  //         console.log(row.original);
+  //         return (
+  //           <CButton text="Seleccionar" color="secondary" onClick={() => handleModalSelect(row.original.id, row.original.nombre)} />
+  //         );
+  //       },
+  //       size: 40,
+  //     },
+  //   ],
+  //   []
+  // );
 
   const fetchProduct2 = async () => {
     try {
@@ -2265,7 +2381,7 @@ function Productos() {
                     <br />
                     <Container>
                       <Row>
-                        <Col sm="3">
+                        {/* <Col sm="9">
                           <CFormGroupInput
                             type="number"
                             disabled="true"
@@ -2274,39 +2390,19 @@ function Productos() {
                             labelName="Servicio:"
                             value={form.id}
                           />
-                        </Col>
-                        <Col sm="3">
-                          <CFormGroupInput
-                            type="number"
-                            handleChange={handleSeguiProd}
-                            inputName="dias_seguimiento"
-                            labelName="Días seguimiento:"
-                            value={ProdReaForm.dias_seguimiento}
-                          />
-                        </Col>
-                        <Col sm="3">
-                          <CFormGroupInput
-                            type="number"
-                            handleChange={handleSeguiProd}
-                            inputName="dias_reagendado"
-                            labelName="Días reagendado:"
-                            value={ProdReaForm.dias_reagendado}
-                          />
-                        </Col>
+                        </Col> */}
                         <Col sm="9">
                           <CFormGroupInput
                             type="textarea"
                             handleChange={handleSeguiProd}
                             inputName="txtAsunto"
-                            labelName="Asunto:"
+                            labelName="Asunto Seguimiento:"
                             value={ProdReaForm.txtAsunto}
                             minlength={1} maxlength={255}
                           />
-                          <br />
+                       
                         </Col>
                         <Col sm="3">
-                          <br />
-                          <br />
                           <Alert color="primary">
                             Agregue el asunto del correo.
                           </Alert>
@@ -2316,25 +2412,87 @@ function Productos() {
                             type="textarea"
                             handleChange={handleSeguiProd}
                             inputName="txtMensaje"
-                            labelName="Mensaje:"
+                            labelName="Mensaje Seguimiento:"
                             value={ProdReaForm.txtMensaje}
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <Alert color="primary" size={2}>
+                            Agregue el Mensaje del correo.
+                          </Alert>
+                        </Col>
+                        <Col sm="9">
+                          <CFormGroupInput
+                            type="textarea"
+                            handleChange={handleSeguiProd}
+                            inputName="txtAsuntoRe"
+                            labelName="Asunto Reagendado:"
+                            value={ProdReaForm.txtAsuntoRe}
+                            minlength={1} maxlength={255}
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <Alert color="primary">
+                            Agregue el asunto de reagendado.
+                          </Alert>
+                        </Col>
+                        <Col sm="9">
+                          <CFormGroupInput
+                            type="textarea"
+                            handleChange={handleSeguiProd}
+                            inputName="txtMensajeRe"
+                            labelName="Mensaje Reagendado:"
+                            value={ProdReaForm.txtMensajeRe}
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <Alert color="primary" size={2}>
+                            Agregue el Mensaje de reagendado del correo.
+                          </Alert>
+                        </Col>
+                        <Col sm="2"> <br /><p>Días seguimiento:</p></Col>
+                        <Col sm="7">
+                          <CFormGroupInput
+                            type="number"
+                            handleChange={handleSeguiProd}
+                            inputName="dias_seguimiento"
+                            labelName=""
+                            value={ProdReaForm.dias_seguimiento}
                           />
                         </Col>
                         <Col sm="3">
                           <br />
                           <Alert color="primary" size={2}>
-                            Agregue el Mensaje del correo.
+                            Días para el segumiento
+                          </Alert>
+                        </Col>
+                        
+                        <Col sm="2"> <br /><p> Días reagendado: </p></Col>
+                        <Col sm="7">
+                          <CFormGroupInput
+                            type="number"
+                            handleChange={handleSeguiProd}
+                            inputName="dias_reagendado"
+                            value={ProdReaForm.dias_reagendado}
+                            labelName=""
+                          />
+                        </Col>
+                        <Col sm="3">
+                          <br />
+                          <Alert color="primary" size={2}>
+                            Dias sugerencia reagendado.
                           </Alert>
                         </Col>
                         <Col sm="5">
                           <ButtonGroup variant="contained" aria-label="outlined primary button group">
                             <CButton color="info" onClick={create2} text="Guardar seguimiento" />
 
-                            <CButton text="Clonar desde" color="danger" onClick={abrirModal} />
+                            <CButton text="Clonar desde" color="success" onClick={abrirModal} />
 
-                            {/* <CButton color="secondary" onClick={create2} text="Clonar desde" /> */}
+                            <CButton color="danger" onClick={() => eliminarRe(ProdReaForm)} text="Eliminar" />
                           </ButtonGroup>
                         </Col>
+                        
                       </Row>
                     </Container>
                   </TabPane>
@@ -2438,15 +2596,28 @@ function Productos() {
           />
         </ModalFooter>
       </Modal>
-      <Modal isOpen={modalOpenCli} toggle={cerrarModal} size="lg">
-        <ModalHeader toggle={cerrarModal}><h2>Clonar servicio:</h2></ModalHeader>
+      <Modal isOpen={modalOpenCli} toggle={cerrarModal} size="xl">
+        <ModalHeader toggle={cerrarModal}><h2>Clonar servicio</h2></ModalHeader>
         <ModalBody>
-          <MaterialReactTable
+          {/* <MaterialReactTable
             columns={columnsReaProd}
             data={data2}
             onSelect={(idProducto, d_producto) => handleModalSelect(idProducto, d_producto)} // Pasa la función de selección
             initialState={{ density: "compact" }}
-          />
+          /> */}
+          <MaterialReactTable
+          columns={columnsReaProd}
+          data={data3}
+          initialState={{ density: "compact" }}
+          getRowId={(row) => row.id}
+          renderRowActions={({ row }) => (
+            <CButton
+              text="Seleccionar"
+              color="secondary"
+              onClick={() => handleModalSelect(row.original)}
+            />
+          )}
+        />
         </ModalBody>
         <ModalFooter>
           <CButton text="Cerrar" color="danger" onClick={cerrarModal} />

@@ -13,7 +13,7 @@ interface Props {
   minlength?: number;
   maxlength?: number;
 }
-function CFormGroupInput({ handleChange, inputName, labelName, value, type, disabled, defaultChecked, defaultValue, placeholder, minlength, maxlength }: Props) {
+function CFormGroupInput({ handleChange, inputName, labelName, value, type, disabled, defaultChecked, defaultValue, placeholder, minlength, maxlength}: Props) {
   return (
     <FormGroup>
       <Label>{labelName}</Label>
@@ -29,6 +29,7 @@ function CFormGroupInput({ handleChange, inputName, labelName, value, type, disa
         placeholder={placeholder}
         minLength={minlength} // Usar la propiedad minLength del input para limitar la longitud mínima
         maxLength={maxlength} // Usar la 
+        rows={1}
       />
     </FormGroup>
   );
