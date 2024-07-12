@@ -304,7 +304,7 @@ function Reagendado() {
     suc: 0,
     d1: 0,
     d2: 0,
-    dayRange:0,
+    dayRange: 0,
     usuario: 0,
   });
 
@@ -444,12 +444,12 @@ function Reagendado() {
 
     setForm1({
       ...form1,
-          llamada1:false,
-          llamada2: false,
-          llamada3: false,
-          idRespuesta: 0,
-          idUsuarioSeguimiento: 0,
-          observaciones: "",
+      llamada1: false,
+      llamada2: false,
+      llamada3: false,
+      idRespuesta: 0,
+      idUsuarioSeguimiento: 0,
+      observaciones: "",
     });
   };
 
@@ -529,6 +529,7 @@ function Reagendado() {
 
   const { dataTrabajadores } = useNominaTrabajadores();
   const dataFiltrada = dataTrabajadores.filter(estilista => estilista.status !== 2);
+
   const optionsEstilista = [
     { value: "", label: "--Selecciona un Estilista--" },
     ...dataFiltrada.map((item) => ({
@@ -542,6 +543,7 @@ function Reagendado() {
       accessorKey: "acciones",
       header: "Acción",
       isVisible: true,
+      size: 3,
       Cell: ({ row }) => (
         <>
           <AiFillEdit
@@ -550,9 +552,9 @@ function Reagendado() {
               setIdActualizar(row.original.id); // Establece el id a actualizar
               mostrarModalActualizar(row.original); // Abre el modal
             }}
-            size={35}
+            size={25}
           ></AiFillEdit>
-          <MdOutlineEditCalendar size={35}
+          <MdOutlineEditCalendar size={25}
             onClick={() => {
 
               // window.open = `http://cbinfo.no-ip.info:9085/?idRec=${dataUsuarios2[0].id}&suc=${dataUsuarios2[0].d_sucursal}&idSuc=${dataUsuarios2[0].sucursal}`;
@@ -580,26 +582,31 @@ function Reagendado() {
 
     {
       accessorKey: "fechaVisita",
-      header: "Fecha última visita",
+      header: "Últ. Vis.",
       isVisible: true,
+      size: 3,
       // Puedes agregar más propiedades de configuración aquí si es necesario
+      Cell: ({ cell }) => formatDate(cell.getValue()),
     },
     {
       accessorKey: "nombre",
-      header: "Sucursal",
+      header: "Suc",
       isVisible: true,
+      size: 5,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "nombreCliente",
       header: "Cliente",
       isVisible: true,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "nombreServicio",
       header: "Servicio",
       isVisible: true,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
@@ -612,94 +619,156 @@ function Reagendado() {
       accessorKey: "nombreEstilista",
       header: "Estilista",
       isVisible: true,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "fechaProximaCitaNormal",
       header: "Próxima cita",
       isVisible: true,
+      size: 10,
+      // Cell: ({ cell }) => formatDate2(cell.getValue()),
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "observaciones",
       header: "Observaciones",
-      width: 200,
+      size: 5,
       isVisible: true,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "llamada1",
-      header: "Llam. 1",
+      header: "Llam1",
       isVisible: true,
-      width: 50,
+      size: 5,
       Cell: ({ row }) => {
-        if (row.original.llamada1 === true) {
-          return <Input type="checkbox" disabled="disabled" checked="checked" />;
-        } else {
-          return <Input type="checkbox" disabled="disabled" />;
-        }
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Input
+              type="checkbox"
+              disabled="disabled"
+              checked={row.original.llamada1}
+            />
+          </div>
+        );
       },
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "llamada2",
-      header: "Llam. 2",
-      width: 50,
+      header: "Llam2",
+      size: 5,
       isVisible: true,
       Cell: ({ row }) => {
-        if (row.original.llamada2 === true) {
-          return <Input type="checkbox" disabled="disabled" checked="checked" className="centered-checkbox"/>;
-        } else {
-          return <Input type="checkbox" disabled="disabled" className="centered-checkbox"/>;
-        }
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Input
+              type="checkbox"
+              disabled="disabled"
+              checked={row.original.llamada2}
+            />
+          </div>
+        );
       },
+      // Cell: ({ row }) => {
+      //   if (row.original.llamada2 === true) {
+      //     return <Input type="checkbox" disabled="disabled" checked="checked" className="centered-checkbox" />;
+      //   } else {
+      //     return <Input type="checkbox" disabled="disabled" className="centered-checkbox" />;
+      //   }
+      // },
     },
     {
       accessorKey: "llamada3",
-      header: "Llam. 3",
-      width: 50,
+      header: "Llam3",
+      size: 5,
       isVisible: true,
-      
+
       Cell: ({ row }) => {
-        if (row.original.llamada3 === true) {
-          return <Input type="checkbox" disabled="disabled" checked="checked" />;
-        } else {
-          return <Input type="checkbox" disabled="disabled" />;
-        }
+        return (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Input
+              type="checkbox"
+              disabled="disabled"
+              checked={row.original.llamada3}
+            />
+          </div>
+        );
       },
-      
+
     },
     {
       accessorKey: "dRespuesta",
       header: "Respuesta",
       isVisible: true,
-      width: 150,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
     {
       accessorKey: "FechaAgendada",
-      header: "Fecha nueva cita",
+      header: "Nueva cita",
       isVisible: true,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
+      Cell: ({ cell }) => formatDate(cell.getValue()),
     },
     {
       accessorKey: "nombreServ",
       header: "Nueva cita",
       isVisible: true,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
-    {
-      accessorKey: "dUsurioAltaSeguimiento",
-      header: "Usr. Alta Seguiento",
-      isVisible: true,
-      // Puedes agregar más propiedades de configuración aquí si es necesario
-    },
+    // {
+    //   accessorKey: "dUsurioAltaSeguimiento",
+    //   header: "Usr. Alta Seg.",
+    //   isVisible: true,
+    //   size: 10,
+    //   // Puedes agregar más propiedades de configuración aquí si es necesario
+    // },
     {
       accessorKey: "dUsurioSeguimiento",
       header: "Contacto",
       isVisible: true,
+      size: 10,
       // Puedes agregar más propiedades de configuración aquí si es necesario
     },
+
+    {
+      accessorKey: "acciones",
+      header: "Acción",
+      isVisible: true,
+      size: 5,
+      Cell: ({ row }) => (
+        <>
+          <AiFillEdit
+            className="mr-2"
+            onClick={() => {
+              setIdActualizar(row.original.id); // Establece el id a actualizar
+              mostrarModalActualizar(row.original); // Abre el modal
+            }}
+            size={25}
+          ></AiFillEdit>
+          <MdOutlineEditCalendar size={25}
+            onClick={() => {
+
+              // window.open = `http://cbinfo.no-ip.info:9085/?idRec=${dataUsuarios2[0].id}&suc=${dataUsuarios2[0].d_sucursal}&idSuc=${dataUsuarios2[0].sucursal}`;
+              window.open(`http://cbinfo.no-ip.info:9085/?idRec=${dataUsuarios2[0].id}&suc=${dataUsuarios2[0].d_sucursal}&idSuc=${dataUsuarios2[0].sucursal}`, '_blank');
+
+            }}
+          >
+          </MdOutlineEditCalendar >
+
+          {/* <AiFillDelete
+            color="lightred"
+            onClick={() => eliminar(row.original.id)} // Pasa el id como parámetro
+            size={23}
+          ></AiFillDelete> */}
+        </>
+      ),
+    },
+
     // Agrega más objetos para cada columna que desees mostrar
   ];
 
@@ -708,7 +777,7 @@ function Reagendado() {
     columns: [],
   });
 
-  const formatDate = (day) => {
+  const formatDate2 = (day) => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -716,6 +785,17 @@ function Reagendado() {
     return `${year}-${month}-${formattedDay}`;
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (isNaN(date)) {
+      return 'Sin fecha'; // Puedes cambiar este mensaje a lo que prefieras mostrar en caso de fecha inválida
+    }
+    return new Intl.DateTimeFormat('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(date);
+  };
   const ejecutaPeticion = async (reporte) => {
     const permiso = await filtroSeguridad("CAT_ANT_SEL");
     if (permiso === false) {
@@ -736,7 +816,7 @@ function Reagendado() {
     const fechaFinalFormateada = obtenerFechaSinGuiones(formData.fechaFinal2);
 
     const queryString = `/sp_repoDetalleSeguimiento?f1=${fechaInicialFormateada}&f2=${fechaFinalFormateada}&cliente=${formData.cliente
-    }&estilista=${formData.estilista
+      }&estilista=${formData.estilista
       }&claveProd=${formData.claveProd
       }&suc=${formData.sucursal
       }`;
@@ -1017,53 +1097,53 @@ function Reagendado() {
         </ModalHeader>
 
         <ModalBody>
-    
+
           <Row>
-          <Col sm="12">
-            <FormGroup>
-              <Label>Sucursal:</Label>
-              <Input type="select" name="suc" value={form.suc} onChange={handleChange4} bsSize="sm">
-                <option value={""}>Seleccione la sucursal</option>
-                {dataSucursales.map((item) => (
-                  <option value={item.sucursal}>{item.nombre}</option>
-                ))}
-              </Input>
-            </FormGroup>
+            <Col sm="12">
+              <FormGroup>
+                <Label>Sucursal:</Label>
+                <Input type="select" name="suc" value={form.suc} onChange={handleChange4} bsSize="sm">
+                  <option value={""}>Seleccione la sucursal</option>
+                  {dataSucursales.map((item) => (
+                    <option value={item.sucursal}>{item.nombre}</option>
+                  ))}
+                </Input>
+              </FormGroup>
             </Col>
 
 
-      <Col sm="6">
-        <Label>Fecha inicial:</Label>
-        <Input
-          type="date"
-          name="fechaInicial"
-          value={formulario.fechaInicial}
-          onChange={handleChange3}
-          bsSize="sm"
-        />
-      </Col>
+            <Col sm="6">
+              <Label>Fecha inicial:</Label>
+              <Input
+                type="date"
+                name="fechaInicial"
+                value={formulario.fechaInicial}
+                onChange={handleChange3}
+                bsSize="sm"
+              />
+            </Col>
 
-      <Col sm="6">
-        <Label>Fecha final:</Label>
-        <Input
-          type="date"
-          name="fechaFinal"
-          value={formulario.fechaFinal}
-          onChange={handleChange3}
-          bsSize="sm"
-        />
-          <br />
-      </Col>
-    
-      <div>
-        Rango de días: {formulario.dayRange}
-      </div>
- 
-            </Row>
+            <Col sm="6">
+              <Label>Fecha final:</Label>
+              <Input
+                type="date"
+                name="fechaFinal"
+                value={formulario.fechaFinal}
+                onChange={handleChange3}
+                bsSize="sm"
+              />
+              <br />
+            </Col>
+
+            <div>
+              Rango de días: {formulario.dayRange}
+            </div>
+
+          </Row>
         </ModalBody>
         <ModalFooter>
-          <CButton color="success" onClick={insertar} 
-          text="Actualizar" />
+          <CButton color="success" onClick={insertar}
+            text="Actualizar" />
           <CButton
             color="danger"
             onClick={() => {
