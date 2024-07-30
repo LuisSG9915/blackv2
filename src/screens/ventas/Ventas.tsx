@@ -5593,12 +5593,24 @@ const Ventas = () => {
                       //cancelButtonText: "No, imprimir",
                     }).then((result) => {
                       if (result.isConfirmed) {
-                        const envioCorreoRem = "desarrollo01@cbinformatica.net, tnbsoportetnb@gmail.com";
+                        //const envioCorreoRem = "desarrollo01@cbinformatica.net, tnbsoportetnb@gmail.com"; ORIGINAL 
+                        const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
                         //const envioCorreoRem = "soporte@cbinformatica.net";
                         const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
-                        axios
-                          .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                            // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                        const d_cliente = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+                        const escapeHtml = (unsafe) => {
+                          return unsafe
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;");
+                        };
+                  
+                        if (d_cliente.length > 0) {
+                          const nombreCliente = escapeHtml(d_cliente[0].nombre); // Ajusta según la estructura de tu objeto cliente
+                  
+                          axios.post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                             to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
                             subject: "Ticket",
                             textTicket: response.data,
@@ -5610,11 +5622,61 @@ const Ventas = () => {
                               text: "Correo enviado con éxito",
                               confirmButtonColor: "#3085d6",
                             });
+                  
+                            // Enviar el segundo correo después de enviar el primero
+                            return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
+                              to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                              subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
+                              text: "CORREO 📧",
+                              html: `
+                                <div style="font-family: Arial, sans-serif; color: #333;">
+                                  <meta charset="UTF-8">
+                                  <p><strong>¡Hola, ${nombreCliente}!</strong></p>
+                                  <p>¡Muchas gracias por elegirnos y visitarnos el día de hoy! 🫰🖤</p>
+                                  <p>Nunca olvides que eres muy especial para nosotros. Cualquier cosa en la que podamos apoyarte, cuenta con nosotros. 🫂</p>
+                                  <p>Tip: Es importante que demos mantenimiento al servicio que te realizamos por lo menos cada mes y medio.</p>
+                                  <p>¡Esperamos verte pronto! 😎🤘 WE LOVE U! </p>
+                                  <p>🙈 <strong>GANA UN 10% de descuento</strong> para tu siguiente visita respondiendo nuestra encuesta: 
+                                    <a href="https://forms.gle/srHf9DbcUKmJMhxq9" target="_blank">https://forms.gle/srHf9DbcUKmJMhxq9</a>
+                                  </p>
+                                  <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
+                                  <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
+                                  <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
+                                </div>
+                              `
+                            });
+                          })
+                          .then(() => {
+                            Swal.fire({
+                              icon: "success",
+                              text: "Correo de agradecimiento enviado a TNB",
+                              confirmButtonColor: "#3085d6",
+                            });
                           })
                           .catch((error) => {
                             alert(error);
                             console.log(error);
                           });
+                        }
+                          // .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                          //   // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                          //   to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                          //   subject: "Ticket",
+                          //   textTicket: response.data,
+                          //   text: "...",
+                          // })
+                          // .then(() => {
+                          //   Swal.fire({
+                          //     icon: "success",
+                          //     text: "Correo enviado con éxito",
+                          //     confirmButtonColor: "#3085d6",
+                          //   });
+                          // })
+                          // .catch((error) => {
+                          //   alert(error);
+                          //   console.log(error);
+                          // });
+                          
                       } else if (result.isDenied) {
                         Swal.fire({
                           title: "Ingrese el correo",
