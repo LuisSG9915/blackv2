@@ -5504,6 +5504,9 @@ const Ventas = () => {
     setForm((prevState) => ({ ...prevState, [name]: trimmedValue }));
     console.log(form);
   };
+  const verificarObservaciones = (observaciones) => {
+    return observaciones.some(observacion => observacion.includes("SERV"));
+};
 
   const endVenta = async () => {
     // alert(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`)
@@ -5594,8 +5597,8 @@ const Ventas = () => {
                     }).then((result) => {
                       if (result.isConfirmed) {
                         //const envioCorreoRem = "desarrollo01@cbinformatica.net, tnbsoportetnb@gmail.com"; ORIGINAL 
-                        const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
-                        //const envioCorreoRem = "soporte@cbinformatica.net";
+                        //const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
+                        const envioCorreoRem = "tnbsoportetnb@gmail";
                         const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         const d_cliente = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         const escapeHtml = (unsafe) => {
@@ -5623,41 +5626,50 @@ const Ventas = () => {
                               confirmButtonColor: "#3085d6",
                             });
                   
-                            // Enviar el segundo correo después de enviar el primero
-                            return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
-                              to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
-                              subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
-                              text: "CORREO 📧",
-                              html: `
-                                <div style="font-family: Arial, sans-serif; color: #333;">
-                                  <meta charset="UTF-8">
-                                  <p><strong>¡Hola, ${nombreCliente}!</strong></p>
-                                  <p>¡Muchas gracias por elegirnos y visitarnos el día de hoy! 🫰🖤</p>
-                                  <p>Nunca olvides que eres muy especial para nosotros. Cualquier cosa en la que podamos apoyarte, cuenta con nosotros. 🫂</p>
-                                  <p>Tip: Es importante que demos mantenimiento al servicio que te realizamos por lo menos cada mes y medio.</p>
-                                  <p>¡Esperamos verte pronto! 😎🤘 WE LOVE U! </p>
-                                  <p>🙈 <strong>GANA UN 10% de descuento</strong> para tu siguiente visita respondiendo nuestra encuesta: 
-                                    <a href="https://forms.gle/srHf9DbcUKmJMhxq9" target="_blank">https://forms.gle/srHf9DbcUKmJMhxq9</a>
-                                  </p>
-                                  <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
-                                  <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
-                                  <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
-                                </div>
-                              `
-                            });
-                          })
-                          .then(() => {
-                            Swal.fire({
-                              icon: "success",
-                              text: "Correo de agradecimiento enviado a TNB",
-                              confirmButtonColor: "#3085d6",
-                            });
+                            
+                            const observaciones = dataVentas.map(venta => venta.Observacion);
+                            const tieneServ = observaciones.some(obs => obs.includes("SERV"));
+
+                            if (tieneServ) {
+                              // Enviar el segundo correo después de enviar el primero
+                              return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
+                                to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                                subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
+                                text: "CORREO 📧",
+                                html: `
+                                  <div style="font-family: Arial, sans-serif; color: #333;">
+                                    <meta charset="UTF-8">
+                                    <p><strong>¡Hola, ${nombreCliente}!</strong></p>
+                                    <p>¡Muchas gracias por elegirnos y visitarnos el día de hoy! 🫰🖤</p>
+                                    <p>Nunca olvides que eres muy especial para nosotros. Cualquier cosa en la que podamos apoyarte, cuenta con nosotros. 🫂</p>
+                                    <p>Tip: Es importante que demos mantenimiento al servicio que te realizamos por lo menos cada mes y medio.</p>
+                                    <p>¡Esperamos verte pronto! 😎🤘 WE LOVE U! </p>
+                                    <p>🙈 <strong>GANA UN 10% de descuento</strong> para tu siguiente visita respondiendo nuestra encuesta: 
+                                      <a href="https://forms.gle/srHf9DbcUKmJMhxq9" target="_blank">https://forms.gle/srHf9DbcUKmJMhxq9</a>
+                                    </p>
+                                    <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
+                                    <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
+                                    <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
+                                  </div>
+                                `
+                              }).then(() => {
+                                Swal.fire({
+                                  icon: "success",
+                                  text: "Correo de agradecimiento enviado a TNB",
+                                  confirmButtonColor: "#3085d6",
+                                });
+                              }).catch((error) => {
+                                alert(error);
+                                console.log(error);
+                              });
+                            }
                           })
                           .catch((error) => {
                             alert(error);
                             console.log(error);
                           });
                         }
+                      } 
                           // .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                           //   // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
                           //   to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
@@ -5677,7 +5689,7 @@ const Ventas = () => {
                           //   console.log(error);
                           // });
                           
-                      } else if (result.isDenied) {
+                       else if (result.isDenied) {
                         Swal.fire({
                           title: "Ingrese el correo",
                           input: "email",
@@ -5703,6 +5715,16 @@ const Ventas = () => {
                             // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
                             const envioCorreoRem = "desarrollo01@cbinformatica.net, tnbsoportetnb@gmail.com";
                             //const envioCorreoRem = "soporte@cbinformatica.net";
+                            const d_cliente = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
+                            const escapeHtml = (unsafe) => {
+                              return unsafe
+                                .replace(/&/g, "&amp;")
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;")
+                                .replace(/"/g, "&quot;")
+                                .replace(/'/g, "&#039;");
+                            };
+                      
                             axios
                               .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                                 // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
@@ -5722,6 +5744,42 @@ const Ventas = () => {
                                 alert(error);
                                 console.log(error);
                               });
+
+                              const observaciones = dataVentas.map(venta => venta.Observacion);
+                              const tieneServ = observaciones.some(obs => obs.includes("SERV"));
+                              if (tieneServ) {
+                                // Enviar el segundo correo después de enviar el primero
+                                return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
+                                  to: envioCorreoRem + `,${result.value}`,
+                                  subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
+                                  text: "CORREO 📧",
+                                  html: `
+                                    <div style="font-family: Arial, sans-serif; color: #333;">
+                                      <meta charset="UTF-8">
+                                      <p><strong>¡Hola, ${nombreCliente}!</strong></p>
+                                      <p>¡Muchas gracias por elegirnos y visitarnos el día de hoy! 🫰🖤</p>
+                                      <p>Nunca olvides que eres muy especial para nosotros. Cualquier cosa en la que podamos apoyarte, cuenta con nosotros. 🫂</p>
+                                      <p>Tip: Es importante que demos mantenimiento al servicio que te realizamos por lo menos cada mes y medio.</p>
+                                      <p>¡Esperamos verte pronto! 😎🤘 WE LOVE U! </p>
+                                      <p>🙈 <strong>GANA UN 10% de descuento</strong> para tu siguiente visita respondiendo nuestra encuesta: 
+                                        <a href="https://forms.gle/srHf9DbcUKmJMhxq9" target="_blank">https://forms.gle/srHf9DbcUKmJMhxq9</a>
+                                      </p>
+                                      <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
+                                      <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
+                                      <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
+                                    </div>
+                                  `
+                                }).then(() => {
+                                  Swal.fire({
+                                    icon: "success",
+                                    text: "Correo de agradecimiento enviado a TNB",
+                                    confirmButtonColor: "#3085d6",
+                                  });
+                                }).catch((error) => {
+                                  alert(error);
+                                  console.log(error);
+                                });
+                              }  
                           }
                         });
                       }
@@ -5748,6 +5806,7 @@ const Ventas = () => {
                         alert(error);
                         console.log(error);
                       });
+                      
                     ticketVta({ folio: temp });
                     setModalTicket(true);
                   }
