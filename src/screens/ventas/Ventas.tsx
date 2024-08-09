@@ -5596,8 +5596,8 @@ const Ventas = () => {
                     }).then((result) => {
                       if (result.isConfirmed) {
                         //const envioCorreoRem = "desarrollo01@cbinformatica.net, tnbsoportetnb@gmail.com"; ORIGINAL 
-                        const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
-                        //const envioCorreoRem = "tnbsoportetnb@gmail";
+                        //const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
+                        const envioCorreoRem = "tnbsoportetnb@gmail.com";
                         const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         const d_cliente = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         const escapeHtml = (unsafe) => {
@@ -5613,7 +5613,8 @@ const Ventas = () => {
                           const nombreCliente = escapeHtml(d_cliente[0].nombre); // Ajusta según la estructura de tu objeto cliente
 
                           axios.post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                            to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                            //to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                            to: envioCorreoRem + `,${correo[0].email}`,
                             subject: "Ticket",
                             textTicket: response.data,
                             text: "...",
@@ -5632,7 +5633,8 @@ const Ventas = () => {
                               if (tieneServ) {
                                 // Enviar el segundo correo después de enviar el primero
                                 return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
-                                  to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                                  //to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                                  to: envioCorreoRem + `,${correo[0].email}`,
                                   subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
                                   text: "CORREO 📧",
                                   html: `
@@ -5669,7 +5671,7 @@ const Ventas = () => {
                                 }).then(() => {
                                   Swal.fire({
                                     icon: "success",
-                                    text: "Correo de agradecimiento enviado a TNB",
+                                    text: "Correo de agradecimiento enviado al cliente",
                                     confirmButtonColor: "#3085d6",
                                   });
                                 }).catch((error) => {
@@ -5801,7 +5803,7 @@ const Ventas = () => {
                                 }).then(() => {
                                   Swal.fire({
                                     icon: "success",
-                                    text: "Correo de agradecimiento enviado a TNB",
+                                    text: "Correo de agradecimiento enviado al cliente",
                                     confirmButtonColor: "#3085d6",
                                   });
                                 }).catch((error) => {
