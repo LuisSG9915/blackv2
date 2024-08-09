@@ -5506,7 +5506,7 @@ const Ventas = () => {
   };
   const verificarObservaciones = (observaciones) => {
     return observaciones.some(observacion => observacion.includes("SERV"));
-};
+  };
 
   const endVenta = async () => {
     // alert(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`)
@@ -5590,15 +5590,14 @@ const Ventas = () => {
                       denyButtonText: `Asignar correo`,
                       denyButtonColor: "green",
                       confirmButtonColor: "#3085d6",
-                      //cancelButtonColor: "#d33",
                       confirmButtonText: "Sí",
                       allowOutsideClick: false
                       //cancelButtonText: "No, imprimir",
                     }).then((result) => {
                       if (result.isConfirmed) {
                         //const envioCorreoRem = "desarrollo01@cbinformatica.net, tnbsoportetnb@gmail.com"; ORIGINAL 
-                        //const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
-                        const envioCorreoRem = "tnbsoportetnb@gmail";
+                        const envioCorreoRem = "tnbsoportetnb@gmail.com , rene@cbinformatica.net , holanefi@tnbmx.com, holaatenea@tnbmx.com,  holajann@tnbmx.com ";
+                        //const envioCorreoRem = "tnbsoportetnb@gmail";
                         const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         const d_cliente = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                         const escapeHtml = (unsafe) => {
@@ -5609,34 +5608,45 @@ const Ventas = () => {
                             .replace(/"/g, "&quot;")
                             .replace(/'/g, "&#039;");
                         };
-                  
+
                         if (d_cliente.length > 0) {
                           const nombreCliente = escapeHtml(d_cliente[0].nombre); // Ajusta según la estructura de tu objeto cliente
-                  
+
                           axios.post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                             to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
                             subject: "Ticket",
                             textTicket: response.data,
                             text: "...",
                           })
-                          .then(() => {
-                            Swal.fire({
-                              icon: "success",
-                              text: "Correo enviado con éxito",
-                              confirmButtonColor: "#3085d6",
-                            });
-                  
-                            
-                            const observaciones = dataVentas.map(venta => venta.Observacion);
-                            const tieneServ = observaciones.some(obs => obs.includes("SERV"));
+                            .then(() => {
+                              Swal.fire({
+                                icon: "success",
+                                text: "Correo enviado con éxito",
+                                confirmButtonColor: "#3085d6",
+                              });
 
-                            if (tieneServ) {
-                              // Enviar el segundo correo después de enviar el primero
-                              return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
-                                to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
-                                subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
-                                text: "CORREO 📧",
-                                html: `
+
+                              const observaciones = dataVentas.map(venta => venta.Observacion);
+                              const tieneServ = observaciones.some(obs => obs.includes("SERV"));
+
+                              if (tieneServ) {
+                                // Enviar el segundo correo después de enviar el primero
+                                return axios.post("http://cbinfo.no-ip.info:9086/send-custom-email", {
+                                  to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                                  subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
+                                  text: "CORREO 📧",
+                                  html: `
+                                  <html>
+                                   <head>
+                                     <meta charset="UTF-8">
+                                     <style>
+                                       body {
+                                         font-family: Arial, sans-serif;
+                                         color: #333;
+                                       }
+                                     </style>
+                                   </head>
+                                   <body>
                                   <div style="font-family: Arial, sans-serif; color: #333;">
                                     <meta charset="UTF-8">
                                     <p><strong>¡Hola, ${nombreCliente}!</strong></p>
@@ -5650,46 +5660,50 @@ const Ventas = () => {
                                     <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
                                     <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
                                     <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
-                                  </div>
+                                    <br>
+                                    <img src="https://i.imgur.com/dfwXr3L.png" alt="Imagen de agradecimiento" style="width: 40%; max-width: 250px; height: auto;">
+                                    </div>
+                                  </body>
+                                  </html>
                                 `
-                              }).then(() => {
-                                Swal.fire({
-                                  icon: "success",
-                                  text: "Correo de agradecimiento enviado a TNB",
-                                  confirmButtonColor: "#3085d6",
+                                }).then(() => {
+                                  Swal.fire({
+                                    icon: "success",
+                                    text: "Correo de agradecimiento enviado a TNB",
+                                    confirmButtonColor: "#3085d6",
+                                  });
+                                }).catch((error) => {
+                                  alert(error);
+                                  console.log(error);
                                 });
-                              }).catch((error) => {
-                                alert(error);
-                                console.log(error);
-                              });
-                            }
-                          })
-                          .catch((error) => {
-                            alert(error);
-                            console.log(error);
-                          });
+                              }
+                            })
+                            .catch((error) => {
+                              alert(error);
+                              console.log(error);
+                            });
                         }
-                      } 
-                          // .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
-                          //   // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                          //   to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
-                          //   subject: "Ticket",
-                          //   textTicket: response.data,
-                          //   text: "...",
-                          // })
-                          // .then(() => {
-                          //   Swal.fire({
-                          //     icon: "success",
-                          //     text: "Correo enviado con éxito",
-                          //     confirmButtonColor: "#3085d6",
-                          //   });
-                          // })
-                          // .catch((error) => {
-                          //   alert(error);
-                          //   console.log(error);
-                          // });
-                          
-                       else if (result.isDenied) {
+                      }
+                      // .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                      //   // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
+                      //   to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
+                      //   subject: "Ticket",
+                      //   textTicket: response.data,
+                      //   text: "...",
+                      // })
+                      // .then(() => {
+                      //   Swal.fire({
+                      //     icon: "success",
+                      //     text: "Correo enviado con éxito",
+                      //     confirmButtonColor: "#3085d6",
+                      //   });
+                      // })
+                      // .catch((error) => {
+                      //   alert(error);
+                      //   console.log(error);
+                      // });
+
+                      else if (result.isDenied) {
                         Swal.fire({
                           title: "Ingrese el correo",
                           input: "email",
@@ -5703,7 +5717,7 @@ const Ventas = () => {
                           allowEscapeKey: false,
                           preConfirm: (correo) => {
                             // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
-                           // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                            // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                             const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
 
                             if (!regexCorreo.test(correo)) {
@@ -5724,26 +5738,26 @@ const Ventas = () => {
                                 .replace(/"/g, "&quot;")
                                 .replace(/'/g, "&#039;");
                             };
-                      
-                            axios
-                              .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                            if (d_cliente.length > 0) {
+                              const nombreCliente = escapeHtml(d_cliente[0].nombre); // Ajusta según la estructura de tu objeto cliente
+                              axios.post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
                                 // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
-                                to: envioCorreoRem + `,${result.value}`,
+                                to: envioCorreoRem + `,${result.value} `,
                                 subject: "Ticket",
                                 textTicket: response.data,
                                 text: "...",
                               })
-                              .then(() => {
-                                Swal.fire({
-                                  icon: "success",
-                                  text: "Correo enviado con éxito",
-                                  confirmButtonColor: "#3085d6",
+                                .then(() => {
+                                  Swal.fire({
+                                    icon: "success",
+                                    text: "Correo enviado con éxito",
+                                    confirmButtonColor: "#3085d6",
+                                  });
+                                })
+                                .catch((error) => {
+                                  alert(error);
+                                  console.log(error);
                                 });
-                              })
-                              .catch((error) => {
-                                alert(error);
-                                console.log(error);
-                              });
 
                               const observaciones = dataVentas.map(venta => venta.Observacion);
                               const tieneServ = observaciones.some(obs => obs.includes("SERV"));
@@ -5754,20 +5768,35 @@ const Ventas = () => {
                                   subject: "GRACIAS POR TU VISITA🖤OBTÉN UN -10%😱PARA TU SIGUIENTE CITA😎🤘",
                                   text: "CORREO 📧",
                                   html: `
-                                    <div style="font-family: Arial, sans-serif; color: #333;">
-                                      <meta charset="UTF-8">
-                                      <p><strong>¡Hola, ${nombreCliente}!</strong></p>
-                                      <p>¡Muchas gracias por elegirnos y visitarnos el día de hoy! 🫰🖤</p>
-                                      <p>Nunca olvides que eres muy especial para nosotros. Cualquier cosa en la que podamos apoyarte, cuenta con nosotros. 🫂</p>
-                                      <p>Tip: Es importante que demos mantenimiento al servicio que te realizamos por lo menos cada mes y medio.</p>
-                                      <p>¡Esperamos verte pronto! 😎🤘 WE LOVE U! </p>
-                                      <p>🙈 <strong>GANA UN 10% de descuento</strong> para tu siguiente visita respondiendo nuestra encuesta: 
-                                        <a href="https://forms.gle/srHf9DbcUKmJMhxq9" target="_blank">https://forms.gle/srHf9DbcUKmJMhxq9</a>
-                                      </p>
-                                      <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
-                                      <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
-                                      <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
+                                    <html>
+                                   <head>
+                                     <meta charset="UTF-8">
+                                     <style>
+                                       body {
+                                         font-family: Arial, sans-serif;
+                                         color: #333;
+                                       }
+                                     </style>
+                                   </head>
+                                   <body>
+                                  <div style="font-family: Arial, sans-serif; color: #333;">
+                                    <meta charset="UTF-8">
+                                    <p><strong>¡Hola, ${nombreCliente}!</strong></p>
+                                    <p>¡Muchas gracias por elegirnos y visitarnos el día de hoy! 🫰🖤</p>
+                                    <p>Nunca olvides que eres muy especial para nosotros. Cualquier cosa en la que podamos apoyarte, cuenta con nosotros. 🫂</p>
+                                    <p>Tip: Es importante que demos mantenimiento al servicio que te realizamos por lo menos cada mes y medio.</p>
+                                    <p>¡Esperamos verte pronto! 😎🤘 WE LOVE U! </p>
+                                    <p>🙈 <strong>GANA UN 10% de descuento</strong> para tu siguiente visita respondiendo nuestra encuesta: 
+                                      <a href="https://forms.gle/srHf9DbcUKmJMhxq9" target="_blank">https://forms.gle/srHf9DbcUKmJMhxq9</a>
+                                    </p>
+                                    <p>Presenta el screenshot cuando agendes tu cita para que se aplique. Tienes 30 días para usar tu descuento. No aplica con otras PROMOS.</p>
+                                    <p>P.S.: Recuerda que un cabello increíble es trabajo en equipo de salón y casa.</p>
+                                    <p>No hay garantías de trabajo si no seguimos recomendaciones adecuadas en casa, tanto de hábitos como de productos profesionales que te sugiramos.</p>
+                                   <br>
+                                    <img src="https://i.imgur.com/dfwXr3L.png" alt="Imagen de agradecimiento" style="width: 40%; max-width: 250px; height: auto;">
                                     </div>
+                                  </body>
+                                  </html>
                                   `
                                 }).then(() => {
                                   Swal.fire({
@@ -5779,7 +5808,8 @@ const Ventas = () => {
                                   alert(error);
                                   console.log(error);
                                 });
-                              }  
+                              }
+                            }
                           }
                         });
                       }
@@ -5806,7 +5836,7 @@ const Ventas = () => {
                         alert(error);
                         console.log(error);
                       });
-                      
+
                     ticketVta({ folio: temp });
                     setModalTicket(true);
                   }
@@ -6089,54 +6119,54 @@ const Ventas = () => {
 
   const muestraPromo = () => {
 
-  // Verificar si dataPromo es un arreglo vacío
-  if (Array.isArray(dataPromo) && dataPromo.length === 0) {
-    console.log("DATAPROMO ES ARREGLO VACIO")
-    return;
-  }
+    // Verificar si dataPromo es un arreglo vacío
+    if (Array.isArray(dataPromo) && dataPromo.length === 0) {
+      console.log("DATAPROMO ES ARREGLO VACIO")
+      return;
+    }
 
- 
-      // Se prepara el mensaje con la descripción y el importe del descuento
-      const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
 
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-success',
-          cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-      });
+    // Se prepara el mensaje con la descripción y el importe del descuento
+    const promoMessage = `¡Buenas noticias! La venta califica para un descuento especial. Al pagar con <strong>${dataPromo["0"].descripcion}</strong>, el total de la venta será de solo <strong>$${dataPromo["0"].importeDescuento}</strong>.`;
 
-      swalWithBootstrapButtons.fire({
-        title: 'Venta con descuento disponible',
-        html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, aplicar descuento',
-        cancelButtonText: 'No, cancelar',
-        reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          setPromocion(1);
-          setTotal(Number(dataPromo["0"].importeDescuento.toFixed(2)));
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+    });
 
-          swalWithBootstrapButtons.fire({
-            title: '¡Descuento aplicado!',
-            text: 'El descuento ha sido aplicado a tu compra.',
-            icon: 'success'
-          });
-          // Aquí podrías incluir lógica adicional para aplicar el descuento
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          setPromocion(0);
-          setDataPromo([])
-          swalWithBootstrapButtons.fire({
-            title: 'Cancelado',
-            text: 'El descuento no ha sido aplicado.',
-            icon: 'error'
-          });
-        }
-      });
-    
+    swalWithBootstrapButtons.fire({
+      title: 'Venta con descuento disponible',
+      html: promoMessage, // Usar html en lugar de text para interpretar las etiquetas HTML
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, aplicar descuento',
+      cancelButtonText: 'No, cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setPromocion(1);
+        setTotal(Number(dataPromo["0"].importeDescuento.toFixed(2)));
+
+        swalWithBootstrapButtons.fire({
+          title: '¡Descuento aplicado!',
+          text: 'El descuento ha sido aplicado a tu compra.',
+          icon: 'success'
+        });
+        // Aquí podrías incluir lógica adicional para aplicar el descuento
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        setPromocion(0);
+        setDataPromo([])
+        swalWithBootstrapButtons.fire({
+          title: 'Cancelado',
+          text: 'El descuento no ha sido aplicado.',
+          icon: 'error'
+        });
+      }
+    });
+
 
     //setModalOpenPromo(true); // Solo abrir el modal si response.data cumple con tus criterios
   };
@@ -6144,7 +6174,7 @@ const Ventas = () => {
 
   useEffect(() => {
     getPromo();
-  }, [dataVentas,modalOpenPago]);
+  }, [dataVentas, modalOpenPago]);
 
 
 
@@ -7653,20 +7683,20 @@ const Ventas = () => {
           </Input>
            */}
 
-<Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name="formaPago">
-  <option value="">--Seleccione la forma de pago--</option>
-  {formasPagosFiltradas
-    .filter((formaPago) => {
-      const descripcion = formaPago.descripcion.toLowerCase();
-      const palabraClave = /efectivo|anticipos/;
-      return promocion === 1 ? palabraClave.test(descripcion) : true;
-    })
-    .map((formaPago, index) => (
-      <option key={index} value={formaPago.tipo}>
-        {formaPago.descripcion}
-      </option>
-    ))}
-</Input>
+          <Input type="select" onChange={handleFormaPagoTemporal} value={dataArregloTemporal.formaPago} name="formaPago">
+            <option value="">--Seleccione la forma de pago--</option>
+            {formasPagosFiltradas
+              .filter((formaPago) => {
+                const descripcion = formaPago.descripcion.toLowerCase();
+                const palabraClave = /efectivo|anticipos/;
+                return promocion === 1 ? palabraClave.test(descripcion) : true;
+              })
+              .map((formaPago, index) => (
+                <option key={index} value={formaPago.tipo}>
+                  {formaPago.descripcion}
+                </option>
+              ))}
+          </Input>
           <br />
           <Label> Importe: </Label>
           <Input
