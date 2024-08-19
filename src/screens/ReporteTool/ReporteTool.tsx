@@ -1100,7 +1100,7 @@ function ReporteTool() {
     almacen: ALMACEN.VENTAS,
     cia: dataUsuarios2[0]?.idCia,
     descripcion: "%",
-    idCliente: 26296,
+    idCliente: 44110,
     insumo: 2,
     inventariable: 2,
     obsoleto: 2,

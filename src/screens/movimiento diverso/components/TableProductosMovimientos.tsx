@@ -33,7 +33,7 @@ const TableProductosMovimientos = ({ setModalOpen2, form, setform, productoSelec
     sucursal: sucursal,
     almacen: almacenId,
     cia: cia,
-    idCliente: 26308,
+    idCliente: 44110,
   });
   useEffect(() => {
     fetchProduct4();
