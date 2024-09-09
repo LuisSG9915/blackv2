@@ -4806,26 +4806,6 @@ const Ventas = () => {
     });
   };
 
-
-
-  //EDITAR ORIGINAL
-
-  // const editInsumo = () => {
-  //   jezaApi
-  //     .put("/VentaInsumo", null, {
-  //       params: {
-  //         id: Number(formInsumo.id),
-  //         cantidad: Number(formInsumo.cantidad),
-  //       },
-  //     })
-  //     .then((response) =>
-  //       Swal.fire({
-  //         icon: "success",
-  //         text: "Insumo actualizada con éxito",
-  //         confirmButtonColor: "#3085d6",
-  //       })
-  //     );
-  // };
   const editInsumo = () => {
     // Verificar si los campos están vacíos
     if (!formInsumo.id || !formInsumo.cantidad || formInsumo.cantidad <= 0) {
