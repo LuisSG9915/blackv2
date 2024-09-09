@@ -463,6 +463,15 @@ const SidebarHorizontal = () => {
 
                 <UncontrolledDropdown>
                   <DropdownToggle nav caret color="rgba(225,224,253,255)">
+                    Ventas Estilistas
+                  </DropdownToggle>
+                  <DropdownMenu dark>
+                    <DropdownItem onClick={() => navigate("/VentasEstilista")}>Ventas insumos Estilistas</DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+
+                <UncontrolledDropdown>
+                  <DropdownToggle nav caret color="rgba(225,224,253,255)">
                     Citas
                   </DropdownToggle>
                   <DropdownMenu dark>

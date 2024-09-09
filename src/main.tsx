@@ -83,6 +83,7 @@ import CifraSucursal from "./screens/cifrasuc/CifraSucursal";
 import Reagendado from "./screens/reagendado/Reagendado";
 import AnticipoNomina from "./screens/detalleAnticiNom/anticipoNomina";
 import RespuestasClientes from "./screens/respuestas/RespuestasClientes";
+import VentasEstilista from "./screens/ventas/VentasEstilista";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -398,6 +399,10 @@ const router = createBrowserRouter([
   {
     path: "/RespuestasClientes",
     element: <RespuestasClientes />,
+  },
+  {
+    path: "/VentasEstilista",
+    element: <VentasEstilista />,
   },
 
  

@@ -4,17 +4,18 @@ import { jezaApi } from "../../api/jezaApi";
 import { Venta } from "../../models/Venta";
 interface Props {
   idSucursal: any;
+  estilista: any;
 }
 interface Proceso {
   id_cliente: number;
   nombre: string;
 }
 
-export const useVentasProceso = ({ idSucursal }: Props) => {
+export const useVentasProceso = ({ idSucursal , estilista}: Props) => {
   const [dataVentasProcesos, setDataVentasProcesos] = useState<any[]>([]);
   const fetchVentasProcesos = async () => {
     try {
-      const response: AxiosResponse<any[]> = await jezaApi.get(`/ClienteProceso?suc=${idSucursal}`);
+      const response: AxiosResponse<any[]> = await jezaApi.get(`/ClienteProceso?suc=${idSucursal}&estilista=${estilista}`);
       // const response: AxiosResponse<Venta[]> = await jezaApi.get(`/VentaCliente?suc=1&cliente=6`);
       setDataVentasProcesos(response.data);
       console.log({ dataVentasProcesos });
@@ -25,7 +26,7 @@ export const useVentasProceso = ({ idSucursal }: Props) => {
 
   useEffect(() => {
     fetchVentasProcesos();
-  }, [idSucursal]);
+  }, [idSucursal, estilista]);
 
   return { dataVentasProcesos, fetchVentasProcesos };
 };

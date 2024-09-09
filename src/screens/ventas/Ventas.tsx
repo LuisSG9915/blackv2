@@ -4158,7 +4158,7 @@ const Ventas = () => {
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
-  const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal });
+  const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal , estilista: 0});
 
   const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
   const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
