@@ -42,6 +42,7 @@ import { useVentasV2 } from "../../hooks/getsHooks/useVentasV2";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { GrStakeholder } from "react-icons/gr";
 import TableInsumosGenerales from "./Components/TableInsumosGenerales";
+import TableInsumosGeneralesSoli from "./Components/TableInsumosGeneralesSoli";
 import { useInsumosProductos } from "../../hooks/getsHooks/useInsumoProducto";
 import { VentaInsumo } from "../../models/VentaInsumo";
 import { useDescuentos } from "../../hooks/getsHooks/useClientesProceso copy";
@@ -73,7 +74,8 @@ import TableTiendaVirtual from "./Components/TableTiendaVirtual";
 import { Cliente } from "../../models/Cliente";
 import { CgColorBucket } from "react-icons/cg";
 import { LuPackagePlus } from "react-icons/lu";
-
+import { FcPaid } from "react-icons/fc";
+import { FcSynchronize } from "react-icons/fc";
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
@@ -88,31 +90,31 @@ const VentasEstilista = () => {
       setDataUsuarios2(parsedItem);
       console.log({ parsedItem });
 
-      // getPermisoPantalla(parsedItem);
+      getPermisoPantalla(parsedItem);
     }
   }, []);
 
 
-  // const getPermisoPantalla = async (userData) => {
-  //   try {
-  //     const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_ventas_view`);
+  const getPermisoPantalla = async (userData) => {
+    try {
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_ventas_estilistaSolicita_view`);
 
-  //     if (Array.isArray(response.data) && response.data.length > 0) {
-  //       if (response.data[0].permiso === false) {
-  //         Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
-  //         setShowView(false);
-  //         handleRedirect();
-  //       } else {
-  //         setShowView(true);
-  //       }
-  //     } else {
-  //       // No se encontraron datos válidos en la respuesta.
-  //       setShowView(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al obtener el permiso:", error);
-  //   }
-  // };
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        if (response.data[0].permiso === false) {
+          Swal.fire("Error!", "No tiene los permisos para ver esta pantalla", "error");
+          setShowView(false);
+          handleRedirect();
+        } else {
+          setShowView(true);
+        }
+      } else {
+        // No se encontraron datos válidos en la respuesta.
+        setShowView(false);
+      }
+    } catch (error) {
+      console.error("Error al obtener el permiso:", error);
+    }
+  };
 
   const navigate = useNavigate();
   const handleRedirect = () => {
@@ -132,6 +134,7 @@ const VentasEstilista = () => {
   const [modalOpenInsumosSelect, setModalOpenInsumosSelect] = useState<boolean>(false);
   const [modalOpenInsumosSelect2, setModalOpenInsumosSelect2] = useState<boolean>(false);
   const [modalEditInsumo, setModalEditInsumo] = useState<boolean>(false);
+  const [modalEditInsumoSolicitud, setModalEditInsumoSolicitud] = useState<boolean>(false);
   const [modalClientesProceso, setModalClientesProceso] = useState<boolean>(false);
   const [modalCliente, setModalCliente] = useState<boolean>(false);
   const [modalTicket, setModalTicket] = useState<boolean>(false);
@@ -181,7 +184,7 @@ const VentasEstilista = () => {
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
-  const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal , estilista: dataUsuarios2[0]?.id });
+  const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal, estilista: dataUsuarios2[0]?.id });
 
   const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
   const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
@@ -738,6 +741,27 @@ const VentasEstilista = () => {
     });
   };
 
+
+  const deleteInsumoSolicitud = async (dato: VentaInsumo): Promise<void> => {
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Está seguro que desea eliminar el insumo: ${dato.d_insumo}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          jezaApi.delete(`/VentaInsumoSolicitud?id=${dato.id}`).then(() => fetchInsumosProductoSolicitud());
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+  };
+
   //EDITAR ORIGINAL
 
   // const editInsumo = () => {
@@ -797,6 +821,51 @@ const VentasEstilista = () => {
         });
     }
   };
+
+
+
+  const editInsumoSolicitud = () => {
+    // Verificar si los campos están vacíos
+    if (!formInsumo.id || !formInsumo.cantidad || formInsumo.cantidad <= 0) {
+      Swal.fire({
+        icon: "error",
+        text: "Por favor, complete todos los campos.",
+        confirmButtonColor: "#3085d6",
+      });
+      return; // Salir de la función si faltan campos
+    }
+    if (formInsumo.cantidad > formInsumo?.existencia) {
+      Swal.fire({
+        icon: "error",
+        title: "Alerta",
+        text: `No hay suficientes insumos en sucursal`,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+      return;
+    } else {
+      // Si los campos no están vacíos, realizar la solicitud PUT a la API
+      jezaApi
+        .put("/VentaInsumoSolicitud", null, {
+          params: {
+            id: Number(formInsumo.id),
+            cantidad: Number(formInsumo.cantidad),
+          },
+        })
+        .then((response) => {
+          fetchInsumosProductoSolicitud();
+          Swal.fire({
+            icon: "success",
+            text: "Insumo actualizada con éxito",
+            confirmButtonColor: "#3085d6",
+          });
+          setTimeout(() => {
+            setModalEditInsumoSolicitud(false);
+            fetchInsumosProducto();
+          }, 1000);
+        });
+    }
+  };
+
 
   const { dataVentas, fetchVentas } = useVentasV2({
     idCliente: dataTemporal?.Cve_cliente,
@@ -2557,18 +2626,18 @@ const VentasEstilista = () => {
             {/* {dataVentas.map((dato: Venta) => (
               <tr key={dato.id}>
                 {dato.Cia ? ( */}
-  {dataVentas
-      .filter((dato: Venta) => dato.User === dataUsuarios2[0]?.id) // Filtra las ventas por el estilista logueado
-      .map((dato: Venta) => (
-        <tr key={dato.id}>
-          {dato.Cia ? (
+            {dataVentas
+              .filter((dato: Venta) => dato.User === dataUsuarios2[0]?.id) // Filtra las ventas por el estilista logueado
+              .map((dato: Venta) => (
+                <tr key={dato.id}>
+                  {dato.Cia ? (
 
-                  <>
-                    <td>{dato.d_estilista}</td>
-                    <td>{dato.nombreEstilistaAux ? dato.nombreEstilistaAux : "Sin estilista auxilliar"}</td>
-                    <td>{dato.d_producto}</td>
-                    <td align="center">{dato.Cant_producto}</td>
-                    {/* <td>
+                    <>
+                      <td>{dato.d_estilista}</td>
+                      <td>{dato.nombreEstilistaAux ? dato.nombreEstilistaAux : "Sin estilista auxilliar"}</td>
+                      <td>{dato.d_producto}</td>
+                      <td align="center">{dato.Cant_producto}</td>
+                      {/* <td>
                       {dato.Precio.toLocaleString("es-MX", {
                         style: "currency",
                         currency: "MXN", // Código de moneda para el Peso Mexicano
@@ -2576,7 +2645,7 @@ const VentasEstilista = () => {
                         maximumFractionDigits: 2,
                       })}
                     </td> */}
-                    {/* <td>
+                      {/* <td>
                       {(dato.Precio * dato.Cant_producto).toLocaleString("es-MX", {
                         style: "currency",
                         currency: "MXN", // Código de moneda para el Peso Mexicano
@@ -2584,8 +2653,8 @@ const VentasEstilista = () => {
                         maximumFractionDigits: 2,
                       })}
                     </td> */}
-                    {/* IMPORTE */}
-                    {/* <td>
+                      {/* IMPORTE */}
+                      {/* <td>
                       {(dato.Cant_producto * dato.Descuento * dato.Precio).toLocaleString("es-MX", {
                         style: "currency",
                         currency: "MXN", // Código de moneda para el Peso Mexicano
@@ -2610,15 +2679,15 @@ const VentasEstilista = () => {
                           maximumFractionDigits: 2,
                         })}
                     </td> */}
-                    <td className="gap-5">
-                      {/* <AiFillDelete
+                      <td className="gap-5">
+                        {/* <AiFillDelete
                         color="lightred"
                         onClick={() => {
                           deleteVenta(dato);
                         }}
                         size={23}
                       /> */}
-                      {/* <AiFillEdit
+                        {/* <AiFillEdit
                         color="lightred"
                         onClick={() => {
                           setDataVentaEdit({
@@ -2653,32 +2722,36 @@ const VentasEstilista = () => {
                         }}
                         size={23}
                       /> */}
-                      {dato.Observacion === "SERV" ? (
-                        <GrStakeholder size={30} 
-                          className="mr-2"
-                          onClick={() => {
-                            setSelectedID(dato.id ? dato.id : null);
-                            setDatoVentaSeleccionado(dato);
-                            setModalOpenInsumos(true);
-                          }}
-                        ></GrStakeholder>
-                      ) : null}
+                        {/* {dato.Observacion === "SERV" ? (
+                          <GrStakeholder size={30}
+                            className="mr-2"
+                            onClick={() => {
+                              setSelectedID(dato.id ? dato.id : null);
+                              setDatoVentaSeleccionado(dato);
+                              setModalOpenInsumos(true);
+                            }}
+                          ></GrStakeholder>
+                        ) : null} */}
 
-{dato.Observacion === "SERV" ? (
-                        <LuPackagePlus size={30} 
-                          className="mr-2"
-                          onClick={() => {
-                            setSelectedID(dato.id ? dato.id : null);
-                            setDatoVentaSeleccionado(dato);
-                            setModalOpenInsumosSolicitud(true);
-                          }}
-                        ></LuPackagePlus>
-                      ) : null}
-                    </td>
-                  </>
-                ) : null}
-              </tr>
-            ))}
+                        {dato.Observacion === "SERV" ? (
+                          <LuPackagePlus size={30}
+                            className="mr-2"
+                            onClick={() => {
+                              setSelectedID(dato.id ? dato.id : null);
+                              setDatoVentaSeleccionado(dato);
+                              // Llamar a la función para actualizar los datos antes de abrir el modal
+                              fetchInsumosProductoSolicitud();
+
+                              // Abrir el modal después de actualizar los datos
+                              setModalOpenInsumosSolicitud(true);
+                            }}
+                          ></LuPackagePlus>
+                        ) : null}
+                      </td>
+                    </>
+                  ) : null}
+                </tr>
+              ))}
           </tbody>
         </Table>
         <br />
@@ -3448,7 +3521,7 @@ const VentasEstilista = () => {
 
 
       <Modal isOpen={modalOpenInsumosSolicitud} size="xl">
-        <ModalHeader>Insumos a solicitar {datoVentaSeleccionado.d_producto}</ModalHeader>
+        <ModalHeader><strong>Solicitar insumos para el Servicio:</strong> {datoVentaSeleccionado.d_producto}</ModalHeader>
 
         <ModalBody>
           <Row className="justify-content-end">
@@ -3469,13 +3542,13 @@ const VentasEstilista = () => {
                   // if (permiso === false) {
                   //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
                   // } else {
-                    setModalOpenInsumosSelect(true);
-                    fetchInsumosProductoResumen();
-                    fetchInsumosProducto();
+                  setModalOpenInsumosSelect2(true);
+                  fetchInsumosProductoSolicitud();
+                  fetchInsumosProducto();
                   // }
                 }}
               >
-                Agregar insumos +
+                Agregar insumo solicitado +
               </Button>
             </Col>
             <Col md={6}></Col>
@@ -3484,6 +3557,7 @@ const VentasEstilista = () => {
           <br />
           <Table size="sm" striped={true} responsive={"sm"}>
             <thead>
+              {/* const TableDataHeaderInsumoSoli = ["Insumo", "Existencia", "Unidad de medida", "Cantidad", "Enlace", "Fecha", "Acciones"]; */}
               <tr>
                 {TableDataHeaderInsumoSoli.map((valor: any) => (
                   <th key={valor}>{valor}</th>
@@ -3500,52 +3574,49 @@ const VentasEstilista = () => {
                         <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
                         <td align="left">{dato.unidadMedida}</td>
                         <td align="left">{dato.cantidad}</td>
-                        <td align="center">{dato.enlazado}</td>
+                        <td align="left">{dato.enlazado ? <FcPaid size={23} /> : <FcSynchronize size={23} />}</td>
                         <td align="center">{dato.fecha_enlace}</td>
 
+                        {/* Solo mostrar íconos si enlazado es false */}
                         <td className="gap-5">
-                          <AiFillEdit
-                            className="mr-2"
-                            onClick={() => {
-                              setModalEditInsumo(true);
-                              setFormInsumo({
-                                cantidad: dato.cantidad,
-                                fechaAlta: dato.fechaAlta,
-                                id: dato.id,
-                                id_insumo: dato.id_insumo,
-                                id_venta: dato.id_venta,
-                                unidadMedida: dato.unidadMedida,
-                                d_insumo: dato.d_insumo,
-                                existencia: cantidadInsumo(dato.id_insumo),
-                              });
-                            }}
-                            size={23}
-                          ></AiFillEdit>
-                          {/* <AiFillDelete
-                            color="lightred"
-                            onClick={() => {
-                              deleteInsumo(dato);
-                              setTimeout(() => {
-                                fetchInsumosProducto();
-                              }, 1000);
-                            }}
-                            size={23}
-                          /> */}
-                          <AiFillDelete
-                            color="lightred"
-                            onClick={async () => {
-                              const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
-                              if (permiso === false) {
-                                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-                              } else {
-                                deleteInsumo(dato);
-                                setTimeout(() => {
-                                  fetchInsumosProducto();
-                                }, 1000);
-                              }
-                            }}
-                            size={23}
-                          />
+                          {!dato.enlazado && (
+                            <>
+                              <AiFillEdit
+                                className="mr-2"
+                                onClick={() => {
+
+                                  setModalEditInsumoSolicitud(true);
+
+                                  setFormInsumo({
+                                    cantidad: dato.cantidad,
+                                    fechaAlta: dato.fechaAlta,
+                                    id: dato.id,
+                                    id_insumo: dato.id_insumo,
+                                    id_venta: dato.id_venta,
+                                    unidadMedida: dato.unidadMedida,
+                                    d_insumo: dato.d_insumo,
+                                    existencia: cantidadInsumo(dato.id_insumo),
+                                  });
+                                }}
+                                size={23}
+                              />
+                              <AiFillDelete
+                                color="lightred"
+                                onClick={async () => {
+                                  const permiso = await filtroSeguridad("ELIMINAR_INSUMO_SOLICITADO");
+                                  if (permiso === false) {
+                                    return; // Si el permiso es falso, se sale de la función
+                                  } else {
+                                    deleteInsumoSolicitud(dato);
+                                    setTimeout(() => {
+                                      fetchInsumosProductoSolicitud();
+                                    }, 1000);
+                                  }
+                                }}
+                                size={23}
+                              />
+                            </>
+                          )}
                         </td>
                       </>
                     ) : null}
@@ -3559,6 +3630,7 @@ const VentasEstilista = () => {
           <CButton
             color="danger"
             onClick={() => {
+
               setModalOpenInsumosSolicitud(false);
             }}
             text="Salir"
@@ -3595,8 +3667,8 @@ const VentasEstilista = () => {
       <Modal isOpen={modalOpenInsumosSelect2} size="xl">
         <ModalBody>
           <br />
-          <TableInsumosGenerales
-            datoVentaSeleccionado={selectedID2}
+          <TableInsumosGeneralesSoli
+            datoVentaSeleccionado2={selectedID2}
             data={data}
             setModalOpen2={setModalOpenInsumosSelect2}
             handleGetFetch={fetchInsumosProductoSolicitud}
@@ -3604,7 +3676,7 @@ const VentasEstilista = () => {
             datoInsumosProductoSolicitud={datoInsumosProductoSolicitud}
             setDescInsumos={setDescInsumos}
             descInsumos={descInsumos}
-          ></TableInsumosGenerales>
+          ></TableInsumosGeneralesSoli>
         </ModalBody>
         <ModalFooter>
           <CButton
@@ -3617,6 +3689,62 @@ const VentasEstilista = () => {
         </ModalFooter>
       </Modal>
 
+
+
+      <Modal isOpen={modalEditInsumoSolicitud} size="md">
+        <ModalHeader>
+          <h3>Edición insumos Solicitados</h3>{" "}
+        </ModalHeader>
+        <ModalBody>
+          <Row>
+            <Col>
+              <Label>
+                Insumo utilizado: <strong>{formInsumo.d_insumo}</strong>{" "}
+              </Label>
+              <Label>
+                Cantidad de existencia: <strong>{formInsumo.existencia}</strong>{" "}
+              </Label>
+              <br />
+              <br />
+              <Label> Cantidad a modificar: </Label>
+              <Input value={formInsumo.cantidad} name="cantidad" onChange={cambiosInsumos} type="number"></Input>
+              <br />
+            </Col>
+          </Row>
+        </ModalBody>
+        <ModalFooter>
+          <CButton
+            color="danger"
+            onClick={() => {
+              setModalEditInsumoSolicitud(false);
+            }}
+            text="Cancelar"
+          />
+          {/* <Button
+            color="success"
+            style={{ width: "34%" }}
+            onClick={() => {
+              editInsumo();
+            }}
+          >
+            Guardar cambios
+          </Button> */}
+
+          <Button
+            color="success"
+            onClick={async () => {
+              const permiso = await filtroSeguridad("EDITAR_INSUMO_SOLICITADO");
+              if (permiso === false) {
+                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+              } else {
+                editInsumoSolicitud();
+              }
+            }}
+          >
+            Guardar cambios
+          </Button>
+        </ModalFooter>
+      </Modal>
 
 
       <Modal isOpen={modalEditInsumo} size="md">
@@ -3673,6 +3801,9 @@ const VentasEstilista = () => {
           </Button>
         </ModalFooter>
       </Modal>
+
+
+
 
       <Modal isOpen={modalTicket} size="sm">
         <ModalHeader>Preview</ModalHeader>
@@ -4309,6 +4440,14 @@ const VentasEstilista = () => {
           <CButton color="danger" onClick={() => setModalOpenPromo(false)} text="Salir" />
         </ModalFooter>
       </Modal>
+
+
+
+
+
+
+
+
 
     </>
   );

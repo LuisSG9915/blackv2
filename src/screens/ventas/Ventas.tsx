@@ -4049,10 +4049,13 @@ import axios from "axios";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useInsumosProductosResumen } from "../../hooks/getsHooks/useInsumoProductoResumen";
+import { useInsumoProductoSolicitud } from "../../hooks/getsHooks/useInsumoProductoSolicitud";
 import { ALMACEN } from "../../utilities/constsAlmacenes";
 import TableTiendaVirtual from "./Components/TableTiendaVirtual";
 import { Cliente } from "../../models/Cliente";
-
+import { FcPaid } from "react-icons/fc";
+import { FcSynchronize } from "react-icons/fc";
+import { FcDownload } from "react-icons/fc";
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
@@ -4158,7 +4161,7 @@ const Ventas = () => {
   const [form, setForm] = useState<Usuario[]>([]);
   const [datoTicket, setDatoTicket] = useState([]);
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
-  const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal , estilista: 0});
+  const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal, estilista: 0 });
 
   const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
   const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
@@ -4404,10 +4407,78 @@ const Ventas = () => {
     "Acciones",
   ];
   const TableDataHeaderInsumo = ["Insumo", "Existencia", "Unidad de medida", "Cantidad", "Acciones"];
+
   const TabñeDataHeaderEstilistaProceso = ["Estilista", ""];
   const { datoInsumosProductoResumen, fetchInsumosProductoResumen } = useInsumosProductosResumen({
     idVenta: selectedID2,
   });
+
+
+  const TableDataHeaderInsumoSoli = ["Insumo", "Existencia", "Unidad de medida", "Cantidad", "Enlace", "Fecha", "Acciones"];
+  const [modalOpenInsumosSolicitud, setModalOpenInsumosSolicitud] = useState<boolean>(false);
+  const { datoInsumosProductoSolicitud, fetchInsumosProductoSolicitud } = useInsumoProductoSolicitud({
+    idVenta: selectedID2,
+  });
+
+  const [alertShown, setAlertShown] = useState<boolean>(false);
+
+
+  // useEffect(() => {
+  //   // Verifica si hay insumos con enlazado = false
+  //   const insumosNoEnlazados = datoInsumosProductoSolicitud.filter(
+  //     (insumo: any) => insumo.enlazado === false
+  //   );
+
+  //   // Si hay insumos no enlazados, mostrar alerta
+  //   if (insumosNoEnlazados.length > 0) {
+  //     const listaInsumos = insumosNoEnlazados.map((insumo: any) => insumo.d_insumo).join(", ");
+
+  //     Swal.fire({
+  //       icon: "warning",
+  //       title: "Advertencia",
+  //       text: `Los siguientes servicios tienen insumos no enlazados: ${listaInsumos}`,
+  //       confirmButtonColor: "#3085d6",
+  //       showCancelButton: true,
+  //       confirmButtonText: "Ir a enlazar",
+  //       cancelButtonText: "Cancelar",
+  //     }).then((result) => {
+  //       if (result.isConfirmed) {
+  //         // Abre el modal al hacer clic en "Ir a enlazar"
+  //         setModalOpenInsumosSolicitud(true);
+  //       }
+  //     });
+  //   }
+  // }, [datoInsumosProductoSolicitud]);
+
+  useEffect(() => {
+    // Verifica si hay insumos con enlazado = false
+    const insumosNoEnlazados = datoInsumosProductoSolicitud.filter(
+      (insumo: any) => insumo.enlazado === false
+    );
+
+    // Si hay insumos no enlazados y la alerta no ha sido mostrada
+    if (insumosNoEnlazados.length > 0 && !alertShown) {
+      const listaInsumos = insumosNoEnlazados.map((insumo: any) => insumo.d_insumo).join(", ");
+
+      Swal.fire({
+        icon: "warning",
+        title: "Advertencia",
+        text: `El servicio contiene insumos no enlazados: ${listaInsumos}`,
+        confirmButtonColor: "#3085d6",
+        showCancelButton: true,
+        confirmButtonText: "Ir a enlazar",
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Abre el modal al hacer clic en "Ir a enlazar"
+          setModalOpenInsumosSolicitud(true);
+        }
+        setAlertShown(true); // Marca la alerta como mostrada
+      });
+    }
+  }, [datoInsumosProductoSolicitud, alertShown]);
+
+
 
   const [descuento, setDescuento] = useState({
     min: 0,
@@ -4708,6 +4779,34 @@ const Ventas = () => {
       }
     });
   };
+
+
+  const InsumoSolicitadoFinaliza = async (dato: VentaInsumo): Promise<void> => {
+    Swal.fire({
+      title: "ADVERTENCIA",
+      text: `¿Desea enlazar el insumo solicitado: ${dato.d_insumo}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, enlazar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          jezaApi.put(`/VentaInsumoSolicitudFin?id=${dato.id}`).then(() => {
+            fetchInsumosProductoSolicitud(); // Actualizar la tabla del modal de insumos solicitados
+            fetchInsumosProducto();          // Actualizar la tabla de la ventana principal de insumos
+            fetchInsumosProductoResumen();   // Actualizar resumen si es necesario
+            setAlertShown(false);
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
+  };
+
+
 
   //EDITAR ORIGINAL
 
@@ -5508,10 +5607,34 @@ const Ventas = () => {
     return observaciones.some(observacion => observacion.includes("SERV"));
   };
 
+  const verificarInsumosNoEnlazados = async () => {
+    for (const venta of dataVentas) {
+      const response = await jezaApi.get(`/VentaInsumoSolicitud?id_venta=${venta.id}`);
+      const insumosNoEnlazados = response.data.filter((insumo: any) => insumo.enlazado === false);
+
+      // Si hay insumos no enlazados, muestra la alerta
+      if (insumosNoEnlazados.length > 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Advertencia",
+          text: `Algunos insumos no se encuentran enlazados. Favor de revisar antes de finalizar la venta.`,
+          confirmButtonColor: "#FF0000",
+          confirmButtonText: "OK",
+        });
+        // Continuar el proceso sin detener la función
+        break; // Salimos del ciclo tras la primera coincidencia
+      }
+    }
+  };
+
   const endVenta = async () => {
     // alert(`/VentaCierreP?suc=${dataUsuarios2[0].sucursal}&cliente=${dataTemporal.Cve_cliente}&Caja=1&promo=${promocion}`)
     // return;
+    // Mostrar alerta si hay insumos no enlazados pero continuar con el proceso
+
+
     // Cierro mi venta y mando response a medioPago
+
     const permiso = await filtroSeguridad("CIERE_VENTA_UPD");
     if (permiso === false) {
       return;
@@ -6618,16 +6741,64 @@ const Ventas = () => {
                         }}
                         size={23}
                       />
+                      {/* {dato.Observacion === "SERV" ? (
+                        <GrStakeholder
+                          className="mr-2"
+                          onClick={() => {
+                            setSelectedID(dato.id ? dato.id : null);
+                            setDatoVentaSeleccionado(dato);
+                            fetchInsumosProducto();
+                            fetchInsumosProductoSolicitud();
+                            setModalOpenInsumos(true);
+                          }}
+                        ></GrStakeholder>
+                      ) : null} */}
+
                       {dato.Observacion === "SERV" ? (
                         <GrStakeholder
                           className="mr-2"
                           onClick={() => {
                             setSelectedID(dato.id ? dato.id : null);
                             setDatoVentaSeleccionado(dato);
-                            setModalOpenInsumos(true);
+
+                            // Llamar a las funciones de fetch para actualizar los datos
+                            fetchInsumosProducto();
+                            fetchInsumosProductoSolicitud();
+
+                            // Restablecer `alertShown` para asegurarse de que la alerta se muestre en futuras interacciones
+                            setAlertShown(false);
+
+                            // Verifica si hay insumos con enlazado = false
+                            const insumosNoEnlazados = datoInsumosProductoSolicitud.filter(
+                              (insumo: any) => insumo.enlazado === false
+                            );
+
+                            if (insumosNoEnlazados.length > 0 && !alertShown) {
+                              const listaInsumos = insumosNoEnlazados.map((insumo: any) => insumo.d_insumo).join(", ");
+
+                              Swal.fire({
+                                icon: "warning",
+                                title: "Advertencia",
+                                text: `Los siguientes servicios tienen insumos no enlazados: ${listaInsumos}`,
+                                confirmButtonColor: "#3085d6",
+                                showCancelButton: true,
+                                confirmButtonText: "Ir a enlazar",
+                                cancelButtonText: "Cancelar",
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  // Abre el modal al hacer clic en "Ir a enlazar"
+                                  setModalOpenInsumosSolicitud(true);
+                                }
+                                setAlertShown(true); // Marca la alerta como mostrada
+                              });
+                            } else {
+                              // Si no hay insumos no enlazados, abre el modal directamente
+                              setModalOpenInsumos(true);
+                            }
                           }}
                         ></GrStakeholder>
                       ) : null}
+
                     </td>
                   </>
                 ) : null}
@@ -6649,6 +6820,7 @@ const Ventas = () => {
                   color="success"
                   onClick={() => {
                     muestraPromo();
+                    verificarInsumosNoEnlazados();
                     setModalOpenPago(true);
 
                     setFormPago({ ...formPago, anticipos: 0, efectivo: 0, tc: 0, cambioCliente: 0 });
@@ -7283,35 +7455,41 @@ const Ventas = () => {
 
 
       <Modal isOpen={modalOpenInsumos} size="xl">
-        <ModalHeader>Insumos del servicio {datoVentaSeleccionado.d_producto}</ModalHeader>
+        <ModalHeader><strong>Insumos del servicio:</strong> {datoVentaSeleccionado.d_producto}</ModalHeader>
 
         <ModalBody>
-          <Row className="justify-content-end">
-            <Col md={6}>
-              {/* <Button
-                onClick={() => {
-                  setModalOpenInsumosSelect(true);
-                  fetchInsumosProductoResumen();
-                  fetchInsumosProducto();
-                }}
-              >
-                Agregar insumos +
-              </Button> */}
-
-              <Button
-                onClick={async () => {
-                  const permiso = await filtroSeguridad("AGREGA_INSUMO");
-                  if (permiso === false) {
-                    return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-                  } else {
-                    setModalOpenInsumosSelect(true);
-                    fetchInsumosProductoResumen();
-                    fetchInsumosProducto();
-                  }
-                }}
-              >
-                Agregar insumos +
-              </Button>
+          {/* <Row className="justify-content-end"> */}
+          <Row>
+            <Col md={7}>
+              <ButtonGroup>
+                {/* <Button
+                  onClick={async () => {
+                    const permiso = await filtroSeguridad("AGREGA_INSUMO");
+                    if (permiso === false) {
+                      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                    } else {
+                      setModalOpenInsumosSelect(true);
+                      fetchInsumosProductoResumen();
+                      fetchInsumosProducto();
+                    }
+                  }}
+                >
+                  Agregar insumos +
+                </Button> */}
+                <Button color="info"
+                  onClick={async () => {
+                    const permiso = await filtroSeguridad("AGREGA_INSUMO");
+                    if (permiso === false) {
+                      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                    } else {
+                      fetchInsumosProductoSolicitud();
+                      setModalOpenInsumosSolicitud(true);
+                    }
+                  }}
+                >
+                  Enlazar insumos <FcDownload size={23} />
+                </Button>
+              </ButtonGroup>
             </Col>
             <Col md={6}></Col>
           </Row>
@@ -7334,7 +7512,7 @@ const Ventas = () => {
                         <td>{dato.d_insumo}</td>
                         <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
                         <td align="left">{dato.unidadMedida}</td>
-                        <td align="center">{dato.cantidad}</td>
+                        <td align="left">{dato.cantidad}</td>
 
                         <td className="gap-5">
                           <AiFillEdit
@@ -8114,6 +8292,87 @@ const Ventas = () => {
           <CButton color="danger" onClick={() => setModalOpenPromo(false)} text="Salir" />
         </ModalFooter>
       </Modal>
+
+
+      {/* ENLAZAR INSUMOS DE LOS ESTILISTAS */}
+
+      <Modal isOpen={modalOpenInsumosSolicitud} size="xl">
+        <ModalHeader><strong>Enlace de Insumos Solicitados:</strong> {datoVentaSeleccionado.d_producto}</ModalHeader>
+
+        <ModalBody>
+          <Table size="sm" striped={true} responsive={"sm"}>
+            <thead>
+              <tr>
+                {TableDataHeaderInsumoSoli.map((valor: any) => (
+                  <th key={valor}>{valor}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {datoInsumosProductoSolicitud.length > 0
+                ? datoInsumosProductoSolicitud.map((dato: any) => (
+                  <tr key={dato.id}>
+                    {dato.id ? (
+                      <>
+                        <td>{dato.d_insumo}</td>
+                        <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
+                        <td align="left">{dato.unidadMedida}</td>
+                        <td align="left">{dato.cantidad}</td>
+                        <td align="left">{dato.enlazado ? "Si" : "No"}</td>
+                        <td align="left">{dato.fecha_enlace}</td>
+
+                        {/* Mostrar ícono de sincronización en la columna de eliminar si enlazado = false */}
+                        <td align="left" className="gap-5">
+                          {!dato.enlazado ? (
+                            <FcSynchronize
+                              color="lightred"
+                              onClick={async () => {
+                                const permiso = await filtroSeguridad("FINALIZA_INSUMO_SOLICITADO");
+                                if (permiso === false) {
+                                  return; // Si el permiso es falso, se sale de la función
+                                } else {
+                                  InsumoSolicitadoFinaliza(dato);
+                                  setTimeout(() => {
+                                    fetchInsumosProductoSolicitud();
+
+                                  }, 1000);
+                                }
+                              }}
+                              size={23}
+                            />
+                          ) : (
+                            <>
+                              {/* Íconos de editar/eliminar cuando enlazado es true */}
+
+                              <FcPaid
+                                color="lightred"
+                                size={23}
+                              />
+                            </>
+                          )}
+                        </td>
+                      </>
+                    ) : null}
+                  </tr>
+                ))
+                : null}
+            </tbody>
+          </Table>
+        </ModalBody>
+        <ModalFooter>
+          <CButton
+            color="danger"
+            onClick={() => {
+              setModalOpenInsumosSolicitud(false);
+            }}
+            text="Salir"
+          />
+        </ModalFooter>
+      </Modal>
+
+
+
+
 
     </>
   );

@@ -14,16 +14,16 @@ import { InsumoExistencia } from "./TableProductos";
 interface Props {
   data: Estilistas[];
   setModalOpen2: React.Dispatch<React.SetStateAction<boolean>>;
-  datoVentaSeleccionado: any;
+  datoVentaSeleccionado2: any;
   handleGetFetch: any;
   datoInsumosProducto: InsumoExistencia[];
-  datoInsumosProductoResumen?: VentaInsumo[];
+  datoInsumosProductoSolicitud?: VentaInsumo[];
 }
 export interface Estilistas {
   id: number;
   estilista: string;
 }
-const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFetch, datoInsumosProducto, datoInsumosProductoResumen }: Props) => {
+const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado2, handleGetFetch, datoInsumosProducto, datoInsumosProductoSolicitud }: Props) => {
   const [form, setForm] = useState({
     marca: "",
     cantidad: "",
@@ -33,15 +33,16 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
 
   const { filtroSeguridad, session } = useSeguridad();
 
-  const createInsumoTrue = async (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
-    // const permiso = await filtroSeguridad("AGREGAR_INSUMO");
+  const createInsumoSoli = async (updatedForm: { id_insumo: number; marca: string; cantidad: string }) => {
+    // const permiso = await filtroSeguridad("AGREGAR_INSUMO_SOLICITADO");
+
     // if (permiso === false) {
     //   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
     // }
     jezaApi
-      .post("/VentaInsumo", null, {
+      .post("/VentaInsumoSolicitud", null, {
         params: {
-          id_venta: datoVentaSeleccionado,
+          id_venta: datoVentaSeleccionado2,
           id_insumo: Number(updatedForm.id_insumo),
           cantidad: Number(updatedForm.cantidad),
         },
@@ -49,7 +50,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
       .then((re) =>
         Swal.fire({
           icon: "success",
-          text: "Insumo ingresado con éxito",
+          text: "Insumo solicitado con éxito",
           confirmButtonColor: "#3085d6",
         })
       )
@@ -59,14 +60,14 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
   useEffect(() => {
     handleGetFetch();
     console.log(datoInsumosProducto);
-  }, [datoVentaSeleccionado]);
+  }, [datoVentaSeleccionado2]);
 
-  const handleInsumoSelection = async (id: InsumoExistencia) => {
+  const handleInsumoSelectionORI = async (id: InsumoExistencia) => {
 
     // Mostrar el SweetAlert para obtener la cantidad
     // AQUI PONGO MI CONDICIONAL datoInsumosProducto
 
-    const validarInsumoProducto = datoInsumosProductoResumen?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id.id));
+    const validarInsumoProducto = datoInsumosProductoSolicitud?.some((elemento: VentaInsumo) => elemento.id_insumo === Number(id.id));
     if (validarInsumoProducto) {
       Swal.fire({
         icon: "error",
@@ -132,7 +133,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
           } else {
             setForm((prevState) => {
               const updatedForm = { ...prevState, id_insumo: id.id, cantidad };
-              createInsumoTrue(updatedForm);
+              createInsumoSoli(updatedForm);
               return updatedForm;
             });
             setModalOpen2(false);
@@ -145,6 +146,64 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado, handleGetFet
       });
     }
   };
+
+
+  const handleInsumoSelection = async (id: InsumoExistencia) => {
+    // Mostrar alerta para ingresar la cantidad
+    Swal.fire({
+      title: "Ingrese la cantidad:",
+      input: "number",
+      inputAttributes: {
+        min: "0.01",
+        step: "0.01", // Para permitir decimales
+      },
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      cancelButtonText: "Cancelar",
+      showLoaderOnConfirm: true,
+      preConfirm: (cantidad) => {
+        const cantidadNumber = parseFloat(cantidad);
+        return new Promise((resolve, reject) => {
+          // Validaciones para cantidad
+          if (!cantidad || isNaN(cantidadNumber) || cantidadNumber <= 0) {
+            reject("La cantidad debe ser mayor a cero y no puede estar vacía.");
+          } else {
+            resolve(cantidadNumber);
+          }
+        });
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const cantidad = result.value as number;
+
+        // Verificar si la cantidad excede la existencia
+        if (cantidad > id.existencia) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: `Insumo no tiene existencia para cubrir`,
+            confirmButtonColor: "#3085d6",
+          });
+        } else {
+          // Guardar insumo
+          setForm((prevState) => {
+            const updatedForm = { ...prevState, id_insumo: id.id, cantidad };
+            createInsumoSoli(updatedForm);
+            return updatedForm;
+          });
+          setModalOpen2(false);
+
+          // Refrescar datos después de guardar
+          setTimeout(() => {
+            handleGetFetch();
+          }, 1600);
+        }
+      }
+    });
+  };
+
+
   const { dataUnidadMedida } = useUnidadMedida();
   const getCiaForeignKey = (idTableCia: number) => {
     const cia = dataUnidadMedida.find((cia: UnidadMedidaModel) => cia.id === idTableCia);
