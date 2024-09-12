@@ -186,6 +186,10 @@ const VentasEstilista = () => {
   const [datoTicketEstilista, setDatoTicketEstilista] = useState([]);
   const { dataVentasProcesos, fetchVentasProcesos } = useVentasProceso({ idSucursal: dataUsuarios2[0]?.sucursal, estilista: dataUsuarios2[0]?.id });
 
+
+
+
+
   const nombreClienteParam = new URLSearchParams(window.location.search).get("nombreCliente");
   const nombreCliente = nombreClienteParam ? nombreClienteParam.replace(/%20/g, "").replace(/#/g, "") : "";
   const idCliente = new URLSearchParams(window.location.search).get("idCliente");
@@ -584,6 +588,33 @@ const VentasEstilista = () => {
       setDataUsuarios2(parsedItem);
     }
   }, []);
+
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     fetchVentasProcesos().then((ventasProcesos) => {
+  //       console.log('Ventas en proceso:', ventasProcesos); // Ver qué datos llegan
+
+  //       if (ventasProcesos === undefined || ventasProcesos.length === 0) {
+  //         Swal.fire({
+  //           icon: 'warning',
+  //           title: 'Venta cerrada',
+  //           text: 'Esta venta ha sido cerrada por el recepcionista. Recargando la pantalla...',
+  //           confirmButtonText: 'OK',
+  //         }).then(() => {
+  //           window.location.reload();
+  //         });
+  //       }
+  //     }).catch((error) => {
+  //       console.error('Error al obtener ventas en proceso:', error); // Captura posibles errores
+  //     });
+  //   }, 5000); // Consulta cada 5 segundos
+
+  //   return () => clearInterval(intervalId); // Limpia el intervalo cuando el componente se desmonte
+  // }, [fetchVentasProcesos, dataTemporal?.Cve_cliente]);
+
+
+
 
   const insertar = async () => {
     const permiso = await filtroSeguridad("CREAR_VENTA");
@@ -2512,6 +2543,54 @@ const VentasEstilista = () => {
     setModalActualizar2(false);
   };
 
+
+  //   const fetchVentasProcesos = async () => {
+  //     try {
+  //       const response = await jezaApi.get(`/ruta-de-la-api?sucursal=${idSucursal}&estilista=${estilista}`);
+  //       setDataVentasProcesos(response.data); // Asignar los datos de la respuesta
+  //       return response.data; // Devuelve los datos
+  //     } catch (error) {
+  //       console.error('Error al obtener las ventas en proceso:', error);
+  //       return undefined; // Maneja el caso de error devolviendo undefined
+  //     }
+  //   };
+
+  //   useEffect(() => {
+  //     fetchVentasProcesos(); // Llama a la función al cargar el componente
+  //   }, [idSucursal, estilista]);
+
+  //   return { dataVentasProcesos, fetchVentasProcesos };
+  // };
+
+  useEffect(() => {
+    // Definir el intervalo de tiempo
+    const intervalId = setInterval(() => {
+      fetchVentasProcesos().then((ventasProcesos) => {
+        console.log('Ventas en proceso actualizadas:', ventasProcesos); // Ver qué datos están llegando
+        const clienteEnProceso = ventasProcesos.some(venta => venta.id_cliente === dataTemporal.Cve_cliente);
+
+        if (!clienteEnProceso) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Venta cerrada',
+            text: 'Esta venta ha sido cerrada por el recepcionista. Ya no puedes agregar insumos.',
+            confirmButtonText: 'OK',
+          });
+
+          // Aquí puedes agregar lógica para deshabilitar acciones relacionadas con la venta cerrada
+        }
+      }).catch((error) => {
+        console.error('Error al obtener ventas en proceso:', error);
+      });
+    }, 5000); // El intervalo se ejecuta cada 5 segundos
+
+    // Limpiar el intervalo cuando el componente se desmonte para evitar fugas de memoria
+    return () => clearInterval(intervalId);
+  }, [fetchVentasProcesos, dataTemporal?.Cve_cliente]); // El efecto depende de fetchVentasProcesos y el cliente actual
+
+
+
+
   const editar = async () => {
     const permiso = await filtroSeguridad("CAT_CLIENT_UPD");
     if (!permiso) {
@@ -2734,18 +2813,73 @@ const VentasEstilista = () => {
                         ) : null} */}
 
                         {dato.Observacion === "SERV" ? (
+                          // <LuPackagePlus size={30}
+                          //   className="mr-2"
+                          //   onClick={() => {
+                          //     setSelectedID(dato.id ? dato.id : null);
+                          //     setDatoVentaSeleccionado(dato);
+                          //     // Llamar a la función para actualizar los datos antes de abrir el modal
+                          //     fetchInsumosProductoSolicitud();
+
+                          //     // Abrir el modal después de actualizar los datos
+                          //     setModalOpenInsumosSolicitud(true);
+                          //   }}
+                          // ></LuPackagePlus>
+
+                          // <LuPackagePlus size={30}
+                          //   className="mr-2"
+                          //   onClick={() => {
+                          //     // Verificar si el cliente (dataTemporal.Cve_cliente) está en el arreglo dataVentasProcesos
+                          //     const clienteEnProceso = dataVentasProcesos.some(venta => venta.id_cliente === dataTemporal.Cve_cliente);
+
+                          //     if (!clienteEnProceso) {
+                          //       // Si el cliente no está en el proceso, mostramos la alerta y recargamos la pantalla
+                          //       Swal.fire({
+                          //         icon: 'warning',
+                          //         title: 'Venta cerrada',
+                          //         text: 'Esta venta ha sido cerrada por el recepcionista. Recargando la pantalla...',
+                          //         confirmButtonText: 'OK',
+                          //       }).then(() => {
+                          //         window.location.reload(); // Recargar la pantalla para actualizar los datos
+                          //       });
+                          //     } else {
+                          //       // Si el cliente sigue en proceso, continuamos con la lógica de agregar insumos
+                          //       setSelectedID(dato.id ? dato.id : null);
+                          //       setDatoVentaSeleccionado(dato);
+                          //       fetchInsumosProductoSolicitud(); // Llamada a la función para obtener los insumos
+                          //       setModalOpenInsumosSolicitud(true); // Abrimos el modal
+                          //     }
+                          //   }}
+                          // ></LuPackagePlus>
+
+                          // Implementación del botón con validación
                           <LuPackagePlus size={30}
                             className="mr-2"
                             onClick={() => {
-                              setSelectedID(dato.id ? dato.id : null);
-                              setDatoVentaSeleccionado(dato);
-                              // Llamar a la función para actualizar los datos antes de abrir el modal
-                              fetchInsumosProductoSolicitud();
+                              // Verificar si el cliente (dataTemporal.Cve_cliente) está en el arreglo dataVentasProcesos
+                              const clienteEnProceso = dataVentasProcesos.some(venta => venta.id_cliente === dataTemporal.Cve_cliente);
 
-                              // Abrir el modal después de actualizar los datos
-                              setModalOpenInsumosSolicitud(true);
+                              if (!clienteEnProceso) {
+                                // Si el cliente no está en el proceso, mostramos la alerta sin recargar la página
+                                Swal.fire({
+                                  icon: 'warning',
+                                  title: 'Venta cerrada',
+                                  text: 'Esta venta ha sido cerrada por el recepcionista. Ya no puedes agregar insumos.',
+                                  confirmButtonText: 'OK',
+                                });
+
+                                // Aquí puedes agregar lógica adicional para deshabilitar botones o limpiar el formulario, si es necesario.
+                              } else {
+                                // Si el cliente sigue en proceso, continuamos con la lógica de agregar insumos
+                                setSelectedID(dato.id ? dato.id : null);
+                                setDatoVentaSeleccionado(dato);
+                                fetchInsumosProductoSolicitud(); // Llamada a la función para obtener los insumos
+                                setModalOpenInsumosSolicitud(true); // Abrimos el modal
+                              }
                             }}
                           ></LuPackagePlus>
+
+
                         ) : null}
                       </td>
                     </>
