@@ -4056,6 +4056,7 @@ import { Cliente } from "../../models/Cliente";
 import { FcPaid } from "react-icons/fc";
 import { FcSynchronize } from "react-icons/fc";
 import { FcDownload } from "react-icons/fc";
+import { GoPersonAdd } from "react-icons/go";
 interface TicketPrintProps {
   children: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
@@ -4110,6 +4111,7 @@ const Ventas = () => {
   const [modalOpenPago, setModalOpenPago] = useState<boolean>(false);
   const [modalOpenPromo, setModalOpenPromo] = useState<boolean>(false);
   const [modalOpenInsumos, setModalOpenInsumos] = useState<boolean>(false);
+  const [modalOpenInsumos1, setModalOpenInsumos1] = useState<boolean>(false);
   const [modalOpenInsumosSelect, setModalOpenInsumosSelect] = useState<boolean>(false);
   const [modalEditInsumo, setModalEditInsumo] = useState<boolean>(false);
   const [modalClientesProceso, setModalClientesProceso] = useState<boolean>(false);
@@ -6721,21 +6723,25 @@ const Ventas = () => {
                         }}
                         size={23}
                       />
-                      {/* {dato.Observacion === "SERV" ? (
+                      {/* {dato.Observacion === "SERV" ? ( */}
+                      {dato.Observacion === "SERV" && ![1074].includes(dataUsuarios2[0]?.sucursal) ? (
                         <GrStakeholder
                           className="mr-2"
+                          size={20}
                           onClick={() => {
                             setSelectedID(dato.id ? dato.id : null);
                             setDatoVentaSeleccionado(dato);
                             fetchInsumosProducto();
                             fetchInsumosProductoSolicitud();
-                            setModalOpenInsumos(true);
+                            setModalOpenInsumos1(true);
                           }}
                         ></GrStakeholder>
-                      ) : null} */}
+                      ) : null}
 
-                      {dato.Observacion === "SERV" ? (
-                        <GrStakeholder
+                      {/* {dato.Observacion === "SERV" ? ( */}
+                      {dato.Observacion === "SERV" && ![27, 21, 26, 33].includes(dataUsuarios2[0]?.sucursal) ? (
+                        <GoPersonAdd
+                          size={20}
                           className="mr-2"
                           onClick={() => {
                             setSelectedID(dato.id ? dato.id : null);
@@ -6776,7 +6782,7 @@ const Ventas = () => {
                               setModalOpenInsumos(true);
                             }
                           }}
-                        ></GrStakeholder>
+                        ></GoPersonAdd>
                       ) : null}
 
                     </td>
@@ -7434,6 +7440,132 @@ const Ventas = () => {
       </Modal>
 
 
+      {/* INSUMOS SIN ACTUALIZACION  */}
+      <Modal isOpen={modalOpenInsumos1} size="xl">
+        <ModalHeader><strong>Insumos del servicio:</strong> {datoVentaSeleccionado.d_producto}</ModalHeader>
+
+        <ModalBody>
+          {/* <Row className="justify-content-end"> */}
+          <Row>
+            <Col md={7}>
+              <ButtonGroup>
+                <Button
+                  onClick={async () => {
+                    const permiso = await filtroSeguridad("AGREGA_INSUMO");
+                    if (permiso === false) {
+                      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                    } else {
+                      setModalOpenInsumosSelect(true);
+                      fetchInsumosProductoResumen();
+                      fetchInsumosProducto();
+                    }
+                  }}
+                >
+                  Agregar insumos +
+                </Button>
+                {/* <Button color="info"
+                  onClick={async () => {
+                    const permiso = await filtroSeguridad("AGREGA_INSUMO");
+                    if (permiso === false) {
+                      return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                    } else {
+                      fetchInsumosProductoSolicitud();
+                      setModalOpenInsumosSolicitud(true);
+                    }
+                  }}
+                >
+                  Enlazar insumos <FcDownload size={23} />
+                </Button> */}
+              </ButtonGroup>
+            </Col>
+            <Col md={6}></Col>
+          </Row>
+          <br />
+          <br />
+          <Table size="sm" striped={true} responsive={"sm"}>
+            <thead>
+              <tr>
+                {TableDataHeaderInsumo.map((valor: any) => (
+                  <th key={valor}>{valor}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {datoInsumosProductoResumen.length > 0
+                ? datoInsumosProductoResumen.map((dato: any) => (
+                  <tr key={dato.id}>
+                    {dato.id ? (
+                      <>
+                        <td>{dato.d_insumo}</td>
+                        <td align="left">{cantidadInsumo(dato.id_insumo)}</td>
+                        <td align="left">{dato.unidadMedida}</td>
+                        <td align="left">{dato.cantidad}</td>
+
+                        <td className="gap-5">
+                          <AiFillEdit
+                            className="mr-2"
+                            onClick={() => {
+                              setModalEditInsumo(true);
+                              setFormInsumo({
+                                cantidad: dato.cantidad,
+                                fechaAlta: dato.fechaAlta,
+                                id: dato.id,
+                                id_insumo: dato.id_insumo,
+                                id_venta: dato.id_venta,
+                                unidadMedida: dato.unidadMedida,
+                                d_insumo: dato.d_insumo,
+                                existencia: cantidadInsumo(dato.id_insumo),
+                              });
+                            }}
+                            size={23}
+                          ></AiFillEdit>
+                          {/* <AiFillDelete
+                            color="lightred"
+                            onClick={() => {
+                              deleteInsumo(dato);
+                              setTimeout(() => {
+                                fetchInsumosProducto();
+                              }, 1000);
+                            }}
+                            size={23}
+                          /> */}
+                          <AiFillDelete
+                            color="lightred"
+                            onClick={async () => {
+                              const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
+                              if (permiso === false) {
+                                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+                              } else {
+                                deleteInsumo(dato);
+                                setTimeout(() => {
+                                  fetchInsumosProducto();
+                                }, 1000);
+                              }
+                            }}
+                            size={23}
+                          />
+                        </td>
+                      </>
+                    ) : null}
+                  </tr>
+                ))
+                : null}
+            </tbody>
+          </Table>
+        </ModalBody>
+        <ModalFooter>
+          <CButton
+            color="danger"
+            onClick={() => {
+              setModalOpenInsumos1(false);
+            }}
+            text="Salir"
+          />
+        </ModalFooter>
+      </Modal>
+
+
+      {/* NUEVAS ACTUALIZACION DE INSUMOS  */}
       <Modal isOpen={modalOpenInsumos} size="xl">
         <ModalHeader><strong>Insumos del servicio:</strong> {datoVentaSeleccionado.d_producto}</ModalHeader>
 
