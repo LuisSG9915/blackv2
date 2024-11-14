@@ -3713,7 +3713,7 @@ const VentasEstilista = () => {
 
                         {/* Solo mostrar íconos si enlazado es false */}
                         <td className="gap-5">
-                          {!dato.enlazado && (
+                        {/*{!dato.enlazado && (*/}
                             <>
                               <AiFillEdit
                                 className="mr-2"
@@ -3750,7 +3750,7 @@ const VentasEstilista = () => {
                                 size={23}
                               />
                             </>
-                          )}
+                        {/* )}*/}
                         </td>
                       </>
                     ) : null}

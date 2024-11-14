@@ -4408,7 +4408,7 @@ const Ventas = () => {
     "Importe",
     "Acciones",
   ];
-  const TableDataHeaderInsumo = ["Insumo", "Existencia", "Unidad de medida", "Cantidad", "Acciones"];
+  const TableDataHeaderInsumo = ["Insumo", "Existencia", "Unidad de medida", "Cantidad"];
 
   const TabñeDataHeaderEstilistaProceso = ["Estilista", ""];
   const { datoInsumosProductoResumen, fetchInsumosProductoResumen } = useInsumosProductosResumen({
@@ -7566,12 +7566,12 @@ const Ventas = () => {
 
 
       {/* NUEVAS ACTUALIZACION DE INSUMOS  */}
-      <Modal isOpen={modalOpenInsumos} size="xl">
+      <Modal isOpen={modalOpenInsumos} size="xs">
         <ModalHeader><strong>Insumos del servicio:</strong> {datoVentaSeleccionado.d_producto}</ModalHeader>
 
         <ModalBody>
           {/* <Row className="justify-content-end"> */}
-          <Row>
+          {/* <Row>
             <Col md={7}>
               <ButtonGroup>
                 {/* <Button
@@ -7588,7 +7588,7 @@ const Ventas = () => {
                 >
                   Agregar insumos +
                 </Button> */}
-                <Button color="info"
+                {/* <Button color="info"
                   onClick={async () => {
                     const permiso = await filtroSeguridad("AGREGA_INSUMO");
                     if (permiso === false) {
@@ -7604,9 +7604,9 @@ const Ventas = () => {
               </ButtonGroup>
             </Col>
             <Col md={6}></Col>
-          </Row>
-          <br />
-          <br />
+          </Row> */}
+          {/* <br />
+          <br /> */} 
           <Table size="sm" striped={true} responsive={"sm"}>
             <thead>
               <tr>
@@ -7626,7 +7626,7 @@ const Ventas = () => {
                         <td align="left">{dato.unidadMedida}</td>
                         <td align="left">{dato.cantidad}</td>
 
-                        <td className="gap-5">
+                        {/* <td className="gap-5">
                           <AiFillEdit
                             className="mr-2"
                             onClick={() => {
@@ -7654,7 +7654,7 @@ const Ventas = () => {
                             }}
                             size={23}
                           /> */}
-                          <AiFillDelete
+                          {/* <AiFillDelete
                             color="lightred"
                             onClick={async () => {
                               const permiso = await filtroSeguridad("ELIMINA_INSUMO ");
@@ -7669,7 +7669,7 @@ const Ventas = () => {
                             }}
                             size={23}
                           />
-                        </td>
+                        </td> */} 
                       </>
                     ) : null}
                   </tr>

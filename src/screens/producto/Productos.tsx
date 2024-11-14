@@ -528,6 +528,11 @@ function Productos() {
               size: 60,
             },
             {
+              accessorKey: "txtMensaje",
+              header: "txtMensaje",
+              size: 60,
+            },
+            {
               accessorKey: "dias_seguimiento",
               header: "Días Seg",
               size: 60,
@@ -537,6 +542,18 @@ function Productos() {
               header: "Días Reag.",
               size: 60,
             },
+            {
+              accessorKey: "txtAsuntoRe",
+              header: "txtAsuntoRe",
+              size: 60,
+            },
+            {
+              accessorKey: "txtMensajeRe",
+              header: "txtMensajeRe",
+              size: 60,
+            },
+
+
       {
         header: "Acciones",
         Cell: ({ row }) => {
