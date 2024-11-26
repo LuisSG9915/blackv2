@@ -2873,7 +2873,8 @@ const VentasEstilista = () => {
                                 // Si el cliente sigue en proceso, continuamos con la lógica de agregar insumos
                                 setSelectedID(dato.id ? dato.id : null);
                                 setDatoVentaSeleccionado(dato);
-                                fetchInsumosProductoSolicitud(); // Llamada a la función para obtener los insumos
+                                
+                                 // Llamada a la función para obtener los insumos
                                 setModalOpenInsumosSolicitud(true); // Abrimos el modal
                               }
                             }}
