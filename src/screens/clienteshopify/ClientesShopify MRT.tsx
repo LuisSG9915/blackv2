@@ -46,15 +46,8 @@ import { ShopifyCliente } from "../../models/ShopifyCliente";
 
 function ClientesShopify() {
   const { filtroSeguridad, session } = useSeguridad();
-  const {
-    modalActualizar,
-    modalInsertar,
-    setModalInsertar,
-    setModalActualizar,
-    cerrarModalActualizar,
-    cerrarModalInsertar,
-    mostrarModalInsertar,
-  } = useModalHook();
+  const { modalActualizar, modalInsertar, setModalInsertar, setModalActualizar, cerrarModalActualizar, cerrarModalInsertar, mostrarModalInsertar } =
+    useModalHook();
 
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
@@ -127,17 +120,7 @@ function ClientesShopify() {
   const [camposFaltantes, setCamposFaltantes] = useState<string[]>([]);
 
   const validarCampos = () => {
-    const camposRequeridos: (keyof Cliente)[] = [
-      "nombre",
-      "domicilio",
-      "ciudad",
-      "estado",
-      "colonia",
-      "cp",
-      "telefono",
-      "email",
-      "fecha_nac",
-    ];
+    const camposRequeridos: (keyof Cliente)[] = ["nombre", "domicilio", "ciudad", "estado", "colonia", "cp", "telefono", "email", "fecha_nac"];
     const camposVacios: string[] = [];
 
     camposRequeridos.forEach((campo: keyof Cliente) => {
@@ -432,15 +415,13 @@ function ClientesShopify() {
       field: "fecha_alta",
       headerName: "Fecha alta",
       flex: 1,
-      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) =>
-        new Date(params.row.fecha_alta).toLocaleDateString(),
+      valueGetter: (params: { row: { fecha_alta: string | number | Date } }) => new Date(params.row.fecha_alta).toLocaleDateString(),
     },
     {
       field: "plastico_activo",
       headerName: "Cuenta activa",
       flex: 1,
-      renderCell: (params: { row: { plastico_activo: any } }) =>
-        params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>,
+      renderCell: (params: { row: { plastico_activo: any } }) => (params.row.plastico_activo ? <>&#10004;</> : <>&#10008;</>),
     },
   ];
 
@@ -546,12 +527,7 @@ function ClientesShopify() {
             size={23}
             onClick={() => {
               console.log(row.original);
-              loadHistorialDetalle(
-                row.original.Cve_cliente,
-                row.original.NumVenta,
-                row.original.idProducto,
-                row.original.sucursal
-              );
+              loadHistorialDetalle(row.original.Cve_cliente, row.original.NumVenta, row.original.idProducto, row.original.sucursal);
               setParamsDetalles({
                 Cve_cliente: row.original.Cve_cliente,
                 idProducto: row.original.idProducto,
@@ -666,11 +642,7 @@ function ClientesShopify() {
         accessorKey: "Precio",
         header: "Precio",
         flex: 1,
-        Cell: ({ cell }) => (
-          <span>
-            ${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </span>
-        ),
+        Cell: ({ cell }) => <span>${cell.getValue<number>().toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>,
         muiTableBodyCellProps: {
           align: "right",
         },
@@ -725,11 +697,7 @@ function ClientesShopify() {
         Cell: ({ cell }) => (
           <>
             {/* <AiFillEye className="mr-2" onClick={() => mostrarModalDetalle(cell.row.original)} size={23} /> */}
-            <AiFillEdit
-              className="mr-2"
-              onClick={() => mostrarModalActualizar(cell.row.original)}
-              size={23}
-            ></AiFillEdit>
+            <AiFillEdit className="mr-2" onClick={() => mostrarModalActualizar(cell.row.original)} size={23}></AiFillEdit>
             {/* <AiFillDelete color="lightred" onClick={() => eliminar(cell.row.original)} size={23} /> */}
           </>
         ),
@@ -793,7 +761,7 @@ function ClientesShopify() {
   //TABLA 2
   useEffect(() => {
     // Realiza la solicitud GET a la API para la Tabla 2
-    fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
+    fetch("https://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
       .then((response) => response.json())
       .then((responseData) => {
         setReportesTabla2(responseData);
@@ -828,11 +796,7 @@ function ClientesShopify() {
         header: "Acciones",
         size: 5,
         Cell: ({ row }) => (
-          <CButton
-            color="secondary"
-            onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)}
-            text="  Elegir"
-          ></CButton>
+          <CButton color="secondary" onClick={() => setIdShopify(row.original.id, row.original.nombreShopify)} text="  Elegir"></CButton>
         ),
       },
       {
@@ -1034,12 +998,7 @@ function ClientesShopify() {
           <Row>
             <Col sm="6">
               <Label>Nombre:</Label>
-              <Input
-                type="text"
-                name={"nombre"}
-                onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })}
-                defaultValue={form.nombre}
-              />
+              <Input type="text" name={"nombre"} onChange={(e) => setForm({ ...form, nombre: String(e.target.value) })} defaultValue={form.nombre} />
               <br />
             </Col>
 
@@ -1055,22 +1014,12 @@ function ClientesShopify() {
             </Col>
             <Col sm="6">
               <Label>Ciudad:</Label>
-              <Input
-                type="text"
-                name={"ciudad"}
-                onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })}
-                defaultValue={form.ciudad}
-              />
+              <Input type="text" name={"ciudad"} onChange={(e) => setForm({ ...form, ciudad: String(e.target.value) })} defaultValue={form.ciudad} />
               <br />
             </Col>
             <Col sm="6">
               <Label>Estado:</Label>
-              <Input
-                type="text"
-                name={"Estado"}
-                onChange={(e) => setForm({ ...form, estado: String(e.target.value) })}
-                defaultValue={form.estado}
-              />
+              <Input type="text" name={"Estado"} onChange={(e) => setForm({ ...form, estado: String(e.target.value) })} defaultValue={form.estado} />
               <br />
             </Col>
             <Col sm="6">
@@ -1085,12 +1034,7 @@ function ClientesShopify() {
             </Col>
             <Col sm="6">
               <Label>Código postal:</Label>
-              <Input
-                type="text"
-                name={"cp"}
-                onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                defaultValue={form.cp}
-              />
+              <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
               <br />
             </Col>
             <Col sm="6">
@@ -1105,12 +1049,7 @@ function ClientesShopify() {
             </Col>
             <Col sm="6">
               <Label>E-mail:</Label>
-              <Input
-                type="email"
-                name={"email"}
-                onChange={(e) => setForm({ ...form, email: String(e.target.value) })}
-                defaultValue={form.email}
-              />
+              <Input type="email" name={"email"} onChange={(e) => setForm({ ...form, email: String(e.target.value) })} defaultValue={form.email} />
               <br />
             </Col>
 
@@ -1230,22 +1169,12 @@ function ClientesShopify() {
 
                     <Col sm="6">
                       <Label>Código postal:</Label>
-                      <Input
-                        type="text"
-                        name={"cp"}
-                        onChange={(e) => setForm({ ...form, cp: String(e.target.value) })}
-                        defaultValue={form.cp}
-                      />
+                      <Input type="text" name={"cp"} onChange={(e) => setForm({ ...form, cp: String(e.target.value) })} defaultValue={form.cp} />
                       <br />
                     </Col>
                     <Col sm="6">
                       <Label>RFC:</Label>
-                      <Input
-                        type="text"
-                        name="rfc"
-                        onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })}
-                        defaultValue={form.rfc}
-                      />
+                      <Input type="text" name="rfc" onChange={(e) => setForm({ ...form, rfc: String(e.target.value) })} defaultValue={form.rfc} />
                       <br />
                     </Col>
                   </Row>

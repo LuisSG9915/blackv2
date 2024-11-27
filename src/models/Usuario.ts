@@ -16,4 +16,6 @@ export interface Usuario {
   fecha_act?: string;
   d_sucursal?: string;
   sucursal?: any;
+  idDepartamento?: number;
+  idPuesto?: number;
 }

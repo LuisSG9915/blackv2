@@ -332,24 +332,25 @@ function Clientes() {
       if (form.recibirCorreo == true) {
         // Si no requiere recibir correos electrónicos, no se valida el correo electrónico
         // Proceder con la creación del cliente
-        await jezaApi.post("/Cliente", null, {
-          params: {
-            nombre: form.nombre,
-            domicilio: form.domicilio,
-            ciudad: form.ciudad ? form.ciudad : "...",
-            estado: form.estado ? form.estado : "...",
-            colonia: form.colonia ? form.redsocial1 : "...",
-            cp: form.cp ? form.cp : "...",
-            telefono: form.telefono,
-            email: form.email,
-            fecha_nac: form.fecha_nac,
-            redsocial1: form.redsocial1 ? form.redsocial1 : "...",
-            redsocial2: "...",
-            redsocial3: "...",
-            sucOrigen: dataUsuarios2[0]?.sucursal,
-            recibirCorreo: form.recibirCorreo,
-          },
-        })
+        await jezaApi
+          .post("/Cliente", null, {
+            params: {
+              nombre: form.nombre,
+              domicilio: form.domicilio,
+              ciudad: form.ciudad ? form.ciudad : "...",
+              estado: form.estado ? form.estado : "...",
+              colonia: form.colonia ? form.redsocial1 : "...",
+              cp: form.cp ? form.cp : "...",
+              telefono: form.telefono,
+              email: form.email,
+              fecha_nac: form.fecha_nac,
+              redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+              redsocial2: "...",
+              redsocial3: "...",
+              sucOrigen: dataUsuarios2[0]?.sucursal,
+              recibirCorreo: form.recibirCorreo,
+            },
+          })
           .then((response) => {
             Swal.fire({
               icon: "success",
@@ -371,7 +372,8 @@ function Clientes() {
         // Si el cliente requiere recibir correos electrónicos, se valida el correo electrónico
         // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         //const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
-        const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
+        const regexCorreo =
+          /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
 
         if (!regexCorreo.test(form.email)) {
           Swal.fire({
@@ -381,24 +383,25 @@ function Clientes() {
           return;
         }
         // Proceder con la creación del cliente
-        await jezaApi.post("/Cliente", null, {
-          params: {
-            nombre: form.nombre,
-            domicilio: form.domicilio,
-            ciudad: form.ciudad ? form.ciudad : "...",
-            estado: form.estado ? form.estado : "...",
-            colonia: form.colonia ? form.redsocial1 : "...",
-            cp: form.cp ? form.cp : "...",
-            telefono: form.telefono,
-            email: form.email,
-            fecha_nac: form.fecha_nac,
-            redsocial1: form.redsocial1 ? form.redsocial1 : "...",
-            redsocial2: "...",
-            redsocial3: "...",
-            sucOrigen: dataUsuarios2[0]?.sucursal,
-            recibirCorreo: form.recibirCorreo,
-          },
-        })
+        await jezaApi
+          .post("/Cliente", null, {
+            params: {
+              nombre: form.nombre,
+              domicilio: form.domicilio,
+              ciudad: form.ciudad ? form.ciudad : "...",
+              estado: form.estado ? form.estado : "...",
+              colonia: form.colonia ? form.redsocial1 : "...",
+              cp: form.cp ? form.cp : "...",
+              telefono: form.telefono,
+              email: form.email,
+              fecha_nac: form.fecha_nac,
+              redsocial1: form.redsocial1 ? form.redsocial1 : "...",
+              redsocial2: "...",
+              redsocial3: "...",
+              sucOrigen: dataUsuarios2[0]?.sucursal,
+              recibirCorreo: form.recibirCorreo,
+            },
+          })
           .then((response) => {
             Swal.fire({
               icon: "success",
@@ -420,6 +423,24 @@ function Clientes() {
     } else {
       // Otra lógica para manejar el caso donde los campos no son válidos
     }
+    const dataNotificacion = {
+      Titulo: "Notificación de Prueba",
+      Cuerpo: "Este es el mensaje de prueba para todos los suscriptores.",
+      idEmpresa: 1,
+      idNotificación: 2,
+      Base: "dbBlack",
+      idSucursal: 1,
+    };
+    fetch("https://cbinfo.no-ip.info:9111/api/notificaciones/enviar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataNotificacion),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
   };
 
   // const insertar1 = async () => {
@@ -462,7 +483,8 @@ function Clientes() {
     if (validarCampos1() === true) {
       // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol|tnbmx)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$/i;
       // const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|co|info|biz|me|xyz))$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      const regexCorreo = /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
+      const regexCorreo =
+        /^(?:[a-zA-Z0-9._%+-]+@(?:gmail|yahoo|hotmail|outlook|aol)\.(?:com|net|org|edu|gov|mil|info|biz|me|xyz)|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]+)?)$/;
       if (!regexCorreo.test(form.email)) {
         Swal.fire({
           icon: "error",
@@ -472,15 +494,15 @@ function Clientes() {
       }
       const estatusSuspendido = form.suspendido === true;
       // Verifica si el trabajador tiene citas futuras
-      const clienteSuspAnticipo = dataAnticiposVal.some(suspendido => Number(suspendido.idCliente) === Number(form.id_cliente));
-      const clienteCitafutura = dataCitaFutura.some(cita => Number(cita.idCliente) === Number(form.id_cliente));
+      const clienteSuspAnticipo = dataAnticiposVal.some((suspendido) => Number(suspendido.idCliente) === Number(form.id_cliente));
+      const clienteCitafutura = dataCitaFutura.some((cita) => Number(cita.idCliente) === Number(form.id_cliente));
       // Si el estatus está cambiando a 2 y hay citas futuras, muestra un mensaje de error
       // if (estatusSuspendido && clienteSuspAnticipo) {
       if (estatusSuspendido && (clienteSuspAnticipo || clienteCitafutura)) {
         Swal.fire({
-          icon: 'error',
-          text: 'No se puede cambiar el estatus a suspendido, el cliente cuenta con anticipos o citas futuras.',
-          confirmButtonColor: '#d33',
+          icon: "error",
+          text: "No se puede cambiar el estatus a suspendido, el cliente cuenta con anticipos o citas futuras.",
+          confirmButtonColor: "#d33",
         });
         return;
       }
@@ -693,7 +715,6 @@ function Clientes() {
       setForm((prevState: Cliente) => ({ ...prevState, [name]: value }));
     }
   };
-
 
   //LIMPIEZA DE CAMPOS
   const [estado, setEstado] = useState("");
@@ -1042,8 +1063,6 @@ function Clientes() {
     [session]
   );
 
-
-
   const columnsclientes: MRT_ColumnDef<Cliente>[] = useMemo(
     () => [
       {
@@ -1097,9 +1116,9 @@ function Clientes() {
         size: 50,
         Cell: ({ row }) => {
           if (row.original.suspendido === true) {
-            return <span>SUSPENDIDO</span>
+            return <span>SUSPENDIDO</span>;
           } else {
-            return <span>VIGENTE</span>
+            return <span>VIGENTE</span>;
           }
         },
         accessorFn: (row) => row.supendido,
@@ -1186,7 +1205,14 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} minlength={1} maxlength={190} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="domicilio"
+                labelName="Domicilio:"
+                value={form.domicilio}
+                minlength={1}
+                maxlength={190}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} minlength={1} maxlength={190} />
@@ -1195,13 +1221,27 @@ function Clientes() {
               <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} minlength={1} maxlength={190} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} minlength={1} maxlength={190} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="colonia"
+                labelName="Colonia:"
+                value={form.colonia}
+                minlength={1}
+                maxlength={190}
+              />
             </Col>
             <Col sm="6">
               <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} minlength={1} maxlength={100} />
             </Col>
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="telefono"
+                labelName="Teléfono:"
+                value={form.telefono}
+                minlength={1}
+                maxlength={100}
+              />
             </Col>
 
             <Col sm="6">
@@ -1219,7 +1259,14 @@ function Clientes() {
             </Col>
 
             <Col sm="6">
-              <CFormGroupInput handleChange={handleChange} inputName="redsocial1" labelName="Instagram:" value={form.redsocial1} minlength={1} maxlength={199} />
+              <CFormGroupInput
+                handleChange={handleChange}
+                inputName="redsocial1"
+                labelName="Instagram:"
+                value={form.redsocial1}
+                minlength={1}
+                maxlength={199}
+              />
             </Col>
             <Col sm="6">
               <label className="checkbox-container">
@@ -1228,7 +1275,6 @@ function Clientes() {
                 No recibir correos
               </label>
             </Col>
-
           </Row>
         </ModalBody>
         <ModalFooter>
@@ -1269,7 +1315,14 @@ function Clientes() {
                 <TabPane tabId="1">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre" labelName="Nombre:" value={form.nombre} minlength={1} maxlength={190} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="nombre"
+                        labelName="Nombre:"
+                        value={form.nombre}
+                        minlength={1}
+                        maxlength={190}
+                      />
                     </Col>
                     <Col sm="6">
                       <CFormGroupInput
@@ -1282,23 +1335,58 @@ function Clientes() {
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="domicilio" labelName="Domicilio:" value={form.domicilio} minlength={1} maxlength={190} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="domicilio"
+                        labelName="Domicilio:"
+                        value={form.domicilio}
+                        minlength={1}
+                        maxlength={190}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="ciudad" labelName="Ciudad:" value={form.ciudad} minlength={1} maxlength={190} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="ciudad"
+                        labelName="Ciudad:"
+                        value={form.ciudad}
+                        minlength={1}
+                        maxlength={190}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="estado" labelName="Estado:" value={form.estado} minlength={1} maxlength={190} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="estado"
+                        labelName="Estado:"
+                        value={form.estado}
+                        minlength={1}
+                        maxlength={190}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="colonia" labelName="Colonia:" value={form.colonia} minlength={1} maxlength={190} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="colonia"
+                        labelName="Colonia:"
+                        value={form.colonia}
+                        minlength={1}
+                        maxlength={190}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="cp" labelName="Código postal:" value={form.cp} minlength={1} maxlength={100} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="cp"
+                        labelName="Código postal:"
+                        value={form.cp}
+                        minlength={1}
+                        maxlength={100}
+                      />
                     </Col>
 
                     <Col sm="6">
@@ -1311,15 +1399,36 @@ function Clientes() {
                 <TabPane tabId="2">
                   <Row>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="telefono" labelName="Teléfono:" value={form.telefono} minlength={1} maxlength={100} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="telefono"
+                        labelName="Teléfono:"
+                        value={form.telefono}
+                        minlength={1}
+                        maxlength={100}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="email" labelName="Email:" value={form.email} minlength={1} maxlength={199} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="email"
+                        labelName="Email:"
+                        value={form.email}
+                        minlength={1}
+                        maxlength={199}
+                      />
                     </Col>
 
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="redSocial1" labelName="Instagram:" value={form.redSocial1} minlength={1} maxlength={199} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="redSocial1"
+                        labelName="Instagram:"
+                        value={form.redSocial1}
+                        minlength={1}
+                        maxlength={199}
+                      />
                     </Col>
 
                     <Col sm="6">
@@ -1328,14 +1437,29 @@ function Clientes() {
                         inputName="correo_factura"
                         labelName="Correo de facturación:"
                         value={form.correo_factura}
-                        minlength={1} maxlength={199}
+                        minlength={1}
+                        maxlength={199}
                       />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="regimenFiscal" labelName="Regimen fiscal:" value={form.regimenFiscal} minlength={1} maxlength={199} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="regimenFiscal"
+                        labelName="Regimen fiscal:"
+                        value={form.regimenFiscal}
+                        minlength={1}
+                        maxlength={199}
+                      />
                     </Col>
                     <Col sm="6">
-                      <CFormGroupInput handleChange={handleChange} inputName="nombre_fiscal" labelName="Nombre fiscal:" value={form.nombre_fiscal} minlength={1} maxlength={199} />
+                      <CFormGroupInput
+                        handleChange={handleChange}
+                        inputName="nombre_fiscal"
+                        labelName="Nombre fiscal:"
+                        value={form.nombre_fiscal}
+                        minlength={1}
+                        maxlength={199}
+                      />
                     </Col>
 
                     <Col sm="6">
@@ -1354,7 +1478,6 @@ function Clientes() {
                       </label>
                     </Col>
                     <br />
-
 
                     {/* <Col sm="6">
                       <Label>Sucursal origen:</Label>
@@ -1574,7 +1697,7 @@ function Clientes() {
                           },
                           density: "compact",
                         }}
-                      // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
+                        // renderDetailPanel={renderDetailPanel} // Pasar la función renderDetailPanel como prop
                       />
                     </Row>
                     <br />

@@ -36,7 +36,6 @@ function ShopifySinc() {
           handleRedirect();
         } else {
           setShowView(true);
-
         }
       } else {
         // No se encontraron datos válidos en la respuesta.
@@ -69,7 +68,7 @@ function ShopifySinc() {
         didOpen: () => {
           Swal.showLoading();
           setTimeout(async () => {
-            const response = await axios.get("http://cbinfo.no-ip.info:9086/api/clientes");
+            const response = await axios.get("https://cbinfo.no-ip.info:9086/api/clientes");
 
             if (response.data) {
               // Ocultar SweetAlert de carga y mostrar el mensaje de éxito
@@ -107,7 +106,7 @@ function ShopifySinc() {
         didOpen: () => {
           Swal.showLoading();
           setTimeout(async () => {
-            const response = await axios.get("http://cbinfo.no-ip.info:9086/api/ordenes");
+            const response = await axios.get("https://cbinfo.no-ip.info:9086/api/ordenes");
 
             if (response.data) {
               // Ocultar SweetAlert de carga y mostrar el mensaje de éxito

@@ -30,40 +30,139 @@ import useSeguridad from "../hooks/getsHooks/useSeguridad";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { versionSistema } from "../utilities/constGenerales";
+import { subscribeUserToPush } from "./../../pushNotifications";
 
 const SidebarHorizontal = () => {
+  const [verificadorVersion, setVerificadorVersion] = useState(false);
+  const [form, setForm] = useState<Usuario[]>([]);
+
   const { isLoading, error, data, isFetching } = useQuery(
     "repoData",
-    () =>
-      axios.get("http://cbinfo.no-ip.info:9086/version").then((res) => {
-        if (res.data.ver > versionSistema) {
-          Swal.fire({
-            title: "Actualización",
-            text: `Favor de actualizar sitio, hemos detectado una versión anterior`,
-            icon: "info",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Actualizar",
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.reload();
-            }
-          });
-          setVerificadorVersion(true);
-        } else {
-          setVerificadorVersion(false);
-        }
-      }),
+    async () => {
+      const res = await axios.get("https://cbinfo.no-ip.info:9086/version");
+      if (res.data.ver > versionSistema) {
+        Swal.fire({
+          title: "Actualización",
+          text: `Favor de actualizar sitio, hemos detectado una versión anterior`,
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Actualizar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+        setVerificadorVersion(true);
+      } else {
+        setVerificadorVersion(false);
+      }
+      // Llamar a validaSuscripcion después de verificar la versión
+      validaSuscripcion();
+      return res.data;
+    },
     { staleTime: 10000 }
   );
+  const validaSuscripcion = () => {
+    // Validar la suscripción con el backend
+    console.log(form);
+    if (!form[0]?.clave_perfil || !form[0]?.id || !form[0]?.idPuesto || !form[0]?.idDepartamento) {
+      console.log(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+      return;
+    }
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((registration) => {
+          return registration.pushManager.getSubscription();
+        })
+        .then((subscription) => {
+          if (subscription) {
+            // Validar suscripción con el backend
+            return fetch("https://cbinfo.no-ip.info:9111/api/notificaciones/validar", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ endpoint: subscription.endpoint }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`Error en la validación de suscripción: ${response.statusText}`);
+                }
+                return response.json();
+              })
+              .then((data) => {
+                if (!data.isValid) {
+                  console.log("La suscripción no es válida. Creando una nueva...");
+                  subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+                } else {
+                  console.log("Suscripción válida:", subscription);
+                }
+              });
+          } else {
+            // No hay suscripción, solicitar permiso
+            return Notification.requestPermission().then((permission) => {
+              if (permission === "granted") {
+                console.log("Permiso concedido. Suscribiendo al usuario...");
+                subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+              } else {
+                console.warn("El usuario no otorgó permiso para las notificaciones.");
+              }
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error en el flujo de validación de suscripción:", error);
+        });
+    } else {
+      console.warn("El navegador no soporta Service Workers.");
+    }
+  };
 
-  const [verificadorVersion, setVerificadorVersion] = useState(false);
+  // useEffect(() => {
+  //   if (!form[0]?.id) return;
+
+  //   if ("serviceWorker" in navigator) {
+  //     navigator.serviceWorker
+  //       .register("/service-worker.js")
+  //       .then((registration) => {
+  //         // Verificar si ya existe una suscripción activa
+  //         return registration.pushManager.getSubscription();
+  //       })
+  //       .then((subscription) => {
+  //         if (subscription) {
+  //           validaSuscripcion();
+  //         } else {
+  //           console.log("No hay suscripción activa. Intentando suscribir al usuario...");
+  //           subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+  //         }
+  //         if (!subscription) {
+  //           console.log("No hay suscripción activa. Intentando suscribir al usuario...");
+
+  //           // Solicitar permiso y suscribir al usuario
+  //           Notification.requestPermission().then((permission) => {
+  //             if (permission === "granted") {
+  //               console.log("Permiso concedido. Suscribiendo al usuario...");
+
+  //               subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+  //             } else {
+  //               console.warn("El usuario no otorgó permiso para las notificaciones.");
+  //             }
+  //           });
+  //         } else {
+  //           console.log("Ya existe una suscripción activa:", subscription);
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error al manejar la suscripción:", error);
+  //       });
+  //   }
+  // }, [form[0]]);
+
   const { filtroSeguridad, session } = useSeguridad();
 
   /* sincronizacionshopify */
   const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState<Usuario[]>([]);
   // const [isDataLoaded, setIsDataLoaded] = useState(false);
   const navigate = useNavigate();
   const toggle = () => {
@@ -136,6 +235,57 @@ const SidebarHorizontal = () => {
     navigate("/");
   };
 
+  function unsubscribePushNotifications() {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready
+        .then(async (registration) => {
+          const subscription = await registration.pushManager.getSubscription();
+          if (subscription) {
+            // Eliminar la suscripción
+            await subscription.unsubscribe();
+            console.log("Suscripción eliminada correctamente.");
+          } else {
+            console.log("No existe una suscripción activa.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error al desuscribirse:", error);
+        });
+    }
+  }
+  async function removeSubscriptionFromServer(endpoint: string) {
+    try {
+      const response = await fetch("https://cbinfo.no-ip.info:9111/api/notificaciones/eliminarSuscripcion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(endpoint),
+      });
+
+      if (response.ok) {
+        console.log("Suscripción eliminada del servidor.");
+      } else {
+        console.error("Error al eliminar la suscripción en el servidor:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error al comunicarse con el servidor:", error);
+    }
+  }
+
+  async function logout() {
+    // Paso 1: Desuscribirse del navegador
+    await unsubscribePushNotifications();
+
+    // Paso 2: Notificar al backend (asegúrate de tener el endpoint guardado previamente)
+    const subscription = await navigator.serviceWorker.ready.then((reg) => reg.pushManager.getSubscription());
+    if (subscription) {
+      await removeSubscriptionFromServer(subscription.endpoint);
+    }
+
+    // Paso 3: Redirigir al usuario o realizar otras tareas de logout
+    console.log("Usuario deslogueado.");
+  }
   const cierraSesion = () => {
     Swal.fire({
       title: "Se cerrará la sesión. ¿Deseas continuar?",
@@ -143,6 +293,7 @@ const SidebarHorizontal = () => {
       confirmButtonText: "Cerrar",
       denyButtonText: `Cancelar`,
     }).then((result) => {
+      logout();
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         Swal.fire({
@@ -429,8 +580,6 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/Metas")}>Cifras</DropdownItem>
                     <DropdownItem onClick={() => navigate("/RespuestasClientes")}>Respuestas clientes</DropdownItem>
 
-
-                    
                     {/* <DropdownItem onClick={() => navigate("/AnticipoNomina")}>Nomina Anticipo</DropdownItem> */}
                     <DropdownItem
                       onClick={async () => {
@@ -477,7 +626,7 @@ const SidebarHorizontal = () => {
                   <DropdownMenu dark>
                     {/* <DropdownItem
                       onClick={() =>
-                        (window.location.href = `http://cbinfo.no-ip.info:9085/?idRec=${form[0].id}&suc=${form[0].d_sucursal}&idSuc=${form[0].sucursal}`)
+                        (window.location.href = `https://cbinfo.no-ip.info:9085/?idRec=${form[0].id}&suc=${form[0].d_sucursal}&idSuc=${form[0].sucursal}`)
                       }
                     > */}
                     <DropdownItem
@@ -488,7 +637,7 @@ const SidebarHorizontal = () => {
                         }
 
                         if (permiso === true) {
-                          window.location.href = `http://cbinfo.no-ip.info:9085/?idRec=${form[0].id}&suc=${form[0].d_sucursal}&idSuc=${form[0].sucursal}`;
+                          window.location.href = `https://cbinfo.no-ip.info:9085/?idRec=${form[0].id}&suc=${form[0].d_sucursal}&idSuc=${form[0].sucursal}`;
                         }
                       }}
                     >
@@ -499,7 +648,6 @@ const SidebarHorizontal = () => {
                     <DropdownItem onClick={() => navigate("/Reagendado")}>Reagendar clientes</DropdownItem>
                     {/* <DropdownItem> Configuración </DropdownItem> */}
                   </DropdownMenu>
-
                 </UncontrolledDropdown>
 
                 <UncontrolledDropdown>

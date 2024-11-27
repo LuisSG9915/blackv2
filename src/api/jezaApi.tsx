@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const jezaApi = axios.create({
-  baseURL: "http://cbinfo.no-ip.info:9089",
+  baseURL: "https://cbinfo.no-ip.info:9089",
   //baseURL: "http://cbinfo.no-ip.info:9083",
   headers: {
     "Content-Type": "text/plain; charset=UTF-8; application/json",
@@ -13,7 +13,7 @@ export const jezaApi = axios.create({
 // import axios from "axios";
 
 // export const jezaApi = axios.create({
-//   baseURL: "http://cbinfo.no-ip.info:9089", vite
+//   baseURL: "https://cbinfo.no-ip.info:9089", vite
 //   headers: {
 //     "Content-Type": "text/plain; charset=UTF-8; application/json",
 //     // "Content-Type": "application/json",

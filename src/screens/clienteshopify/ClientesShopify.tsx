@@ -201,7 +201,7 @@ function ClientesShopify() {
   };
 
   const consulta = () => {
-    fetch("http://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
+    fetch("https://cbinfo.no-ip.info:9089/sp_ShopifyClientesSel")
       .then((response) => response.json())
       .then((responseData) => {
         setReportesTabla2(responseData);

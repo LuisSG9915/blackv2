@@ -114,7 +114,7 @@ function DemoTresTablas() {
     const fechaSelected = fechaPost ? fechaPost : new Date();
     const fechaTemporal = format(fechaSelected, "yyyy-MM-dd");
     axios
-      .post("http://cbinfo.no-ip.info:9086/send-email", {
+      .post("https://cbinfo.no-ip.info:9086/send-email", {
         to: "luis.sg9915@gmail.com, desarrollo01@cbinformatica.net",
         subject: "Corte del dia",
         text: "HLOI",

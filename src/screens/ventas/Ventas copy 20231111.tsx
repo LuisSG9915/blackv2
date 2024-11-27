@@ -918,7 +918,7 @@ const Ventas = () => {
                       const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
                       const correo = dataClientes.filter((cliente) => Number(cliente.id_cliente) === Number(dataTemporal.Cve_cliente));
                       axios
-                        .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                        .post("https://cbinfo.no-ip.info:9086/send-emailTicket", {
                           // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
                           to: correo ? envioCorreoRem + `,${correo[0].email}` : envioCorreoRem,
                           subject: "Ticket",
@@ -951,7 +951,7 @@ const Ventas = () => {
                           // const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com";
                           const envioCorreoRem = "desarrollo01@cbinformatica.net, abigailmh9@gmail.com, luis.sg9915@gmail.com, holapaola@tnbmx.com";
                           axios
-                            .post("http://cbinfo.no-ip.info:9086/send-emailTicket", {
+                            .post("https://cbinfo.no-ip.info:9086/send-emailTicket", {
                               // to: "luis.sg9915@gmail.com, abigailmh09@gmail.com ,holapaola@tnbmx.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holasusy@tnbmx.com,holajacque@tnbmx.com, holaeli@tnbmx.com, holalezra@tnbmx.com",
                               to: envioCorreoRem + `,${result.value}`,
                               subject: "Ticket",

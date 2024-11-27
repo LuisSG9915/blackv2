@@ -159,7 +159,7 @@ function DemoTresTablas() {
   const sendEmail = () => {
     const fechaSelected = fechaPost ? fechaPost : format(new Date(), "yyyy-MM-dd");
     axios
-      .post("http://cbinfo.no-ip.info:9086/send-email", {
+      .post("https://cbinfo.no-ip.info:9086/send-email", {
         //to: "luis.sg9915@gmail.com, abigailmh9@gmail.com, paoacv@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com, holapaola@tnbmx.com",
         to: "tnbsoportetnb@gmail.com, holanefi@tnbmx.com, holaatenea@tnbmx.com, holajann@tnbmx.com",
         //to: "luis.sg9915@gmail.com, abigailmh9@gmail.com",
@@ -182,7 +182,19 @@ function DemoTresTablas() {
   };
 
   const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
-  const { dataCorteEmailA, dataCorteEmailB, dataCorteEmailC, dataCorteEmailD, dataCorteEmailE, dataCorteEmailF, ColumnasA, ColumnasB, ColumnasC, ColumnasE, ColumnasF } = useCortesEmail({
+  const {
+    dataCorteEmailA,
+    dataCorteEmailB,
+    dataCorteEmailC,
+    dataCorteEmailD,
+    dataCorteEmailE,
+    dataCorteEmailF,
+    ColumnasA,
+    ColumnasB,
+    ColumnasC,
+    ColumnasE,
+    ColumnasF,
+  } = useCortesEmail({
     sucursal: dataUsuarios2[0]?.sucursal,
     fecha: fechaPost,
   });
@@ -205,7 +217,7 @@ function DemoTresTablas() {
 
   const columnsF: MRT_ColumnDef<CorteF>[] = useMemo(
     () => [
-      ///hay un parametro mas en este get que se llama orden 
+      ///hay un parametro mas en este get que se llama orden
       {
         accessorKey: "anticipos_Futuros",
         header: "Anticipos futuros",
@@ -228,7 +240,6 @@ function DemoTresTablas() {
           );
         },
       },
-
     ],
     []
   );
@@ -337,7 +348,6 @@ function DemoTresTablas() {
           return <p>{row.original.ticketPromedio.toFixed(2)}</p>;
         },
       },
-
     ],
     []
   );
@@ -404,7 +414,6 @@ function DemoTresTablas() {
         header: "Resta",
         size: 10,
       },
-
     ],
     []
   );
@@ -496,7 +505,6 @@ function DemoTresTablas() {
             return <Input type="checkbox" disabled="disabled" />;
           }
         },
-
       },
       {
         accessorKey: "dRespuesta",
@@ -528,18 +536,16 @@ function DemoTresTablas() {
         isVisible: true,
         // Puedes agregar más propiedades de configuración aquí si es necesario
       },
-
     ],
     []
   );
 
-
   const arregloConID = dataCorteEmailA
     ? dataCorteEmailA.map((item, index) => ({
-      id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
-      value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
-      label: item.FormadePago,
-    }))
+        id: index + 1, // Sumamos 1 para que los IDs comiencen desde 1
+        value: item.Importe ? Number(item.Importe.replace("$", "").replace(",", "")) : 0,
+        label: item.FormadePago,
+      }))
     : [];
 
   const arregloFormateado = arregloConID.slice(0, -1);
@@ -592,15 +598,12 @@ function DemoTresTablas() {
                 if (permiso === false) {
                   return; // Si el permiso es falso o los campos no son válidos, se sale de la función
                 } else {
-                  sendEmail()
+                  sendEmail();
                 }
               }}
             >
               Enviar correo
             </Button>
-
-
-
           </Col>
         </Row>
         <br />
@@ -661,7 +664,6 @@ function DemoTresTablas() {
             />
           ) : null}
         </div>
-
 
         <div style={{ width: "500px", overflow: "auto" }}>
           <div className="juntos"></div>
@@ -770,7 +772,6 @@ function DemoTresTablas() {
             />
           ) : null}
         </div> */}
-
 
         {/* <div style={{ width: "400px", overflow: "auto" }}>
           <div className="juntos"></div>

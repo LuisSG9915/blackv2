@@ -72,7 +72,7 @@ function FormasPago() {
 
   const insertar2 = () => {
     axios
-      .post("http://cbinfo.no-ip.info:9089/FormaPago", null, {
+      .post("https://cbinfo.no-ip.info:9089/FormaPago", null, {
         params: {
           sucursal: Number(formaPago.sucursal),
           tipo: Number(formaPago.tipo),
