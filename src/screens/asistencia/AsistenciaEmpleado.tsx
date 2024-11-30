@@ -51,7 +51,7 @@ function AsistenciaEmpleado() {
 
   const getPermisoPantalla = async (userData) => {
     try {
-      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=sb_marcas_view`);
+      const response = await jezaApi.get(`/Permiso?usuario=${userData[0]?.id}&modulo=ASISTENCIA_TRABAJADOR`);
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         if (response.data[0].permiso === false) {
@@ -167,7 +167,7 @@ console.log(fechaActual); // Ejemplo: 2024-11-29 10:10:00
   const [loading, setLoading] = useState(false);
 
 const insertarAsistecia = async () => {
-  const permiso = await filtroSeguridad("CAT_MARCA_ADD");
+  const permiso = await filtroSeguridad("ASISTENCIA_TRABAJADOR");
   if (!permiso) {
     Swal.fire({
       icon: "warning",
