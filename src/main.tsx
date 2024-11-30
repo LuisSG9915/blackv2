@@ -84,6 +84,7 @@ import Reagendado from "./screens/reagendado/Reagendado";
 import AnticipoNomina from "./screens/detalleAnticiNom/anticipoNomina";
 import RespuestasClientes from "./screens/respuestas/RespuestasClientes";
 import VentasEstilista from "./screens/ventas/VentasEstilista";
+import AsistenciaEmpleado from "./screens/asistencia/AsistenciaEmpleado";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -404,6 +405,11 @@ const router = createBrowserRouter([
     path: "/VentasEstilista",
     element: <VentasEstilista />,
   },
+  {
+    path: "/AsistenciaEmpleado",
+    element: <AsistenciaEmpleado />,
+  },
+ 
 
  
 ]);

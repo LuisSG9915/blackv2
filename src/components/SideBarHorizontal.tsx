@@ -726,6 +726,7 @@ const SidebarHorizontal = () => {
                         </p>
                       </div> */}
                     </DropdownItem>
+                    <DropdownItem onClick={() => navigate("/AsistenciaEmpleado")}>Registro de Asistencia</DropdownItem>
                     <DropdownItem onClick={cierraSesion}>Cerrar sesión</DropdownItem>
                   </DropdownMenu>
                 </UncontrolledDropdown>
