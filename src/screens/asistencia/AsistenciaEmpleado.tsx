@@ -36,7 +36,7 @@ function AsistenciaEmpleado() {
   const { filtroSeguridad, session } = useSeguridad();
   const [showView, setShowView] = useState(true);
   const [dataUsuarios2, setDataUsuarios2] = useState<UserResponse[]>([]);
-
+  const [gpsData, setGpsData] = useState({ latitude: null, longitude: null }); // Estado para coordenadas GPS
   useEffect(() => {
     const item = localStorage.getItem("userLoggedv2");
     if (item !== null) {
@@ -48,6 +48,32 @@ function AsistenciaEmpleado() {
       getPermisoPantalla(parsedItem);
     }
   }, []);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setGpsData({ latitude, longitude });
+
+          console.log(latitude)
+          console.log(longitude)
+          // Enviar coordenadas al servidor
+       
+        },
+        (error) => {
+          console.error("Error al obtener ubicación GPS:", error);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    } else {
+      console.error("La geolocalización no está soportada por este navegador.");
+    }
+  }, []);
+
+
+
+
 
   const getPermisoPantalla = async (userData) => {
     try {
@@ -78,7 +104,10 @@ function AsistenciaEmpleado() {
   const [form, setForm] = useState<Asistencias>({
     idEmpleado: 0, 	
     fecha	: "",
-    localizacion: "",
+    // localizacion: "",
+    longitud: "",
+	  latitud: "",
+	  mac: "",
     sucursal: 0,
   });
 
@@ -122,51 +151,68 @@ function AsistenciaEmpleado() {
 const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
 console.log(fechaActual); // Ejemplo: 2024-11-29 10:10:00
 
-  const insertarAsisteciaori = async () => {
-    const permiso = await filtroSeguridad("CAT_MARCA_ADD");
-    if (permiso === false) {
-      return; // Si el permiso es falso, se detiene la función
-    }
-  
-    // Obtener la fecha y hora actual en el formato correcto
-    const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
-  
-    try {
-      // Hacer la solicitud a la API
-      const response = await jezaApi.post("/AsistenciaTrabajador", null, {
-        params: {
-          idEmpleado: dataUsuarios2[0]?.id,
-          fecha: fechaActual, // Fecha actual generada dinámicamente
-          localizacion: "LOCALIZACIÓN DESDE FRONT",
-          sucursal: dataUsuarios2[0]?.sucursal,
-        },
-      });
-  
-      // Verificar la respuesta de la API
-      const { codigo, mensaje } = response.data;
-  
-      // Mostrar el mensaje dinámico en la alerta
-      Swal.fire({
-        icon: codigo === 6 ? "success" : "info", // Icono depende del código (6: éxito)
-        text: mensaje, // Mostrar el mensaje recibido desde la API
-        confirmButtonColor: "#3085d6",
-      });
-    } catch (error) {
-      // Manejar errores y mostrar alerta
-      console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Hubo un problema al registrar la asistencia. Por favor, intenta nuevamente.",
-        confirmButtonColor: "#d33",
-      });
-    }
-  };
-  
+const insertarAsistecia = async () => {
+  const permiso = await filtroSeguridad("ASISTENCIA_TRABAJADOR");
+  if (!permiso) {
+    Swal.fire({
+      icon: "warning",
+      text: "No tienes permiso para registrar asistencias.",
+      confirmButtonColor: "#3085d6",
+    });
+    return;
+  }
+
+  const { latitude, longitude } = gpsData; // Obtén las coordenadas desde el estado
+  if (!latitude || !longitude) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo obtener la ubicación GPS. Verifica los permisos de tu navegador.",
+      confirmButtonColor: "#d33",
+    });
+    return;
+  }
+
+  const fechaActual = dayjs().format("YYYY-MM-DD HH:mm:ss");
+
+  setLoading(true); // Activar el spinner
+  try {
+    const response = await jezaApi.post("/AsistenciaTrabajador", null, {
+      params: {
+        idEmpleado: dataUsuarios2[0]?.id,
+        fecha: fechaActual, // Fecha actual generada dinámicamente
+        longitud: longitude,
+        latitud: latitude,
+        localizacion: "LOCALIZACIÓN DESDE FRONT",
+        sucursal: dataUsuarios2[0]?.sucursal,
+        mac: ".",
+      },
+    });
+
+    const { codigo, mensaje } = response.data;
+
+    Swal.fire({
+      icon: codigo === 6 ? "success" : "info",
+      text: mensaje || "Operación realizada.",
+      confirmButtonColor: "#3085d6",
+    });
+  } catch (error) {
+    console.error("Error al registrar la asistencia:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.response?.data?.mensaje || "Hubo un problema al registrar la asistencia.",
+      confirmButtonColor: "#d33",
+    });
+  } finally {
+    setLoading(false); // Desactivar el spinner
+  }
+};
+
 
   const [loading, setLoading] = useState(false);
 
-const insertarAsistecia = async () => {
+const insertarAsisteciaor = async () => {
   const permiso = await filtroSeguridad("ASISTENCIA_TRABAJADOR");
   if (!permiso) {
     Swal.fire({
@@ -184,9 +230,12 @@ const insertarAsistecia = async () => {
     const response = await jezaApi.post("/AsistenciaTrabajador", null, {
       params: {
         idEmpleado: dataUsuarios2[0]?.id,
-        fecha: fechaActual,
+        // fecha: fechaActual, // Fecha actual generada dinámicamente
+        longitud: longitude,
+        latitud: latitude,
         localizacion: "LOCALIZACIÓN DESDE FRONT",
         sucursal: dataUsuarios2[0]?.sucursal,
+        mac: "." ,
       },
     });
 
