@@ -39,7 +39,7 @@ const App = () => {
             return fetch("https://cbinfo.no-ip.info:9111/api/notificaciones/validar", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ endpoint: subscription.endpoint }),
+              body: JSON.stringify({ endpoint: subscription.endpoint, base: "dbBLACK" }),
             })
               .then((response) => {
                 if (!response.ok) {

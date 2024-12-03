@@ -77,39 +77,41 @@ const SidebarHorizontal = () => {
         .then((registration) => {
           return registration.pushManager.getSubscription();
         })
-        .then((subscription) => {
+        .then(async (subscription) => {
           if (subscription) {
-            // Validar suscripción con el backend
-            return fetch("https://cbinfo.no-ip.info:9111/api/notificaciones/validar", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ endpoint: subscription.endpoint }),
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error(`Error en la validación de suscripción: ${response.statusText}`);
-                }
-                return response.json();
-              })
-              .then((data) => {
-                if (!data.isValid) {
-                  console.log("La suscripción no es válida. Creando una nueva...");
-                  subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
-                } else {
-                  console.log("Suscripción válida:", subscription);
-                }
+            try {
+              const response = await fetch("https://cbinfo.no-ip.info:9111/api/notificaciones/validar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ endpoint: subscription.endpoint, base: "dbBLACK" }),
               });
+          
+              if (!response.ok) {
+                throw new Error(`Error en la validación de suscripción: ${response.statusText}`);
+              }
+          
+              const data = await response.json();
+          
+              if (!data.isValid) {
+                console.log("La suscripción no es válida. Creando una nueva...");
+                await subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+              } else {
+                console.log("Suscripción válida:", subscription);
+              }
+            } catch (error) {
+              console.error("Error en el flujo de validación de suscripción:", error);
+            }
           } else {
             // No hay suscripción, solicitar permiso
-            return Notification.requestPermission().then((permission) => {
-              if (permission === "granted") {
-                console.log("Permiso concedido. Suscribiendo al usuario...");
-                subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
-              } else {
-                console.warn("El usuario no otorgó permiso para las notificaciones.");
-              }
-            });
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+              console.log("Permiso concedido. Suscribiendo al usuario...");
+              await subscribeUserToPush(form[0]?.clave_perfil, form[0]?.id, form[0]?.idPuesto, form[0]?.idDepartamento);
+            } else {
+              console.warn("El usuario no otorgó permiso para las notificaciones.");
+            }
           }
+          
         })
         .catch((error) => {
           console.error("Error en el flujo de validación de suscripción:", error);
