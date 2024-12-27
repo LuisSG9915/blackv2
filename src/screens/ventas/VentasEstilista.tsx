@@ -3865,19 +3865,29 @@ const VentasEstilista = () => {
             Guardar cambios
           </Button> */}
 
-          <Button
-            color="success"
-            onClick={async () => {
-              const permiso = await filtroSeguridad("EDITAR_INSUMO_SOLICITADO");
-              if (permiso === false) {
-                return; // Si el permiso es falso o los campos no son válidos, se sale de la función
-              } else {
-                editInsumoSolicitud();
-              }
-            }}
-          >
-            Guardar cambios
-          </Button>
+<Button
+  color="success"
+  onClick={async () => {
+    // Suponiendo que formInsumo.existencia sea la cantidad "antigua"
+    // y formInsumo.cantidad sea la cantidad "nueva" ingresada.
+
+    // VALIDACIÓN
+    if (Number(formInsumo.cantidad) < Number(formInsumo.existencia)) {
+      // Puedes usar alert, sweetalert, toasts, etc.
+      alert("La cantidad no puede ser menor a la existente.");
+      return; // con este return prevenimos que se ejecute el resto del código
+    }
+
+    const permiso = await filtroSeguridad("EDITAR_INSUMO_SOLICITADO");
+    if (permiso === false) {
+      return; // Si el permiso es falso, no se hace nada
+    } else {
+      editInsumoSolicitud();
+    }
+  }}
+>
+  Guardar cambios
+</Button>
         </ModalFooter>
       </Modal>
 
