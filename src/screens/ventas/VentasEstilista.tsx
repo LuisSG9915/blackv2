@@ -3868,19 +3868,22 @@ const VentasEstilista = () => {
 <Button
   color="success"
   onClick={async () => {
-    // Suponiendo que formInsumo.existencia sea la cantidad "antigua"
-    // y formInsumo.cantidad sea la cantidad "nueva" ingresada.
-
-    // VALIDACIÓN
+    // Validar que la nueva cantidad sea mayor que la cantidad existente
     if (Number(formInsumo.cantidad) < Number(formInsumo.existencia)) {
-      // Puedes usar alert, sweetalert, toasts, etc.
-      alert("La cantidad no puede ser menor a la existente.");
-      return; // con este return prevenimos que se ejecute el resto del código
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La cantidad no puede ser menor a la existente.',
+        confirmButtonText: 'Ok',
+      });
+      return;
     }
 
+    // Si la cantidad es válida, continúa con la lógica
     const permiso = await filtroSeguridad("EDITAR_INSUMO_SOLICITADO");
     if (permiso === false) {
-      return; // Si el permiso es falso, no se hace nada
+      // Aquí podrías mostrar otro SweetAlert, un mensaje de error, etc.
+      return;
     } else {
       editInsumoSolicitud();
     }
