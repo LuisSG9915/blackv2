@@ -6711,6 +6711,8 @@ const Ventas = () => {
                             setSelectedID(dato.id ? dato.id : null);
                             setDatoVentaSeleccionado(dato);
                             fetchInsumosProducto();
+                            fetchInsumosProductoResumen();
+
                             fetchInsumosProductoSolicitud();
                             setModalOpenInsumos1(true);
                           }}
@@ -6729,6 +6731,7 @@ const Ventas = () => {
                             // Llamar a las funciones de fetch para actualizar los datos
                             fetchInsumosProducto();
                             fetchInsumosProductoSolicitud();
+                            fetchInsumosProductoResumen();
 
                             // Restablecer `alertShown` para asegurarse de que la alerta se muestre en futuras interacciones
                             setAlertShown(false);

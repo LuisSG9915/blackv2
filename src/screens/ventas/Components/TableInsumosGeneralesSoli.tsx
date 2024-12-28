@@ -149,6 +149,21 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado2, handleGetFe
 
 
   const handleInsumoSelection = async (id: InsumoExistencia) => {
+
+ // Verificar si ya existe en datoInsumosProductoSolicitud
+ const validarInsumoProducto = datoInsumosProductoSolicitud?.some(
+  (elemento: VentaInsumo) => elemento.id_insumo === Number(id.id)
+);
+if (validarInsumoProducto) {
+  Swal.fire({
+    icon: "error",
+    title: "Error",
+    text: `Insumo repetido, favor de verificar`,
+    confirmButtonColor: "#3085d6",
+  });
+  return;
+}
+
     // Mostrar alerta para ingresar la cantidad
     Swal.fire({
       title: "Ingrese la cantidad:",
@@ -240,7 +255,7 @@ const TableInsumos = ({ data, setModalOpen2, datoVentaSeleccionado2, handleGetFe
         Cell: ({ cell }) => (
           <Button
             onClick={() => {
-              handleInsumoSelection(cell.row.original);
+              handleInsumoSelectionORI(cell.row.original);
             }}
           >
             Seleccionar

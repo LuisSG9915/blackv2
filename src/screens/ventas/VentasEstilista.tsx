@@ -246,6 +246,8 @@ const VentasEstilista = () => {
     unidadMedida: "",
     d_insumo: "",
     existencia: 1,
+
+    cantidadOri :0,
   });
 
   const [selectedID2, setSelectedID] = useState(0);
@@ -3710,8 +3712,17 @@ const VentasEstilista = () => {
                         <td align="left">{dato.unidadMedida}</td>
                         <td align="left">{dato.cantidad}</td>
                         <td align="left">{dato.enlazado ? <FcPaid size={23} /> : <FcSynchronize size={23} />}</td>
-                        <td align="center">{dato.fecha_enlace}</td>
+                       {/*   <td align="center">{dato.fecha_enlace.split("T")[0]}</td>*/}
 
+                        <td align="center">
+  {
+    new Date(dato.fecha_enlace).toLocaleDateString("es-MX", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+  }
+</td>
                         {/* Solo mostrar íconos si enlazado es false */}
                         <td className="gap-5">
                         {/*{!dato.enlazado && (*/}
@@ -3731,6 +3742,7 @@ const VentasEstilista = () => {
                                     unidadMedida: dato.unidadMedida,
                                     d_insumo: dato.d_insumo,
                                     existencia: cantidadInsumo(dato.id_insumo),
+                                    cantidadOri: dato.cantidad,
                                   });
                                 }}
                                 size={23}
@@ -3836,6 +3848,7 @@ const VentasEstilista = () => {
               <Label>
                 Insumo utilizado: <strong>{formInsumo.d_insumo}</strong>{" "}
               </Label>
+              <br />
               <Label>
                 Cantidad de existencia: <strong>{formInsumo.existencia}</strong>{" "}
               </Label>
@@ -3865,24 +3878,28 @@ const VentasEstilista = () => {
             Guardar cambios
           </Button> */}
 
+
 <Button
   color="success"
   onClick={async () => {
-    // Validar que la nueva cantidad sea mayor que la cantidad existente
-    if (Number(formInsumo.cantidad) < Number(formInsumo.existencia)) {
+    // Supongamos que la cantidad original está en "formInsumo.cantidadOriginal"
+    // y la nueva cantidad ingresada está en "formInsumo.cantidad".
+    // Si no tienes "cantidadOriginal", deberías guardarla al abrir el modal 
+    // o donde inicializas `formInsumo`.
+
+    if (Number(formInsumo.cantidad) < Number(formInsumo.cantidadOri)) {
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'La cantidad no puede ser menor a la existente.',
+        title: 'No se puede reducir la cantidad solicitada',
+        text: `La cantidad no puede ser menor que la solicitada anteriormente (${formInsumo.cantidadOri}).`,
         confirmButtonText: 'Ok',
       });
-      return;
+      return; // Detiene la ejecución, no llama a editInsumoSolicitud()
     }
 
-    // Si la cantidad es válida, continúa con la lógica
+    // Aquí va tu lógica normal
     const permiso = await filtroSeguridad("EDITAR_INSUMO_SOLICITADO");
     if (permiso === false) {
-      // Aquí podrías mostrar otro SweetAlert, un mensaje de error, etc.
       return;
     } else {
       editInsumoSolicitud();
