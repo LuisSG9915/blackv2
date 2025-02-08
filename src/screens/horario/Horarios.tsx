@@ -264,6 +264,38 @@ function Horarios() {
     setFormData(updatedFormData);
   };
 
+
+//PARA FECHAS DE REPLICACION
+
+
+const handleDateChange2 = (e) => {
+  const { name, value } = e.target;
+  if (name === 'fecha1') {
+    setFecha1(value);
+  } else if (name === 'fecha2') {
+    setFecha2(value);
+  }
+
+  if (!fecha1 || !fecha2) {
+    return; // No hacer nada hasta que ambas fechas estén establecidas
+  }
+
+  const startDate = new Date(fecha1);
+  const endDate = new Date(fecha2);
+
+  // Crear un array de fechas entre startDate y endDate
+  const dateArray = [];
+  let currentDate = startDate;
+  while (currentDate <= endDate) {
+    dateArray.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+};
+
+
+
+
   // Función auxiliar para formatear la fecha como "YYYY-MM-DD"
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -558,10 +590,14 @@ function Horarios() {
   };
 
 
-  const replicaHorarios = () => {
+  const replicaHorarios = async () => {
+      const permiso = await filtroSeguridad("REPLICA_HORARIO_ADD");
+      if (permiso === false) {
+        return; // Si el permiso es falso o los campos no son válidos, se sale de la función
+      }
     jezaApi
       .post(
-        `/ReplicaHorarios?idEmpleado=${selectedId}&suc=${dataUsuarios2[0]?.sucursal}&f1=${fecha1}&f2=${fecha2}&usuario=${dataUsuarios2[0]?.id}`
+        `/ReplicaHorarios?idEmpleado=${selectedId}&f1=${fecha1}&f2=${fecha2}&usuario=${dataUsuarios2[0]?.id}`
       )
       .then((response) => {
         // Validamos el código devuelto por la API
@@ -609,13 +645,13 @@ function Horarios() {
   };
   
   
-  const Replica = () => {
+  const Replica1 = () => {
     // Verifica si se ha seleccionado un trabajador y se ha ingresado una fecha
     if (selectedId && fecha1 && fecha2) {
       // Realiza la solicitud a la API con los parámetros
       replicaHorarios();
-      // setSelectedWeek(0);
-      // setSelectedMonth(0);
+      setFecha1("");
+      setFecha1("");
       getHorarios();
     } else {
       // Muestra un mensaje de error o realiza alguna acción apropiada
@@ -627,6 +663,31 @@ function Horarios() {
       });
     }
   };
+
+  const Replica = () => {
+    let camposVacios = [];
+  
+    if (!selectedId) camposVacios.push("Trabajador");
+    if (!fecha1) camposVacios.push("Fecha inicial");
+    if (!fecha2) camposVacios.push("Fecha final");
+  
+    if (camposVacios.length === 0) {
+      // Realiza la solicitud a la API con los parámetros
+      replicaHorarios();
+      setFecha1("");
+      setFecha2(""); // Aquí tenías un error, repetías `setFecha1("")`
+      getHorarios();
+    } else {
+      // Muestra un mensaje de error indicando los campos vacíos
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Favor de llenar los siguientes campos: ${camposVacios.join(", ")}`,
+        confirmButtonColor: "#3085d6",
+      });
+    }
+  };
+  
 
   const formatFecha = (fecha) => {
     const dateObj = new Date(fecha);
@@ -650,7 +711,6 @@ function Horarios() {
               <Row>
                 <Col sm="12">
                   <h3>Horario de: {selectedName}</h3>
-                  <br />
                 </Col>
                 <Col sm="6">
                   <Label> Seleccione un trabajador: </Label>
@@ -663,28 +723,16 @@ function Horarios() {
                   <br />
                 </Col>
 
-                <Col sm="6">
+                <Col sm="3">
                   <Label> Seleccione una fecha: </Label>
                   <Input type="date" value={selectedDate} onChange={handleDateChange} />
                   <br />
                 </Col>
-                <Col sm="4">
-                  <Label> Del: </Label>
 
-                  <Input type="date" name="fecha1" value={fecha1} onChange={handleDateChange} />
-                  <br />
-                </Col>
-
-                <Col sm="4">
-                  <Label> Al: </Label>
-
-                  <Input type="date" name="fecha2" value={fecha2} onChange={handleDateChange} />
-                  <br />
-                </Col>
 
                 {/* parte buena */}
-                <Col sm="6">
-                  <Button color="primary" onClick={consulta}>
+                <Col sm="3" className="d-flex align-items-center">
+                  <Button  style={{ marginRight: 5 }} color="primary" onClick={consulta}>
                     Consultar
                   </Button>
                   {showButton && (
@@ -712,6 +760,30 @@ function Horarios() {
                     </Button>
                   )}
                 </Col>
+
+                <Col md="2">
+                <h5>Replica horarios: </h5>
+                {/* <br /> */}
+                </Col>
+                <Col md="2" className="d-flex align-items-end">
+                  <Label style={{ marginRight: 8 }}> Del </Label>
+
+                  <Input  type="date" name="fecha1" value={fecha1} onChange={handleDateChange2} />
+               
+                </Col>
+
+                <Col md="2" className="d-flex align-items-end" style={{ marginRight: 8 }}>
+                  <Label style={{ marginRight: 8 }}> Al </Label>
+
+                  <Input type="date" name="fecha2" value={fecha2} onChange={handleDateChange2} />
+              
+                </Col>
+
+                <Col md="3" className="d-flex align-items-end">
+                <Button color="primary" onClick={Replica}>
+                    Replicar Horario
+                  </Button>
+                  </Col>
               </Row>
             </CardBody>
           </Card>
