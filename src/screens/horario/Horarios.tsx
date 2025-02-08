@@ -80,7 +80,10 @@ function Horarios() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState([]);
+  const [fecha1, setFecha1] = useState('');
+  const [fecha2, setFecha2] = useState('');
   const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+ 
   const handleEditInputChange = (field, value) => {
     // Desmarcar el checkbox si h1 a h4 tienen un valor distinto de "00:00"
     if (field === "h1" || field === "h2" || field === "h3" || field === "h4") {
@@ -554,6 +557,77 @@ function Horarios() {
     }
   };
 
+
+  const replicaHorarios = () => {
+    jezaApi
+      .post(
+        `/ReplicaHorarios?idEmpleado=${selectedId}&suc=${dataUsuarios2[0]?.sucursal}&f1=${fecha1}&f2=${fecha2}&usuario=${dataUsuarios2[0]?.id}`
+      )
+      .then((response) => {
+        // Validamos el código devuelto por la API
+        const { codigo, msg } = response?.data || {};
+  
+        if (codigo === 1) {
+          // Código de éxito (por ejemplo: "1" indica éxito)
+          Swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: "Los horarios se replicaron correctamente.",
+            confirmButtonColor: "#3085d6",
+          });
+        } else if (codigo === -1) {
+          // Código de error o validación (por ejemplo: "-1" indica validación fallida)
+          Swal.fire({
+            icon: "warning",
+            title: "Advertencia",
+            text: msg || "Ocurrió un problema con los datos proporcionados.",
+            confirmButtonColor: "#f39c12",
+          });
+        } else {
+          // Otros casos de error no esperados
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: msg || "Ocurrió un error inesperado.",
+            confirmButtonColor: "#d33",
+          });
+        }
+      })
+      .catch((error) => {
+        // Manejamos errores de la solicitud o problemas de red
+        let errorMessage = "No se pudo conectar con el servidor.";
+        if (error.response && error.response.data && error.response.data.msg) {
+          errorMessage = error.response.data.msg; // Mensaje de error proporcionado por la API
+        }
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: errorMessage,
+          confirmButtonColor: "#d33",
+        });
+      });
+  };
+  
+  
+  const Replica = () => {
+    // Verifica si se ha seleccionado un trabajador y se ha ingresado una fecha
+    if (selectedId && fecha1 && fecha2) {
+      // Realiza la solicitud a la API con los parámetros
+      replicaHorarios();
+      // setSelectedWeek(0);
+      // setSelectedMonth(0);
+      getHorarios();
+    } else {
+      // Muestra un mensaje de error o realiza alguna acción apropiada
+      Swal.fire({
+        icon: "error",
+        title: "Campos vacíos",
+        text: `Favor de llenar todos los campos `,
+        confirmButtonColor: "#3085d6", // Cambiar el color del botón OK
+      });
+    }
+  };
+
   const formatFecha = (fecha) => {
     const dateObj = new Date(fecha);
     const dia = dateObj.getDate();
@@ -592,6 +666,19 @@ function Horarios() {
                 <Col sm="6">
                   <Label> Seleccione una fecha: </Label>
                   <Input type="date" value={selectedDate} onChange={handleDateChange} />
+                  <br />
+                </Col>
+                <Col sm="4">
+                  <Label> Del: </Label>
+
+                  <Input type="date" name="fecha1" value={fecha1} onChange={handleDateChange} />
+                  <br />
+                </Col>
+
+                <Col sm="4">
+                  <Label> Al: </Label>
+
+                  <Input type="date" name="fecha2" value={fecha2} onChange={handleDateChange} />
                   <br />
                 </Col>
 
