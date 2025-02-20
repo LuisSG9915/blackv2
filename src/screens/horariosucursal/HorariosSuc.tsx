@@ -509,7 +509,10 @@ function HorariosSuc() {
     ],
     []
   );
-  const handleSubmit = async () => {
+
+
+
+  const handleSubmit1 = async () => {
     const permiso = await filtroSeguridad("CAMBIO_SUC_CREAR");
     if (permiso === false) {
       return; // Si el permiso es falso o los campos no son válidos, se sale de la función
@@ -586,6 +589,67 @@ function HorariosSuc() {
       }
     }
   };
+
+
+  const handleSubmit = async () => {
+    const permiso = await filtroSeguridad("CAMBIO_SUC_CREAR");
+    if (!permiso) return;
+  
+    // Filtrar los días que realmente tienen datos antes de postear
+    const daysWithData = formData.filter(dayData => 
+      dayData.h1 && dayData.h2 && dayData.h3 && dayData.h4 && dayData.sucursal
+    );
+  
+    if (daysWithData.length === 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Debes completar al menos un día con horarios válidos.",
+      });
+      return;
+    }
+  
+    let successfulRequests = 0;
+    let failedRequests = 0;
+    let messages = [];
+  
+    for (let dayData of daysWithData) {
+      try {
+        const response = await jezaApi.post(
+          `/HorariosApoyo?id_empleado=${selectedId}&fecha=${dayData.fecha}&h1=${dayData.h1}&h2=${dayData.h2}&h3=${dayData.h3}&h4=${dayData.h4}&sucursal=${dayData.sucursal}`
+        );
+  
+        const { codigo, mensaje1, mensaje2 } = response.data;
+  
+        if (codigo === 1) {
+          successfulRequests++;
+        } else {
+          failedRequests++;
+        }
+  
+        // Guardar mensajes exactos de la API
+        messages.push(`${mensaje1} ${mensaje2}`.trim());
+  
+      } catch (error) {
+        console.error("Error en la solicitud POST:", error);
+        failedRequests++;
+        messages.push("Error en la comunicación con el servidor.");
+      }
+    }
+  
+    // Mostrar alertas con los mensajes exactos de la API
+    Swal.fire({
+      icon: failedRequests > 0 ? "warning" : "success",
+      title: failedRequests > 0 ? "Atención" : "Operación exitosa",
+      html: messages.join("<br>"),
+    });
+  
+    consulta();
+    toggleModalCrear();
+  };
+
+
+
   const formatFecha = (fecha) => {
     const dateObj = new Date(fecha);
     const dia = dateObj.getDate();
